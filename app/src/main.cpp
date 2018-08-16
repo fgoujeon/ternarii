@@ -1,4 +1,4 @@
-#include <SDL2/SDL.h>
+#include "libsdl.hpp"
 
 #ifdef EMSCRIPTEN
 #include <emscripten/html5.h>
@@ -11,8 +11,28 @@
 
 struct context
 {
-    SDL_Window* pwindow = nullptr;
-    SDL_Renderer* prenderer = nullptr;
+    context():
+        window
+        (
+            "Test",
+            SDL_WINDOWPOS_UNDEFINED,
+            SDL_WINDOWPOS_UNDEFINED,
+            640,
+            480,
+            SDL_WINDOW_RESIZABLE
+        ),
+        renderer
+        (
+            window.ptr,
+            -1,
+            0
+        )
+    {
+    }
+
+    libsdl::session session;
+    libsdl::window window;
+    libsdl::renderer renderer;
     bool quit = false;
 };
 
@@ -37,11 +57,11 @@ void iterate(void *arg)
 
     process_events(ctx);
 
-    SDL_Renderer* prenderer = ctx.prenderer;
+    SDL_Renderer* prenderer = ctx.renderer.ptr;
 
     int window_width;
     int window_height;
-    SDL_GetWindowSize(ctx.pwindow, &window_width, &window_height);
+    SDL_GetWindowSize(ctx.window.ptr, &window_width, &window_height);
 
     //white background
     SDL_SetRenderDrawColor(prenderer, 255, 255, 255, 255);
@@ -68,7 +88,7 @@ void sync_window_size_with_canvas_size(context& ctx)
 {
     double width, height;
     emscripten_get_element_css_size("canvas", &width, &height);
-    SDL_SetWindowSize(ctx.pwindow, width, height);
+    SDL_SetWindowSize(ctx.window.ptr, width, height);
 }
 
 int on_canvas_resize(int, const EmscriptenUiEvent*, void* arg)
@@ -116,27 +136,7 @@ void run(context& ctx)
 
 int main(int, char**)
 {
-    SDL_Init(SDL_INIT_VIDEO);
-    SDL_Window* pwindow = SDL_CreateWindow
-    (
-        "Test",
-        SDL_WINDOWPOS_UNDEFINED,
-        SDL_WINDOWPOS_UNDEFINED,
-        640,
-        480,
-        SDL_WINDOW_RESIZABLE
-    );
-    SDL_Renderer* prenderer = SDL_CreateRenderer(pwindow, -1, 0);
-
     context ctx;
-    ctx.pwindow = pwindow;
-    ctx.prenderer = prenderer;
-
     run(ctx);
-
-    SDL_DestroyRenderer(prenderer);
-    SDL_DestroyWindow(pwindow);
-    SDL_Quit();
-
     return EXIT_SUCCESS;
 }
