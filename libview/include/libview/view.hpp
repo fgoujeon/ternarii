@@ -1,13 +1,17 @@
-#ifndef VIEW_HPP
-#define VIEW_HPP
+#ifndef LIBVIEW_VIEW_HPP
+#define LIBVIEW_VIEW_HPP
 
-#include "fixed_ratio_box.hpp"
-#include "libsdl.hpp"
+#include <memory>
+
+namespace libview
+{
 
 class view
 {
     public:
         view();
+
+        ~view();
 
         void set_window_size(const unsigned int width, const unsigned int height);
 
@@ -19,11 +23,10 @@ class view
         void process_events();
 
     private:
-        libsdl::session session_;
-        libsdl::window window_;
-        libsdl::renderer renderer_;
-        fixed_ratio_box child_;
-        bool quit_ = false;
+        struct impl;
+        std::unique_ptr<impl> pimpl_;
 };
+
+} //namespace view
 
 #endif

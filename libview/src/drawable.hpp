@@ -1,8 +1,11 @@
-#ifndef DRAWABLE_HPP
-#define DRAWABLE_HPP
+#ifndef LIBVIEW_DRAWABLE_HPP
+#define LIBVIEW_DRAWABLE_HPP
 
 #include "rectangle.hpp"
 #include "libsdl.hpp"
+
+namespace libview
+{
 
 struct drawable
 {
@@ -12,5 +15,7 @@ struct drawable
         const rectangle& area
     ) = 0;
 };
+
+} //namespace view
 
 #endif

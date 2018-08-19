@@ -11,5 +11,5 @@ add_executable(
 target_link_libraries(
     app
     PRIVATE
-        SDL2::SDL2
+        libview
 )

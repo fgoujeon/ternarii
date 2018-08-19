@@ -1,4 +1,4 @@
-#include "view.hpp"
+#include <libview/view.hpp>
 
 #ifdef EMSCRIPTEN
 #include <emscripten/html5.h>
@@ -12,11 +12,11 @@
 #ifdef EMSCRIPTEN
 void iterate(void* arg)
 {
-    auto pv = reinterpret_cast<view*>(arg);
+    auto pv = reinterpret_cast<libview::view*>(arg);
     pv->iterate();
 }
 
-void sync_window_size_with_canvas_size(view& v)
+void sync_window_size_with_canvas_size(libview::view& v)
 {
     double width, height;
     emscripten_get_element_css_size("canvas", &width, &height);
@@ -25,13 +25,13 @@ void sync_window_size_with_canvas_size(view& v)
 
 int on_canvas_resize(int, const EmscriptenUiEvent*, void* arg)
 {
-    auto* pctx = static_cast<view*>(arg);
+    auto* pctx = static_cast<libview::view*>(arg);
     auto& v = *pctx;
     sync_window_size_with_canvas_size(v);
     return 0;
 }
 
-void run(view& v)
+void run(libview::view& v)
 {
     sync_window_size_with_canvas_size(v);
     emscripten_set_resize_callback(nullptr, &v, false, on_canvas_resize);
@@ -44,7 +44,7 @@ void run(view& v)
     );
 }
 #else
-void run(view& v)
+void run(libview::view& v)
 {
     const unsigned int frame_duration = 1000 / 60;
 
@@ -68,7 +68,7 @@ void run(view& v)
 
 int main(int, char**)
 {
-    view v;
+    libview::view v;
     run(v);
     return EXIT_SUCCESS;
 }

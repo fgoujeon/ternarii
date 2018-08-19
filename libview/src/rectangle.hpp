@@ -1,5 +1,8 @@
-#ifndef RECTANGLE_HPP
-#define RECTANGLE_HPP
+#ifndef LIBVIEW_RECTANGLE_HPP
+#define LIBVIEW_RECTANGLE_HPP
+
+namespace libview
+{
 
 struct rectangle
 {
@@ -8,5 +11,7 @@ struct rectangle
     int width_px = 0;
     int height_px = 0;
 };
+
+} //namespace view
 
 #endif

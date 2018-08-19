@@ -1,5 +1,8 @@
 #include "fixed_ratio_box.hpp"
 
+namespace libview
+{
+
 fixed_ratio_box::fixed_ratio_box(const double ratio):
     ratio_(ratio)
 {
@@ -36,3 +39,5 @@ void fixed_ratio_box::add(const std::shared_ptr<drawable>& child)
 {
     children_.push_back(child);
 }
+
+} //namespace view

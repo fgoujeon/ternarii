@@ -1,5 +1,8 @@
 #include "grid.hpp"
 
+namespace libview
+{
+
 namespace
 {
     void draw_item
@@ -56,3 +59,5 @@ void grid::draw
         for(auto y = 0; y < 7; ++y)
             draw_item(renderer, area, x, y + 7);
 }
+
+} //namespace view

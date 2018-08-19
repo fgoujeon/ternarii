@@ -1,10 +1,13 @@
-#ifndef FIXED_RATIO_BOX_HPP
-#define FIXED_RATIO_BOX_HPP
+#ifndef LIBVIEW_FIXED_RATIO_BOX_HPP
+#define LIBVIEW_FIXED_RATIO_BOX_HPP
 
 #include "drawable.hpp"
 #include "libsdl.hpp"
 #include <memory>
 #include <vector>
+
+namespace libview
+{
 
 class fixed_ratio_box: public drawable
 {
@@ -23,5 +26,7 @@ class fixed_ratio_box: public drawable
         const double ratio_;
         std::vector<std::shared_ptr<drawable>> children_;
 };
+
+} //namespace view
 
 #endif
