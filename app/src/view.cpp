@@ -17,7 +17,7 @@ view::view():
         -1,
         0
     ),
-    child_(0.5)
+    child_(6.0 / 14)
 {
     child_.add(std::make_shared<grid>());
 }
