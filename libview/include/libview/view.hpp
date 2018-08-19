@@ -1,6 +1,7 @@
 #ifndef LIBVIEW_VIEW_HPP
 #define LIBVIEW_VIEW_HPP
 
+#include "item.hpp"
 #include <functional>
 #include <memory>
 
@@ -27,7 +28,13 @@ class view
 
         void iterate();
 
-        bool must_quit();
+        bool must_quit() const;
+
+        void set_next_input_items(const next_input_item_array& items);
+
+        void set_input_items(const input_item_array& items);
+
+        void set_board_items(const board_item_array& items);
 
     private:
         struct impl;

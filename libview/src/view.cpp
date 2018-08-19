@@ -26,9 +26,10 @@ struct view::impl
             -1,
             0
         ),
+        pgrid(std::make_shared<grid>()),
         child(6.0 / 14)
     {
-        child.add(std::make_shared<grid>());
+        child.add(pgrid);
     }
 
     void process_events()
@@ -66,6 +67,7 @@ struct view::impl
     libsdl::session session;
     libsdl::window window;
     libsdl::renderer renderer;
+    std::shared_ptr<grid> pgrid;
     fixed_ratio_box child;
     bool quit = false;
 };
@@ -106,9 +108,24 @@ void view::iterate()
     SDL_RenderPresent(pimpl_->renderer.ptr);
 }
 
-bool view::must_quit()
+bool view::must_quit() const
 {
     return pimpl_->quit;
+}
+
+void view::set_next_input_items(const next_input_item_array& items)
+{
+    pimpl_->pgrid->set_next_input_items(items);
+}
+
+void view::set_input_items(const input_item_array& items)
+{
+    pimpl_->pgrid->set_input_items(items);
+}
+
+void view::set_board_items(const board_item_array& items)
+{
+    pimpl_->pgrid->set_board_items(items);
 }
 
 } //namespace view
