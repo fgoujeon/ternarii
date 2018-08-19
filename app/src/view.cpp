@@ -1,7 +1,8 @@
 #include "view.hpp"
+#include "grid.hpp"
 
 view::view():
-    window
+    window_
     (
         "Test",
         SDL_WINDOWPOS_UNDEFINED,
@@ -10,70 +11,49 @@ view::view():
         480,
         SDL_WINDOW_RESIZABLE
     ),
-    renderer
+    renderer_
     (
-        window.ptr,
+        window_.ptr,
         -1,
         0
-    )
+    ),
+    child_(0.5)
 {
+    child_.add(std::make_shared<grid>());
 }
 
 void view::set_window_size(const unsigned int width, const unsigned int height)
 {
-    SDL_SetWindowSize(window.ptr, width, height);
+    SDL_SetWindowSize(window_.ptr, width, height);
 }
 
 void view::iterate()
 {
     process_events();
 
-    int window_width;
-    int window_height;
-    SDL_GetWindowSize(window.ptr, &window_width, &window_height);
+    int window_width_px;
+    int window_height_px;
+    SDL_GetWindowSize(window_.ptr, &window_width_px, &window_height_px);
+
+    const auto margin_pc = 3;
+    const auto margin_px = window_height_px * (margin_pc / 100.0);
 
     //grey background
-    SDL_SetRenderDrawColor(renderer.ptr, 0x44, 0x44, 0x44, 0xff);
-    SDL_RenderClear(renderer.ptr);
+    SDL_SetRenderDrawColor(renderer_.ptr, 0x44, 0x44, 0x44, 0xff);
+    SDL_RenderClear(renderer_.ptr);
 
-    //centered box
-    {
-        const auto margin_px = 40;
-
-        const auto container_width_px = window_width - margin_px * 2;
-        const auto container_height_px = window_height - margin_px * 2;
-        const auto container_ratio = static_cast<double>(container_width_px) / container_height_px;
-
-        const auto box_ratio = 0.5;
-        auto box_width_px = 0;
-        auto box_height_px = 0;
-        if(container_ratio > box_ratio)
-        {
-            box_width_px = container_height_px * box_ratio;
-            box_height_px = container_height_px;
-        }
-        else
-        {
-            box_width_px = container_width_px;
-            box_height_px = container_width_px / box_ratio;
-        }
-
-        SDL_Rect r;
-        r.x = window_width / 2 - box_width_px / 2;
-        r.y = window_height / 2 - box_height_px / 2;
-        r.w = box_width_px;
-        r.h = box_height_px;
-
-        SDL_SetRenderDrawColor(renderer.ptr, 0x69, 0, 0xC2, 255);
-        SDL_RenderFillRect(renderer.ptr, &r);
-    }
-
-    SDL_RenderPresent(renderer.ptr);
+    rectangle area;
+    area.pos_x_px = margin_px;
+    area.pos_y_px = margin_px;
+    area.width_px = window_width_px - margin_px * 2;
+    area.height_px = window_height_px - margin_px * 2;
+    child_.draw(renderer_, area);
+    SDL_RenderPresent(renderer_.ptr);
 }
 
 bool view::must_quit()
 {
-    return quit;
+    return quit_;
 }
 
 void view::process_events()
@@ -84,7 +64,7 @@ void view::process_events()
         switch(event.type)
         {
             case SDL_QUIT:
-                quit = true;
+                quit_ = true;
                 break;
         }
     }

@@ -1,6 +1,7 @@
 #ifndef VIEW_HPP
 #define VIEW_HPP
 
+#include "fixed_ratio_box.hpp"
 #include "libsdl.hpp"
 
 class view
@@ -18,10 +19,11 @@ class view
         void process_events();
 
     private:
-        libsdl::session session;
-        libsdl::window window;
-        libsdl::renderer renderer;
-        bool quit = false;
+        libsdl::session session_;
+        libsdl::window window_;
+        libsdl::renderer renderer_;
+        fixed_ratio_box child_;
+        bool quit_ = false;
 };
 
 #endif
