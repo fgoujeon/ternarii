@@ -68,7 +68,13 @@ void run(libview::view& v)
 
 int main(int, char**)
 {
-    libview::view v;
+    libview::view::callback_set callbacks;
+    callbacks.left_shift = []{std::cout << "left\n";};
+    callbacks.right_shift = []{std::cout << "right\n";};
+    callbacks.clockwise_rotation = []{std::cout << "clockwise_rotation\n";};
+    callbacks.down = []{std::cout << "down\n";};
+
+    libview::view v{callbacks};
     run(v);
     return EXIT_SUCCESS;
 }

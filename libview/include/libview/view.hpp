@@ -1,6 +1,7 @@
 #ifndef LIBVIEW_VIEW_HPP
 #define LIBVIEW_VIEW_HPP
 
+#include <functional>
 #include <memory>
 
 namespace libview
@@ -9,7 +10,16 @@ namespace libview
 class view
 {
     public:
-        view();
+        struct callback_set
+        {
+            std::function<void()> left_shift;
+            std::function<void()> right_shift;
+            std::function<void()> clockwise_rotation;
+            std::function<void()> down;
+        };
+
+    public:
+        view(const callback_set& callbacks);
 
         ~view();
 
@@ -18,9 +28,6 @@ class view
         void iterate();
 
         bool must_quit();
-
-    private:
-        void process_events();
 
     private:
         struct impl;

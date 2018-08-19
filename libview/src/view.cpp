@@ -9,7 +9,8 @@ namespace libview
 
 struct view::impl
 {
-    impl():
+    impl(const callback_set& callbacks):
+        callbacks(callbacks),
         window
         (
             "Test",
@@ -30,6 +31,38 @@ struct view::impl
         child.add(std::make_shared<grid>());
     }
 
+    void process_events()
+    {
+        SDL_Event event;
+        while(SDL_PollEvent(&event))
+        {
+            switch(event.type)
+            {
+                case SDL_KEYDOWN:
+                    switch(event.key.keysym.sym)
+                    {
+                        case SDLK_LEFT:
+                            callbacks.left_shift();
+                            break;
+                        case SDLK_RIGHT:
+                            callbacks.right_shift();
+                            break;
+                        case SDLK_UP:
+                            callbacks.clockwise_rotation();
+                            break;
+                        case SDLK_DOWN:
+                            callbacks.down();
+                            break;
+                    }
+                    break;
+                case SDL_QUIT:
+                    quit = true;
+                    break;
+            }
+        }
+    }
+
+    callback_set callbacks;
     libsdl::session session;
     libsdl::window window;
     libsdl::renderer renderer;
@@ -37,8 +70,8 @@ struct view::impl
     bool quit = false;
 };
 
-view::view():
-    pimpl_(std::make_unique<impl>())
+view::view(const callback_set& callbacks):
+    pimpl_(std::make_unique<impl>(callbacks))
 {
 }
 
@@ -51,7 +84,7 @@ void view::set_window_size(const unsigned int width, const unsigned int height)
 
 void view::iterate()
 {
-    process_events();
+    pimpl_->process_events();
 
     int window_width_px;
     int window_height_px;
@@ -76,20 +109,6 @@ void view::iterate()
 bool view::must_quit()
 {
     return pimpl_->quit;
-}
-
-void view::process_events()
-{
-    SDL_Event event;
-    while(SDL_PollEvent(&event))
-    {
-        switch(event.type)
-        {
-            case SDL_QUIT:
-                pimpl_->quit = true;
-                break;
-        }
-    }
 }
 
 } //namespace view
