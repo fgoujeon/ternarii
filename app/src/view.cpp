@@ -32,20 +32,39 @@ void view::iterate()
     int window_height;
     SDL_GetWindowSize(window.ptr, &window_width, &window_height);
 
-    //white background
-    SDL_SetRenderDrawColor(renderer.ptr, 255, 255, 255, 255);
+    //grey background
+    SDL_SetRenderDrawColor(renderer.ptr, 0x44, 0x44, 0x44, 0xff);
     SDL_RenderClear(renderer.ptr);
 
-    //centered red rectangle
+    //centered box
     {
-        const auto size = 50;
+        const auto margin_px = 40;
+
+        const auto container_width_px = window_width - margin_px * 2;
+        const auto container_height_px = window_height - margin_px * 2;
+        const auto container_ratio = static_cast<double>(container_width_px) / container_height_px;
+
+        const auto box_ratio = 0.5;
+        auto box_width_px = 0;
+        auto box_height_px = 0;
+        if(container_ratio > box_ratio)
+        {
+            box_width_px = container_height_px * box_ratio;
+            box_height_px = container_height_px;
+        }
+        else
+        {
+            box_width_px = container_width_px;
+            box_height_px = container_width_px / box_ratio;
+        }
 
         SDL_Rect r;
-        r.x = window_width / 2 - size / 2;
-        r.y = window_height / 2 - size / 2;
-        r.w = size;
-        r.h = size;
-        SDL_SetRenderDrawColor(renderer.ptr, 255, 0, 0, 255);
+        r.x = window_width / 2 - box_width_px / 2;
+        r.y = window_height / 2 - box_height_px / 2;
+        r.w = box_width_px;
+        r.h = box_height_px;
+
+        SDL_SetRenderDrawColor(renderer.ptr, 0x69, 0, 0xC2, 255);
         SDL_RenderFillRect(renderer.ptr, &r);
     }
 
