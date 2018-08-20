@@ -82,6 +82,11 @@ game::game():
 
 game::~game() = default;
 
+unsigned int game::get_score() const
+{
+    return pimpl_->board_.get_score();
+}
+
 const board_next_input_t& game::next_input_items() const
 {
     return pimpl_->next_input_;

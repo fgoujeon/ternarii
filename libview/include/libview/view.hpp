@@ -30,6 +30,8 @@ class view
 
         bool must_quit() const;
 
+        void set_score(const unsigned int value);
+
         void set_next_input_items(const next_input_item_array& items);
 
         void set_input_items(const input_item_array& items);

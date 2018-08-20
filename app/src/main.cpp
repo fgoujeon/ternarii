@@ -137,6 +137,11 @@ class controller
             return libview::item{pgame_item->value};
         }
 
+        void update_view_score()
+        {
+            view_.set_score(game_.get_score());
+        }
+
         void update_view_input()
         {
             libview::input_item_array view_items;
@@ -187,6 +192,7 @@ class controller
 
         void update_view()
         {
+            update_view_score();
             update_view_next_input();
             update_view_input();
             update_view_board();

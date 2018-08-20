@@ -1,5 +1,6 @@
 #include <libview/view.hpp>
 #include "grid.hpp"
+#include "score_display.hpp"
 #include "fixed_ratio_box.hpp"
 #include "libsdl.hpp"
 #include <string>
@@ -7,10 +8,6 @@
 
 namespace libview
 {
-
-namespace
-{
-}
 
 struct view::impl
 {
@@ -38,9 +35,11 @@ struct view::impl
             )
         ),
         pgrid(std::make_shared<grid>(*prenderer)),
+        pscore_display(std::make_shared<score_display>(*prenderer)),
         child(6.0 / 14)
     {
         child.add(pgrid);
+        child.add(pscore_display);
     }
 
     void iterate()
@@ -107,6 +106,7 @@ struct view::impl
     libsdl::window_unique_ptr pwindow;
     libsdl::renderer_unique_ptr prenderer;
     std::shared_ptr<grid> pgrid;
+    std::shared_ptr<score_display> pscore_display;
     fixed_ratio_box child;
 
     bool quit = false;
@@ -132,6 +132,11 @@ void view::iterate()
 bool view::must_quit() const
 {
     return pimpl_->quit;
+}
+
+void view::set_score(const unsigned int value)
+{
+    pimpl_->pscore_display->set_score(value);
 }
 
 void view::set_next_input_items(const next_input_item_array& items)

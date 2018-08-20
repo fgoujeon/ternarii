@@ -16,6 +16,8 @@ struct game
 
 		~game();
 
+        unsigned int get_score() const;
+
 		const board_next_input_t& next_input_items() const;
 
 		const board_next_input_t& get_input_items() const;
