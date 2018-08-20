@@ -196,6 +196,9 @@ class controller
             update_view_next_input();
             update_view_input();
             update_view_board();
+
+            if(game_.is_game_over())
+                view_.set_game_over_screen_visible(true);
         }
 
     private:

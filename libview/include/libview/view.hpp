@@ -38,6 +38,8 @@ class view
 
         void set_board_items(const board_item_array& items);
 
+        void set_game_over_screen_visible(const bool visible);
+
     private:
         struct impl;
         std::unique_ptr<impl> pimpl_;

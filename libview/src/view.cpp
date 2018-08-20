@@ -1,6 +1,7 @@
 #include <libview/view.hpp>
 #include "grid.hpp"
 #include "score_display.hpp"
+#include "game_over_screen.hpp"
 #include "fixed_ratio_box.hpp"
 #include "libsdl.hpp"
 #include <string>
@@ -36,10 +37,12 @@ struct view::impl
         ),
         pgrid(std::make_shared<grid>(*prenderer)),
         pscore_display(std::make_shared<score_display>(*prenderer)),
+        pgame_over_screen(std::make_shared<game_over_screen>(*prenderer)),
         child(6.0 / 14)
     {
         child.add(pgrid);
         child.add(pscore_display);
+        child.add(pgame_over_screen);
     }
 
     void iterate()
@@ -107,6 +110,7 @@ struct view::impl
     libsdl::renderer_unique_ptr prenderer;
     std::shared_ptr<grid> pgrid;
     std::shared_ptr<score_display> pscore_display;
+    std::shared_ptr<game_over_screen> pgame_over_screen;
     fixed_ratio_box child;
 
     bool quit = false;
@@ -152,6 +156,11 @@ void view::set_input_items(const input_item_array& items)
 void view::set_board_items(const board_item_array& items)
 {
     pimpl_->pgrid->set_board_items(items);
+}
+
+void view::set_game_over_screen_visible(const bool visible)
+{
+    pimpl_->pgame_over_screen->set_visible(visible);
 }
 
 } //namespace view
