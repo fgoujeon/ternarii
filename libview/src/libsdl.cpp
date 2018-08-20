@@ -22,7 +22,8 @@ libsdl::texture_unique_ptr make_texture
 (
     SDL_Renderer& renderer,
     TTF_Font& font,
-    const std::string& text
+    const std::string& text,
+    const SDL_Color& color
 )
 {
     auto psurface = libsdl::surface_unique_ptr
@@ -31,7 +32,7 @@ libsdl::texture_unique_ptr make_texture
         (
             &font,
             text.c_str(),
-            SDL_Color{255, 255, 255, 255}
+            color
         )
     };
     return make_texture_from_surface(renderer, *psurface);

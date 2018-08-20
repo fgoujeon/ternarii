@@ -80,7 +80,8 @@ void score_display::set_score(const unsigned int value)
     (
         renderer_,
         *pfont_,
-        score_to_string(value)
+        score_to_string(value),
+        SDL_Color{255, 255, 255, 255}
     );
 }
 

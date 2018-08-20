@@ -42,7 +42,8 @@ namespace
             (
                 renderer,
                 font,
-                std::to_string(value)
+                std::to_string(value),
+                SDL_Color{255, 255, 255, 255}
             );
         }
 

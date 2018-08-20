@@ -76,7 +76,8 @@ libsdl::texture_unique_ptr make_texture
 (
     SDL_Renderer& renderer,
     TTF_Font& font,
-    const std::string& text
+    const std::string& text,
+    const SDL_Color& color
 );
 
 } //namespace libsdl

@@ -15,7 +15,8 @@ game_over_screen::game_over_screen(SDL_Renderer& renderer):
         (
             renderer_,
             *pfont_,
-            "GAME OVER"
+            "GAME OVER",
+            SDL_Color{0x88, 0x88, 0x88, 255}
         )
     )
 {
@@ -58,10 +59,10 @@ void game_over_screen::draw
         ;
 
         SDL_Rect r;
-        r.w = area.w * 0.9;
+        r.w = area.w;
         r.h = r.w / texture_ratio;
         r.x = area.x + area.w / 2 - r.w / 2;
-        r.y = area.y + area.h * 0.05;
+        r.y = area.y + area.h / 2 - r.h / 2;
 
         SDL_RenderCopy(&renderer, pgame_over_texture_.get(), nullptr, &r);
     }
