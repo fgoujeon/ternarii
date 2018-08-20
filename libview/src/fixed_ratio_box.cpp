@@ -10,7 +10,7 @@ fixed_ratio_box::fixed_ratio_box(const double ratio):
 
 void fixed_ratio_box::draw
 (
-    libsdl::renderer& renderer,
+    SDL_Renderer& renderer,
     const rectangle& area
 )
 {

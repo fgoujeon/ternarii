@@ -11,7 +11,7 @@ struct drawable
 {
     virtual void draw
     (
-        libsdl::renderer& renderer,
+        SDL_Renderer& renderer,
         const rectangle& area
     ) = 0;
 };

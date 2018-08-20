@@ -16,7 +16,7 @@ class grid: public drawable
 
         void draw
         (
-            libsdl::renderer& renderer,
+            SDL_Renderer& renderer,
             const rectangle& area
         );
 

@@ -38,7 +38,7 @@ namespace
 
     void draw_item
     (
-        libsdl::renderer& renderer,
+        SDL_Renderer& renderer,
         const rectangle& area,
         const unsigned int value,
         const double pos_x_cell, //position of the center of the item, in cell unity
@@ -54,14 +54,14 @@ namespace
         r.y = area.pos_y_px + pos_y_cell * cell_size_px + cell_size_px / 2.0 - size_px / 2.0;
         r.w = size_px;
         r.h = size_px;
-        SDL_SetRenderDrawColor(renderer.ptr, c.r, c.g, c.b, c.a);
-        SDL_RenderFillRect(renderer.ptr, &r);
+        SDL_SetRenderDrawColor(&renderer, c.r, c.g, c.b, c.a);
+        SDL_RenderFillRect(&renderer, &r);
     }
 
     template<class Items>
     void draw_items
     (
-        libsdl::renderer& renderer,
+        SDL_Renderer& renderer,
         const rectangle& area,
         const Items& items,
         const double pos_y_cell
@@ -88,7 +88,7 @@ grid::grid()
 
 void grid::draw
 (
-    libsdl::renderer& renderer,
+    SDL_Renderer& renderer,
     const rectangle& area
 )
 {
@@ -98,8 +98,8 @@ void grid::draw
         r.y = area.pos_y_px;
         r.w = area.width_px;
         r.h = area.height_px;
-        SDL_SetRenderDrawColor(renderer.ptr, 0x66, 0x66, 0x66, 255);
-        SDL_RenderFillRect(renderer.ptr, &r);
+        SDL_SetRenderDrawColor(&renderer, 0x66, 0x66, 0x66, 255);
+        SDL_RenderFillRect(&renderer, &r);
     }
 
     draw_items(renderer, area, next_input_items, 1);
