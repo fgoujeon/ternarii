@@ -2,7 +2,6 @@
 #define LIBVIEW_SCORE_DISPLAY_HPP
 
 #include "drawable.hpp"
-#include "rectangle.hpp"
 #include "libsdl.hpp"
 
 namespace libview
@@ -16,7 +15,7 @@ class score_display: public drawable
         void draw
         (
             SDL_Renderer& renderer,
-            const rectangle& area
+            const SDL_Rect& area
         );
 
         void set_score(const unsigned int value);

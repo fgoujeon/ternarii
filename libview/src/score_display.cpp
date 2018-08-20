@@ -44,7 +44,7 @@ score_display::score_display(SDL_Renderer& renderer):
 void score_display::draw
 (
     SDL_Renderer& renderer,
-    const rectangle& area
+    const SDL_Rect& area
 )
 {
     int texture_width_px;
@@ -62,12 +62,12 @@ void score_display::draw
         texture_height_px
     ;
 
-    const auto score_height_px = area.width_px * 0.1;
+    const auto score_height_px = area.w * 0.1;
     const auto score_width_px = score_height_px * texture_ratio;
 
     SDL_Rect r;
-    r.x = area.pos_x_px + area.width_px - score_width_px;
-    r.y = area.pos_y_px;
+    r.x = area.x + area.w - score_width_px;
+    r.y = area.y;
     r.w = score_width_px;
     r.h = score_height_px;
 

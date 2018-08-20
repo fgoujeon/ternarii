@@ -59,11 +59,11 @@ struct view::impl
 
         //draw children
         {
-            rectangle area;
-            area.pos_x_px = margin_px;
-            area.pos_y_px = margin_px;
-            area.width_px = window_width_px - margin_px * 2;
-            area.height_px = window_height_px - margin_px * 2;
+            SDL_Rect area;
+            area.x = margin_px;
+            area.y = margin_px;
+            area.w = window_width_px - margin_px * 2;
+            area.h = window_height_px - margin_px * 2;
             child.draw(*prenderer, area);
         }
 

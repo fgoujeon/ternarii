@@ -17,7 +17,7 @@ class fixed_ratio_box: public drawable
         void draw
         (
             SDL_Renderer& renderer,
-            const rectangle& area
+            const SDL_Rect& area
         );
 
         void add(const std::shared_ptr<drawable>& child);

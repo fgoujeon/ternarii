@@ -2,7 +2,6 @@
 #define LIBVIEW_GRID_HPP
 
 #include "drawable.hpp"
-#include "rectangle.hpp"
 #include "libsdl.hpp"
 #include <libview/item.hpp>
 #include <map>
@@ -21,7 +20,7 @@ class grid: public drawable
         void draw
         (
             SDL_Renderer& renderer,
-            const rectangle& area
+            const SDL_Rect& area
         );
 
         void set_next_input_items(const next_input_item_array& items)

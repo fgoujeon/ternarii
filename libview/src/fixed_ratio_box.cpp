@@ -11,25 +11,25 @@ fixed_ratio_box::fixed_ratio_box(const double ratio):
 void fixed_ratio_box::draw
 (
     SDL_Renderer& renderer,
-    const rectangle& area
+    const SDL_Rect& area
 )
 {
-    const auto area_ratio = static_cast<double>(area.width_px) / area.height_px;
+    const auto area_ratio = static_cast<double>(area.w) / area.h;
 
-    rectangle child_area;
+    SDL_Rect child_area;
     if(area_ratio > ratio_)
     {
-        child_area.width_px = area.height_px * ratio_;
-        child_area.height_px = area.height_px;
+        child_area.w = area.h * ratio_;
+        child_area.h = area.h;
     }
     else
     {
-        child_area.width_px = area.width_px;
-        child_area.height_px = area.width_px / ratio_;
+        child_area.w = area.w;
+        child_area.h = area.w / ratio_;
     }
 
-    child_area.pos_x_px = area.pos_x_px + area.width_px / 2 - child_area.width_px / 2;
-    child_area.pos_y_px = area.pos_y_px + area.height_px / 2 - child_area.height_px / 2;
+    child_area.x = area.x + area.w / 2 - child_area.w / 2;
+    child_area.y = area.y + area.h / 2 - child_area.h / 2;
 
     for(const auto& pchild: children_)
         pchild->draw(renderer, child_area);
