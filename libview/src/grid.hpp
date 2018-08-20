@@ -5,6 +5,7 @@
 #include "rectangle.hpp"
 #include "libsdl.hpp"
 #include <libview/item.hpp>
+#include <map>
 
 namespace libview
 {
@@ -12,7 +13,10 @@ namespace libview
 class grid: public drawable
 {
     public:
-        grid();
+        using number_texture_map = std::map<unsigned int, libsdl::texture_unique_ptr>;
+
+    public:
+        grid(SDL_Renderer& renderer);
 
         void draw
         (
@@ -36,6 +40,9 @@ class grid: public drawable
         }
 
     private:
+        libsdl::font_unique_ptr ptile_font_;
+        number_texture_map tile_number_textures_;
+
         next_input_item_array next_input_items;
         input_item_array input_items;
         board_item_array board_items;

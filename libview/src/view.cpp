@@ -2,10 +2,15 @@
 #include "grid.hpp"
 #include "fixed_ratio_box.hpp"
 #include "libsdl.hpp"
+#include <string>
 #include <utility>
 
 namespace libview
 {
+
+namespace
+{
+}
 
 struct view::impl
 {
@@ -32,10 +37,38 @@ struct view::impl
                 0
             )
         ),
-        pgrid(std::make_shared<grid>()),
+        pgrid(std::make_shared<grid>(*prenderer)),
         child(6.0 / 14)
     {
         child.add(pgrid);
+    }
+
+    void iterate()
+    {
+        process_events();
+
+        int window_width_px;
+        int window_height_px;
+        SDL_GetWindowSize(pwindow.get(), &window_width_px, &window_height_px);
+
+        const auto margin_pc = 3;
+        const auto margin_px = window_height_px * (margin_pc / 100.0);
+
+        //draw background
+        SDL_SetRenderDrawColor(prenderer.get(), 0x44, 0x44, 0x44, 0xff);
+        SDL_RenderClear(prenderer.get());
+
+        //draw children
+        {
+            rectangle area;
+            area.pos_x_px = margin_px;
+            area.pos_y_px = margin_px;
+            area.width_px = window_width_px - margin_px * 2;
+            area.height_px = window_height_px - margin_px * 2;
+            child.draw(*prenderer, area);
+        }
+
+        SDL_RenderPresent(prenderer.get());
     }
 
     void process_events()
@@ -75,6 +108,7 @@ struct view::impl
     libsdl::renderer_unique_ptr prenderer;
     std::shared_ptr<grid> pgrid;
     fixed_ratio_box child;
+
     bool quit = false;
 };
 
@@ -92,26 +126,7 @@ void view::set_window_size(const unsigned int width, const unsigned int height)
 
 void view::iterate()
 {
-    pimpl_->process_events();
-
-    int window_width_px;
-    int window_height_px;
-    SDL_GetWindowSize(pimpl_->pwindow.get(), &window_width_px, &window_height_px);
-
-    const auto margin_pc = 3;
-    const auto margin_px = window_height_px * (margin_pc / 100.0);
-
-    //grey background
-    SDL_SetRenderDrawColor(pimpl_->prenderer.get(), 0x44, 0x44, 0x44, 0xff);
-    SDL_RenderClear(pimpl_->prenderer.get());
-
-    rectangle area;
-    area.pos_x_px = margin_px;
-    area.pos_y_px = margin_px;
-    area.width_px = window_width_px - margin_px * 2;
-    area.height_px = window_height_px - margin_px * 2;
-    pimpl_->child.draw(*pimpl_->prenderer, area);
-    SDL_RenderPresent(pimpl_->prenderer.get());
+    pimpl_->iterate();
 }
 
 bool view::must_quit() const
