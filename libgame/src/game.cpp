@@ -2,6 +2,7 @@
 #include "board.hpp"
 #include "board_input.hpp"
 #include <algorithm>
+#include <cmath>
 #include <cstdlib>
 #include <cassert>
 
@@ -11,37 +12,11 @@ namespace libgame
 namespace
 {
     std::shared_ptr<element>
-    generate_new_element(const unsigned int highest_unlocked_element_value)
+    generate_new_element(const unsigned int max_value)
     {
-        const double cumulated_probabilities[11] =
-        {
-            /* 0*/ 0.175416,
-            /* 1*/ 0.34315,
-            /* 2*/ 0.507042,
-            /* 3*/ 0.668374,
-            /* 4*/ 0.771447,
-            /* 5*/ 0.8418695,
-            /* 6*/ 0.9052498,
-            /* 7*/ 0.9475033,
-            /* 8*/ 0.9827146,
-            /* 9*/ 0.9929579,
-            /*10*/ 1
-        };
-
-        const unsigned int max_element_index =
-            std::min(highest_unlocked_element_value, 10u) //10: highest element that can be generated on the input
-        ;
-        assert(max_element_index < 11);
-        const unsigned int random = rand() * cumulated_probabilities[max_element_index];
-
-        for(unsigned int i = 0; i < max_element_index; ++i)
-        {
-            if(random <= cumulated_probabilities[i] * RAND_MAX)
-            {
-                return std::make_shared<element>(element{i});
-            }
-        }
-        return std::make_shared<element>(element{max_element_index});
+        const auto random = static_cast<double>(std::rand() - 1) / RAND_MAX;
+        const auto value = (max_value + 1) * std::pow(random, 2);
+        return std::make_shared<element>(value);
     }
 
     board_next_input_t
@@ -49,8 +24,8 @@ namespace
     {
         return
         {
-            generate_new_element(highest_unlocked_element_value),
-            generate_new_element(highest_unlocked_element_value)
+            generate_new_element(highest_unlocked_element_value - 1),
+            generate_new_element(highest_unlocked_element_value - 1)
         };
     }
 }

@@ -9,7 +9,7 @@ namespace libgame
 {
 
 board::board():
-    highest_unlocked_element_index_(2)
+    highest_unlocked_element_index_(3)
 {
 }
 

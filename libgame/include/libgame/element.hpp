@@ -6,6 +6,10 @@ namespace libgame
 
 struct element
 {
+    element(unsigned int value): value(value)
+    {
+    }
+
     unsigned int value;
 };
 
