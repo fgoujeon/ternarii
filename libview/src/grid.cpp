@@ -162,9 +162,23 @@ void grid::draw
     const SDL_Rect& area
 )
 {
+    //background
     SDL_SetRenderDrawColor(&renderer, 0x66, 0x66, 0x66, 255);
     SDL_RenderFillRect(&renderer, &area);
 
+    //death line
+    {
+        SDL_Rect r;
+        r.x = area.x;
+        r.y = area.y + area.h / 2;
+        r.w = area.w;
+        r.h = 1;
+
+        SDL_SetRenderDrawColor(&renderer, 0xff, 0xff, 0xff, 255);
+        SDL_RenderFillRect(&renderer, &r);
+    }
+
+    //tiles
     draw_tiles(renderer, *ptile_font_, tile_number_textures_, area, next_input_items, 1);
     draw_tiles(renderer, *ptile_font_, tile_number_textures_, area, input_items, 4.5);
     draw_tiles(renderer, *ptile_font_, tile_number_textures_, area, board_items, 13);
