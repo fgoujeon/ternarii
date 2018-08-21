@@ -33,9 +33,9 @@ void game_over_screen::draw
 
     SDL_Rect area;
     area.x = area0.x;
-    area.y = area0.y + 3.0 / 14 * area0.h;
+    area.y = area0.y + 2.0 / 13 * area0.h;
     area.w = area0.w;
-    area.h = 3.0 / 14 * area0.h;
+    area.h = 3.0 / 13 * area0.h;
 
     //background
     SDL_SetRenderDrawColor(&renderer, 0x44, 0x44, 0x44, 255);

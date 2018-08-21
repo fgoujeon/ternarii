@@ -171,7 +171,7 @@ void grid::draw
     {
         SDL_Rect r;
         r.x = area.x;
-        r.y = area.y + area.h / 2;
+        r.y = area.y + area.h * 6 / 13;
         r.w = area.w;
         r.h = 1;
 
@@ -181,8 +181,8 @@ void grid::draw
 
     //tiles
     draw_tiles(renderer, *ptile_font_, tile_number_textures_, area, next_input_items, 1);
-    draw_tiles(renderer, *ptile_font_, tile_number_textures_, area, input_items, 4.5);
-    draw_tiles(renderer, *ptile_font_, tile_number_textures_, area, board_items, 13);
+    draw_tiles(renderer, *ptile_font_, tile_number_textures_, area, input_items, 4);
+    draw_tiles(renderer, *ptile_font_, tile_number_textures_, area, board_items, 12);
 }
 
 } //namespace view

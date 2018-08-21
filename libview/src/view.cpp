@@ -38,7 +38,7 @@ struct view::impl
         pgrid(std::make_shared<grid>(*prenderer)),
         pscore_display(std::make_shared<score_display>(*prenderer)),
         pgame_over_screen(std::make_shared<game_over_screen>(*prenderer)),
-        child(6.0 / 14)
+        child(6.0 / 13)
     {
         child.add(pgrid);
         child.add(pscore_display);
