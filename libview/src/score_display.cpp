@@ -62,7 +62,7 @@ void score_display::draw
         texture_height_px
     ;
 
-    const auto score_height_px = area.w * 0.1;
+    const auto score_height_px = area.h * 1.0 / 13;
     const auto score_width_px = score_height_px * texture_ratio;
 
     SDL_Rect r;
