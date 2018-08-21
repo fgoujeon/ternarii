@@ -16,11 +16,11 @@ namespace
             const auto digit = temp_score % 10;
             const auto digit_char = static_cast<char>('0' + digit);
 
-            //create and add a thousands separator sprite
+            //add thousands separator
             if(digit_index != 0 && digit_index % 3 == 0)
-                str = '.' + str;
+                str = ' ' + str;
 
-            //create and add the digit sprite
+            //add digit
             str = std::string{digit_char} + str;
 
             ++digit_index;
