@@ -11,12 +11,17 @@ namespace libgame
 
 namespace
 {
+    //return random value from 0 to max
+    unsigned int random_value(const unsigned int max)
+    {
+        const auto random = static_cast<double>(std::rand() - 1) / RAND_MAX; //[0, 1)
+        return (max + 1) * std::pow(random, 2);
+    }
+
     std::shared_ptr<element>
     generate_new_element(const unsigned int max_value)
     {
-        const auto random = static_cast<double>(std::rand() - 1) / RAND_MAX;
-        const auto value = (max_value + 1) * std::pow(random, 2);
-        return std::make_shared<element>(value);
+        return std::make_shared<element>(random_value(max_value));
     }
 
     board_next_input_t
