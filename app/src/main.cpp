@@ -6,7 +6,9 @@
 #include <emscripten.h>
 #endif
 
+#include <SDL2/SDL.h>
 #include <iostream>
+#include <ctime>
 #include <cstdlib>
 #include <cassert>
 
