@@ -1,7 +1,6 @@
 #ifndef LIBVIEW_GRID_HPP
 #define LIBVIEW_GRID_HPP
 
-#include "drawable.hpp"
 #include "libsdl.hpp"
 #include <libview/item.hpp>
 #include <map>
@@ -9,7 +8,7 @@
 namespace libview
 {
 
-class grid: public drawable
+class grid
 {
     public:
         using number_texture_map = std::map<unsigned int, libsdl::texture_unique_ptr>;
@@ -17,11 +16,11 @@ class grid: public drawable
     public:
         grid(SDL_Renderer& renderer);
 
-        void draw
-        (
-            SDL_Renderer& renderer,
-            const SDL_Rect& area
-        );
+        int get_logical_width() const;
+
+        int get_logical_height() const;
+
+        void draw(SDL_Renderer& renderer);
 
         void set_next_input_items(const next_input_item_array& items)
         {

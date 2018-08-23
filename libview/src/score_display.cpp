@@ -41,11 +41,23 @@ score_display::score_display(SDL_Renderer& renderer):
     set_score(0);
 }
 
-void score_display::draw
-(
-    SDL_Renderer& renderer,
-    const SDL_Rect& area
-)
+void score_display::set_area(const SDL_Rect& area)
+{
+    area_ = area;
+}
+
+void score_display::set_score(const unsigned int value)
+{
+    ptexture_ = libsdl::make_texture
+    (
+        renderer_,
+        *pfont_,
+        score_to_string(value),
+        SDL_Color{255, 255, 255, 255}
+    );
+}
+
+void score_display::draw(SDL_Renderer& renderer)
 {
     int texture_width_px;
     int texture_height_px;
@@ -62,27 +74,16 @@ void score_display::draw
         texture_height_px
     ;
 
-    const auto score_height_px = area.h * 1.0 / 13;
+    const auto score_height_px = area_.h;
     const auto score_width_px = score_height_px * texture_ratio;
 
     SDL_Rect r;
-    r.x = area.x + area.w - score_width_px;
-    r.y = area.y;
+    r.x = area_.x + area_.w - score_width_px;
+    r.y = area_.y;
     r.w = score_width_px;
     r.h = score_height_px;
 
     SDL_RenderCopy(&renderer, ptexture_.get(), nullptr, &r);
-}
-
-void score_display::set_score(const unsigned int value)
-{
-    ptexture_ = libsdl::make_texture
-    (
-        renderer_,
-        *pfont_,
-        score_to_string(value),
-        SDL_Color{255, 255, 255, 255}
-    );
 }
 
 } //namespace view

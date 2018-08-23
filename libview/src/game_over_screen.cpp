@@ -22,24 +22,24 @@ game_over_screen::game_over_screen(SDL_Renderer& renderer):
 {
 }
 
-void game_over_screen::draw
-(
-    SDL_Renderer& renderer,
-    const SDL_Rect& area0
-)
+void game_over_screen::set_area(const SDL_Rect& area)
+{
+    area_ = area;
+}
+
+void game_over_screen::set_visible(const bool value)
+{
+    visible_ = value;
+}
+
+void game_over_screen::draw(SDL_Renderer& renderer)
 {
     if(!visible_)
         return;
 
-    SDL_Rect area;
-    area.x = area0.x;
-    area.y = area0.y + 2.0 / 13 * area0.h;
-    area.w = area0.w;
-    area.h = 3.0 / 13 * area0.h;
-
     //background
     SDL_SetRenderDrawColor(&renderer, 0x44, 0x44, 0x44, 255);
-    SDL_RenderFillRect(&renderer, &area);
+    SDL_RenderFillRect(&renderer, &area_);
 
     //"GAME OVER"
     {
@@ -59,18 +59,13 @@ void game_over_screen::draw
         ;
 
         SDL_Rect r;
-        r.w = area.w;
+        r.w = area_.w;
         r.h = r.w / texture_ratio;
-        r.x = area.x + area.w / 2 - r.w / 2;
-        r.y = area.y + area.h / 2 - r.h / 2;
+        r.x = area_.x + area_.w / 2 - r.w / 2;
+        r.y = area_.y + area_.h / 2 - r.h / 2;
 
         SDL_RenderCopy(&renderer, pgame_over_texture_.get(), nullptr, &r);
     }
-}
-
-void game_over_screen::set_visible(const bool value)
-{
-    visible_ = value;
 }
 
 } //namespace view
