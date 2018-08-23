@@ -1,7 +1,7 @@
 #ifndef LIBVIEW_SCORE_DISPLAY_HPP
 #define LIBVIEW_SCORE_DISPLAY_HPP
 
-#include "libsdl.hpp"
+#include <libsdl.hpp>
 
 namespace libview
 {
@@ -19,8 +19,8 @@ class score_display
 
     private:
         SDL_Renderer& renderer_;
-        libsdl::font_unique_ptr pfont_;
-        libsdl::texture_unique_ptr ptexture_;
+        libsdl::unique_ptr<TTF_Font> pfont_;
+        libsdl::unique_ptr<SDL_Texture> ptexture_;
         SDL_Rect area_ = SDL_Rect{0, 0, 0, 0};
 };
 

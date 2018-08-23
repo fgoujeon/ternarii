@@ -1,7 +1,7 @@
 #ifndef LIBVIEW_GAME_OVER_SCREEN_HPP
 #define LIBVIEW_GAME_OVER_SCREEN_HPP
 
-#include "libsdl.hpp"
+#include <libsdl.hpp>
 
 namespace libview
 {
@@ -21,8 +21,8 @@ class game_over_screen
         SDL_Renderer& renderer_;
         SDL_Rect area_;
         bool visible_ = false;
-        libsdl::font_unique_ptr pfont_;
-        libsdl::texture_unique_ptr pgame_over_texture_;
+        libsdl::unique_ptr<TTF_Font> pfont_;
+        libsdl::unique_ptr<SDL_Texture> pgame_over_texture_;
 };
 
 } //namespace view

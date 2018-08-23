@@ -1,7 +1,7 @@
 #ifndef LIBVIEW_GRID_HPP
 #define LIBVIEW_GRID_HPP
 
-#include "libsdl.hpp"
+#include <libsdl.hpp>
 #include <libview/item.hpp>
 #include <map>
 
@@ -11,7 +11,7 @@ namespace libview
 class grid
 {
     public:
-        using number_texture_map = std::map<unsigned int, libsdl::texture_unique_ptr>;
+        using number_texture_map = std::map<unsigned int, libsdl::unique_ptr<SDL_Texture>>;
 
     public:
         grid(SDL_Renderer& renderer);
@@ -38,7 +38,7 @@ class grid
         }
 
     private:
-        libsdl::font_unique_ptr ptile_font_;
+        libsdl::unique_ptr<TTF_Font> ptile_font_;
         number_texture_map tile_number_textures_;
 
         next_input_item_array next_input_items;

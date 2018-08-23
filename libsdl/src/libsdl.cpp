@@ -5,20 +5,20 @@ namespace libsdl
 
 namespace
 {
-    libsdl::texture_unique_ptr make_texture_from_surface
+    unique_ptr<SDL_Texture> make_texture_from_surface
     (
         SDL_Renderer& renderer,
         SDL_Surface& surface
     )
     {
-        return libsdl::texture_unique_ptr
+        return unique_ptr<SDL_Texture>
         {
             SDL_CreateTextureFromSurface(&renderer, &surface)
         };
     }
 }
 
-libsdl::texture_unique_ptr make_texture
+unique_ptr<SDL_Texture> make_texture
 (
     SDL_Renderer& renderer,
     TTF_Font& font,
@@ -26,7 +26,7 @@ libsdl::texture_unique_ptr make_texture
     const SDL_Color& color
 )
 {
-    auto psurface = libsdl::surface_unique_ptr
+    auto psurface = unique_ptr<SDL_Surface>
     {
         TTF_RenderText_Blended
         (

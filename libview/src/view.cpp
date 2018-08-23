@@ -3,7 +3,7 @@
 #include "score_display.hpp"
 #include "game_over_screen.hpp"
 #include "utility.hpp"
-#include "libsdl.hpp"
+#include <libsdl.hpp>
 #include <string>
 #include <utility>
 #include <iostream>
@@ -171,8 +171,8 @@ struct view::impl
 
     callback_set callbacks;
     libsdl::session session;
-    libsdl::window_unique_ptr pwindow;
-    libsdl::renderer_unique_ptr prenderer;
+    libsdl::unique_ptr<SDL_Window> pwindow;
+    libsdl::unique_ptr<SDL_Renderer> prenderer;
     std::shared_ptr<grid> pgrid;
     std::shared_ptr<score_display> pscore_display;
     std::shared_ptr<game_over_screen> pgame_over_screen;

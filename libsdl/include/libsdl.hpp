@@ -11,7 +11,11 @@ namespace libsdl
 
 namespace detail
 {
-    struct window_deleter
+    template<class T>
+    struct deleter;
+
+    template<>
+    struct deleter<SDL_Window>
     {
         void operator()(SDL_Window* ptr) const
         {
@@ -19,7 +23,8 @@ namespace detail
         }
     };
 
-    struct renderer_deleter
+    template<>
+    struct deleter<SDL_Renderer>
     {
         void operator()(SDL_Renderer* ptr) const
         {
@@ -27,7 +32,8 @@ namespace detail
         }
     };
 
-    struct surface_deleter
+    template<>
+    struct deleter<SDL_Surface>
     {
         void operator()(SDL_Surface* ptr) const
         {
@@ -35,7 +41,8 @@ namespace detail
         }
     };
 
-    struct texture_deleter
+    template<>
+    struct deleter<SDL_Texture>
     {
         void operator()(SDL_Texture* ptr) const
         {
@@ -43,7 +50,8 @@ namespace detail
         }
     };
 
-    struct font_deleter
+    template<>
+    struct deleter<TTF_Font>
     {
         void operator()(TTF_Font* ptr) const
         {
@@ -52,11 +60,8 @@ namespace detail
     };
 }
 
-using window_unique_ptr   = std::unique_ptr<SDL_Window,   detail::window_deleter>;
-using renderer_unique_ptr = std::unique_ptr<SDL_Renderer, detail::renderer_deleter>;
-using surface_unique_ptr  = std::unique_ptr<SDL_Surface,  detail::surface_deleter>;
-using texture_unique_ptr  = std::unique_ptr<SDL_Texture,  detail::texture_deleter>;
-using font_unique_ptr     = std::unique_ptr<TTF_Font,     detail::font_deleter>;
+template<class T>
+using unique_ptr = std::unique_ptr<T, detail::deleter<T>>;
 
 struct session
 {
@@ -72,7 +77,7 @@ struct session
     }
 };
 
-libsdl::texture_unique_ptr make_texture
+unique_ptr<SDL_Texture> make_texture
 (
     SDL_Renderer& renderer,
     TTF_Font& font,

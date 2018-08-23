@@ -170,7 +170,6 @@ int grid::get_logical_height() const
 
 void grid::draw(SDL_Renderer& renderer)
 {
-
     //background
     {
         const auto r = SDL_Rect{0, 0, 6 * cell_size, 12 * cell_size};
