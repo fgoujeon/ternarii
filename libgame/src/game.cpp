@@ -67,7 +67,7 @@ unsigned int game::get_score() const
     return pimpl_->board_.get_score();
 }
 
-const board_next_input_t& game::next_input_items() const
+const board_next_input_t& game::get_next_input_items() const
 {
     return pimpl_->next_input_;
 }
@@ -77,7 +77,7 @@ const board_next_input_t& game::get_input_items() const
     return pimpl_->input_.get_items();
 }
 
-const board_grid_t& game::board_items() const
+const board_grid_t& game::get_board_items() const
 {
     return pimpl_->board_.item_grid();
 }

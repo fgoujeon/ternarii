@@ -14,7 +14,7 @@ class grid
         template<size_t Size0, size_t Size1>
         using tile_array = std::array<std::array<std::unique_ptr<tile>, Size1>, Size0>;
 
-        using next_input_tile_array = tile_array<6, 2>;
+        using next_input_tile_array = std::array<std::unique_ptr<tile>, 2>;
         using input_tile_array = std::array<std::unique_ptr<tile>, 2>;
         using board_tile_array = tile_array<6, 10>;
 

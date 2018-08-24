@@ -112,22 +112,6 @@ class controller
             return callbacks;
         }
 
-        void update_view_next_input()
-        {
-            libview::next_input_item_array view_items;
-            const auto& game_items = game_.next_input_items();
-            auto x = 0;
-            for(const auto& pgame_item: game_items)
-            {
-                if(pgame_item)
-                    view_items[x + 2][0] = libview::item{pgame_item->value};
-                ++x;
-            }
-            view_.set_next_input_items(view_items);
-            view_.set_input_x_offset(2);
-            view_.set_input_rotation(0);
-        }
-
         std::optional<libview::item> to_view_item(const std::optional<std::shared_ptr<libgame::element>>& optpgame_item)
         {
             if(!optpgame_item)
@@ -143,6 +127,19 @@ class controller
             view_.set_score(game_.get_score());
         }
 
+        void update_view_next_input()
+        {
+            const auto& game_items = game_.get_next_input_items();
+            view_.set_next_input_items
+            (
+                libview::input_item_array
+                {
+                    to_view_item(game_items[0]),
+                    to_view_item(game_items[1])
+                }
+            );
+        }
+
         void update_view_input()
         {
             const auto& game_items = game_.get_input_items();
@@ -154,12 +151,14 @@ class controller
                     to_view_item(game_items[1])
                 }
             );
+            view_.set_input_x_offset(2);
+            view_.set_input_rotation(0);
         }
 
         void update_view_board()
         {
             libview::board_item_array view_items;
-            const auto& game_items = game_.board_items();
+            const auto& game_items = game_.get_board_items();
 
             for(auto x = 0; x < libgame::board_grid_t::column_count; ++x)
             {

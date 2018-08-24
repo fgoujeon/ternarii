@@ -77,7 +77,31 @@ int grid::get_logical_height() const
 
 void grid::set_next_input_items(const next_input_item_array& items)
 {
-    fill_tiles(next_input_tiles_, items, 0);
+    auto i = 0;
+    for(auto& opt_item: items)
+    {
+        if(opt_item)
+        {
+            next_input_tiles_[i] = std::make_unique<tile>();
+            next_input_tiles_[i]->set_value(opt_item->value);
+            next_input_tiles_[i]->set_area
+            (
+                SDL_Rect
+                {
+                    static_cast<int>((2 + i) * cell_size + tile_margin),
+                    static_cast<int>(tile_margin),
+                    static_cast<int>(tile_size),
+                    static_cast<int>(tile_size)
+                }
+            );
+        }
+        else
+        {
+            next_input_tiles_[i] = nullptr;
+        }
+
+        ++i;
+    }
 }
 
 void grid::set_input_items(const input_item_array& items)
@@ -135,13 +159,17 @@ void grid::draw(SDL_Renderer& renderer)
     }
 
     //tiles
-    draw_tiles(next_input_tiles_, renderer);
+    {
+        for(auto& ptile: next_input_tiles_)
+            if(ptile)
+                ptile->draw(renderer);
 
-    for(auto& ptile: input_tiles_)
-        if(ptile)
-            ptile->draw(renderer);
+        for(auto& ptile: input_tiles_)
+            if(ptile)
+                ptile->draw(renderer);
 
-    draw_tiles(board_tiles_, renderer);
+        draw_tiles(board_tiles_, renderer);
+    }
 }
 
 void grid::update_input_tile_areas()
