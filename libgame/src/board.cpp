@@ -36,10 +36,10 @@ board::get_score() const
     return score;
 }
 
-std::vector<std::vector<game_change_t>>
+std::vector<std::vector<event>>
 board::drop_input(const board_input& in)
 {
-    std::vector<std::vector<game_change_t>> changes;
+    std::vector<std::vector<event>> changes;
 
     insert_input(in);
 
@@ -52,7 +52,7 @@ board::drop_input(const board_input& in)
         const auto transmutation_changes = transmute_elements();
         changes.push_back(transmutation_changes);
 
-        changes.push_back({game_changes::score_change{get_score()}});
+        changes.push_back({events::score_change{get_score()}});
 
         changes_happened = !fall_changes.empty() || !transmutation_changes.empty();
     } while(changes_happened);
@@ -79,10 +79,10 @@ board::insert_input(const board_input& in)
     item_grid_.at(x1, y1) = items[1];
 }
 
-std::vector<game_change_t>
+std::vector<event>
 board::make_items_fall()
 {
-    std::vector<game_change_t> changes;
+    std::vector<event> changes;
 
     for(unsigned int column_index = 0; column_index < column_count; ++column_index)
     {
@@ -98,7 +98,7 @@ board::make_items_fall()
 
                     changes.push_back
                     (
-                        board_changes::item_drop
+                        events::item_drop
                         {
                             *opt_item,
                             column_index,
@@ -120,10 +120,10 @@ board::make_items_fall()
     return changes;
 }
 
-std::vector<game_change_t>
+std::vector<event>
 board::transmute_elements()
 {
-    std::vector<game_change_t> changes;
+    std::vector<event> changes;
 
     grid_t item_layer;
 
@@ -170,7 +170,7 @@ board::transmute_elements()
 
                         changes.push_back
                         (
-                            board_changes::element_transmutation
+                            events::element_transmutation
                             {
                                 removed_elements,
                                 new_element,
@@ -184,7 +184,7 @@ board::transmute_elements()
                             highest_unlocked_element_index_ = new_element->value;
                             changes.push_back
                             (
-                                game_changes::element_unlocking
+                                events::element_unlocking
                                 {
                                     highest_unlocked_element_index_
                                 }

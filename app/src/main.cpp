@@ -105,7 +105,7 @@ class controller
 
             callbacks.down = [this]
             {
-                game_.drop_input();
+                handle_game_events(game_.drop_input());
                 update_view();
             };
 
@@ -192,13 +192,13 @@ class controller
         {
         }
 
-        void handle_game_event(const libgame::board_input_changes::layout& event)
+        void handle_game_event(const libgame::events::input_layout_change& event)
         {
             view_.set_input_x_offset(event.x_offset);
             view_.set_input_rotation(event.rotation);
         }
 
-        void handle_game_events(const libgame::game_change_list& events)
+        void handle_game_events(const libgame::event_list& events)
         {
             for(const auto& event: events)
             {

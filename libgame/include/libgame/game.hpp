@@ -3,7 +3,7 @@
 
 #include "board_next_input.hpp"
 #include "board_grid.hpp"
-#include "game_change.hpp"
+#include "event.hpp"
 #include <vector>
 
 namespace libgame
@@ -32,13 +32,13 @@ struct game
 
         unsigned int get_input_rotation() const;
 
-		game_change_list shift_input_left();
+		event_list shift_input_left();
 
-		game_change_list shift_input_right();
+		event_list shift_input_right();
 
-		game_change_list rotate_input();
+		event_list rotate_input();
 
-		void drop_input();
+		event_list drop_input();
 
 	private:
         struct impl;

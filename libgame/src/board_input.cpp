@@ -3,7 +3,7 @@
 namespace libgame
 {
 
-std::vector<game_change_t>
+std::vector<event>
 board_input::set_items(const board_next_input_t& items)
 {
     items_ = items;
@@ -13,7 +13,7 @@ board_input::set_items(const board_next_input_t& items)
 
     return
     {
-        game_changes::next_input_introduction
+        events::next_input_introduction
         {
             items,
             x_offset_,
@@ -22,7 +22,7 @@ board_input::set_items(const board_next_input_t& items)
     };
 }
 
-std::vector<game_change_t>
+std::vector<event>
 board_input::shift_left()
 {
     if(x_offset_ > 0)
@@ -31,10 +31,10 @@ board_input::shift_left()
         return apply();
     }
 
-    return std::vector<game_change_t>();
+    return std::vector<event>();
 }
 
-std::vector<game_change_t>
+std::vector<event>
 board_input::shift_right()
 {
     if(x_offset_ < column_count - 1)
@@ -43,17 +43,17 @@ board_input::shift_right()
         return apply();
     }
 
-    return std::vector<game_change_t>();
+    return std::vector<event>();
 }
 
-std::vector<game_change_t>
+std::vector<event>
 board_input::rotate()
 {
     rotation_ = (rotation_ + 1) % 4;
     return apply();
 }
 
-std::vector<game_change_t>
+std::vector<event>
 board_input::apply()
 {
     //adjust the offset so that the items are inside the board
@@ -62,7 +62,7 @@ board_input::apply()
 
     return
     {
-        board_input_changes::layout{x_offset_, rotation_}
+        events::input_layout_change{x_offset_, rotation_}
     };
 }
 

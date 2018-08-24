@@ -1,7 +1,7 @@
 #ifndef BOARD_INPUT_HPP
 #define BOARD_INPUT_HPP
 
-#include <libgame/game_change.hpp>
+#include <libgame/event.hpp>
 #include <libgame/item_grid.hpp>
 #include <libgame/array2d.hpp>
 #include <libgame/board_next_input.hpp>
@@ -26,7 +26,7 @@ class board_input
             return items_;
         }
 
-        std::vector<game_change_t>
+        std::vector<event>
 		set_items(const board_next_input_t& rhs);
 
         unsigned int
@@ -35,10 +35,10 @@ class board_input
             return x_offset_;
         }
 
-        std::vector<game_change_t>
+        std::vector<event>
 		shift_left();
 
-        std::vector<game_change_t>
+        std::vector<event>
 		shift_right();
 
         unsigned int
@@ -47,11 +47,11 @@ class board_input
             return rotation_;
         }
 
-        std::vector<game_change_t>
+        std::vector<event>
 		rotate();
 
     private:
-        std::vector<game_change_t>
+        std::vector<event>
         apply();
 
 	private:

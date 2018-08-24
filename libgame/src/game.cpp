@@ -102,34 +102,34 @@ unsigned int game::get_input_rotation() const
     return pimpl_->input_.get_rotation();
 }
 
-game_change_list game::shift_input_left()
+event_list game::shift_input_left()
 {
-    //change_signal_(input_.shift_left());
     return pimpl_->input_.shift_left();
 }
 
-game_change_list game::shift_input_right()
+event_list game::shift_input_right()
 {
-    //change_signal_(input_.shift_right());
     return pimpl_->input_.shift_right();
 }
 
-game_change_list game::rotate_input()
+event_list game::rotate_input()
 {
-    //change_signal_(input_.rotate());
     return pimpl_->input_.rotate();
 }
 
-void game::drop_input()
+event_list game::drop_input()
 {
+    event_list changes;
+
     if(!is_game_over())
     {
-        //change_signal_({board_input_changes::clear{}});
+        changes.push_back(events::input_clear{});
 
         //drop the input
         const auto& change_sets = pimpl_->board_.drop_input(pimpl_->input_);
-        //for(const auto& change_set: change_sets)
-        //    change_signal_(change_set);
+        for(const auto& change_set: change_sets)
+            for(const auto& change: change_set)
+                changes.push_back(change);
 
         if(!is_game_over())
         {
@@ -140,16 +140,16 @@ void game::drop_input()
             pimpl_->next_input_ = generate_next_input(pimpl_->get_highest_unlocked_element_index());
             changes.push_back
             (
-                game_changes::next_input_creation
+                events::next_input_creation
                 {
                     pimpl_->next_input_[0],
                     pimpl_->next_input_[1]
                 }
             );
-
-            //change_signal_(changes);
         }
     }
+
+    return changes;
 }
 
 } //namespace libgame

@@ -1,5 +1,5 @@
-#ifndef GAME_CHANGE_HPP
-#define GAME_CHANGE_HPP
+#ifndef LIBGAME_EVENT_HPP
+#define LIBGAME_EVENT_HPP
 
 #include <libgame/element.hpp>
 #include <variant>
@@ -10,7 +10,7 @@
 namespace libgame
 {
 
-namespace game_changes
+namespace events
 {
     struct next_input_creation
     {
@@ -23,21 +23,15 @@ namespace game_changes
         unsigned int x_offset;
         unsigned int rotation;
     };
-}
 
-namespace board_input_changes
-{
-    struct layout
+    struct input_layout_change
     {
         unsigned int x_offset;
         unsigned int rotation;
     };
 
-    struct clear{};
-}
+    struct input_clear{};
 
-namespace board_changes
-{
     struct item_drop
     {
         std::shared_ptr<element> elt;
@@ -52,10 +46,7 @@ namespace board_changes
         unsigned int column_index;
         unsigned int row_index;
     };
-}
 
-namespace game_changes
-{
     struct element_unlocking
     {
         unsigned int index;
@@ -67,19 +58,19 @@ namespace game_changes
     };
 }
 
-using game_change_t = std::variant
+using event = std::variant
 <
-    game_changes::next_input_creation,
-    game_changes::next_input_introduction,
-    board_input_changes::layout,
-    board_input_changes::clear,
-    board_changes::item_drop,
-    board_changes::element_transmutation,
-    game_changes::element_unlocking,
-    game_changes::score_change
+    events::next_input_creation,
+    events::next_input_introduction,
+    events::input_layout_change,
+    events::input_clear,
+    events::item_drop,
+    events::element_transmutation,
+    events::element_unlocking,
+    events::score_change
 >;
 
-using game_change_list = std::vector<game_change_t>;
+using event_list = std::vector<event>;
 
 } //namespace libgame
 

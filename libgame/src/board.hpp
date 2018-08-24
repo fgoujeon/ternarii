@@ -1,7 +1,7 @@
 #ifndef BOARD_HPP
 #define BOARD_HPP
 
-#include <libgame/game_change.hpp>
+#include <libgame/event.hpp>
 #include <libgame/array2d.hpp>
 #include <libgame/item_grid.hpp>
 #include <libgame/element.hpp>
@@ -54,17 +54,17 @@ class board
         unsigned int
         get_score() const;
 
-        std::vector<std::vector<game_change_t>>
+        std::vector<std::vector<event>>
         drop_input(const board_input& in);
 
 	private:
         void
 		insert_input(const board_input& in);
 
-        std::vector<game_change_t>
+        std::vector<event>
 		make_items_fall();
 
-        std::vector<game_change_t>
+        std::vector<event>
 		transmute_elements();
 
 		enum class selection_state
