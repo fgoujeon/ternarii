@@ -217,6 +217,16 @@ void view::set_input_items(const input_item_array& items)
     pimpl_->pgrid->set_input_items(items);
 }
 
+void view::set_input_x_offset(const unsigned int value)
+{
+    pimpl_->pgrid->set_input_x_offset(value);
+}
+
+void view::set_input_rotation(const unsigned int value)
+{
+    pimpl_->pgrid->set_input_rotation(value);
+}
+
 void view::set_board_items(const board_item_array& items)
 {
     pimpl_->pgrid->set_board_items(items);

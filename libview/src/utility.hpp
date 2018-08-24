@@ -2,7 +2,25 @@
 #define LIBVIEW_UTILITY_HPP
 
 #include "libsdl.hpp"
+#include <optional>
 #include <iostream>
+
+inline
+bool operator==(const SDL_Rect& l, const SDL_Rect& r)
+{
+    return
+        l.x == r.x &&
+        l.y == r.y &&
+        l.w == r.w &&
+        l.h == r.h
+    ;
+}
+
+inline
+bool operator!=(const SDL_Rect& l, const SDL_Rect& r)
+{
+    return !(l == r);
+}
 
 namespace libview { namespace utility
 {
@@ -13,6 +31,17 @@ void do_once(F&& f)
     static auto first = true;
     if(first) f();
     first = false;
+}
+
+template<class Value, class F>
+void do_when_value_changes(const Value& value, F&& f)
+{
+    static auto old_value = std::optional<Value>{};
+    if(old_value != value)
+    {
+        f();
+        old_value = value;
+    }
 }
 
 inline void print_current_viewport(SDL_Renderer& renderer)

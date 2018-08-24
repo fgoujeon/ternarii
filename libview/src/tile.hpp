@@ -19,7 +19,7 @@ class tile
 
     private:
         libsdl::unique_ptr<TTF_Font> pfont_;
-        SDL_Rect area_;
+        SDL_Rect area_ = SDL_Rect{0, 0, 0, 0};
         unsigned int value_ = 0;
 };
 

@@ -67,20 +67,19 @@ namespace game_changes
     };
 }
 
-typedef
-    std::variant
-    <
-        game_changes::next_input_creation,
-        game_changes::next_input_introduction,
-        board_input_changes::layout,
-        board_input_changes::clear,
-        board_changes::item_drop,
-        board_changes::element_transmutation,
-        game_changes::element_unlocking,
-        game_changes::score_change
-    >
-    game_change_t
-;
+using game_change_t = std::variant
+<
+    game_changes::next_input_creation,
+    game_changes::next_input_introduction,
+    board_input_changes::layout,
+    board_input_changes::clear,
+    board_changes::item_drop,
+    board_changes::element_transmutation,
+    game_changes::element_unlocking,
+    game_changes::score_change
+>;
+
+using game_change_list = std::vector<game_change_t>;
 
 } //namespace libgame
 

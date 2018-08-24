@@ -1,5 +1,7 @@
 #include "grid.hpp"
+#include "utility.hpp"
 #include <map>
+#include <iostream>
 
 namespace libview
 {
@@ -80,7 +82,35 @@ void grid::set_next_input_items(const next_input_item_array& items)
 
 void grid::set_input_items(const input_item_array& items)
 {
-    fill_tiles(input_tiles_, items, 3);
+    auto i = 0;
+    for(auto& opt_item: items)
+    {
+        if(opt_item)
+        {
+            input_tiles_[i] = std::make_unique<tile>();
+            input_tiles_[i]->set_value(opt_item->value);
+        }
+        else
+        {
+            input_tiles_[i] = nullptr;
+        }
+
+        ++i;
+    }
+
+    update_input_tile_areas();
+}
+
+void grid::set_input_x_offset(const unsigned int value)
+{
+    input_x_offset_ = value;
+    update_input_tile_areas();
+}
+
+void grid::set_input_rotation(const unsigned int value)
+{
+    input_rotation_ = value;
+    update_input_tile_areas();
 }
 
 void grid::set_board_items(const board_item_array& items)
@@ -106,11 +136,76 @@ void grid::draw(SDL_Renderer& renderer)
 
     //tiles
     draw_tiles(next_input_tiles_, renderer);
-    draw_tiles(input_tiles_, renderer);
+
+    for(auto& ptile: input_tiles_)
+        if(ptile)
+            ptile->draw(renderer);
+
     draw_tiles(board_tiles_, renderer);
-    //draw_tiles(renderer, *ptile_font_, tile_number_textures_, next_input_items, 0);
-    //draw_tiles(renderer, *ptile_font_, tile_number_textures_, input_items, 3);
-    //draw_tiles(renderer, *ptile_font_, tile_number_textures_, board_items, 11);
+}
+
+void grid::update_input_tile_areas()
+{
+    auto tile0_x = 0.0;
+    auto tile0_y = 0.0;
+    auto tile1_x = 0.0;
+    auto tile1_y = 0.0;
+
+    switch(input_rotation_)
+    {
+        case 0:
+            tile0_x = 0;
+            tile0_y = 0.5;
+            tile1_x = 1;
+            tile1_y = 0.5;
+            break;
+        case 1:
+            tile0_x = 0;
+            tile0_y = 0;
+            tile1_x = 0;
+            tile1_y = 1;
+            break;
+        case 2:
+            tile0_x = 1;
+            tile0_y = 0.5;
+            tile1_x = 0;
+            tile1_y = 0.5;
+            break;
+        case 3:
+            tile0_x = 0;
+            tile0_y = 1;
+            tile1_x = 0;
+            tile1_y = 0;
+            break;
+    }
+
+    if(auto& ptile = input_tiles_[0])
+    {
+        ptile->set_area
+        (
+            SDL_Rect
+            {
+                static_cast<int>((tile0_x + input_x_offset_) * cell_size + tile_margin),
+                static_cast<int>((tile0_y + 2) * cell_size + tile_margin),
+                static_cast<int>(tile_size),
+                static_cast<int>(tile_size)
+            }
+        );
+    }
+
+    if(auto& ptile = input_tiles_[1])
+    {
+        ptile->set_area
+        (
+            SDL_Rect
+            {
+                static_cast<int>((tile1_x + input_x_offset_) * cell_size + tile_margin),
+                static_cast<int>((tile1_y + 2) * cell_size + tile_margin),
+                static_cast<int>(tile_size),
+                static_cast<int>(tile_size)
+            }
+        );
+    }
 }
 
 } //namespace view

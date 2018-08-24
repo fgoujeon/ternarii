@@ -102,22 +102,22 @@ unsigned int game::get_input_rotation() const
     return pimpl_->input_.get_rotation();
 }
 
-void game::shift_input_left()
+game_change_list game::shift_input_left()
 {
     //change_signal_(input_.shift_left());
-    pimpl_->input_.shift_left();
+    return pimpl_->input_.shift_left();
 }
 
-void game::shift_input_right()
+game_change_list game::shift_input_right()
 {
     //change_signal_(input_.shift_right());
-    pimpl_->input_.shift_right();
+    return pimpl_->input_.shift_right();
 }
 
-void game::rotate_input()
+game_change_list game::rotate_input()
 {
     //change_signal_(input_.rotate());
-    pimpl_->input_.rotate();
+    return pimpl_->input_.rotate();
 }
 
 void game::drop_input()

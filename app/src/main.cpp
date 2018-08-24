@@ -90,20 +90,17 @@ class controller
 
             callbacks.left_shift = [this]
             {
-                game_.shift_input_left();
-                update_view_input();
+                handle_game_events(game_.shift_input_left());
             };
 
             callbacks.right_shift = [this]
             {
-                game_.shift_input_right();
-                update_view_input();
+                handle_game_events(game_.shift_input_right());
             };
 
             callbacks.clockwise_rotation = [this]
             {
-                game_.rotate_input();
-                update_view_input();
+                handle_game_events(game_.rotate_input());
             };
 
             callbacks.down = [this]
@@ -127,6 +124,8 @@ class controller
                 ++x;
             }
             view_.set_next_input_items(view_items);
+            view_.set_input_x_offset(2);
+            view_.set_input_rotation(0);
         }
 
         std::optional<libview::item> to_view_item(const std::optional<std::shared_ptr<libgame::element>>& optpgame_item)
@@ -146,29 +145,15 @@ class controller
 
         void update_view_input()
         {
-            libview::input_item_array view_items;
             const auto& game_items = game_.get_input_items();
-            const auto x_offset = game_.get_input_x_offset();
-            switch(game_.get_input_rotation())
-            {
-                case 0:
-                    view_items[x_offset    ][0] = to_view_item(game_items[0]);
-                    view_items[x_offset + 1][0] = to_view_item(game_items[1]);
-                    break;
-                case 1:
-                    view_items[x_offset    ][1] = to_view_item(game_items[0]);
-                    view_items[x_offset    ][0] = to_view_item(game_items[1]);
-                    break;
-                case 2:
-                    view_items[x_offset + 1][0] = to_view_item(game_items[0]);
-                    view_items[x_offset    ][0] = to_view_item(game_items[1]);
-                    break;
-                case 3:
-                    view_items[x_offset    ][0] = to_view_item(game_items[0]);
-                    view_items[x_offset    ][1] = to_view_item(game_items[1]);
-                    break;
-            }
-            view_.set_input_items(view_items);
+            view_.set_input_items
+            (
+                libview::input_item_array
+                {
+                    to_view_item(game_items[0]),
+                    to_view_item(game_items[1])
+                }
+            );
         }
 
         void update_view_board()
@@ -201,6 +186,32 @@ class controller
 
             if(game_.is_game_over())
                 view_.set_game_over_screen_visible(true);
+        }
+
+        template<class Event>
+        void handle_game_event(const Event& event)
+        {
+        }
+
+        void handle_game_event(const libgame::board_input_changes::layout& event)
+        {
+            view_.set_input_x_offset(event.x_offset);
+            view_.set_input_rotation(event.rotation);
+        }
+
+        void handle_game_events(const libgame::game_change_list& events)
+        {
+            for(const auto& event: events)
+            {
+                std::visit
+                (
+                    [this](const auto& event)
+                    {
+                        handle_game_event(event);
+                    },
+                    event
+                );
+            }
         }
 
     private:

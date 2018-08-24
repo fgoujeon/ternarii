@@ -36,6 +36,10 @@ class view
 
         void set_input_items(const input_item_array& items);
 
+        void set_input_x_offset(const unsigned int value);
+
+        void set_input_rotation(const unsigned int value);
+
         void set_board_items(const board_item_array& items);
 
         void set_game_over_screen_visible(const bool visible);

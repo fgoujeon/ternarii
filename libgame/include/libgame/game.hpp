@@ -32,11 +32,11 @@ struct game
 
         unsigned int get_input_rotation() const;
 
-		void shift_input_left();
+		game_change_list shift_input_left();
 
-		void shift_input_right();
+		game_change_list shift_input_right();
 
-		void rotate_input();
+		game_change_list rotate_input();
 
 		void drop_input();
 
