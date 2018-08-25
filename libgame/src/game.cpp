@@ -142,8 +142,8 @@ event_list game::drop_input()
             (
                 events::next_input_creation
                 {
-                    pimpl_->next_input_[0],
-                    pimpl_->next_input_[1]
+                    *pimpl_->next_input_[0],
+                    *pimpl_->next_input_[1]
                 }
             );
         }

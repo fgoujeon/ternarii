@@ -75,6 +75,39 @@ int grid::get_logical_height() const
     return row_count * cell_size;
 }
 
+void grid::create_next_input(const unsigned int value0, const unsigned int value1)
+{
+    const auto values = std::array<unsigned int, 2>{value0, value1};
+
+    auto i = 0;
+    for(const auto value: values)
+    {
+        next_input_tiles_[i] = std::make_unique<tile>();
+        next_input_tiles_[i]->set_value(value);
+        next_input_tiles_[i]->set_area
+        (
+            SDL_Rect
+            {
+                static_cast<int>((2 + i) * cell_size + tile_margin),
+                static_cast<int>(tile_margin),
+                static_cast<int>(tile_size),
+                static_cast<int>(tile_size)
+            }
+        );
+        ++i;
+    }
+}
+
+void grid::insert_next_input(const unsigned int x_offset, const unsigned int rotation)
+{
+    for(auto i = 0; i < 2; ++i)
+        input_tiles_[i] = std::move(next_input_tiles_[i]);
+
+    input_x_offset_ = x_offset;
+    input_rotation_ = rotation;
+    update_input_tile_areas();
+}
+
 void grid::set_next_input_items(const next_input_item_array& items)
 {
     auto i = 0;

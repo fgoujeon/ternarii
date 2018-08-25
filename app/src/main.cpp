@@ -75,7 +75,32 @@ class controller
         controller():
             view_(make_view_callbacks())
         {
-            update_view();
+            const auto& input_items = game_.get_input_items();
+            const auto& next_input_items = game_.get_next_input_items();
+
+            handle_game_event
+            (
+                libgame::events::next_input_creation
+                {
+                    {
+                        input_items[0]->value,
+                        input_items[1]->value
+                    }
+                }
+            );
+
+            handle_game_event(libgame::events::next_input_introduction{2, 0});
+
+            handle_game_event
+            (
+                libgame::events::next_input_creation
+                {
+                    {
+                        next_input_items[0]->value,
+                        next_input_items[1]->value
+                    }
+                }
+            );
         }
 
         void run()
@@ -120,11 +145,6 @@ class controller
             const auto& pgame_item = *optpgame_item;
 
             return libview::item{pgame_item->value};
-        }
-
-        void update_view_score()
-        {
-            view_.set_score(game_.get_score());
         }
 
         void update_view_next_input()
@@ -178,18 +198,33 @@ class controller
 
         void update_view()
         {
-            update_view_score();
-            update_view_next_input();
-            update_view_input();
-            update_view_board();
+            //update_view_score();
+            //update_view_next_input();
+            //update_view_input();
+            //update_view_board();
 
-            if(game_.is_game_over())
-                view_.set_game_over_screen_visible(true);
+            //if(game_.is_game_over())
+            //    view_.set_game_over_screen_visible(true);
         }
 
         template<class Event>
         void handle_game_event(const Event& event)
         {
+        }
+
+        void handle_game_event(const libgame::events::score_change& event)
+        {
+            view_.set_score(event.score);
+        }
+
+        void handle_game_event(const libgame::events::next_input_creation& event)
+        {
+            view_.create_next_input(event.items[0].value, event.items[1].value);
+        }
+
+        void handle_game_event(const libgame::events::next_input_introduction& event)
+        {
+            view_.insert_next_input(event.x_offset, event.rotation);
         }
 
         void handle_game_event(const libgame::events::input_layout_change& event)

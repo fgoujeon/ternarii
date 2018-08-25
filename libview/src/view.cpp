@@ -207,6 +207,16 @@ void view::set_score(const unsigned int value)
     pimpl_->pscore_display->set_score(value);
 }
 
+void view::create_next_input(const unsigned int value0, const unsigned int value1)
+{
+    pimpl_->pgrid->create_next_input(value0, value1);
+}
+
+void view::insert_next_input(const unsigned int x_offset, const unsigned int rotation)
+{
+    pimpl_->pgrid->insert_next_input(x_offset, rotation);
+}
+
 void view::set_next_input_items(const next_input_item_array& items)
 {
     pimpl_->pgrid->set_next_input_items(items);

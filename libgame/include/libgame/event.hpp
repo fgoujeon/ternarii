@@ -14,12 +14,11 @@ namespace events
 {
     struct next_input_creation
     {
-        std::array<std::shared_ptr<element>, 2> items;
+        std::array<element, 2> items;
     };
 
     struct next_input_introduction
     {
-        std::array<std::shared_ptr<element>, 2> items;
         unsigned int x_offset;
         unsigned int rotation;
     };

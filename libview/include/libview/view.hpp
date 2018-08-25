@@ -32,6 +32,10 @@ class view
 
         void set_score(const unsigned int value);
 
+        void create_next_input(const unsigned int value0, const unsigned int value1);
+
+        void insert_next_input(const unsigned int x_offset, const unsigned int rotation);
+
         void set_next_input_items(const next_input_item_array& items);
 
         void set_input_items(const input_item_array& items);

@@ -15,7 +15,6 @@ board_input::set_items(const board_next_input_t& items)
     {
         events::next_input_introduction
         {
-            items,
             x_offset_,
             rotation_
         }
