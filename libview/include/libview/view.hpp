@@ -1,7 +1,7 @@
 #ifndef LIBVIEW_VIEW_HPP
 #define LIBVIEW_VIEW_HPP
 
-#include "item.hpp"
+#include "data_types.hpp"
 #include <functional>
 #include <memory>
 
@@ -57,6 +57,13 @@ class view
             const unsigned int column_index,
             const unsigned int src_row_index,
             const unsigned int dst_row_index
+        );
+
+        void merge_tiles
+        (
+            const std::vector<tile_coordinate>& src_tiles,
+            const tile_coordinate& dst_tile,
+            const unsigned int dst_tile_value
         );
 
         void set_board_items(const board_item_array& items);

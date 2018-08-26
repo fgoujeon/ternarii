@@ -185,7 +185,8 @@ board::transmute_elements()
                             events::element_transmutation
                             {
                                 removed_tile_coordinates,
-                                tile_coordinate{column_index, row_index}
+                                tile_coordinate{column_index, row_index},
+                                new_element->value
                             }
                         );
 

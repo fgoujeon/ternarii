@@ -1,3 +1,4 @@
+#include "conversion.hpp"
 #include <libgame/game.hpp>
 #include <libview/view.hpp>
 
@@ -185,6 +186,12 @@ class controller
 
         void handle_game_event(const libgame::events::element_transmutation& event)
         {
+            view_.merge_tiles
+            (
+                conversion::to_view(event.src_tiles),
+                conversion::to_view(event.dst_tile),
+                event.dst_tile_value
+            );
         }
 
         void handle_game_events(const libgame::event_list& events)

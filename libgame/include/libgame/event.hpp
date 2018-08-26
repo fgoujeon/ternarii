@@ -117,6 +117,7 @@ namespace events
     {
         std::vector<tile_coordinate> src_tiles;
         tile_coordinate dst_tile;
+        unsigned int dst_tile_value;
     };
 
     inline
@@ -135,7 +136,8 @@ namespace events
             }
         }
         l << "}, ";
-        l << "dst_tile: " << r.dst_tile;
+        l << "dst_tile: " << r.dst_tile << ", ";
+        l << "dst_tile_value: " << r.dst_tile_value;
         l << "}";
         return l;
     }

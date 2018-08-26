@@ -269,6 +269,16 @@ void view::drop_tile
     );
 }
 
+void view::merge_tiles
+(
+    const std::vector<tile_coordinate>& src_tiles,
+    const tile_coordinate& dst_tile,
+    const unsigned int dst_tile_value
+)
+{
+    pimpl_->pgrid->merge_tiles(src_tiles, dst_tile, dst_tile_value);
+}
+
 void view::set_board_items(const board_item_array& items)
 {
     pimpl_->pgrid->set_board_items(items);

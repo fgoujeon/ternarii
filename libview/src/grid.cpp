@@ -14,18 +14,15 @@ namespace
     const auto tile_margin = cell_size * 0.05;
     const auto tile_size = cell_size - tile_margin * 2;
 
-    void update_tile_area(tile& t, const unsigned int x, const unsigned int y)
+    auto tile_coordinate_to_area(const tile_coordinate& c)
     {
-        t.set_area
-        (
-            SDL_Rect
-            {
-                static_cast<int>(x * cell_size + tile_margin),
-                static_cast<int>((11 - y) * cell_size + tile_margin),
-                static_cast<int>(tile_size),
-                static_cast<int>(tile_size)
-            }
-        );
+        return SDL_Rect
+        {
+            static_cast<int>(c.x * cell_size + tile_margin),
+            static_cast<int>((11 - c.y) * cell_size + tile_margin),
+            static_cast<int>(tile_size),
+            static_cast<int>(tile_size)
+        };
     }
 
     template<class TileArray, class ItemArray>
@@ -63,15 +60,6 @@ namespace
 
             ++x;
         }
-    }
-
-    template<class TileArray>
-    void draw_tiles(TileArray& tiles, SDL_Renderer& renderer)
-    {
-        for(auto& tile_column: tiles)
-            for(auto& ptile: tile_column)
-                if(ptile)
-                    ptile->draw(renderer);
     }
 }
 
@@ -209,9 +197,25 @@ void grid::drop_tile
     auto& ptile = board_tiles_[column_index][src_row_index];
     if(ptile)
     {
-        update_tile_area(*ptile, column_index, dst_row_index);
+        ptile->set_area(tile_coordinate_to_area(tile_coordinate{column_index, dst_row_index}));
         board_tiles_[column_index][dst_row_index] = std::move(ptile);
     }
+}
+
+void grid::merge_tiles
+(
+    const std::vector<tile_coordinate>& src_tiles,
+    const tile_coordinate& dst_tile,
+    const unsigned int dst_tile_value
+)
+{
+    for(const auto& src_tile: src_tiles)
+        board_tiles_[src_tile.x][src_tile.y] = nullptr;
+
+    auto pdst_tile = std::make_unique<tile>();
+    pdst_tile->set_value(dst_tile_value);
+    pdst_tile->set_area(tile_coordinate_to_area(dst_tile));
+    board_tiles_[dst_tile.x][dst_tile.y] = std::move(pdst_tile);
 }
 
 void grid::set_board_items(const board_item_array& items)
@@ -245,7 +249,10 @@ void grid::draw(SDL_Renderer& renderer)
             if(ptile)
                 ptile->draw(renderer);
 
-        draw_tiles(board_tiles_, renderer);
+        for(auto& tile_column: board_tiles_)
+            for(auto& ptile: tile_column)
+                if(ptile)
+                    ptile->draw(renderer);
     }
 }
 

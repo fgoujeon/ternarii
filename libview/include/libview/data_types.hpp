@@ -1,9 +1,10 @@
-#ifndef LIBVIEW_ITEM_HPP
-#define LIBVIEW_ITEM_HPP
+#ifndef LIBVIEW_DATA_TYPE_HPP
+#define LIBVIEW_DATA_TYPE_HPP
 
 #include <functional>
 #include <optional>
 #include <array>
+#include <ostream>
 
 namespace libview
 {
@@ -26,6 +27,25 @@ using item_array = std::array<std::array<opt_item, Size1>, Size0>;
 using next_input_item_array = std::array<opt_item, 2>;
 using input_item_array = std::array<opt_item, 2>;
 using board_item_array = item_array<6, 10>;
+
+
+
+struct tile_coordinate
+{
+    unsigned int x;
+    unsigned int y;
+};
+
+inline
+std::ostream& operator<<(std::ostream& l, const tile_coordinate& r)
+{
+    l << "tile_coordinate";
+    l << "{";
+    l << "x: " << r.x << ", ";
+    l << "y: " << r.y;
+    l << "}";
+    return l;
+}
 
 } //namespace view
 
