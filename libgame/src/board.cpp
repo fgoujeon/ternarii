@@ -102,8 +102,8 @@ board::make_items_fall()
                     (
                         events::item_drop
                         {
-                            *opt_item,
                             column_index,
+                            row_index,
                             *opt_empty_cell_row_index
                         }
                     );

@@ -14,6 +14,20 @@ namespace
     const auto tile_margin = cell_size * 0.05;
     const auto tile_size = cell_size - tile_margin * 2;
 
+    void update_tile_area(tile& t, const unsigned int x, const unsigned int y)
+    {
+        t.set_area
+        (
+            SDL_Rect
+            {
+                static_cast<int>(x * cell_size + tile_margin),
+                static_cast<int>((11 - y) * cell_size + tile_margin),
+                static_cast<int>(tile_size),
+                static_cast<int>(tile_size)
+            }
+        );
+    }
+
     template<class TileArray, class ItemArray>
     void fill_tiles(TileArray& tiles, const ItemArray& items, const unsigned int y_offset)
     {
@@ -183,6 +197,21 @@ void grid::insert_input
 
     if(input_tiles_[1])
         board_tiles_[tile1_dst_column_index][tile1_dst_row_index] = std::move(input_tiles_[1]);
+}
+
+void grid::drop_tile
+(
+    const unsigned int column_index,
+    const unsigned int src_row_index,
+    const unsigned int dst_row_index
+)
+{
+    auto& ptile = board_tiles_[column_index][src_row_index];
+    if(ptile)
+    {
+        update_tile_area(*ptile, column_index, dst_row_index);
+        board_tiles_[column_index][dst_row_index] = std::move(ptile);
+    }
 }
 
 void grid::set_board_items(const board_item_array& items)

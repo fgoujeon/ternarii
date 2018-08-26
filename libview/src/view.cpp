@@ -254,6 +254,21 @@ void view::insert_input
     );
 }
 
+void view::drop_tile
+(
+    const unsigned int column_index,
+    const unsigned int src_row_index,
+    const unsigned int dst_row_index
+)
+{
+    pimpl_->pgrid->drop_tile
+    (
+        column_index,
+        src_row_index,
+        dst_row_index
+    );
+}
+
 void view::set_board_items(const board_item_array& items)
 {
     pimpl_->pgrid->set_board_items(items);

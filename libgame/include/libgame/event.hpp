@@ -39,9 +39,9 @@ namespace events
 
     struct item_drop
     {
-        std::shared_ptr<element> elt;
         unsigned int column_index;
-        unsigned int row_index;
+        unsigned int src_row_index;
+        unsigned int dst_row_index;
     };
 
     struct element_transmutation

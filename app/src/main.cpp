@@ -182,6 +182,20 @@ class controller
             );
         }
 
+        void handle_game_event(const libgame::events::item_drop& event)
+        {
+            std::cout << "item_drop ";
+            std::cout << event.column_index  << ", ";
+            std::cout << event.src_row_index << ", ";
+            std::cout << event.dst_row_index << "\n";
+            view_.drop_tile
+            (
+                event.column_index,
+                event.src_row_index,
+                event.dst_row_index
+            );
+        }
+
         void handle_game_events(const libgame::event_list& events)
         {
             for(const auto& event: events)
