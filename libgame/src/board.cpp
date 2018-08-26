@@ -64,17 +64,19 @@ void
 board::insert_input(const board_input& in)
 {
     //put the input on the upper rows
-    for(unsigned int column_index = 0; column_index < board_input::column_count; ++column_index)
-    {
-        for(unsigned int row_index = 0; row_index < board_input::row_count; ++row_index)
-        {
-            if(const auto& opt_item = in.item_grid().at(column_index, row_index))
-            {
-                const auto& item = *opt_item;
-                item_grid_.at(column_index, row_count - 2 + row_index) = item;
-            }
-        }
-    }
+
+    const auto items = in.get_items();
+    const auto x_offset = in.get_x_offset();
+    const auto rotation = in.get_rotation();
+
+    const unsigned int x0 = x_offset + (rotation == 2 ? 1 : 0);
+    const unsigned int y0 = row_count - 2 + (rotation == 1 ? 1 : 0);
+
+    const unsigned int x1 = x_offset + (rotation == 0 ? 1 : 0);
+    const unsigned int y1 = row_count - 2 + (rotation == 3 ? 1 : 0);
+
+    item_grid_.at(x0, y0) = items[0];
+    item_grid_.at(x1, y1) = items[1];
 }
 
 std::vector<game_change_t>

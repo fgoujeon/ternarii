@@ -17,16 +17,9 @@ class board_input
 {
 	public:
 		static const unsigned int column_count = 6;
-		static const unsigned int row_count = 2;
-        using grid_t = item_grid_t<column_count, row_count>;
         using items_t = std::array<std::shared_ptr<element>, 2>;
 
-		const grid_t&
-		item_grid() const
-		{
-			return item_grid_;
-		}
-
+	public:
         const board_next_input_t&
 		get_items() const
         {
@@ -63,7 +56,6 @@ class board_input
 
 	private:
         items_t items_;
-		grid_t item_grid_;
 		unsigned int x_offset_;
 
         //rotation = 0:
