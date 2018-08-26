@@ -155,14 +155,24 @@ board::transmute_elements()
                     if(selection_size >= 3)
                     {
                         //remove the selected items from the board
-                        std::vector<std::shared_ptr<element>> removed_elements;
-                        for(unsigned int i = 0; i < column_count * row_count; ++i)
+                        std::vector<tile_coordinate> removed_tile_coordinates;
+                        for(unsigned int row_index2 = 0; row_index2 < row_count; ++row_index2)
                         {
-                            if(selection.at(i) == selection_state::SELECTED)
+                            for(unsigned int column_index2 = 0; column_index2 < column_count; ++column_index2)
                             {
-                                assert(item_grid_.at(i));
-                                removed_elements.push_back(*item_grid_.at(i));
-                                item_grid_.at(i) = std::nullopt;
+                                if(selection.at(column_index2, row_index2) == selection_state::SELECTED)
+                                {
+                                    assert(item_grid_.at(column_index2, row_index2));
+                                    removed_tile_coordinates.push_back
+                                    (
+                                        tile_coordinate
+                                        {
+                                            column_index2,
+                                            row_index2
+                                        }
+                                    );
+                                    item_grid_.at(column_index2, row_index2) = std::nullopt;
+                                }
                             }
                         }
 
@@ -174,10 +184,8 @@ board::transmute_elements()
                         (
                             events::element_transmutation
                             {
-                                removed_elements,
-                                new_element,
-                                column_index,
-                                row_index
+                                removed_tile_coordinates,
+                                tile_coordinate{column_index, row_index}
                             }
                         );
 

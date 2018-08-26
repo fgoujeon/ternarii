@@ -143,36 +143,27 @@ class controller
 
         void handle_game_event(const libgame::events::score_change& event)
         {
-            std::cout << "score_change " << event.score << '\n';
             view_.set_score(event.score);
         }
 
         void handle_game_event(const libgame::events::next_input_creation& event)
         {
-            std::cout << "next_input_creation " << event.items[0].value << ", " << event.items[1].value << '\n';
             view_.create_next_input(event.items[0].value, event.items[1].value);
         }
 
         void handle_game_event(const libgame::events::next_input_introduction& event)
         {
-            std::cout << "next_input_introduction " << event.x_offset << ", " << event.rotation << '\n';
             view_.insert_next_input(event.x_offset, event.rotation);
         }
 
         void handle_game_event(const libgame::events::input_layout_change& event)
         {
-            std::cout << "input_layout_change " << event.x_offset << ", " << event.rotation << '\n';
             view_.set_input_x_offset(event.x_offset);
             view_.set_input_rotation(event.rotation);
         }
 
         void handle_game_event(const libgame::events::input_introduction& event)
         {
-            std::cout << "input_introduction ";
-            std::cout << event.tile0_dst_column_index << ", ";
-            std::cout << event.tile0_dst_row_index    << ", ";
-            std::cout << event.tile1_dst_column_index << ", ";
-            std::cout << event.tile1_dst_row_index    << "\n";
             view_.insert_input
             (
                 event.tile0_dst_column_index,
@@ -184,16 +175,16 @@ class controller
 
         void handle_game_event(const libgame::events::item_drop& event)
         {
-            std::cout << "item_drop ";
-            std::cout << event.column_index  << ", ";
-            std::cout << event.src_row_index << ", ";
-            std::cout << event.dst_row_index << "\n";
             view_.drop_tile
             (
                 event.column_index,
                 event.src_row_index,
                 event.dst_row_index
             );
+        }
+
+        void handle_game_event(const libgame::events::element_transmutation& event)
+        {
         }
 
         void handle_game_events(const libgame::event_list& events)
@@ -204,6 +195,7 @@ class controller
                 (
                     [this](const auto& event)
                     {
+                        std::cout << event << '\n';
                         handle_game_event(event);
                     },
                     event
