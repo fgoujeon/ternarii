@@ -39,6 +39,14 @@ class grid
 
         void set_input_rotation(const unsigned int value);
 
+        void insert_input
+        (
+            const unsigned int tile0_dst_column_index,
+            const unsigned int tile0_dst_row_index,
+            const unsigned int tile1_dst_column_index,
+            const unsigned int tile1_dst_row_index
+        );
+
         void set_board_items(const board_item_array& items);
 
     private:

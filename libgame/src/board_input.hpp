@@ -26,7 +26,7 @@ class board_input
             return items_;
         }
 
-        std::vector<event>
+        event
 		set_items(const board_next_input_t& rhs);
 
         unsigned int

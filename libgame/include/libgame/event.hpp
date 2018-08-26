@@ -29,7 +29,13 @@ namespace events
         unsigned int rotation;
     };
 
-    struct input_clear{};
+    struct input_introduction
+    {
+        unsigned int tile0_dst_column_index;
+        unsigned int tile0_dst_row_index;
+        unsigned int tile1_dst_column_index;
+        unsigned int tile1_dst_row_index;
+    };
 
     struct item_drop
     {
@@ -62,7 +68,7 @@ using event = std::variant
     events::next_input_creation,
     events::next_input_introduction,
     events::input_layout_change,
-    events::input_clear,
+    events::input_introduction,
     events::item_drop,
     events::element_transmutation,
     events::element_unlocking,

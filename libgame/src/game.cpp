@@ -123,8 +123,6 @@ event_list game::drop_input()
 
     if(!is_game_over())
     {
-        changes.push_back(events::input_clear{});
-
         //drop the input
         const auto& change_sets = pimpl_->board_.drop_input(pimpl_->input_);
         for(const auto& change_set: change_sets)
@@ -134,7 +132,7 @@ event_list game::drop_input()
         if(!is_game_over())
         {
             //move the next input into the input
-            auto changes = pimpl_->input_.set_items(pimpl_->next_input_);
+            changes.push_back(pimpl_->input_.set_items(pimpl_->next_input_));
 
             //create a new next input
             pimpl_->next_input_ = generate_next_input(pimpl_->get_highest_unlocked_element_index());

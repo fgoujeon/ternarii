@@ -237,6 +237,23 @@ void view::set_input_rotation(const unsigned int value)
     pimpl_->pgrid->set_input_rotation(value);
 }
 
+void view::insert_input
+(
+    const unsigned int tile0_dst_column_index,
+    const unsigned int tile0_dst_row_index,
+    const unsigned int tile1_dst_column_index,
+    const unsigned int tile1_dst_row_index
+)
+{
+    pimpl_->pgrid->insert_input
+    (
+        tile0_dst_column_index,
+        tile0_dst_row_index,
+        tile1_dst_column_index,
+        tile1_dst_row_index
+    );
+}
+
 void view::set_board_items(const board_item_array& items)
 {
     pimpl_->pgrid->set_board_items(items);

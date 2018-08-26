@@ -41,7 +41,7 @@ board::drop_input(const board_input& in)
 {
     std::vector<std::vector<event>> changes;
 
-    insert_input(in);
+    changes.push_back({insert_input(in)});
 
     bool changes_happened;
     do
@@ -60,7 +60,7 @@ board::drop_input(const board_input& in)
     return changes;
 }
 
-void
+events::input_introduction
 board::insert_input(const board_input& in)
 {
     //put the input on the upper rows
@@ -77,6 +77,8 @@ board::insert_input(const board_input& in)
 
     item_grid_.at(x0, y0) = items[0];
     item_grid_.at(x1, y1) = items[1];
+
+    return events::input_introduction{x0, y0, x1, y1};
 }
 
 std::vector<event>

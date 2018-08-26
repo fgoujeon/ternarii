@@ -131,80 +131,9 @@ class controller
             callbacks.down = [this]
             {
                 handle_game_events(game_.drop_input());
-                update_view();
             };
 
             return callbacks;
-        }
-
-        std::optional<libview::item> to_view_item(const std::optional<std::shared_ptr<libgame::element>>& optpgame_item)
-        {
-            if(!optpgame_item)
-                return std::nullopt;
-
-            const auto& pgame_item = *optpgame_item;
-
-            return libview::item{pgame_item->value};
-        }
-
-        void update_view_next_input()
-        {
-            const auto& game_items = game_.get_next_input_items();
-            view_.set_next_input_items
-            (
-                libview::input_item_array
-                {
-                    to_view_item(game_items[0]),
-                    to_view_item(game_items[1])
-                }
-            );
-        }
-
-        void update_view_input()
-        {
-            const auto& game_items = game_.get_input_items();
-            view_.set_input_items
-            (
-                libview::input_item_array
-                {
-                    to_view_item(game_items[0]),
-                    to_view_item(game_items[1])
-                }
-            );
-            view_.set_input_x_offset(2);
-            view_.set_input_rotation(0);
-        }
-
-        void update_view_board()
-        {
-            libview::board_item_array view_items;
-            const auto& game_items = game_.get_board_items();
-
-            for(auto x = 0; x < libgame::board_grid_t::column_count; ++x)
-            {
-                for(auto y = 0; y < libgame::board_grid_t::row_count; ++y)
-                {
-                    const auto& opt_pitem = game_items.at(x, y);
-                    if(opt_pitem)
-                    {
-                        const auto pitem = *opt_pitem;
-                        view_items[x][y] = libview::item{pitem->value};
-                    }
-                }
-            }
-
-            view_.set_board_items(view_items);
-        }
-
-        void update_view()
-        {
-            //update_view_score();
-            //update_view_next_input();
-            //update_view_input();
-            //update_view_board();
-
-            //if(game_.is_game_over())
-            //    view_.set_game_over_screen_visible(true);
         }
 
         template<class Event>
@@ -214,23 +143,43 @@ class controller
 
         void handle_game_event(const libgame::events::score_change& event)
         {
+            std::cout << "score_change " << event.score << '\n';
             view_.set_score(event.score);
         }
 
         void handle_game_event(const libgame::events::next_input_creation& event)
         {
+            std::cout << "next_input_creation " << event.items[0].value << ", " << event.items[1].value << '\n';
             view_.create_next_input(event.items[0].value, event.items[1].value);
         }
 
         void handle_game_event(const libgame::events::next_input_introduction& event)
         {
+            std::cout << "next_input_introduction " << event.x_offset << ", " << event.rotation << '\n';
             view_.insert_next_input(event.x_offset, event.rotation);
         }
 
         void handle_game_event(const libgame::events::input_layout_change& event)
         {
+            std::cout << "input_layout_change " << event.x_offset << ", " << event.rotation << '\n';
             view_.set_input_x_offset(event.x_offset);
             view_.set_input_rotation(event.rotation);
+        }
+
+        void handle_game_event(const libgame::events::input_introduction& event)
+        {
+            std::cout << "input_introduction ";
+            std::cout << event.tile0_dst_column_index << ", ";
+            std::cout << event.tile0_dst_row_index    << ", ";
+            std::cout << event.tile1_dst_column_index << ", ";
+            std::cout << event.tile1_dst_row_index    << "\n";
+            view_.insert_input
+            (
+                event.tile0_dst_column_index,
+                event.tile0_dst_row_index,
+                event.tile1_dst_column_index,
+                event.tile1_dst_row_index
+            );
         }
 
         void handle_game_events(const libgame::event_list& events)

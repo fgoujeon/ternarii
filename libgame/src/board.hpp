@@ -58,7 +58,7 @@ class board
         drop_input(const board_input& in);
 
 	private:
-        void
+        events::input_introduction
 		insert_input(const board_input& in);
 
         std::vector<event>

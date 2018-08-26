@@ -3,7 +3,7 @@
 namespace libgame
 {
 
-std::vector<event>
+event
 board_input::set_items(const board_next_input_t& items)
 {
     items_ = items;

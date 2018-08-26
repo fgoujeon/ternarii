@@ -170,6 +170,21 @@ void grid::set_input_rotation(const unsigned int value)
     update_input_tile_areas();
 }
 
+void grid::insert_input
+(
+    const unsigned int tile0_dst_column_index,
+    const unsigned int tile0_dst_row_index,
+    const unsigned int tile1_dst_column_index,
+    const unsigned int tile1_dst_row_index
+)
+{
+    if(input_tiles_[0])
+        board_tiles_[tile0_dst_column_index][tile0_dst_row_index] = std::move(input_tiles_[0]);
+
+    if(input_tiles_[1])
+        board_tiles_[tile1_dst_column_index][tile1_dst_row_index] = std::move(input_tiles_[1]);
+}
+
 void grid::set_board_items(const board_item_array& items)
 {
     fill_tiles(board_tiles_, items, 11);
