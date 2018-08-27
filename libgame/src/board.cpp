@@ -126,6 +126,7 @@ board::transmute_elements()
 
     grid_t item_layer;
 
+    //select the identical adjacent items
     //scan row by row, from the bottom left corner to the top right corner
     for(unsigned int row_index = 0; row_index < row_count; ++row_index)
     {
@@ -137,64 +138,60 @@ board::transmute_elements()
             {
                 const auto& current_element = *opt_element;
 
-                //select the identical adjacent items
-                if(current_element.value < 11)
+                selection_t selection = {}; //fill with unselected
+                unsigned int selection_size = 0;
+
+                select_elements(current_element.value, column_index, row_index, selection, selection_size);
+
+                //if 3 or more items are selected
+                if(selection_size >= 3)
                 {
-                    selection_t selection = {}; //fill with unselected
-                    unsigned int selection_size = 0;
-
-                    select_elements(current_element.value, column_index, row_index, selection, selection_size);
-
-                    //if 3 or more items are selected
-                    if(selection_size >= 3)
+                    //remove the selected items from the board
+                    std::vector<tile_coordinate> removed_tile_coordinates;
+                    for(unsigned int row_index2 = 0; row_index2 < row_count; ++row_index2)
                     {
-                        //remove the selected items from the board
-                        std::vector<tile_coordinate> removed_tile_coordinates;
-                        for(unsigned int row_index2 = 0; row_index2 < row_count; ++row_index2)
+                        for(unsigned int column_index2 = 0; column_index2 < column_count; ++column_index2)
                         {
-                            for(unsigned int column_index2 = 0; column_index2 < column_count; ++column_index2)
+                            if(selection[column_index2][row_index2] == selection_state::SELECTED)
                             {
-                                if(selection[column_index2][row_index2] == selection_state::SELECTED)
-                                {
-                                    assert(item_grid_[column_index2][row_index2]);
-                                    removed_tile_coordinates.push_back
-                                    (
-                                        tile_coordinate
-                                        {
-                                            column_index2,
-                                            row_index2
-                                        }
-                                    );
-                                    item_grid_[column_index2][row_index2] = std::nullopt;
-                                }
+                                assert(item_grid_[column_index2][row_index2]);
+                                removed_tile_coordinates.push_back
+                                (
+                                    tile_coordinate
+                                    {
+                                        column_index2,
+                                        row_index2
+                                    }
+                                );
+                                item_grid_[column_index2][row_index2] = std::nullopt;
                             }
                         }
+                    }
 
-                        //put the new transmuted item on the layer
-                        auto new_element = element{current_element.value + 1};
-                        item_layer[column_index][row_index] = new_element;
+                    //put the new transmuted item on the layer
+                    auto new_element = element{current_element.value + 1};
+                    item_layer[column_index][row_index] = new_element;
 
+                    changes.push_back
+                    (
+                        events::element_transmutation
+                        {
+                            removed_tile_coordinates,
+                            tile_coordinate{column_index, row_index},
+                            new_element.value
+                        }
+                    );
+
+                    if(highest_unlocked_element_index_ < new_element.value)
+                    {
+                        highest_unlocked_element_index_ = new_element.value;
                         changes.push_back
                         (
-                            events::element_transmutation
+                            events::element_unlocking
                             {
-                                removed_tile_coordinates,
-                                tile_coordinate{column_index, row_index},
-                                new_element.value
+                                highest_unlocked_element_index_
                             }
                         );
-
-                        if(highest_unlocked_element_index_ < new_element.value)
-                        {
-                            highest_unlocked_element_index_ = new_element.value;
-                            changes.push_back
-                            (
-                                events::element_unlocking
-                                {
-                                    highest_unlocked_element_index_
-                                }
-                            );
-                        }
                     }
                 }
             }
