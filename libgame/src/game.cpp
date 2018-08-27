@@ -147,6 +147,9 @@ event_list game::drop_input()
         }
     }
 
+    if(is_game_over())
+        changes.push_back(events::end_of_game{});
+
     return changes;
 }
 

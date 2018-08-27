@@ -175,6 +175,16 @@ namespace events
         l << "}";
         return l;
     }
+
+
+
+    struct end_of_game{};
+
+    inline
+    std::ostream& operator<<(std::ostream& l, const end_of_game&)
+    {
+        return l << "end_of_game{}";
+    }
 }
 
 using event = std::variant
@@ -186,7 +196,8 @@ using event = std::variant
     events::item_drop,
     events::element_transmutation,
     events::element_unlocking,
-    events::score_change
+    events::score_change,
+    events::end_of_game
 >;
 
 using event_list = std::vector<event>;

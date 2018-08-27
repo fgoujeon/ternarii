@@ -194,6 +194,11 @@ class controller
             );
         }
 
+        void handle_game_event(const libgame::events::end_of_game&)
+        {
+            view_.set_game_over_screen_visible(true);
+        }
+
         void handle_game_events(const libgame::event_list& events)
         {
             for(const auto& event: events)
