@@ -19,8 +19,8 @@ namespace
 
 struct view::impl
 {
-    impl(const callback_set& callbacks):
-        callbacks(callbacks),
+    impl(const event_handler& evt_handler):
+        evt_handler(evt_handler),
         pwindow
         (
             SDL_CreateWindow
@@ -149,16 +149,16 @@ struct view::impl
                     switch(event.key.keysym.sym)
                     {
                         case SDLK_LEFT:
-                            callbacks.left_shift();
+                            evt_handler(events::left_shift_request{});
                             break;
                         case SDLK_RIGHT:
-                            callbacks.right_shift();
+                            evt_handler(events::right_shift_request{});
                             break;
                         case SDLK_UP:
-                            callbacks.clockwise_rotation();
+                            evt_handler(events::clockwise_rotation_request{});
                             break;
                         case SDLK_DOWN:
-                            callbacks.down();
+                            evt_handler(events::drop_request{});
                             break;
                     }
                     break;
@@ -169,7 +169,7 @@ struct view::impl
         }
     }
 
-    callback_set callbacks;
+    event_handler evt_handler;
     libsdl::session session;
     libsdl::unique_ptr<SDL_Window> pwindow;
     libsdl::unique_ptr<SDL_Renderer> prenderer;
@@ -180,8 +180,8 @@ struct view::impl
     bool quit = false;
 };
 
-view::view(const callback_set& callbacks):
-    pimpl_(std::make_unique<impl>(callbacks))
+view::view(const event_handler& evt_handler):
+    pimpl_(std::make_unique<impl>(evt_handler))
 {
 }
 
@@ -289,4 +289,4 @@ void view::set_game_over_screen_visible(const bool visible)
     pimpl_->pgame_over_screen->set_visible(visible);
 }
 
-} //namespace view
+} //namespace libview

@@ -1,8 +1,8 @@
 #ifndef LIBVIEW_VIEW_HPP
 #define LIBVIEW_VIEW_HPP
 
+#include "events.hpp"
 #include "data_types.hpp"
-#include <functional>
 #include <memory>
 
 namespace libview
@@ -11,16 +11,7 @@ namespace libview
 class view
 {
     public:
-        struct callback_set
-        {
-            std::function<void()> left_shift;
-            std::function<void()> right_shift;
-            std::function<void()> clockwise_rotation;
-            std::function<void()> down;
-        };
-
-    public:
-        view(const callback_set& callbacks);
+        view(const event_handler& evt_handler);
 
         ~view();
 
@@ -75,6 +66,6 @@ class view
         std::unique_ptr<impl> pimpl_;
 };
 
-} //namespace view
+} //namespace libview
 
 #endif

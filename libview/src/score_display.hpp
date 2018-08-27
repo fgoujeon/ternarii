@@ -24,6 +24,6 @@ class score_display
         SDL_Rect area_ = SDL_Rect{0, 0, 0, 0};
 };
 
-} //namespace view
+} //namespace libview
 
 #endif

@@ -74,7 +74,7 @@ class controller
 {
     public:
         controller():
-            view_(make_view_callbacks())
+            view_([this](const libview::event& event){handle_view_event(event);})
         {
             const auto& input_tiles = game_.get_input_tiles();
             const auto& next_input_tiles = game_.get_next_input_tiles();
@@ -110,38 +110,6 @@ class controller
         }
 
     private:
-        libview::view::callback_set make_view_callbacks()
-        {
-            libview::view::callback_set callbacks;
-
-            callbacks.left_shift = [this]
-            {
-                handle_game_events(game_.shift_input_left());
-            };
-
-            callbacks.right_shift = [this]
-            {
-                handle_game_events(game_.shift_input_right());
-            };
-
-            callbacks.clockwise_rotation = [this]
-            {
-                handle_game_events(game_.rotate_input());
-            };
-
-            callbacks.down = [this]
-            {
-                handle_game_events(game_.drop_input());
-            };
-
-            return callbacks;
-        }
-
-        template<class Event>
-        void handle_game_event(const Event& event)
-        {
-        }
-
         void handle_game_event(const libgame::events::score_change& event)
         {
             view_.set_score(event.score);
@@ -194,6 +162,10 @@ class controller
             );
         }
 
+        void handle_game_event(const libgame::events::element_unlocking& event)
+        {
+        }
+
         void handle_game_event(const libgame::events::end_of_game&)
         {
             view_.set_game_over_screen_visible(true);
@@ -213,6 +185,39 @@ class controller
                     event
                 );
             }
+        }
+
+    private:
+        void handle_view_event2(const libview::events::left_shift_request&)
+        {
+            handle_game_events(game_.shift_input_left());
+        }
+
+        void handle_view_event2(const libview::events::right_shift_request&)
+        {
+            handle_game_events(game_.shift_input_left());
+        }
+
+        void handle_view_event2(const libview::events::clockwise_rotation_request&)
+        {
+            handle_game_events(game_.rotate_input());
+        }
+
+        void handle_view_event2(const libview::events::drop_request&)
+        {
+            handle_game_events(game_.drop_input());
+        }
+
+        void handle_view_event(const libview::event& event)
+        {
+            std::visit
+            (
+                [this](const auto& event)
+                {
+                    handle_view_event2(event);
+                },
+                event
+            );
         }
 
     private:

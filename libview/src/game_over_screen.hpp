@@ -25,6 +25,6 @@ class game_over_screen
         libsdl::unique_ptr<SDL_Texture> pgame_over_texture_;
 };
 
-} //namespace view
+} //namespace libview
 
 #endif

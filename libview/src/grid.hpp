@@ -76,6 +76,6 @@ class grid
         board_tile_array board_tiles_;
 };
 
-} //namespace view
+} //namespace libview
 
 #endif

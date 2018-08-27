@@ -23,6 +23,6 @@ class tile
         unsigned int value_ = 0;
 };
 
-} //namespace view
+} //namespace libview
 
 #endif

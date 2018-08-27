@@ -1,5 +1,5 @@
-#ifndef LIBVIEW_DATA_TYPE_HPP
-#define LIBVIEW_DATA_TYPE_HPP
+#ifndef LIBVIEW_DATA_TYPES_HPP
+#define LIBVIEW_DATA_TYPES_HPP
 
 #include <functional>
 #include <optional>
@@ -47,6 +47,6 @@ std::ostream& operator<<(std::ostream& l, const tile_coordinate& r)
     return l;
 }
 
-} //namespace view
+} //namespace libview
 
 #endif
