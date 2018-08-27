@@ -3,12 +3,25 @@
 namespace libgame
 {
 
+namespace
+{
+    const auto default_x_offset = 2;
+    const auto default_rotation = 0;
+}
+
+board_input::board_input(const board_next_input_t& items):
+    items_(items),
+    x_offset_(default_x_offset),
+    rotation_(default_rotation)
+{
+}
+
 event
 board_input::set_items(const board_next_input_t& items)
 {
     items_ = items;
-    x_offset_ = 2;
-    rotation_ = 0;
+    x_offset_ = default_x_offset;
+    rotation_ = default_rotation;
     apply();
 
     return

@@ -14,21 +14,21 @@ using array2d = std::array<std::array<T, Size1>, Size0>;
 
 struct element
 {
-    element(unsigned int value): value(value)
+    explicit element(unsigned int value): value(value)
     {
     }
 
     unsigned int value;
 };
 
-typedef std::optional<std::shared_ptr<element>> item_grid_cell_t;
+typedef std::optional<element> item_grid_cell_t;
 
 template<size_t ColumnCount, size_t RowCount>
 using item_grid_t = array2d<item_grid_cell_t, ColumnCount, RowCount>;
 
 using board_grid_t = item_grid_t<6, 10>; //cell = grid[column_index][row_index]
 
-typedef std::array<std::shared_ptr<element>, 2> board_next_input_t;
+typedef std::array<element, 2> board_next_input_t;
 
 struct tile_coordinate
 {

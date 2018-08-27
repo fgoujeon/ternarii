@@ -14,9 +14,11 @@ class board_input
 {
 	public:
 		static const unsigned int column_count = 6;
-        using items_t = std::array<std::shared_ptr<element>, 2>;
+        using items_t = std::array<element, 2>;
 
 	public:
+        board_input(const board_next_input_t& items);
+
         const board_next_input_t&
 		get_items() const
         {

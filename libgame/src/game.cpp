@@ -18,10 +18,10 @@ namespace
         return (max + 1) * std::pow(random, 2);
     }
 
-    std::shared_ptr<element>
+    element
     generate_new_element(const unsigned int max_value)
     {
-        return std::make_shared<element>(random_value(max_value));
+        return element{random_value(max_value)};
     }
 
     board_next_input_t
@@ -38,10 +38,9 @@ namespace
 struct game::impl
 {
     impl():
-        next_input_(generate_next_input(get_highest_unlocked_element_index()))
+        next_input_(generate_next_input(get_highest_unlocked_element_index())),
+        input_(generate_next_input(get_highest_unlocked_element_index()))
     {
-        //change_signal_(input_.set_items(generate_next_input(get_highest_unlocked_element_index())));
-        input_.set_items(generate_next_input(get_highest_unlocked_element_index()));
     }
 
     unsigned int get_highest_unlocked_element_index() const
@@ -49,7 +48,6 @@ struct game::impl
         return board_.get_highest_unlocked_element_index();
     }
 
-    unsigned int highest_unlocked_element_;
     board board_;
     board_input input_;
     board_next_input_t next_input_;
@@ -140,8 +138,8 @@ event_list game::drop_input()
             (
                 events::next_input_creation
                 {
-                    *pimpl_->next_input_[0],
-                    *pimpl_->next_input_[1]
+                    pimpl_->next_input_[0],
+                    pimpl_->next_input_[1]
                 }
             );
         }

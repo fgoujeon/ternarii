@@ -84,8 +84,8 @@ class controller
                 libgame::events::next_input_creation
                 {
                     {
-                        input_items[0]->value,
-                        input_items[1]->value
+                        input_items[0],
+                        input_items[1]
                     }
                 }
             );
@@ -97,8 +97,8 @@ class controller
                 libgame::events::next_input_creation
                 {
                     {
-                        next_input_items[0]->value,
-                        next_input_items[1]->value
+                        next_input_items[0],
+                        next_input_items[1]
                     }
                 }
             );

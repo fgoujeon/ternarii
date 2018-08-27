@@ -29,7 +29,7 @@ board::get_score() const
     for(const auto& cell_column: item_grid_)
         for(const auto& opt_item: cell_column)
             if(opt_item)
-                score += std::pow(3, (*opt_item)->value);
+                score += std::pow(3, opt_item->value);
     return score;
 }
 
@@ -131,19 +131,19 @@ board::transmute_elements()
     {
         for(unsigned int column_index = 0; column_index < column_count; ++column_index)
         {
-            const std::optional<std::shared_ptr<element>>& opt_element = item_grid_[column_index][row_index];
+            const auto& opt_element = item_grid_[column_index][row_index];
 
             if(opt_element)
             {
-                const std::shared_ptr<element> current_element = *opt_element;
+                const auto& current_element = *opt_element;
 
                 //select the identical adjacent items
-                if(current_element->value < 11)
+                if(current_element.value < 11)
                 {
                     selection_t selection = {}; //fill with unselected
                     unsigned int selection_size = 0;
 
-                    select_elements(current_element->value, column_index, row_index, selection, selection_size);
+                    select_elements(current_element.value, column_index, row_index, selection, selection_size);
 
                     //if 3 or more items are selected
                     if(selection_size >= 3)
@@ -171,7 +171,7 @@ board::transmute_elements()
                         }
 
                         //put the new transmuted item on the layer
-                        auto new_element = std::make_shared<element>(element{current_element->value + 1});
+                        auto new_element = element{current_element.value + 1};
                         item_layer[column_index][row_index] = new_element;
 
                         changes.push_back
@@ -180,13 +180,13 @@ board::transmute_elements()
                             {
                                 removed_tile_coordinates,
                                 tile_coordinate{column_index, row_index},
-                                new_element->value
+                                new_element.value
                             }
                         );
 
-                        if(highest_unlocked_element_index_ < new_element->value)
+                        if(highest_unlocked_element_index_ < new_element.value)
                         {
-                            highest_unlocked_element_index_ = new_element->value;
+                            highest_unlocked_element_index_ = new_element.value;
                             changes.push_back
                             (
                                 events::element_unlocking
@@ -235,7 +235,7 @@ board::select_elements
     if(auto opt_item = item_grid_[column_index][row_index])
     {
         auto item = *opt_item;
-        if(item->value == element_value)
+        if(item.value == element_value)
         {
             selection[column_index][row_index] = selection_state::SELECTED;
             ++selection_size;
