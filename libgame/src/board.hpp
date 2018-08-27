@@ -11,32 +11,19 @@ namespace libgame
 
 class board_input;
 
-/*
-Convention for accessing the items:
-array[column_index][row_index]
-
-Convention of rows and columns:
-[..]
-[R4]
-[R3]
-[R2]
-[R1]
-[R0]
-	[C0][C1][C2][C3][..]
-*/
 class board
 {
 	public:
 		static const unsigned int column_count = 6;
 		static const unsigned int row_count = 10;
-        using grid_t = item_grid_t<column_count, row_count>;
+        using grid_t = tile_grid<column_count, row_count>;
 
 		board();
 
 		const grid_t&
-		item_grid() const
+		tile_grid() const
 		{
-			return item_grid_;
+			return tile_grid_;
 		}
 
 		bool
@@ -55,11 +42,11 @@ class board
         drop_input(const board_input& in);
 
 	private:
-        events::input_introduction
+        events::input_insertion
 		insert_input(const board_input& in);
 
         std::vector<event>
-		make_items_fall();
+		make_tiles_fall();
 
         std::vector<event>
 		transmute_elements();
@@ -84,7 +71,7 @@ class board
 		);
 
 	private:
-		grid_t item_grid_;
+		grid_t tile_grid_;
 		unsigned int highest_unlocked_element_index_;
 };
 

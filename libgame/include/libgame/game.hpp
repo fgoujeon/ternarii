@@ -17,11 +17,11 @@ struct game
 
         unsigned int get_score() const;
 
-		const board_next_input_t& get_next_input_items() const;
+		const tile_pair& get_next_input_tiles() const;
 
-		const board_next_input_t& get_input_items() const;
+		const tile_pair& get_input_tiles() const;
 
-		const board_grid_t& get_board_items() const;
+		const board_tile_grid& get_board_tiles() const;
 
 		bool is_game_over() const;
 

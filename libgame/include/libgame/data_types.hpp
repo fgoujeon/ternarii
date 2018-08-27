@@ -12,23 +12,34 @@ namespace libgame
 template<typename T, size_t Size0, size_t Size1>
 using array2d = std::array<std::array<T, Size1>, Size0>;
 
-struct element
+struct tile
 {
-    explicit element(unsigned int value): value(value)
+    explicit tile(unsigned int value): value(value)
     {
     }
 
     unsigned int value;
 };
 
-typedef std::optional<element> item_grid_cell_t;
+using tile_pair = std::array<tile, 2>;
 
+/*
+Convention for accessing the tiles:
+grid[column_index][row_index]
+
+Convention of rows and columns:
+[..]
+[R4]
+[R3]
+[R2]
+[R1]
+[R0]
+	[C0][C1][C2][C3][..]
+*/
 template<size_t ColumnCount, size_t RowCount>
-using item_grid_t = array2d<item_grid_cell_t, ColumnCount, RowCount>;
+using tile_grid = array2d<std::optional<tile>, ColumnCount, RowCount>;
 
-using board_grid_t = item_grid_t<6, 10>; //cell = grid[column_index][row_index]
-
-typedef std::array<element, 2> board_next_input_t;
+using board_tile_grid = tile_grid<6, 10>;
 
 struct tile_coordinate
 {

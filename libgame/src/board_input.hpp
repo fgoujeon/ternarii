@@ -14,19 +14,19 @@ class board_input
 {
 	public:
 		static const unsigned int column_count = 6;
-        using items_t = std::array<element, 2>;
+        using tiles_t = std::array<tile, 2>;
 
 	public:
-        board_input(const board_next_input_t& items);
+        board_input(const tile_pair& tiles);
 
-        const board_next_input_t&
-		get_items() const
+        const tile_pair&
+		get_tiles() const
         {
-            return items_;
+            return tiles_;
         }
 
         event
-		set_items(const board_next_input_t& rhs);
+		set_tiles(const tile_pair& rhs);
 
         unsigned int
         get_x_offset() const
@@ -54,7 +54,7 @@ class board_input
         apply();
 
 	private:
-        items_t items_;
+        tiles_t tiles_;
 		unsigned int x_offset_;
 
         //rotation = 0:

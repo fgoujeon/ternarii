@@ -15,7 +15,7 @@ namespace events
 {
     struct next_input_creation
     {
-        std::array<element, 2> items;
+        std::array<tile, 2> tiles;
     };
 
     inline
@@ -23,23 +23,23 @@ namespace events
     {
         l << "next_input_creation";
         l << "{";
-        l << "items: " << r.items[0].value << ", " << r.items[1].value;
+        l << "tiles: " << r.tiles[0].value << ", " << r.tiles[1].value;
         l << "}";
         return l;
     }
 
 
 
-    struct next_input_introduction
+    struct next_input_insertion
     {
         unsigned int x_offset;
         unsigned int rotation;
     };
 
     inline
-    std::ostream& operator<<(std::ostream& l, const next_input_introduction& r)
+    std::ostream& operator<<(std::ostream& l, const next_input_insertion& r)
     {
-        l << "next_input_introduction";
+        l << "next_input_insertion";
         l << "{";
         l << "x_offset: " << r.x_offset << ", ";
         l << "rotation: " << r.rotation;
@@ -68,7 +68,7 @@ namespace events
 
 
 
-    struct input_introduction
+    struct input_insertion
     {
         unsigned int tile0_dst_column_index;
         unsigned int tile0_dst_row_index;
@@ -77,9 +77,9 @@ namespace events
     };
 
     inline
-    std::ostream& operator<<(std::ostream& l, const input_introduction& r)
+    std::ostream& operator<<(std::ostream& l, const input_insertion& r)
     {
-        l << "input_introduction";
+        l << "input_insertion";
         l << "{";
         l << "tile0_dst_column_index: " << r.tile0_dst_column_index << ", ";
         l << "tile0_dst_row_index: " << r.tile0_dst_row_index << ", ";
@@ -91,7 +91,7 @@ namespace events
 
 
 
-    struct item_drop
+    struct tile_drop
     {
         unsigned int column_index;
         unsigned int src_row_index;
@@ -99,9 +99,9 @@ namespace events
     };
 
     inline
-    std::ostream& operator<<(std::ostream& l, const item_drop& r)
+    std::ostream& operator<<(std::ostream& l, const tile_drop& r)
     {
-        l << "item_drop";
+        l << "tile_drop";
         l << "{";
         l << "column_index: " << r.column_index << ", ";
         l << "src_row_index: " << r.src_row_index << ", ";
@@ -189,10 +189,10 @@ namespace events
 using event = std::variant
 <
     events::next_input_creation,
-    events::next_input_introduction,
+    events::next_input_insertion,
     events::input_layout_change,
-    events::input_introduction,
-    events::item_drop,
+    events::input_insertion,
+    events::tile_drop,
     events::element_transmutation,
     events::element_unlocking,
     events::score_change,

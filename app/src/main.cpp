@@ -76,29 +76,29 @@ class controller
         controller():
             view_(make_view_callbacks())
         {
-            const auto& input_items = game_.get_input_items();
-            const auto& next_input_items = game_.get_next_input_items();
+            const auto& input_tiles = game_.get_input_tiles();
+            const auto& next_input_tiles = game_.get_next_input_tiles();
 
             handle_game_event
             (
                 libgame::events::next_input_creation
                 {
                     {
-                        input_items[0],
-                        input_items[1]
+                        input_tiles[0],
+                        input_tiles[1]
                     }
                 }
             );
 
-            handle_game_event(libgame::events::next_input_introduction{2, 0});
+            handle_game_event(libgame::events::next_input_insertion{2, 0});
 
             handle_game_event
             (
                 libgame::events::next_input_creation
                 {
                     {
-                        next_input_items[0],
-                        next_input_items[1]
+                        next_input_tiles[0],
+                        next_input_tiles[1]
                     }
                 }
             );
@@ -149,10 +149,10 @@ class controller
 
         void handle_game_event(const libgame::events::next_input_creation& event)
         {
-            view_.create_next_input(event.items[0].value, event.items[1].value);
+            view_.create_next_input(event.tiles[0].value, event.tiles[1].value);
         }
 
-        void handle_game_event(const libgame::events::next_input_introduction& event)
+        void handle_game_event(const libgame::events::next_input_insertion& event)
         {
             view_.insert_next_input(event.x_offset, event.rotation);
         }
@@ -163,7 +163,7 @@ class controller
             view_.set_input_rotation(event.rotation);
         }
 
-        void handle_game_event(const libgame::events::input_introduction& event)
+        void handle_game_event(const libgame::events::input_insertion& event)
         {
             view_.insert_input
             (
@@ -174,7 +174,7 @@ class controller
             );
         }
 
-        void handle_game_event(const libgame::events::item_drop& event)
+        void handle_game_event(const libgame::events::tile_drop& event)
         {
             view_.drop_tile
             (

@@ -18,19 +18,17 @@ namespace
         return (max + 1) * std::pow(random, 2);
     }
 
-    element
-    generate_new_element(const unsigned int max_value)
+    tile generate_new_tile(const unsigned int max_value)
     {
-        return element{random_value(max_value)};
+        return tile{random_value(max_value)};
     }
 
-    board_next_input_t
-    generate_next_input(const unsigned int highest_unlocked_element_value)
+    tile_pair generate_next_input(const unsigned int highest_unlocked_element_value)
     {
         return
         {
-            generate_new_element(highest_unlocked_element_value - 1),
-            generate_new_element(highest_unlocked_element_value - 1)
+            generate_new_tile(highest_unlocked_element_value - 1),
+            generate_new_tile(highest_unlocked_element_value - 1)
         };
     }
 }
@@ -50,7 +48,7 @@ struct game::impl
 
     board board_;
     board_input input_;
-    board_next_input_t next_input_;
+    tile_pair next_input_;
 };
 
 game::game():
@@ -65,19 +63,19 @@ unsigned int game::get_score() const
     return pimpl_->board_.get_score();
 }
 
-const board_next_input_t& game::get_next_input_items() const
+const tile_pair& game::get_next_input_tiles() const
 {
     return pimpl_->next_input_;
 }
 
-const board_next_input_t& game::get_input_items() const
+const tile_pair& game::get_input_tiles() const
 {
-    return pimpl_->input_.get_items();
+    return pimpl_->input_.get_tiles();
 }
 
-const board_grid_t& game::get_board_items() const
+const board_tile_grid& game::get_board_tiles() const
 {
-    return pimpl_->board_.item_grid();
+    return pimpl_->board_.tile_grid();
 }
 
 bool game::is_game_over() const
@@ -130,7 +128,7 @@ event_list game::drop_input()
         if(!is_game_over())
         {
             //move the next input into the input
-            changes.push_back(pimpl_->input_.set_items(pimpl_->next_input_));
+            changes.push_back(pimpl_->input_.set_tiles(pimpl_->next_input_));
 
             //create a new next input
             pimpl_->next_input_ = generate_next_input(pimpl_->get_highest_unlocked_element_index());
