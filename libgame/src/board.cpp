@@ -17,9 +17,7 @@ bool
 board::is_game_over() const
 {
     for(unsigned int i = 0; i < column_count; ++i)
-    {
-        if(item_grid_.at(i, 7)) return true;
-    }
+        if(item_grid_[i][7]) return true;
 
     return false;
 }
@@ -28,11 +26,10 @@ unsigned int
 board::get_score() const
 {
     auto score = 0u;
-    for(const auto& opt_item: item_grid_)
-    {
-        if(opt_item)
-            score += std::pow(3, (*opt_item)->value);
-    }
+    for(const auto& cell_column: item_grid_)
+        for(const auto& opt_item: cell_column)
+            if(opt_item)
+                score += std::pow(3, (*opt_item)->value);
     return score;
 }
 
@@ -75,8 +72,8 @@ board::insert_input(const board_input& in)
     const unsigned int x1 = x_offset + (rotation == 0 ? 1 : 0);
     const unsigned int y1 = row_count - 2 + (rotation == 3 ? 1 : 0);
 
-    item_grid_.at(x0, y0) = items[0];
-    item_grid_.at(x1, y1) = items[1];
+    item_grid_[x0][y0] = items[0];
+    item_grid_[x1][y1] = items[1];
 
     return events::input_introduction{x0, y0, x1, y1};
 }
@@ -91,12 +88,12 @@ board::make_items_fall()
         std::optional<unsigned int> opt_empty_cell_row_index;
         for(unsigned int row_index = 0; row_index < row_count; ++row_index) //from bottom to top
         {
-            if(const auto opt_item = item_grid_.at(column_index, row_index))
+            if(const auto opt_item = item_grid_[column_index][row_index])
             {
                 if(opt_empty_cell_row_index) //if the item is floating
                 {
-                    item_grid_.at(column_index, row_index) = std::nullopt;
-                    item_grid_.at(column_index, *opt_empty_cell_row_index) = opt_item;
+                    item_grid_[column_index][row_index] = std::nullopt;
+                    item_grid_[column_index][*opt_empty_cell_row_index] = opt_item;
 
                     changes.push_back
                     (
@@ -134,7 +131,7 @@ board::transmute_elements()
     {
         for(unsigned int column_index = 0; column_index < column_count; ++column_index)
         {
-            const std::optional<std::shared_ptr<element>>& opt_element = item_grid_.at(column_index, row_index);
+            const std::optional<std::shared_ptr<element>>& opt_element = item_grid_[column_index][row_index];
 
             if(opt_element)
             {
@@ -143,11 +140,8 @@ board::transmute_elements()
                 //select the identical adjacent items
                 if(current_element->value < 11)
                 {
-                    selection_t selection;
+                    selection_t selection = {}; //fill with unselected
                     unsigned int selection_size = 0;
-
-                    //clear the selection
-                    selection.fill(selection_state::UNSELECTED);
 
                     select_elements(current_element->value, column_index, row_index, selection, selection_size);
 
@@ -160,9 +154,9 @@ board::transmute_elements()
                         {
                             for(unsigned int column_index2 = 0; column_index2 < column_count; ++column_index2)
                             {
-                                if(selection.at(column_index2, row_index2) == selection_state::SELECTED)
+                                if(selection[column_index2][row_index2] == selection_state::SELECTED)
                                 {
-                                    assert(item_grid_.at(column_index2, row_index2));
+                                    assert(item_grid_[column_index2][row_index2]);
                                     removed_tile_coordinates.push_back
                                     (
                                         tile_coordinate
@@ -171,14 +165,14 @@ board::transmute_elements()
                                             row_index2
                                         }
                                     );
-                                    item_grid_.at(column_index2, row_index2) = std::nullopt;
+                                    item_grid_[column_index2][row_index2] = std::nullopt;
                                 }
                             }
                         }
 
                         //put the new transmuted item on the layer
                         auto new_element = std::make_shared<element>(element{current_element->value + 1});
-                        item_layer.at(column_index, row_index) = new_element;
+                        item_layer[column_index][row_index] = new_element;
 
                         changes.push_back
                         (
@@ -210,12 +204,15 @@ board::transmute_elements()
     if(!changes.empty())
     {
         //overlay the item layer to the item array of the board
-        for(unsigned int i = 0; i < column_count * row_count; ++i)
+        for(auto x = 0; x < column_count; ++x)
         {
-            if(item_layer.at(i))
+            for(auto y = 0; y < row_count; ++y)
             {
-                assert(!item_grid_.at(i));
-                item_grid_.at(i) = item_layer.at(i);
+                if(item_layer[x][y])
+                {
+                    assert(!item_grid_[x][y]);
+                    item_grid_[x][y] = item_layer[x][y];
+                }
             }
         }
     }
@@ -233,21 +230,21 @@ board::select_elements
     unsigned int& selection_size
 )
 {
-    selection.at(column_index, row_index) = selection_state::VISITED;
+    selection[column_index][row_index] = selection_state::VISITED;
 
-    if(auto opt_item = item_grid_.at(column_index, row_index))
+    if(auto opt_item = item_grid_[column_index][row_index])
     {
         auto item = *opt_item;
         if(item->value == element_value)
         {
-            selection.at(column_index, row_index) = selection_state::SELECTED;
+            selection[column_index][row_index] = selection_state::SELECTED;
             ++selection_size;
 
             //above item
             if
             (
                 row_index + 1 < row_count &&
-                selection.at(column_index, row_index + 1) == selection_state::UNSELECTED
+                selection[column_index][row_index + 1] == selection_state::UNSELECTED
             )
             {
                 select_elements(element_value, column_index, row_index + 1, selection, selection_size);
@@ -257,7 +254,7 @@ board::select_elements
             if
             (
                 row_index >= 1 &&
-                selection.at(column_index, row_index - 1) == selection_state::UNSELECTED
+                selection[column_index][row_index - 1] == selection_state::UNSELECTED
             )
             {
                 select_elements(element_value, column_index, row_index - 1, selection, selection_size);
@@ -267,7 +264,7 @@ board::select_elements
             if
             (
                 column_index + 1 < column_count &&
-                selection.at(column_index + 1, row_index) == selection_state::UNSELECTED
+                selection[column_index + 1][row_index] == selection_state::UNSELECTED
             )
             {
                 select_elements(element_value, column_index + 1, row_index, selection, selection_size);
@@ -277,7 +274,7 @@ board::select_elements
             if
             (
                 column_index >= 1 &&
-                selection.at(column_index - 1, row_index) == selection_state::UNSELECTED
+                selection[column_index - 1][row_index] == selection_state::UNSELECTED
             )
             {
                 select_elements(element_value, column_index - 1, row_index, selection, selection_size);

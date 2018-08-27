@@ -8,7 +8,7 @@
 namespace libgame
 {
 
-using board_grid_t = item_grid_t<6, 10>;
+using board_grid_t = item_grid_t<6, 10>; //cell = grid[column_index][row_index]
 
 } //namespace libgame
 
