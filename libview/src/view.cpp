@@ -25,7 +25,7 @@ struct view::impl
         (
             SDL_CreateWindow
             (
-                "Test",
+                "Ternarii",
                 SDL_WINDOWPOS_UNDEFINED,
                 SDL_WINDOWPOS_UNDEFINED,
                 640,
