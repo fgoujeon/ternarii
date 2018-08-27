@@ -43,7 +43,7 @@ struct game::impl
 
     unsigned int get_highest_unlocked_element_index() const
     {
-        return board_.get_highest_unlocked_element_index();
+        return board_.get_highest_tile_ever();
     }
 
     board board_;
@@ -81,11 +81,6 @@ const board_tile_grid& game::get_board_tiles() const
 bool game::is_game_over() const
 {
     return pimpl_->board_.is_game_over();
-}
-
-unsigned int game::get_highest_unlocked_element_index() const
-{
-    return pimpl_->board_.get_highest_unlocked_element_index();
 }
 
 unsigned int game::get_input_x_offset() const

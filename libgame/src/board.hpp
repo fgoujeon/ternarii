@@ -30,9 +30,9 @@ class board
 		is_game_over() const;
 
 		unsigned int
-		get_highest_unlocked_element_index() const
+		get_highest_tile_ever() const
 		{
-			return highest_unlocked_element_index_;
+			return highest_tile_ever_;
 		}
 
         unsigned int
@@ -49,7 +49,7 @@ class board
 		make_tiles_fall();
 
         std::vector<event>
-		transmute_elements();
+		transmute_tiles();
 
 		enum class selection_state
 		{
@@ -61,9 +61,9 @@ class board
 		typedef array2d<selection_state, column_count, row_count> selection_t;
 
 		void
-		select_elements
+		select_tiles
 		(
-			const unsigned int element_value,
+			const unsigned int tile_value,
 			const unsigned int column_index,
 			const unsigned int row_index,
 			selection_t& selection,
@@ -72,7 +72,7 @@ class board
 
 	private:
 		grid_t tile_grid_;
-		unsigned int highest_unlocked_element_index_;
+		unsigned int highest_tile_ever_;
 };
 
 } //namespace libgame

@@ -25,8 +25,6 @@ struct game
 
 		bool is_game_over() const;
 
-		unsigned int get_highest_unlocked_element_index() const;
-
         unsigned int get_input_x_offset() const;
 
         unsigned int get_input_rotation() const;

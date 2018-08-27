@@ -152,7 +152,7 @@ class controller
             );
         }
 
-        void handle_game_event(const libgame::events::element_transmutation& event)
+        void handle_game_event(const libgame::events::tile_merge& event)
         {
             view_.merge_tiles
             (
@@ -160,10 +160,6 @@ class controller
                 conversion::to_view(event.dst_tile),
                 event.dst_tile_value
             );
-        }
-
-        void handle_game_event(const libgame::events::element_unlocking& event)
-        {
         }
 
         void handle_game_event(const libgame::events::end_of_game&)

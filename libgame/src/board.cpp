@@ -9,7 +9,7 @@ namespace libgame
 {
 
 board::board():
-    highest_unlocked_element_index_(3)
+    highest_tile_ever_(3)
 {
 }
 
@@ -46,7 +46,7 @@ board::drop_input(const board_input& in)
         const auto fall_changes = make_tiles_fall();
         changes.push_back(fall_changes);
 
-        const auto transmutation_changes = transmute_elements();
+        const auto transmutation_changes = transmute_tiles();
         changes.push_back(transmutation_changes);
 
         changes.push_back({events::score_change{get_score()}});
@@ -120,7 +120,7 @@ board::make_tiles_fall()
 }
 
 std::vector<event>
-board::transmute_elements()
+board::transmute_tiles()
 {
     std::vector<event> changes;
 
@@ -132,16 +132,16 @@ board::transmute_elements()
     {
         for(unsigned int column_index = 0; column_index < column_count; ++column_index)
         {
-            const auto& opt_element = tile_grid_[column_index][row_index];
+            const auto& opt_tile = tile_grid_[column_index][row_index];
 
-            if(opt_element)
+            if(opt_tile)
             {
-                const auto& current_element = *opt_element;
+                const auto& current_tile = *opt_tile;
 
                 selection_t selection = {}; //fill with unselected
                 unsigned int selection_size = 0;
 
-                select_elements(current_element.value, column_index, row_index, selection, selection_size);
+                select_tiles(current_tile.value, column_index, row_index, selection, selection_size);
 
                 //if 3 or more tiles are selected
                 if(selection_size >= 3)
@@ -168,31 +168,22 @@ board::transmute_elements()
                         }
                     }
 
-                    //put the new transmuted tile on the layer
-                    auto new_element = tile{current_element.value + 1};
-                    tile_layer[column_index][row_index] = new_element;
+                    //put the new merged tile on the layer
+                    auto merged_tile = tile{current_tile.value + 1};
+                    tile_layer[column_index][row_index] = merged_tile;
 
                     changes.push_back
                     (
-                        events::element_transmutation
+                        events::tile_merge
                         {
                             removed_tile_coordinates,
                             tile_coordinate{column_index, row_index},
-                            new_element.value
+                            merged_tile.value
                         }
                     );
 
-                    if(highest_unlocked_element_index_ < new_element.value)
-                    {
-                        highest_unlocked_element_index_ = new_element.value;
-                        changes.push_back
-                        (
-                            events::element_unlocking
-                            {
-                                highest_unlocked_element_index_
-                            }
-                        );
-                    }
+                    if(highest_tile_ever_ < merged_tile.value)
+                        highest_tile_ever_ = merged_tile.value;
                 }
             }
         }
@@ -218,9 +209,9 @@ board::transmute_elements()
 }
 
 void
-board::select_elements
+board::select_tiles
 (
-    const unsigned int element_value,
+    const unsigned int tile_value,
     const unsigned int column_index,
     const unsigned int row_index,
     selection_t& selection,
@@ -232,7 +223,7 @@ board::select_elements
     if(auto opt_tile = tile_grid_[column_index][row_index])
     {
         auto tile = *opt_tile;
-        if(tile.value == element_value)
+        if(tile.value == tile_value)
         {
             selection[column_index][row_index] = selection_state::SELECTED;
             ++selection_size;
@@ -244,7 +235,7 @@ board::select_elements
                 selection[column_index][row_index + 1] == selection_state::UNSELECTED
             )
             {
-                select_elements(element_value, column_index, row_index + 1, selection, selection_size);
+                select_tiles(tile_value, column_index, row_index + 1, selection, selection_size);
             }
 
             //beneath tile
@@ -254,7 +245,7 @@ board::select_elements
                 selection[column_index][row_index - 1] == selection_state::UNSELECTED
             )
             {
-                select_elements(element_value, column_index, row_index - 1, selection, selection_size);
+                select_tiles(tile_value, column_index, row_index - 1, selection, selection_size);
             }
 
             //right tile
@@ -264,7 +255,7 @@ board::select_elements
                 selection[column_index + 1][row_index] == selection_state::UNSELECTED
             )
             {
-                select_elements(element_value, column_index + 1, row_index, selection, selection_size);
+                select_tiles(tile_value, column_index + 1, row_index, selection, selection_size);
             }
 
             //left tile
@@ -274,7 +265,7 @@ board::select_elements
                 selection[column_index - 1][row_index] == selection_state::UNSELECTED
             )
             {
-                select_elements(element_value, column_index - 1, row_index, selection, selection_size);
+                select_tiles(tile_value, column_index - 1, row_index, selection, selection_size);
             }
         }
     }

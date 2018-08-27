@@ -112,7 +112,7 @@ namespace events
 
 
 
-    struct element_transmutation
+    struct tile_merge
     {
         std::vector<tile_coordinate> src_tiles;
         tile_coordinate dst_tile;
@@ -120,9 +120,9 @@ namespace events
     };
 
     inline
-    std::ostream& operator<<(std::ostream& l, const element_transmutation& r)
+    std::ostream& operator<<(std::ostream& l, const tile_merge& r)
     {
-        l << "element_transmutation";
+        l << "tile_merge";
         l << "{";
         l << "src_tiles: {";
         {
@@ -137,23 +137,6 @@ namespace events
         l << "}, ";
         l << "dst_tile: " << r.dst_tile << ", ";
         l << "dst_tile_value: " << r.dst_tile_value;
-        l << "}";
-        return l;
-    }
-
-
-
-    struct element_unlocking
-    {
-        unsigned int index;
-    };
-
-    inline
-    std::ostream& operator<<(std::ostream& l, const element_unlocking& r)
-    {
-        l << "element_unlocking";
-        l << "{";
-        l << "index: " << r.index;
         l << "}";
         return l;
     }
@@ -193,8 +176,7 @@ using event = std::variant
     events::input_layout_change,
     events::input_insertion,
     events::tile_drop,
-    events::element_transmutation,
-    events::element_unlocking,
+    events::tile_merge,
     events::score_change,
     events::end_of_game
 >;
