@@ -1,8 +1,7 @@
 #ifndef LIBGAME_EVENT_HPP
 #define LIBGAME_EVENT_HPP
 
-#include "element.hpp"
-#include "tile_coordinate.hpp"
+#include "data_types.hpp"
 #include <variant>
 #include <vector>
 #include <memory>

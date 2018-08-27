@@ -2,7 +2,7 @@
 #define CONVERSION_HPP
 
 #include <libview/data_types.hpp>
-#include <libgame/tile_coordinate.hpp>
+#include <libgame/data_types.hpp>
 
 namespace conversion
 {

@@ -1,6 +1,6 @@
 #include "board.hpp"
 #include "board_input.hpp"
-#include <libgame/element.hpp>
+#include <libgame/data_types.hpp>
 #include <memory>
 #include <cmath>
 #include <cassert>

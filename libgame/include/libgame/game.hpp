@@ -1,10 +1,9 @@
 #ifndef GAME_HPP
 #define GAME_HPP
 
-#include "board_next_input.hpp"
-#include "board_grid.hpp"
-#include "event.hpp"
-#include <vector>
+#include "events.hpp"
+#include "data_types.hpp"
+#include <memory>
 
 namespace libgame
 {

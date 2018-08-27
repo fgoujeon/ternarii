@@ -1,11 +1,8 @@
 #ifndef BOARD_HPP
 #define BOARD_HPP
 
-#include <libgame/event.hpp>
-#include <libgame/array2d.hpp>
-#include <libgame/item_grid.hpp>
-#include <libgame/element.hpp>
-#include <optional>
+#include <libgame/events.hpp>
+#include <libgame/data_types.hpp>
 #include <vector>
 #include <memory>
 

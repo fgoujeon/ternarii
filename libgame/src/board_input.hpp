@@ -1,11 +1,8 @@
 #ifndef BOARD_INPUT_HPP
 #define BOARD_INPUT_HPP
 
-#include <libgame/event.hpp>
-#include <libgame/item_grid.hpp>
-#include <libgame/array2d.hpp>
-#include <libgame/board_next_input.hpp>
-#include <libgame/element.hpp>
+#include <libgame/events.hpp>
+#include <libgame/data_types.hpp>
 #include <array>
 #include <vector>
 #include <memory>
