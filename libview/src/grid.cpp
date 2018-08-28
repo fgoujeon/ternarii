@@ -76,6 +76,56 @@ namespace
             ++x;
         }
     }
+
+    std::array<SDL_Point, 2> get_input_tile_positions(const unsigned int x_offset, const unsigned int rotation)
+    {
+        auto tile0_x = 0.0;
+        auto tile0_y = 0.0;
+        auto tile1_x = 0.0;
+        auto tile1_y = 0.0;
+
+        switch(rotation)
+        {
+            case 0:
+                tile0_x = 0;
+                tile0_y = 0.5;
+                tile1_x = 1;
+                tile1_y = 0.5;
+                break;
+            case 1:
+                tile0_x = 0;
+                tile0_y = 0;
+                tile1_x = 0;
+                tile1_y = 1;
+                break;
+            case 2:
+                tile0_x = 1;
+                tile0_y = 0.5;
+                tile1_x = 0;
+                tile1_y = 0.5;
+                break;
+            case 3:
+                tile0_x = 0;
+                tile0_y = 1;
+                tile1_x = 0;
+                tile1_y = 0;
+                break;
+        }
+
+        return std::array<SDL_Point, 2>
+        {
+            SDL_Point
+            {
+                static_cast<int>((tile0_x + x_offset) * cell_size + tile_margin),
+                static_cast<int>((tile0_y + 2) * cell_size + tile_margin)
+            },
+            SDL_Point
+            {
+                static_cast<int>((tile1_x + x_offset) * cell_size + tile_margin),
+                static_cast<int>((tile1_y + 2) * cell_size + tile_margin)
+            }
+        };
+    }
 }
 
 grid::grid(SDL_Renderer& renderer)
@@ -271,62 +321,10 @@ void grid::draw(SDL_Renderer& renderer)
 
 void grid::update_input_tile_areas()
 {
-    auto tile0_x = 0.0;
-    auto tile0_y = 0.0;
-    auto tile1_x = 0.0;
-    auto tile1_y = 0.0;
-
-    switch(input_rotation_)
-    {
-        case 0:
-            tile0_x = 0;
-            tile0_y = 0.5;
-            tile1_x = 1;
-            tile1_y = 0.5;
-            break;
-        case 1:
-            tile0_x = 0;
-            tile0_y = 0;
-            tile1_x = 0;
-            tile1_y = 1;
-            break;
-        case 2:
-            tile0_x = 1;
-            tile0_y = 0.5;
-            tile1_x = 0;
-            tile1_y = 0.5;
-            break;
-        case 3:
-            tile0_x = 0;
-            tile0_y = 1;
-            tile1_x = 0;
-            tile1_y = 0;
-            break;
-    }
-
-    if(auto& ptile = input_tiles_[0])
-    {
-        ptile->set_position
-        (
-            SDL_Point
-            {
-                static_cast<int>((tile0_x + input_x_offset_) * cell_size + tile_margin),
-                static_cast<int>((tile0_y + 2) * cell_size + tile_margin)
-            }
-        );
-    }
-
-    if(auto& ptile = input_tiles_[1])
-    {
-        ptile->set_position
-        (
-            SDL_Point
-            {
-                static_cast<int>((tile1_x + input_x_offset_) * cell_size + tile_margin),
-                static_cast<int>((tile1_y + 2) * cell_size + tile_margin)
-            }
-        );
-    }
+    const auto positions = get_input_tile_positions(input_x_offset_, input_rotation_);
+    for(auto i = 0; i < 2; ++i)
+        if(auto& ptile = input_tiles_[i])
+            ptile->set_position(positions[i]);
 }
 
 } //namespace view
