@@ -191,7 +191,7 @@ class controller
 
         void handle_view_event2(const libview::events::right_shift_request&)
         {
-            handle_game_events(game_.shift_input_left());
+            handle_game_events(game_.shift_input_right());
         }
 
         void handle_view_event2(const libview::events::clockwise_rotation_request&)
