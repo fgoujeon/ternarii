@@ -87,6 +87,11 @@ tile::tile():
 {
 }
 
+const SDL_Point& tile::get_position() const
+{
+    return position_;
+}
+
 void tile::set_position(const SDL_Point& position)
 {
     position_ = position;

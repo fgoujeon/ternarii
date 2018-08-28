@@ -30,6 +30,8 @@ class tile
     public:
         tile();
 
+        const SDL_Point& get_position() const;
+
         void set_position(const SDL_Point& position);
 
         void set_size(const unsigned int w, const unsigned int h);
