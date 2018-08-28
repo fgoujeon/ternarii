@@ -30,7 +30,9 @@ class tile
     public:
         tile();
 
-        void set_area(const SDL_Rect& area);
+        void set_position(const SDL_Point& position);
+
+        void set_size(const unsigned int w, const unsigned int h);
 
         void set_value(const unsigned int value);
 
@@ -38,7 +40,9 @@ class tile
 
     private:
         libsdl::unique_ptr<TTF_Font> pfont_;
-        SDL_Rect area_ = SDL_Rect{0, 0, 0, 0};
+        SDL_Point position_ = SDL_Point{0, 0};
+        unsigned int w_ = 0;
+        unsigned int h_ = 0;
         unsigned int value_ = 0;
 };
 

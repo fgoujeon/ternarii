@@ -87,9 +87,15 @@ tile::tile():
 {
 }
 
-void tile::set_area(const SDL_Rect& area)
+void tile::set_position(const SDL_Point& position)
 {
-    area_ = area;
+    position_ = position;
+}
+
+void tile::set_size(const unsigned int w, const unsigned int h)
+{
+    w_ = w;
+    h_ = h;
 }
 
 void tile::set_value(const unsigned int value)
@@ -102,8 +108,16 @@ void tile::draw(SDL_Renderer& renderer)
     //draw background box
     {
         const auto c = get_background_color(value_);
+        const auto r = SDL_Rect
+        {
+            position_.x,
+            position_.y,
+            static_cast<int>(w_),
+            static_cast<int>(h_)
+        };
+
         SDL_SetRenderDrawColor(&renderer, c.r, c.g, c.b, c.a);
-        SDL_RenderFillRect(&renderer, &area_);
+        SDL_RenderFillRect(&renderer, &r);
     }
 
     //draw number
@@ -130,12 +144,12 @@ void tile::draw(SDL_Renderer& renderer)
             number_texture_height
         ;
 
-        const auto number_width = area_.w * number_texture_ratio * 0.6;
-        const auto number_height = area_.h * 0.6;
+        const auto number_width = w_ * number_texture_ratio * 0.6;
+        const auto number_height = h_ * 0.6;
 
         SDL_Rect r;
-        r.x = static_cast<int>(area_.x + area_.w / 2.0 - number_width / 2.0);
-        r.y = static_cast<int>(area_.y + area_.h / 2.0 - number_height / 2.0);
+        r.x = static_cast<int>(position_.x + w_ / 2.0 - number_width / 2.0);
+        r.y = static_cast<int>(position_.y + h_ / 2.0 - number_height / 2.0);
         r.w = number_width;
         r.h = number_height;
         SDL_RenderCopy(&renderer, pnumber_texture, nullptr, &r);

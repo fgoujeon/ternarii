@@ -33,14 +33,12 @@ namespace
     const auto tile_margin = cell_size * 0.05;
     const auto tile_size = cell_size - tile_margin * 2;
 
-    auto tile_coordinate_to_area(const tile_coordinate& c)
+    auto tile_coordinate_to_position(const tile_coordinate& c)
     {
-        return SDL_Rect
+        return SDL_Point
         {
             static_cast<int>(c.x * cell_size + tile_margin),
-            static_cast<int>((11 - c.y) * cell_size + tile_margin),
-            static_cast<int>(tile_size),
-            static_cast<int>(tile_size)
+            static_cast<int>((11 - c.y) * cell_size + tile_margin)
         };
     }
 
@@ -57,14 +55,12 @@ namespace
                 {
                     auto ptile = std::make_unique<tile>();
                     ptile->set_value(opt_item->value);
-                    ptile->set_area
+                    ptile->set_position
                     (
-                        SDL_Rect
+                        SDL_Point
                         {
                             static_cast<int>(x * cell_size + tile_margin),
-                            static_cast<int>((y_offset - y) * cell_size + tile_margin),
-                            static_cast<int>(tile_size),
-                            static_cast<int>(tile_size)
+                            static_cast<int>((y_offset - y) * cell_size + tile_margin)
                         }
                     );
                     tiles[x][y] = std::move(ptile);
@@ -105,14 +101,13 @@ void grid::create_next_input(const unsigned int value0, const unsigned int value
     {
         next_input_tiles_[i] = std::make_unique<tile>();
         next_input_tiles_[i]->set_value(value);
-        next_input_tiles_[i]->set_area
+        next_input_tiles_[i]->set_size(tile_size, tile_size);
+        next_input_tiles_[i]->set_position
         (
-            SDL_Rect
+            SDL_Point
             {
                 static_cast<int>((2 + i) * cell_size + tile_margin),
-                static_cast<int>(tile_margin),
-                static_cast<int>(tile_size),
-                static_cast<int>(tile_size)
+                static_cast<int>(tile_margin)
             }
         );
         ++i;
@@ -138,14 +133,12 @@ void grid::set_next_input_items(const next_input_item_array& items)
         {
             next_input_tiles_[i] = std::make_unique<tile>();
             next_input_tiles_[i]->set_value(opt_item->value);
-            next_input_tiles_[i]->set_area
+            next_input_tiles_[i]->set_position
             (
-                SDL_Rect
+                SDL_Point
                 {
                     static_cast<int>((2 + i) * cell_size + tile_margin),
-                    static_cast<int>(tile_margin),
-                    static_cast<int>(tile_size),
-                    static_cast<int>(tile_size)
+                    static_cast<int>(tile_margin)
                 }
             );
         }
@@ -216,7 +209,7 @@ void grid::drop_tile
     auto& ptile = board_tiles_[column_index][src_row_index];
     if(ptile)
     {
-        ptile->set_area(tile_coordinate_to_area(tile_coordinate{column_index, dst_row_index}));
+        ptile->set_position(tile_coordinate_to_position(tile_coordinate{column_index, dst_row_index}));
         board_tiles_[column_index][dst_row_index] = std::move(ptile);
     }
 }
@@ -233,7 +226,8 @@ void grid::merge_tiles
 
     auto pdst_tile = std::make_unique<tile>();
     pdst_tile->set_value(dst_tile_value);
-    pdst_tile->set_area(tile_coordinate_to_area(dst_tile));
+    pdst_tile->set_size(tile_size, tile_size);
+    pdst_tile->set_position(tile_coordinate_to_position(dst_tile));
     board_tiles_[dst_tile.x][dst_tile.y] = std::move(pdst_tile);
 }
 
@@ -312,28 +306,24 @@ void grid::update_input_tile_areas()
 
     if(auto& ptile = input_tiles_[0])
     {
-        ptile->set_area
+        ptile->set_position
         (
-            SDL_Rect
+            SDL_Point
             {
                 static_cast<int>((tile0_x + input_x_offset_) * cell_size + tile_margin),
-                static_cast<int>((tile0_y + 2) * cell_size + tile_margin),
-                static_cast<int>(tile_size),
-                static_cast<int>(tile_size)
+                static_cast<int>((tile0_y + 2) * cell_size + tile_margin)
             }
         );
     }
 
     if(auto& ptile = input_tiles_[1])
     {
-        ptile->set_area
+        ptile->set_position
         (
-            SDL_Rect
+            SDL_Point
             {
                 static_cast<int>((tile1_x + input_x_offset_) * cell_size + tile_margin),
-                static_cast<int>((tile1_y + 2) * cell_size + tile_margin),
-                static_cast<int>(tile_size),
-                static_cast<int>(tile_size)
+                static_cast<int>((tile1_y + 2) * cell_size + tile_margin)
             }
         );
     }
