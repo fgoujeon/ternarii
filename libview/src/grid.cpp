@@ -160,78 +160,106 @@ void grid::create_next_input(const unsigned int value0, const unsigned int value
                 tile_margin
             }
         );
+        next_input_tiles_[i]->set_visible(true);
         ++i;
     }
 }
 
 void grid::insert_next_input(const unsigned int x_offset, const unsigned int rotation)
 {
-    for(auto i = 0; i < 2; ++i)
-        input_tiles_[i] = std::move(next_input_tiles_[i]);
-
     input_x_offset_ = x_offset;
     input_rotation_ = rotation;
-    update_input_tile_areas();
+
+    const auto dst_positions = get_input_tile_positions(x_offset, rotation);
+
+    animation_group g;
+    for(auto i = 0; i < 2; ++i)
+    {
+        input_tiles_[i] = std::move(next_input_tiles_[i]);
+        g.push_back(std::make_unique<translation>(*input_tiles_[i], dst_positions[i]));
+    }
+
+    animations_.push(std::move(g));
 }
 
 void grid::set_next_input_items(const next_input_item_array& items)
 {
-    auto i = 0;
-    for(auto& opt_item: items)
-    {
-        if(opt_item)
-        {
-            next_input_tiles_[i] = std::make_unique<tile>();
-            next_input_tiles_[i]->set_value(opt_item->value);
-            next_input_tiles_[i]->set_position
-            (
-                point
-                {
-                    (2 + i) * cell_size + tile_margin,
-                    tile_margin
-                }
-            );
-        }
-        else
-        {
-            next_input_tiles_[i] = nullptr;
-        }
-
-        ++i;
-    }
+//    auto i = 0;
+//    for(auto& opt_item: items)
+//    {
+//        if(opt_item)
+//        {
+//            next_input_tiles_[i] = std::make_unique<tile>();
+//            next_input_tiles_[i]->set_value(opt_item->value);
+//            next_input_tiles_[i]->set_position
+//            (
+//                SDL_Point
+//                {
+//                    static_cast<int>((2 + i) * cell_size + tile_margin),
+//                    static_cast<int>(tile_margin)
+//                }
+//            );
+//        }
+//        else
+//        {
+//            next_input_tiles_[i] = nullptr;
+//        }
+//
+//        ++i;
+//    }
 }
 
 void grid::set_input_items(const input_item_array& items)
 {
-    auto i = 0;
-    for(auto& opt_item: items)
-    {
-        if(opt_item)
-        {
-            input_tiles_[i] = std::make_unique<tile>();
-            input_tiles_[i]->set_value(opt_item->value);
-        }
-        else
-        {
-            input_tiles_[i] = nullptr;
-        }
-
-        ++i;
-    }
-
-    update_input_tile_areas();
+//    auto i = 0;
+//    for(auto& opt_item: items)
+//    {
+//        if(opt_item)
+//        {
+//            input_tiles_[i] = std::make_unique<tile>();
+//            input_tiles_[i]->set_value(opt_item->value);
+//        }
+//        else
+//        {
+//            input_tiles_[i] = nullptr;
+//        }
+//
+//        ++i;
+//    }
+//
+//    update_input_tile_areas();
 }
 
 void grid::set_input_x_offset(const unsigned int value)
 {
-    input_x_offset_ = value;
-    update_input_tile_areas();
+    if(input_x_offset_ != value)
+    {
+        input_x_offset_ = value;
+
+        const auto dst_positions = get_input_tile_positions(input_x_offset_, input_rotation_);
+
+        animation_group g;
+        for(auto i = 0; i < 2; ++i)
+            g.push_back(std::make_unique<translation>(*input_tiles_[i], dst_positions[i]));
+
+        animations_.push(std::move(g));
+    }
 }
 
 void grid::set_input_rotation(const unsigned int value)
 {
-    input_rotation_ = value;
-    update_input_tile_areas();
+    if(input_rotation_ != value)
+    {
+        input_rotation_ = value;
+
+        const auto dst_positions = get_input_tile_positions(input_x_offset_, input_rotation_);
+
+        animation_group g;
+        for(auto i = 0; i < 2; ++i)
+            g.push_back(std::make_unique<translation>(*input_tiles_[i], dst_positions[i]));
+
+        animations_.push(std::move(g));
+    }
 }
 
 void grid::insert_input
@@ -259,7 +287,12 @@ void grid::drop_tile
     auto& ptile = board_tiles_[column_index][src_row_index];
     if(ptile)
     {
-        ptile->set_position(tile_coordinate_to_position(tile_coordinate{column_index, dst_row_index}));
+        const auto dst_position = tile_coordinate_to_position(tile_coordinate{column_index, dst_row_index});
+
+        animation_group g;
+        g.push_back(std::make_unique<translation>(*ptile, dst_position));
+        animations_.push(std::move(g));
+
         board_tiles_[column_index][dst_row_index] = std::move(ptile);
     }
 }
@@ -271,38 +304,88 @@ void grid::merge_tiles
     const unsigned int dst_tile_value
 )
 {
-    for(const auto& src_tile: src_tiles)
-        board_tiles_[src_tile.x][src_tile.y] = nullptr;
+    //translate source tiles to position of destination tile
+    {
+        animation_group g;
 
-    auto pdst_tile = std::make_unique<tile>();
-    pdst_tile->set_value(dst_tile_value);
-    pdst_tile->set_size(tile_size, tile_size);
-    pdst_tile->set_position(tile_coordinate_to_position(dst_tile));
-    board_tiles_[dst_tile.x][dst_tile.y] = std::move(pdst_tile);
+        const auto dst_position = tile_coordinate_to_position(dst_tile);
+
+        for(const auto& src_tile_coordinate: src_tiles)
+        {
+            if(auto& ptile = board_tiles_[src_tile_coordinate.x][src_tile_coordinate.y])
+            {
+                g.push_back(std::make_unique<translation>(*ptile, dst_position));
+            }
+        }
+
+        animations_.push(std::move(g));
+    }
+
+    //make source tiles disappear
+    {
+        animation_group g;
+
+        for(const auto& src_tile_coordinate: src_tiles)
+        {
+            if(auto& ptile = board_tiles_[src_tile_coordinate.x][src_tile_coordinate.y])
+            {
+                g.push_back(std::make_unique<fade_out>(*ptile));
+            }
+        }
+
+        animations_.push(std::move(g));
+    }
+
+    for(const auto& src_tile_coordinate: src_tiles)
+    {
+        if(auto& ptile = board_tiles_[src_tile_coordinate.x][src_tile_coordinate.y])
+        {
+            disappearing_tiles_.push_back(std::move(ptile));
+        }
+    }
+
+    //create merged tile
+    {
+        auto pdst_tile = std::make_unique<tile>();
+        pdst_tile->set_value(dst_tile_value);
+        pdst_tile->set_size(tile_size, tile_size);
+        pdst_tile->set_position(tile_coordinate_to_position(dst_tile));
+
+        animation_group g;
+        g.push_back(std::make_unique<fade_in>(*pdst_tile));
+        animations_.push(std::move(g));
+
+        board_tiles_[dst_tile.x][dst_tile.y] = std::move(pdst_tile);
+    }
 }
 
 void grid::set_board_items(const board_item_array& items)
 {
-    fill_tiles(board_tiles_, items, 11);
+//    fill_tiles(board_tiles_, items, 11);
 }
 
 void grid::draw(SDL_Renderer& renderer)
 {
-    //background
+    //animate
+    iterate(animations_);
+    if(animations_.empty())
+        disappearing_tiles_.clear();
+
+    //draw background
     {
         const auto r = SDL_Rect{0, 0, 6 * cell_size, 12 * cell_size};
         SDL_SetRenderDrawColor(&renderer, 0x66, 0x66, 0x66, 255);
         SDL_RenderFillRect(&renderer, &r);
     }
 
-    //death line
+    //draw death line
     {
         const auto r = SDL_Rect{0, 5 * cell_size - 1, 6 * cell_size, 2};
         SDL_SetRenderDrawColor(&renderer, 0xff, 0xff, 0xff, 255);
         SDL_RenderFillRect(&renderer, &r);
     }
 
-    //tiles
+    //draw tiles
     {
         for(auto& ptile: next_input_tiles_)
             if(ptile)
@@ -316,15 +399,11 @@ void grid::draw(SDL_Renderer& renderer)
             for(auto& ptile: tile_column)
                 if(ptile)
                     ptile->draw(renderer);
-    }
-}
 
-void grid::update_input_tile_areas()
-{
-    const auto positions = get_input_tile_positions(input_x_offset_, input_rotation_);
-    for(auto i = 0; i < 2; ++i)
-        if(auto& ptile = input_tiles_[i])
-            ptile->set_position(positions[i]);
+        for(auto& ptile: disappearing_tiles_)
+            if(ptile)
+                ptile->draw(renderer);
+    }
 }
 
 } //namespace view

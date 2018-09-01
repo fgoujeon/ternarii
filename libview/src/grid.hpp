@@ -2,6 +2,7 @@
 #define LIBVIEW_GRID_HPP
 
 #include "tile.hpp"
+#include "animations.hpp"
 #include <libview/data_types.hpp>
 #include <libsdl.hpp>
 #include <vector>
@@ -85,14 +86,13 @@ class grid
         void set_board_items(const board_item_array& items);
 
     private:
-        void update_input_tile_areas();
-
-    private:
         next_input_tile_array next_input_tiles_;
         input_tile_array input_tiles_;
         unsigned int input_x_offset_ = 0;
         unsigned int input_rotation_ = 0;
         board_tile_array board_tiles_;
+        std::vector<std::unique_ptr<tile>> disappearing_tiles_;
+        animation_queue animations_;
 };
 
 } //namespace libview

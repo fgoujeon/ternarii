@@ -37,6 +37,8 @@ class tile
 
         void set_size(const unsigned int w, const unsigned int h);
 
+        void set_visible(const bool visible);
+
         void set_value(const unsigned int value);
 
         void draw(SDL_Renderer& renderer);
@@ -46,6 +48,7 @@ class tile
         point position_;
         unsigned int w_ = 0;
         unsigned int h_ = 0;
+        bool visible_ = false;
         unsigned int value_ = 0;
 };
 

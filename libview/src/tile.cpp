@@ -103,6 +103,11 @@ void tile::set_size(const unsigned int w, const unsigned int h)
     h_ = h;
 }
 
+void tile::set_visible(const bool visible)
+{
+    visible_ = visible;
+}
+
 void tile::set_value(const unsigned int value)
 {
     value_ = value;
@@ -110,6 +115,9 @@ void tile::set_value(const unsigned int value)
 
 void tile::draw(SDL_Renderer& renderer)
 {
+    if(!visible_)
+        return;
+
     //draw background box
     {
         const auto c = get_background_color(value_);
