@@ -110,15 +110,15 @@ namespace events
 
 
 
-    struct tile_drop_list
+    struct tile_drop
     {
         data_types::tile_drop_list drops;
     };
 
     inline
-    std::ostream& operator<<(std::ostream& l, const tile_drop_list& r)
+    std::ostream& operator<<(std::ostream& l, const tile_drop& r)
     {
-        l << "tile_drop_list";
+        l << "tile_drop";
         l << "{";
         l << "drops: {";
         {
@@ -137,15 +137,15 @@ namespace events
 
 
 
-    struct tile_merge_list
+    struct tile_merge
     {
         data_types::tile_merge_list merges;
     };
 
     inline
-    std::ostream& operator<<(std::ostream& l, const tile_merge_list& r)
+    std::ostream& operator<<(std::ostream& l, const tile_merge& r)
     {
-        l << "tile_merge_list";
+        l << "tile_merge";
         l << "{";
         l << "merges: {";
         {
@@ -196,8 +196,8 @@ using event = std::variant
     events::next_input_insertion,
     events::input_layout_change,
     events::input_insertion,
-    events::tile_drop_list,
-    events::tile_merge_list,
+    events::tile_drop,
+    events::tile_merge,
     events::score_change,
     events::end_of_game
 >;

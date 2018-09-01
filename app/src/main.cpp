@@ -161,12 +161,12 @@ class controller
             );
         }
 
-        void handle_game_event(const libgame::events::tile_drop_list& event)
+        void handle_game_event(const libgame::events::tile_drop& event)
         {
             view_.drop_tiles(conversion::to_view(event.drops));
         }
 
-        void handle_game_event(const libgame::events::tile_merge_list& event)
+        void handle_game_event(const libgame::events::tile_merge& event)
         {
             view_.merge_tiles(conversion::to_view(event.merges));
         }

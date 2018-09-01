@@ -58,9 +58,9 @@ class board
 	private:
         events::input_insertion insert_input(const board_input& in);
 
-        events::tile_drop_list make_tiles_fall();
+        data_types::tile_drop_list make_tiles_fall();
 
-        events::tile_merge_list merge_tiles();
+        data_types::tile_merge_list merge_tiles();
 
 		enum class selection_state
 		{

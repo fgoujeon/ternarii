@@ -59,15 +59,17 @@ std::vector<event> board::drop_input(const board_input& in)
     bool events_happened;
     do
     {
-        const auto fall_event = make_tiles_fall();
-        events.push_back(fall_event);
+        const auto drops = make_tiles_fall();
+        if(!drops.empty())
+            events.push_back(events::tile_drop{drops});
 
-        const auto merge_event = merge_tiles();
-        events.push_back(merge_event);
+        const auto merges = merge_tiles();
+        if(!merges.empty())
+            events.push_back(events::tile_merge{merges});
 
         events.push_back(events::score_change{get_score()});
 
-        events_happened = !fall_event.drops.empty() || !merge_event.merges.empty();
+        events_happened = !drops.empty() || !merges.empty();
     } while(events_happened);
 
     return events;
@@ -93,9 +95,9 @@ events::input_insertion board::insert_input(const board_input& in)
     return events::input_insertion{x0, y0, x1, y1};
 }
 
-events::tile_drop_list board::make_tiles_fall()
+data_types::tile_drop_list board::make_tiles_fall()
 {
-    events::tile_drop_list event;
+    data_types::tile_drop_list drops;
 
     for(unsigned int column_index = 0; column_index < column_count; ++column_index)
     {
@@ -109,7 +111,7 @@ events::tile_drop_list board::make_tiles_fall()
                     tile_grid_[column_index][row_index] = std::nullopt;
                     tile_grid_[column_index][*opt_empty_cell_row_index] = opt_tile;
 
-                    event.drops.push_back
+                    drops.push_back
                     (
                         data_types::tile_drop
                         {
@@ -130,12 +132,12 @@ events::tile_drop_list board::make_tiles_fall()
         }
     }
 
-    return event;
+    return drops;
 }
 
-events::tile_merge_list board::merge_tiles()
+data_types::tile_merge_list board::merge_tiles()
 {
-    events::tile_merge_list event;
+    data_types::tile_merge_list merges;
 
     grid_t tile_layer;
 
@@ -185,7 +187,7 @@ events::tile_merge_list board::merge_tiles()
                     auto merged_tile = data_types::tile{current_tile.value + 1};
                     tile_layer[column_index][row_index] = merged_tile;
 
-                    event.merges.push_back
+                    merges.push_back
                     (
                         data_types::tile_merge
                         {
@@ -202,7 +204,7 @@ events::tile_merge_list board::merge_tiles()
         }
     }
 
-    if(!event.merges.empty())
+    if(!merges.empty())
     {
         //overlay the tile layer to the tile array of the board
         for(auto x = 0; x < column_count; ++x)
@@ -218,7 +220,7 @@ events::tile_merge_list board::merge_tiles()
         }
     }
 
-    return event;
+    return merges;
 }
 
 void board::select_tiles
