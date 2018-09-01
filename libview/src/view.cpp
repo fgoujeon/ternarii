@@ -159,26 +159,35 @@ struct view::impl
 
     void process_events()
     {
+        /*
+        Note: We want to ignore user inputs when we're animating, so that:
+        - we don't queue to many animations;
+        - user moves only when they knows what they're moving.
+        */
+
         SDL_Event event;
         while(SDL_PollEvent(&event))
         {
             switch(event.type)
             {
                 case SDL_KEYDOWN:
-                    switch(event.key.keysym.sym)
+                    if(!pgrid->is_animating())
                     {
-                        case SDLK_LEFT:
-                            evt_handler(events::left_shift_request{});
-                            break;
-                        case SDLK_RIGHT:
-                            evt_handler(events::right_shift_request{});
-                            break;
-                        case SDLK_UP:
-                            evt_handler(events::clockwise_rotation_request{});
-                            break;
-                        case SDLK_DOWN:
-                            evt_handler(events::drop_request{});
-                            break;
+                        switch(event.key.keysym.sym)
+                        {
+                            case SDLK_LEFT:
+                                evt_handler(events::left_shift_request{});
+                                break;
+                            case SDLK_RIGHT:
+                                evt_handler(events::right_shift_request{});
+                                break;
+                            case SDLK_UP:
+                                evt_handler(events::clockwise_rotation_request{});
+                                break;
+                            case SDLK_DOWN:
+                                evt_handler(events::drop_request{});
+                                break;
+                        }
                     }
                     break;
                 case SDL_QUIT:

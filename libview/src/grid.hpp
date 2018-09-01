@@ -75,6 +75,8 @@ class grid
 
         void set_board_items(const data_types::board_item_array& items);
 
+        bool is_animating() const;
+
     private:
         next_input_tile_array next_input_tiles_;
         input_tile_array input_tiles_;

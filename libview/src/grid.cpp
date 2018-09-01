@@ -408,4 +408,9 @@ void grid::draw(SDL_Renderer& renderer)
     }
 }
 
+bool grid::is_animating() const
+{
+    return !animations_.empty();
+}
+
 } //namespace view
