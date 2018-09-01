@@ -1,12 +1,3 @@
-#ifndef LIBVIEW_GRID_HPP
-#define LIBVIEW_GRID_HPP
-
-#include "tile.hpp"
-#include "animations.hpp"
-#include <libview/data_types.hpp>
-#include <libsdl.hpp>
-#include <vector>
-#include <array>
 /*
 Copyright 2018 Florian Goujeon
 
@@ -26,6 +17,15 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+#ifndef LIBVIEW_GRID_HPP
+#define LIBVIEW_GRID_HPP
+
+#include "tile.hpp"
+#include "animations.hpp"
+#include <libview/data_types.hpp>
+#include <libsdl.hpp>
+#include <vector>
+#include <array>
 
 namespace libview
 {

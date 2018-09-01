@@ -23,6 +23,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include "tile.hpp"
 #include "point.hpp"
 #include <queue>
+#include <cmath>
 
 namespace libview
 {
@@ -39,36 +40,46 @@ struct animation
 class translation: public animation
 {
     public:
-        translation(tile& t, const point& dst_pos):
+        translation
+        (
+            tile& t,
+            const point& dst_pos,
+            const double speed //in pixels per second
+        ):
             t_(t),
-            dst_pos_(dst_pos)
+            dst_pos_(dst_pos),
+            speed_(speed)
         {
         }
 
         void iterate()
         {
-            if(first_)
+            //We must postpone initialization because source position isn't
+            //known at construction time.
+            if(!initialized_)
             {
                 init();
-                first_ = false;
+                initialized_ = true;
             }
 
-            auto pos = t_.get_position();
-            pos.x += x_step_;
-            pos.y += y_step_;
-            t_.set_position(pos);
-
-            --iteration_countdown_;
-            if(iteration_countdown_ == 0)
+            if(iteration_countdown_ > 1)
+            {
+                auto pos = t_.get_position();
+                pos.x += x_step_;
+                pos.y += y_step_;
+                t_.set_position(pos);
+                --iteration_countdown_;
+            }
+            else
             {
                 t_.set_position(dst_pos_);
-                done_ = true;
+                iteration_countdown_ = 0;
             }
         }
 
         bool is_done() const
         {
-            return done_;
+            return iteration_countdown_ == 0;
         }
 
     private:
@@ -80,18 +91,30 @@ class translation: public animation
             const auto dst_x = dst_pos_.x;
             const auto dst_y = dst_pos_.y;
 
-            x_step_ = (dst_x - src_x) / 10;
-            y_step_ = (dst_y - src_y) / 10;
+            const auto x_diff = dst_x - src_x;
+            const auto y_diff = dst_y - src_y;
+
+            const auto distance = std::sqrt(x_diff * x_diff + y_diff * y_diff);
+            const auto needed_iteration_count = std::max
+            (
+                1u, //iterate at least once
+                static_cast<unsigned int>(distance / std::abs(speed_ / 60))
+            );
+
+            x_step_ = x_diff / needed_iteration_count;
+            y_step_ = y_diff / needed_iteration_count;
+            iteration_countdown_ = needed_iteration_count;
         }
 
     private:
         tile& t_;
-        point dst_pos_;
-        bool first_ = true;
+        const point dst_pos_;
+        const double speed_;
+
+        bool initialized_ = false;
         double x_step_ = 0;
         double y_step_ = 0;
-        unsigned int iteration_countdown_ = 10;
-        bool done_ = false;
+        unsigned int iteration_countdown_ = 1;
 };
 
 class fade_in: public animation

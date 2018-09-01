@@ -20,7 +20,6 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include "grid.hpp"
 #include "utility.hpp"
 #include <map>
-#include <iostream>
 
 namespace libview
 {
@@ -33,6 +32,13 @@ namespace
     const auto tile_margin = cell_size * 0.05;
     const auto tile_size = cell_size - tile_margin * 2;
 
+    //speeds, in pixels per second
+    const auto tile_insertion_speed = 600;
+    const auto tile_shift_speed = 600;
+    const auto tile_rotation_speed = 600;
+    const auto tile_drop_speed = 1200;
+    const auto tile_merge_speed = 400;
+
     auto tile_coordinate_to_position(const data_types::tile_coordinate& c)
     {
         return point
@@ -40,41 +46,6 @@ namespace
             c.x * cell_size + tile_margin,
             (11 - c.y) * cell_size + tile_margin
         };
-    }
-
-    template<class TileArray, class ItemArray>
-    void fill_tiles(TileArray& tiles, const ItemArray& items, const unsigned int y_offset)
-    {
-        auto x = 0;
-        for(auto& item_column: items)
-        {
-            auto y = 0;
-            for(auto& opt_item: item_column)
-            {
-                if(opt_item)
-                {
-                    auto ptile = std::make_unique<tile>();
-                    ptile->set_value(opt_item->value);
-                    ptile->set_position
-                    (
-                        point
-                        {
-                            x * cell_size + tile_margin,
-                            (y_offset - y) * cell_size + tile_margin
-                        }
-                    );
-                    tiles[x][y] = std::move(ptile);
-                }
-                else
-                {
-                    tiles[x][y] = nullptr;
-                }
-
-                ++y;
-            }
-
-            ++x;
-        }
     }
 
     std::array<point, 2> get_input_tile_positions(const unsigned int x_offset, const unsigned int rotation)
@@ -176,7 +147,7 @@ void grid::insert_next_input(const unsigned int x_offset, const unsigned int rot
     for(auto i = 0; i < 2; ++i)
     {
         input_tiles_[i] = std::move(next_input_tiles_[i]);
-        g.push_back(std::make_unique<translation>(*input_tiles_[i], dst_positions[i]));
+        g.push_back(std::make_unique<translation>(*input_tiles_[i], dst_positions[i], tile_insertion_speed));
     }
 
     animations_.push(std::move(g));
@@ -240,7 +211,7 @@ void grid::set_input_x_offset(const unsigned int value)
 
         animation_group g;
         for(auto i = 0; i < 2; ++i)
-            g.push_back(std::make_unique<translation>(*input_tiles_[i], dst_positions[i]));
+            g.push_back(std::make_unique<translation>(*input_tiles_[i], dst_positions[i], tile_shift_speed));
 
         animations_.push(std::move(g));
     }
@@ -256,7 +227,7 @@ void grid::set_input_rotation(const unsigned int value)
 
         animation_group g;
         for(auto i = 0; i < 2; ++i)
-            g.push_back(std::make_unique<translation>(*input_tiles_[i], dst_positions[i]));
+            g.push_back(std::make_unique<translation>(*input_tiles_[i], dst_positions[i], tile_rotation_speed));
 
         animations_.push(std::move(g));
     }
@@ -286,7 +257,7 @@ void grid::drop_tiles(const data_types::tile_drop_list& drops)
         if(auto& ptile = board_tiles_[drop.column_index][drop.src_row_index])
         {
             const auto dst_position = tile_coordinate_to_position(data_types::tile_coordinate{drop.column_index, drop.dst_row_index});
-            g.push_back(std::make_unique<translation>(*ptile, dst_position));
+            g.push_back(std::make_unique<translation>(*ptile, dst_position, tile_drop_speed));
             board_tiles_[drop.column_index][drop.dst_row_index] = std::move(ptile);
         }
     }
@@ -308,7 +279,7 @@ void grid::merge_tiles(const data_types::tile_merge_list& merges)
             {
                 if(auto& ptile = board_tiles_[src_tile_coordinate.x][src_tile_coordinate.y])
                 {
-                    g.push_back(std::make_unique<translation>(*ptile, dst_position));
+                    g.push_back(std::make_unique<translation>(*ptile, dst_position, tile_merge_speed));
                 }
             }
         }
