@@ -265,7 +265,7 @@ void grid::drop_tiles(const data_types::tile_drop_list& drops)
     animations_.push(std::move(g));
 
     animation_group pause_group;
-    pause_group.push_back(std::make_unique<pause>(0.1));
+    pause_group.push_back(std::make_unique<pause>(0.05));
     animations_.push(std::move(pause_group));
 }
 
