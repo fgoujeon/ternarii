@@ -53,10 +53,6 @@ class grid
 
         void insert_next_input(const unsigned int x_offset, const unsigned int rotation);
 
-        void set_next_input_items(const data_types::next_input_item_array& items);
-
-        void set_input_items(const data_types::input_item_array& items);
-
         void set_input_x_offset(const unsigned int value);
 
         void set_input_rotation(const unsigned int value);
@@ -72,8 +68,6 @@ class grid
         void drop_tiles(const data_types::tile_drop_list& drops);
 
         void merge_tiles(const data_types::tile_merge_list& merges);
-
-        void set_board_items(const data_types::board_item_array& items);
 
         bool is_animating() const;
 

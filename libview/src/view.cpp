@@ -257,16 +257,6 @@ void view::insert_next_input(const unsigned int x_offset, const unsigned int rot
     pimpl_->pgrid->insert_next_input(x_offset, rotation);
 }
 
-void view::set_next_input_items(const data_types::next_input_item_array& items)
-{
-    pimpl_->pgrid->set_next_input_items(items);
-}
-
-void view::set_input_items(const data_types::input_item_array& items)
-{
-    pimpl_->pgrid->set_input_items(items);
-}
-
 void view::set_input_x_offset(const unsigned int value)
 {
     pimpl_->pgrid->set_input_x_offset(value);
@@ -302,11 +292,6 @@ void view::drop_tiles(const data_types::tile_drop_list& drops)
 void view::merge_tiles(const data_types::tile_merge_list& merges)
 {
     pimpl_->pgrid->merge_tiles(merges);
-}
-
-void view::set_board_items(const data_types::board_item_array& items)
-{
-    pimpl_->pgrid->set_board_items(items);
 }
 
 void view::set_game_over_screen_visible(const bool visible)

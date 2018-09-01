@@ -153,54 +153,6 @@ void grid::insert_next_input(const unsigned int x_offset, const unsigned int rot
     animations_.push(std::move(g));
 }
 
-void grid::set_next_input_items(const data_types::next_input_item_array& items)
-{
-//    auto i = 0;
-//    for(auto& opt_item: items)
-//    {
-//        if(opt_item)
-//        {
-//            next_input_tiles_[i] = std::make_unique<tile>();
-//            next_input_tiles_[i]->set_value(opt_item->value);
-//            next_input_tiles_[i]->set_position
-//            (
-//                SDL_Point
-//                {
-//                    static_cast<int>((2 + i) * cell_size + tile_margin),
-//                    static_cast<int>(tile_margin)
-//                }
-//            );
-//        }
-//        else
-//        {
-//            next_input_tiles_[i] = nullptr;
-//        }
-//
-//        ++i;
-//    }
-}
-
-void grid::set_input_items(const data_types::input_item_array& items)
-{
-//    auto i = 0;
-//    for(auto& opt_item: items)
-//    {
-//        if(opt_item)
-//        {
-//            input_tiles_[i] = std::make_unique<tile>();
-//            input_tiles_[i]->set_value(opt_item->value);
-//        }
-//        else
-//        {
-//            input_tiles_[i] = nullptr;
-//        }
-//
-//        ++i;
-//    }
-//
-//    update_input_tile_areas();
-}
-
 void grid::set_input_x_offset(const unsigned int value)
 {
     if(input_x_offset_ != value)
@@ -341,11 +293,6 @@ void grid::merge_tiles(const data_types::tile_merge_list& merges)
         pause_group.push_back(std::make_unique<pause>(0.2));
         animations_.push(std::move(pause_group));
     }
-}
-
-void grid::set_board_items(const data_types::board_item_array& items)
-{
-//    fill_tiles(board_tiles_, items, 11);
 }
 
 void grid::draw(SDL_Renderer& renderer, const double ellapsed_time)
