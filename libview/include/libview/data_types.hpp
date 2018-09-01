@@ -22,6 +22,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 
 #include <functional>
 #include <optional>
+#include <vector>
 #include <array>
 #include <ostream>
 
@@ -55,24 +56,18 @@ struct tile_coordinate
     unsigned int y;
 };
 
-inline
-std::ostream& operator<<(std::ostream& l, const tile_coordinate& r)
-{
-    l << "tile_coordinate";
-    l << "{";
-    l << "x: " << r.x << ", ";
-    l << "y: " << r.y;
-    l << "}";
-    return l;
-}
-
-
-
 struct tile_drop
 {
     unsigned int column_index;
     unsigned int src_row_index;
     unsigned int dst_row_index;
+};
+
+struct tile_merge
+{
+    std::vector<tile_coordinate> src_tile_coordinates;
+    tile_coordinate dst_tile_coordinate;
+    unsigned int dst_tile_value;
 };
 
 } //namespace libview

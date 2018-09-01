@@ -21,6 +21,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #define LIBGAME_DATA_TYPES_HPP
 
 #include <optional>
+#include <vector>
 #include <array>
 #include <memory>
 #include <ostream>
@@ -94,6 +95,37 @@ std::ostream& operator<<(std::ostream& l, const tile_drop& r)
     l << "column_index: " << r.column_index << ", ";
     l << "src_row_index: " << r.src_row_index << ", ";
     l << "dst_row_index: " << r.dst_row_index;
+    l << "}";
+    return l;
+}
+
+
+
+struct tile_merge
+{
+    std::vector<tile_coordinate> src_tile_coordinates;
+    tile_coordinate dst_tile_coordinate;
+    unsigned int dst_tile_value;
+};
+
+inline
+std::ostream& operator<<(std::ostream& l, const tile_merge& r)
+{
+    l << "tile_merge";
+    l << "{";
+    l << "src_tile_coordinates: {";
+    {
+        auto first = true;
+        for(const auto& coord: r.src_tile_coordinates)
+        {
+            if(!first) l << ", ";
+            l << coord;
+            first = false;
+        }
+    }
+    l << "}, ";
+    l << "dst_tile_coordinate: " << r.dst_tile_coordinate << ", ";
+    l << "dst_tile_value: " << r.dst_tile_value;
     l << "}";
     return l;
 }

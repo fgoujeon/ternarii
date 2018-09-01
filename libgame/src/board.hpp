@@ -39,36 +39,28 @@ class board
 
 		board();
 
-		const grid_t&
-		tile_grid() const
+		const grid_t& tile_grid() const
 		{
 			return tile_grid_;
 		}
 
-		bool
-		is_game_over() const;
+		bool is_game_over() const;
 
-		unsigned int
-		get_highest_tile_ever() const
+		unsigned int get_highest_tile_ever() const
 		{
 			return highest_tile_ever_;
 		}
 
-        unsigned int
-        get_score() const;
+        unsigned int get_score() const;
 
-        std::vector<event>
-        drop_input(const board_input& in);
+        std::vector<event> drop_input(const board_input& in);
 
 	private:
-        events::input_insertion
-		insert_input(const board_input& in);
+        events::input_insertion insert_input(const board_input& in);
 
-        events::tile_drop_set
-		make_tiles_fall();
+        events::tile_drop_set make_tiles_fall();
 
-        std::vector<event>
-		transmute_tiles();
+        events::tile_merge_set merge_tiles();
 
 		enum class selection_state
 		{
@@ -79,8 +71,7 @@ class board
 
 		typedef array2d<selection_state, column_count, row_count> selection_t;
 
-		void
-		select_tiles
+		void select_tiles
 		(
 			const unsigned int tile_value,
 			const unsigned int column_index,

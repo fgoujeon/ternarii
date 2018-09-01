@@ -30,6 +30,8 @@ libview::tile_coordinate to_view(const libgame::tile_coordinate& from);
 
 libview::tile_drop to_view(const libgame::tile_drop& from);
 
+libview::tile_merge to_view(const libgame::tile_merge& from);
+
 template<class T>
 auto to_view(const std::vector<T>& from)
 {

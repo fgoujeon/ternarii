@@ -39,4 +39,13 @@ libview::tile_drop to_view(const libgame::tile_drop& from)
     return to;
 }
 
+libview::tile_merge to_view(const libgame::tile_merge& from)
+{
+    auto to = libview::tile_merge{};
+    to.src_tile_coordinates = to_view(from.src_tile_coordinates);
+    to.dst_tile_coordinate = to_view(from.dst_tile_coordinate);
+    to.dst_tile_value = from.dst_tile_value;
+    return to;
+}
+
 } //namespace conversion

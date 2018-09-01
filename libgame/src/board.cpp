@@ -32,8 +32,7 @@ board::board():
 {
 }
 
-bool
-board::is_game_over() const
+bool board::is_game_over() const
 {
     for(unsigned int i = 0; i < column_count; ++i)
         if(tile_grid_[i][7]) return true;
@@ -41,8 +40,7 @@ board::is_game_over() const
     return false;
 }
 
-unsigned int
-board::get_score() const
+unsigned int board::get_score() const
 {
     auto score = 0u;
     for(const auto& cell_column: tile_grid_)
@@ -52,8 +50,7 @@ board::get_score() const
     return score;
 }
 
-std::vector<event>
-board::drop_input(const board_input& in)
+std::vector<event> board::drop_input(const board_input& in)
 {
     std::vector<event> events;
 
@@ -65,20 +62,18 @@ board::drop_input(const board_input& in)
         const auto fall_event = make_tiles_fall();
         events.push_back(fall_event);
 
-        const auto transmutation_events = transmute_tiles();
-        for(const auto& event: transmutation_events)
-            events.push_back(event);
+        const auto merge_event = merge_tiles();
+        events.push_back(merge_event);
 
         events.push_back(events::score_change{get_score()});
 
-        events_happened = !fall_event.drops.empty() || !transmutation_events.empty();
+        events_happened = !fall_event.drops.empty() || !merge_event.merges.empty();
     } while(events_happened);
 
     return events;
 }
 
-events::input_insertion
-board::insert_input(const board_input& in)
+events::input_insertion board::insert_input(const board_input& in)
 {
     //put the input on the upper rows
 
@@ -98,8 +93,7 @@ board::insert_input(const board_input& in)
     return events::input_insertion{x0, y0, x1, y1};
 }
 
-events::tile_drop_set
-board::make_tiles_fall()
+events::tile_drop_set board::make_tiles_fall()
 {
     events::tile_drop_set event;
 
@@ -139,10 +133,9 @@ board::make_tiles_fall()
     return event;
 }
 
-std::vector<event>
-board::transmute_tiles()
+events::tile_merge_set board::merge_tiles()
 {
-    std::vector<event> events;
+    events::tile_merge_set event;
 
     grid_t tile_layer;
 
@@ -192,9 +185,9 @@ board::transmute_tiles()
                     auto merged_tile = tile{current_tile.value + 1};
                     tile_layer[column_index][row_index] = merged_tile;
 
-                    events.push_back
+                    event.merges.push_back
                     (
-                        events::tile_merge
+                        tile_merge
                         {
                             removed_tile_coordinates,
                             tile_coordinate{column_index, row_index},
@@ -209,7 +202,7 @@ board::transmute_tiles()
         }
     }
 
-    if(!events.empty())
+    if(!event.merges.empty())
     {
         //overlay the tile layer to the tile array of the board
         for(auto x = 0; x < column_count; ++x)
@@ -225,11 +218,10 @@ board::transmute_tiles()
         }
     }
 
-    return events;
+    return event;
 }
 
-void
-board::select_tiles
+void board::select_tiles
 (
     const unsigned int tile_value,
     const unsigned int column_index,

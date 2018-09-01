@@ -137,31 +137,27 @@ namespace events
 
 
 
-    struct tile_merge
+    struct tile_merge_set
     {
-        std::vector<tile_coordinate> src_tiles;
-        tile_coordinate dst_tile;
-        unsigned int dst_tile_value;
+        std::vector<tile_merge> merges;
     };
 
     inline
-    std::ostream& operator<<(std::ostream& l, const tile_merge& r)
+    std::ostream& operator<<(std::ostream& l, const tile_merge_set& r)
     {
-        l << "tile_merge";
+        l << "tile_merge_set";
         l << "{";
-        l << "src_tiles: {";
+        l << "merges: {";
         {
             auto first = true;
-            for(const auto& coord: r.src_tiles)
+            for(const auto& merge: r.merges)
             {
                 if(!first) l << ", ";
-                l << coord;
+                l << merge;
                 first = false;
             }
         }
-        l << "}, ";
-        l << "dst_tile: " << r.dst_tile << ", ";
-        l << "dst_tile_value: " << r.dst_tile_value;
+        l << "}";
         l << "}";
         return l;
     }
@@ -201,7 +197,7 @@ using event = std::variant
     events::input_layout_change,
     events::input_insertion,
     events::tile_drop_set,
-    events::tile_merge,
+    events::tile_merge_set,
     events::score_change,
     events::end_of_game
 >;

@@ -166,14 +166,9 @@ class controller
             view_.drop_tiles(conversion::to_view(event.drops));
         }
 
-        void handle_game_event(const libgame::events::tile_merge& event)
+        void handle_game_event(const libgame::events::tile_merge_set& event)
         {
-            view_.merge_tiles
-            (
-                conversion::to_view(event.src_tiles),
-                conversion::to_view(event.dst_tile),
-                event.dst_tile_value
-            );
+            view_.merge_tiles(conversion::to_view(event.merges));
         }
 
         void handle_game_event(const libgame::events::end_of_game&)

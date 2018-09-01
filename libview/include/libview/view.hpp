@@ -64,12 +64,7 @@ class view
 
         void drop_tiles(const std::vector<tile_drop>& drops);
 
-        void merge_tiles
-        (
-            const std::vector<tile_coordinate>& src_tiles,
-            const tile_coordinate& dst_tile,
-            const unsigned int dst_tile_value
-        );
+        void merge_tiles(const std::vector<tile_merge>& merges);
 
         void set_board_items(const board_item_array& items);
 
