@@ -62,12 +62,7 @@ class view
             const unsigned int tile1_dst_row_index
         );
 
-        void drop_tile
-        (
-            const unsigned int column_index,
-            const unsigned int src_row_index,
-            const unsigned int dst_row_index
-        );
+        void drop_tiles(const std::vector<tile_drop>& drops);
 
         void merge_tiles
         (

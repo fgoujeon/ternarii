@@ -66,6 +66,15 @@ std::ostream& operator<<(std::ostream& l, const tile_coordinate& r)
     return l;
 }
 
+
+
+struct tile_drop
+{
+    unsigned int column_index;
+    unsigned int src_row_index;
+    unsigned int dst_row_index;
+};
+
 } //namespace libview
 
 #endif

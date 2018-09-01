@@ -273,19 +273,9 @@ void view::insert_input
     );
 }
 
-void view::drop_tile
-(
-    const unsigned int column_index,
-    const unsigned int src_row_index,
-    const unsigned int dst_row_index
-)
+void view::drop_tiles(const std::vector<tile_drop>& drops)
 {
-    pimpl_->pgrid->drop_tile
-    (
-        column_index,
-        src_row_index,
-        dst_row_index
-    );
+    pimpl_->pgrid->drop_tiles(drops);
 }
 
 void view::merge_tiles

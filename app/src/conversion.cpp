@@ -30,4 +30,13 @@ libview::tile_coordinate to_view(const libgame::tile_coordinate& from)
     return to;
 }
 
+libview::tile_drop to_view(const libgame::tile_drop& from)
+{
+    auto to = libview::tile_drop{};
+    to.column_index = from.column_index;
+    to.src_row_index = from.src_row_index;
+    to.dst_row_index = from.dst_row_index;
+    return to;
+}
+
 } //namespace conversion

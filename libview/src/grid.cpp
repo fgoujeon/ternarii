@@ -277,24 +277,21 @@ void grid::insert_input
         board_tiles_[tile1_dst_column_index][tile1_dst_row_index] = std::move(input_tiles_[1]);
 }
 
-void grid::drop_tile
-(
-    const unsigned int column_index,
-    const unsigned int src_row_index,
-    const unsigned int dst_row_index
-)
+void grid::drop_tiles(const std::vector<tile_drop>& drops)
 {
-    auto& ptile = board_tiles_[column_index][src_row_index];
-    if(ptile)
+    animation_group g;
+
+    for(const auto& drop: drops)
     {
-        const auto dst_position = tile_coordinate_to_position(tile_coordinate{column_index, dst_row_index});
-
-        animation_group g;
-        g.push_back(std::make_unique<translation>(*ptile, dst_position));
-        animations_.push(std::move(g));
-
-        board_tiles_[column_index][dst_row_index] = std::move(ptile);
+        if(auto& ptile = board_tiles_[drop.column_index][drop.src_row_index])
+        {
+            const auto dst_position = tile_coordinate_to_position(tile_coordinate{drop.column_index, drop.dst_row_index});
+            g.push_back(std::make_unique<translation>(*ptile, dst_position));
+            board_tiles_[drop.column_index][drop.dst_row_index] = std::move(ptile);
+        }
     }
+
+    animations_.push(std::move(g));
 }
 
 void grid::merge_tiles
