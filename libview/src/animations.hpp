@@ -37,6 +37,29 @@ struct animation
     virtual bool is_done() const = 0;
 };
 
+class pause: public animation
+{
+    public:
+        pause(const double duration /*in seconds*/):
+            iteration_countdown_(duration * 60)
+        {
+        }
+
+        void iterate()
+        {
+            if(!is_done())
+                --iteration_countdown_;
+        }
+
+        bool is_done() const
+        {
+            return iteration_countdown_ == 0;
+        }
+
+    private:
+        unsigned int iteration_countdown_;
+};
+
 class translation: public animation
 {
     public:

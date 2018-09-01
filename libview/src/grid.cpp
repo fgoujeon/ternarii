@@ -37,7 +37,7 @@ namespace
     const auto tile_shift_speed = 600;
     const auto tile_rotation_speed = 600;
     const auto tile_drop_speed = 1200;
-    const auto tile_merge_speed = 400;
+    const auto tile_merge_speed = 300;
 
     auto tile_coordinate_to_position(const data_types::tile_coordinate& c)
     {
@@ -263,6 +263,10 @@ void grid::drop_tiles(const data_types::tile_drop_list& drops)
     }
 
     animations_.push(std::move(g));
+
+    animation_group pause_group;
+    pause_group.push_back(std::make_unique<pause>(0.1));
+    animations_.push(std::move(pause_group));
 }
 
 void grid::merge_tiles(const data_types::tile_merge_list& merges)
@@ -329,6 +333,13 @@ void grid::merge_tiles(const data_types::tile_merge_list& merges)
         animations_.push(std::move(g));
 
         board_tiles_[merge.dst_tile_coordinate.x][merge.dst_tile_coordinate.y] = std::move(pdst_tile);
+    }
+
+    //make a pause
+    {
+        animation_group pause_group;
+        pause_group.push_back(std::make_unique<pause>(0.2));
+        animations_.push(std::move(pause_group));
     }
 }
 
