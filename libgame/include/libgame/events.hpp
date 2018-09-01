@@ -110,21 +110,27 @@ namespace events
 
 
 
-    struct tile_drop
+    struct tile_drop_set
     {
-        unsigned int column_index;
-        unsigned int src_row_index;
-        unsigned int dst_row_index;
+        std::vector<tile_drop> drops;
     };
 
     inline
-    std::ostream& operator<<(std::ostream& l, const tile_drop& r)
+    std::ostream& operator<<(std::ostream& l, const tile_drop_set& r)
     {
-        l << "tile_drop";
+        l << "tile_drop_set";
         l << "{";
-        l << "column_index: " << r.column_index << ", ";
-        l << "src_row_index: " << r.src_row_index << ", ";
-        l << "dst_row_index: " << r.dst_row_index;
+        l << "drops: {";
+        {
+            auto first = true;
+            for(const auto& drop: r.drops)
+            {
+                if(!first) l << ", ";
+                l << drop;
+                first = false;
+            }
+        }
+        l << "}";
         l << "}";
         return l;
     }
@@ -194,7 +200,7 @@ using event = std::variant
     events::next_input_insertion,
     events::input_layout_change,
     events::input_insertion,
-    events::tile_drop,
+    events::tile_drop_set,
     events::tile_merge,
     events::score_change,
     events::end_of_game

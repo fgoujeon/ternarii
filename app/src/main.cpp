@@ -161,14 +161,15 @@ class controller
             );
         }
 
-        void handle_game_event(const libgame::events::tile_drop& event)
+        void handle_game_event(const libgame::events::tile_drop_set& event)
         {
-            view_.drop_tile
-            (
-                event.column_index,
-                event.src_row_index,
-                event.dst_row_index
-            );
+            for(const auto& drop: event.drops)
+                view_.drop_tile
+                (
+                    drop.column_index,
+                    drop.src_row_index,
+                    drop.dst_row_index
+                );
         }
 
         void handle_game_event(const libgame::events::tile_merge& event)

@@ -64,7 +64,7 @@ class board
         events::input_insertion
 		insert_input(const board_input& in);
 
-        std::vector<event>
+        events::tile_drop_set
 		make_tiles_fall();
 
         std::vector<event>

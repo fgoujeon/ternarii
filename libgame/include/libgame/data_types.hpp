@@ -77,6 +77,27 @@ std::ostream& operator<<(std::ostream& l, const tile_coordinate& r)
     return l;
 }
 
+
+
+struct tile_drop
+{
+    unsigned int column_index;
+    unsigned int src_row_index;
+    unsigned int dst_row_index;
+};
+
+inline
+std::ostream& operator<<(std::ostream& l, const tile_drop& r)
+{
+    l << "tile_drop";
+    l << "{";
+    l << "column_index: " << r.column_index << ", ";
+    l << "src_row_index: " << r.src_row_index << ", ";
+    l << "dst_row_index: " << r.dst_row_index;
+    l << "}";
+    return l;
+}
+
 } //namespace libgame
 
 #endif

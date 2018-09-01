@@ -62,9 +62,8 @@ board::drop_input(const board_input& in)
     bool events_happened;
     do
     {
-        const auto fall_events = make_tiles_fall();
-        for(const auto& event: fall_events)
-            events.push_back(event);
+        const auto fall_event = make_tiles_fall();
+        events.push_back(fall_event);
 
         const auto transmutation_events = transmute_tiles();
         for(const auto& event: transmutation_events)
@@ -72,7 +71,7 @@ board::drop_input(const board_input& in)
 
         events.push_back(events::score_change{get_score()});
 
-        events_happened = !fall_events.empty() || !transmutation_events.empty();
+        events_happened = !fall_event.drops.empty() || !transmutation_events.empty();
     } while(events_happened);
 
     return events;
@@ -99,10 +98,10 @@ board::insert_input(const board_input& in)
     return events::input_insertion{x0, y0, x1, y1};
 }
 
-std::vector<event>
+events::tile_drop_set
 board::make_tiles_fall()
 {
-    std::vector<event> events;
+    events::tile_drop_set event;
 
     for(unsigned int column_index = 0; column_index < column_count; ++column_index)
     {
@@ -116,9 +115,9 @@ board::make_tiles_fall()
                     tile_grid_[column_index][row_index] = std::nullopt;
                     tile_grid_[column_index][*opt_empty_cell_row_index] = opt_tile;
 
-                    events.push_back
+                    event.drops.push_back
                     (
-                        events::tile_drop
+                        tile_drop
                         {
                             column_index,
                             row_index,
@@ -137,7 +136,7 @@ board::make_tiles_fall()
         }
     }
 
-    return events;
+    return event;
 }
 
 std::vector<event>
