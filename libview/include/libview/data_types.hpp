@@ -56,6 +56,8 @@ struct tile_coordinate
     unsigned int y;
 };
 
+using tile_coordinate_list = std::vector<tile_coordinate>;
+
 struct tile_drop
 {
     unsigned int column_index;
@@ -63,12 +65,16 @@ struct tile_drop
     unsigned int dst_row_index;
 };
 
+using tile_drop_list = std::vector<tile_drop>;
+
 struct tile_merge
 {
-    std::vector<tile_coordinate> src_tile_coordinates;
+    tile_coordinate_list src_tile_coordinates;
     tile_coordinate dst_tile_coordinate;
     unsigned int dst_tile_value;
 };
+
+using tile_merge_list = std::vector<tile_merge>;
 
 }} //namespace libview::data_types
 

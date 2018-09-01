@@ -87,6 +87,8 @@ struct tile_drop
     unsigned int dst_row_index;
 };
 
+using tile_drop_list = std::vector<tile_drop>;
+
 inline
 std::ostream& operator<<(std::ostream& l, const tile_drop& r)
 {
@@ -107,6 +109,8 @@ struct tile_merge
     tile_coordinate dst_tile_coordinate;
     unsigned int dst_tile_value;
 };
+
+using tile_merge_list = std::vector<tile_merge>;
 
 inline
 std::ostream& operator<<(std::ostream& l, const tile_merge& r)

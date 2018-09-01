@@ -277,7 +277,7 @@ void grid::insert_input
         board_tiles_[tile1_dst_column_index][tile1_dst_row_index] = std::move(input_tiles_[1]);
 }
 
-void grid::drop_tiles(const std::vector<data_types::tile_drop>& drops)
+void grid::drop_tiles(const data_types::tile_drop_list& drops)
 {
     animation_group g;
 
@@ -294,7 +294,7 @@ void grid::drop_tiles(const std::vector<data_types::tile_drop>& drops)
     animations_.push(std::move(g));
 }
 
-void grid::merge_tiles(const std::vector<data_types::tile_merge>& merges)
+void grid::merge_tiles(const data_types::tile_merge_list& merges)
 {
     //translate source tiles to position of destination tile
     {

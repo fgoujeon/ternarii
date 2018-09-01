@@ -62,9 +62,9 @@ class view
             const unsigned int tile1_dst_row_index
         );
 
-        void drop_tiles(const std::vector<data_types::tile_drop>& drops);
+        void drop_tiles(const data_types::tile_drop_list& drops);
 
-        void merge_tiles(const std::vector<data_types::tile_merge>& merges);
+        void merge_tiles(const data_types::tile_merge_list& merges);
 
         void set_board_items(const data_types::board_item_array& items);
 

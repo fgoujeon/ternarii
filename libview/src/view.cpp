@@ -273,12 +273,12 @@ void view::insert_input
     );
 }
 
-void view::drop_tiles(const std::vector<data_types::tile_drop>& drops)
+void view::drop_tiles(const data_types::tile_drop_list& drops)
 {
     pimpl_->pgrid->drop_tiles(drops);
 }
 
-void view::merge_tiles(const std::vector<data_types::tile_merge>& merges)
+void view::merge_tiles(const data_types::tile_merge_list& merges)
 {
     pimpl_->pgrid->merge_tiles(merges);
 }

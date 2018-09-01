@@ -34,7 +34,7 @@ namespace events
 {
     struct next_input_creation
     {
-        std::array<data_types::tile, 2> tiles;
+        data_types::tile_pair tiles;
     };
 
     inline
@@ -110,15 +110,15 @@ namespace events
 
 
 
-    struct tile_drop_set
+    struct tile_drop_list
     {
-        std::vector<data_types::tile_drop> drops;
+        data_types::tile_drop_list drops;
     };
 
     inline
-    std::ostream& operator<<(std::ostream& l, const tile_drop_set& r)
+    std::ostream& operator<<(std::ostream& l, const tile_drop_list& r)
     {
-        l << "tile_drop_set";
+        l << "tile_drop_list";
         l << "{";
         l << "drops: {";
         {
@@ -137,15 +137,15 @@ namespace events
 
 
 
-    struct tile_merge_set
+    struct tile_merge_list
     {
-        std::vector<data_types::tile_merge> merges;
+        data_types::tile_merge_list merges;
     };
 
     inline
-    std::ostream& operator<<(std::ostream& l, const tile_merge_set& r)
+    std::ostream& operator<<(std::ostream& l, const tile_merge_list& r)
     {
-        l << "tile_merge_set";
+        l << "tile_merge_list";
         l << "{";
         l << "merges: {";
         {
@@ -196,8 +196,8 @@ using event = std::variant
     events::next_input_insertion,
     events::input_layout_change,
     events::input_insertion,
-    events::tile_drop_set,
-    events::tile_merge_set,
+    events::tile_drop_list,
+    events::tile_merge_list,
     events::score_change,
     events::end_of_game
 >;

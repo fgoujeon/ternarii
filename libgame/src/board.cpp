@@ -93,9 +93,9 @@ events::input_insertion board::insert_input(const board_input& in)
     return events::input_insertion{x0, y0, x1, y1};
 }
 
-events::tile_drop_set board::make_tiles_fall()
+events::tile_drop_list board::make_tiles_fall()
 {
-    events::tile_drop_set event;
+    events::tile_drop_list event;
 
     for(unsigned int column_index = 0; column_index < column_count; ++column_index)
     {
@@ -133,9 +133,9 @@ events::tile_drop_set board::make_tiles_fall()
     return event;
 }
 
-events::tile_merge_set board::merge_tiles()
+events::tile_merge_list board::merge_tiles()
 {
-    events::tile_merge_set event;
+    events::tile_merge_list event;
 
     grid_t tile_layer;
 
