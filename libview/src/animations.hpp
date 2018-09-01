@@ -210,6 +210,12 @@ class animation_group: public animation
             animations_.push_back(std::move(a));
         }
 
+        template<class Animation, class... Args>
+        void emplace(Args&&... args)
+        {
+            animations_.push_back(std::make_unique<Animation>(std::forward<Args>(args)...));
+        }
+
         void iterate(const double ellapsed_time)
         {
             for(auto& a: animations_)
