@@ -23,6 +23,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include "game_over_screen.hpp"
 #include "utility.hpp"
 #include <libsdl.hpp>
+#include <chrono>
 #include <string>
 #include <utility>
 #include <iostream>
@@ -90,71 +91,13 @@ struct view::impl
 
     void iterate()
     {
+        const auto current_time = std::chrono::steady_clock::now();
+        const auto ellapsed_time = std::chrono::duration<double>{current_time - previous_frame_time_};
+
         process_events();
+        draw(ellapsed_time.count());
 
-        //draw background
-        SDL_SetRenderDrawColor(prenderer.get(), 0x44, 0x44, 0x44, 0xff);
-        SDL_RenderClear(prenderer.get());
-
-        SDL_RenderSetLogicalSize
-        (
-            prenderer.get(),
-            logical_width,
-            logical_height
-        );
-
-        //draw children
-        {
-            SDL_Rect current_viewport;
-            SDL_RenderGetViewport(prenderer.get(), &current_viewport);
-
-            float current_x_scale, current_y_scale;
-            SDL_RenderGetScale(prenderer.get(), &current_x_scale, &current_y_scale);
-
-            //tile grid
-            {
-                const auto grid_logical_width = pgrid->get_logical_width();
-                const auto grid_logical_height = pgrid->get_logical_height();
-                const auto grid_ratio = static_cast<double>(grid_logical_width) / grid_logical_height;
-
-                SDL_Rect viewport;
-                viewport.x = current_viewport.x + current_viewport.w * 0.025;
-                viewport.y = current_viewport.y + current_viewport.h * 0.085;
-                viewport.w = current_viewport.w * 0.95;
-                viewport.h = viewport.w / grid_ratio;
-                SDL_RenderSetViewport(prenderer.get(), &viewport);
-
-                SDL_RenderSetScale
-                (
-                    prenderer.get(),
-                    current_x_scale * viewport.w / grid_logical_width,
-                    current_y_scale * viewport.h / grid_logical_height
-                );
-
-                pgrid->draw(*prenderer);
-            }
-
-            //score
-            {
-                SDL_RenderSetScale
-                (
-                    prenderer.get(),
-                    current_x_scale,
-                    current_y_scale
-                );
-
-                SDL_RenderSetViewport(prenderer.get(), &current_viewport);
-
-                pscore_display->draw(*prenderer);
-            }
-
-            //game over screen
-            {
-                pgame_over_screen->draw(*prenderer);
-            }
-        }
-
-        SDL_RenderPresent(prenderer.get());
+        previous_frame_time_ = current_time;
     }
 
     void process_events()
@@ -197,6 +140,73 @@ struct view::impl
         }
     }
 
+    void draw(const double ellapsed_time)
+    {
+        //draw background
+        SDL_SetRenderDrawColor(prenderer.get(), 0x44, 0x44, 0x44, 0xff);
+        SDL_RenderClear(prenderer.get());
+
+        SDL_RenderSetLogicalSize
+        (
+            prenderer.get(),
+            logical_width,
+            logical_height
+        );
+
+        //draw children
+        {
+            SDL_Rect current_viewport;
+            SDL_RenderGetViewport(prenderer.get(), &current_viewport);
+
+            float current_x_scale, current_y_scale;
+            SDL_RenderGetScale(prenderer.get(), &current_x_scale, &current_y_scale);
+
+            //tile grid
+            {
+                const auto grid_logical_width = pgrid->get_logical_width();
+                const auto grid_logical_height = pgrid->get_logical_height();
+                const auto grid_ratio = static_cast<double>(grid_logical_width) / grid_logical_height;
+
+                SDL_Rect viewport;
+                viewport.x = current_viewport.x + current_viewport.w * 0.025;
+                viewport.y = current_viewport.y + current_viewport.h * 0.085;
+                viewport.w = current_viewport.w * 0.95;
+                viewport.h = viewport.w / grid_ratio;
+                SDL_RenderSetViewport(prenderer.get(), &viewport);
+
+                SDL_RenderSetScale
+                (
+                    prenderer.get(),
+                    current_x_scale * viewport.w / grid_logical_width,
+                    current_y_scale * viewport.h / grid_logical_height
+                );
+
+                pgrid->draw(*prenderer, ellapsed_time);
+            }
+
+            //score
+            {
+                SDL_RenderSetScale
+                (
+                    prenderer.get(),
+                    current_x_scale,
+                    current_y_scale
+                );
+
+                SDL_RenderSetViewport(prenderer.get(), &current_viewport);
+
+                pscore_display->draw(*prenderer);
+            }
+
+            //game over screen
+            {
+                pgame_over_screen->draw(*prenderer);
+            }
+        }
+
+        SDL_RenderPresent(prenderer.get());
+    }
+
     event_handler evt_handler;
     libsdl::session session;
     libsdl::unique_ptr<SDL_Window> pwindow;
@@ -204,6 +214,8 @@ struct view::impl
     std::shared_ptr<grid> pgrid;
     std::shared_ptr<score_display> pscore_display;
     std::shared_ptr<game_over_screen> pgame_over_screen;
+
+    std::chrono::time_point<std::chrono::steady_clock> previous_frame_time_;
 
     bool quit = false;
 };

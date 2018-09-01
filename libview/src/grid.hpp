@@ -47,7 +47,7 @@ class grid
 
         int get_logical_height() const;
 
-        void draw(SDL_Renderer& renderer);
+        void draw(SDL_Renderer& renderer, const double ellapsed_time);
 
         void create_next_input(const unsigned int value0, const unsigned int value1);
 

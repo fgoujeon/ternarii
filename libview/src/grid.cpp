@@ -348,10 +348,10 @@ void grid::set_board_items(const data_types::board_item_array& items)
 //    fill_tiles(board_tiles_, items, 11);
 }
 
-void grid::draw(SDL_Renderer& renderer)
+void grid::draw(SDL_Renderer& renderer, const double ellapsed_time)
 {
     //animate
-    iterate(animations_);
+    iterate(animations_, ellapsed_time);
     if(animations_.empty())
         disappearing_tiles_.clear();
 

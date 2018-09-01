@@ -39,6 +39,18 @@ struct point
     double y = 0;
 };
 
+inline
+bool operator==(const point& l, const point& r)
+{
+    return l.x == r.x && l.y == r.y;
+}
+
+inline
+bool operator!=(const point& l, const point& r)
+{
+    return !(l == r);
+}
+
 } //namespace libview
 
 #endif
