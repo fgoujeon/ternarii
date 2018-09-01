@@ -87,12 +87,12 @@ tile::tile():
 {
 }
 
-const SDL_Point& tile::get_position() const
+const point& tile::get_position() const
 {
     return position_;
 }
 
-void tile::set_position(const SDL_Point& position)
+void tile::set_position(const point& position)
 {
     position_ = position;
 }
@@ -115,8 +115,8 @@ void tile::draw(SDL_Renderer& renderer)
         const auto c = get_background_color(value_);
         const auto r = SDL_Rect
         {
-            position_.x,
-            position_.y,
+            static_cast<int>(position_.x),
+            static_cast<int>(position_.y),
             static_cast<int>(w_),
             static_cast<int>(h_)
         };

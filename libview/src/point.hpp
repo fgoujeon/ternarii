@@ -17,36 +17,26 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef LIBVIEW_TILE_HPP
-#define LIBVIEW_TILE_HPP
-
-#include "point.hpp"
-#include <libsdl.hpp>
+#ifndef LIBVIEW_POINT_HPP
+#define LIBVIEW_POINT_HPP
 
 namespace libview
 {
 
-class tile
+struct point
 {
-    public:
-        tile();
+    point()
+    {
+    }
 
-        const point& get_position() const;
+    point(const double x, const double y):
+        x(x),
+        y(y)
+    {
+    }
 
-        void set_position(const point& position);
-
-        void set_size(const unsigned int w, const unsigned int h);
-
-        void set_value(const unsigned int value);
-
-        void draw(SDL_Renderer& renderer);
-
-    private:
-        libsdl::unique_ptr<TTF_Font> pfont_;
-        point position_;
-        unsigned int w_ = 0;
-        unsigned int h_ = 0;
-        unsigned int value_ = 0;
+    double x = 0;
+    double y = 0;
 };
 
 } //namespace libview

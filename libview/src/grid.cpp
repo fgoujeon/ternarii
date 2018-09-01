@@ -35,10 +35,10 @@ namespace
 
     auto tile_coordinate_to_position(const tile_coordinate& c)
     {
-        return SDL_Point
+        return point
         {
-            static_cast<int>(c.x * cell_size + tile_margin),
-            static_cast<int>((11 - c.y) * cell_size + tile_margin)
+            c.x * cell_size + tile_margin,
+            (11 - c.y) * cell_size + tile_margin
         };
     }
 
@@ -57,10 +57,10 @@ namespace
                     ptile->set_value(opt_item->value);
                     ptile->set_position
                     (
-                        SDL_Point
+                        point
                         {
-                            static_cast<int>(x * cell_size + tile_margin),
-                            static_cast<int>((y_offset - y) * cell_size + tile_margin)
+                            x * cell_size + tile_margin,
+                            (y_offset - y) * cell_size + tile_margin
                         }
                     );
                     tiles[x][y] = std::move(ptile);
@@ -77,7 +77,7 @@ namespace
         }
     }
 
-    std::array<SDL_Point, 2> get_input_tile_positions(const unsigned int x_offset, const unsigned int rotation)
+    std::array<point, 2> get_input_tile_positions(const unsigned int x_offset, const unsigned int rotation)
     {
         auto tile0_x = 0.0;
         auto tile0_y = 0.0;
@@ -112,17 +112,17 @@ namespace
                 break;
         }
 
-        return std::array<SDL_Point, 2>
+        return std::array<point, 2>
         {
-            SDL_Point
+            point
             {
-                static_cast<int>((tile0_x + x_offset) * cell_size + tile_margin),
-                static_cast<int>((tile0_y + 2) * cell_size + tile_margin)
+                (tile0_x + x_offset) * cell_size + tile_margin,
+                (tile0_y + 2) * cell_size + tile_margin
             },
-            SDL_Point
+            point
             {
-                static_cast<int>((tile1_x + x_offset) * cell_size + tile_margin),
-                static_cast<int>((tile1_y + 2) * cell_size + tile_margin)
+                (tile1_x + x_offset) * cell_size + tile_margin,
+                (tile1_y + 2) * cell_size + tile_margin
             }
         };
     }
@@ -154,10 +154,10 @@ void grid::create_next_input(const unsigned int value0, const unsigned int value
         next_input_tiles_[i]->set_size(tile_size, tile_size);
         next_input_tiles_[i]->set_position
         (
-            SDL_Point
+            point
             {
-                static_cast<int>((2 + i) * cell_size + tile_margin),
-                static_cast<int>(tile_margin)
+                (2 + i) * cell_size + tile_margin,
+                tile_margin
             }
         );
         ++i;
@@ -185,10 +185,10 @@ void grid::set_next_input_items(const next_input_item_array& items)
             next_input_tiles_[i]->set_value(opt_item->value);
             next_input_tiles_[i]->set_position
             (
-                SDL_Point
+                point
                 {
-                    static_cast<int>((2 + i) * cell_size + tile_margin),
-                    static_cast<int>(tile_margin)
+                    (2 + i) * cell_size + tile_margin,
+                    tile_margin
                 }
             );
         }
