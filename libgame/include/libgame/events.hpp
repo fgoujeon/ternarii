@@ -34,7 +34,7 @@ namespace events
 {
     struct next_input_creation
     {
-        std::array<tile, 2> tiles;
+        std::array<data_types::tile, 2> tiles;
     };
 
     inline
@@ -112,7 +112,7 @@ namespace events
 
     struct tile_drop_set
     {
-        std::vector<tile_drop> drops;
+        std::vector<data_types::tile_drop> drops;
     };
 
     inline
@@ -139,7 +139,7 @@ namespace events
 
     struct tile_merge_set
     {
-        std::vector<tile_merge> merges;
+        std::vector<data_types::tile_merge> merges;
     };
 
     inline

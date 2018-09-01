@@ -111,7 +111,7 @@ events::tile_drop_set board::make_tiles_fall()
 
                     event.drops.push_back
                     (
-                        tile_drop
+                        data_types::tile_drop
                         {
                             column_index,
                             row_index,
@@ -160,7 +160,7 @@ events::tile_merge_set board::merge_tiles()
                 if(selection_size >= 3)
                 {
                     //remove the selected tiles from the board
-                    std::vector<tile_coordinate> removed_tile_coordinates;
+                    std::vector<data_types::tile_coordinate> removed_tile_coordinates;
                     for(unsigned int row_index2 = 0; row_index2 < row_count; ++row_index2)
                     {
                         for(unsigned int column_index2 = 0; column_index2 < column_count; ++column_index2)
@@ -170,7 +170,7 @@ events::tile_merge_set board::merge_tiles()
                                 assert(tile_grid_[column_index2][row_index2]);
                                 removed_tile_coordinates.push_back
                                 (
-                                    tile_coordinate
+                                    data_types::tile_coordinate
                                     {
                                         column_index2,
                                         row_index2
@@ -182,15 +182,15 @@ events::tile_merge_set board::merge_tiles()
                     }
 
                     //put the new merged tile on the layer
-                    auto merged_tile = tile{current_tile.value + 1};
+                    auto merged_tile = data_types::tile{current_tile.value + 1};
                     tile_layer[column_index][row_index] = merged_tile;
 
                     event.merges.push_back
                     (
-                        tile_merge
+                        data_types::tile_merge
                         {
                             removed_tile_coordinates,
-                            tile_coordinate{column_index, row_index},
+                            data_types::tile_coordinate{column_index, row_index},
                             merged_tile.value
                         }
                     );

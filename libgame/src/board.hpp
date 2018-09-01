@@ -35,7 +35,7 @@ class board
 	public:
 		static const unsigned int column_count = 6;
 		static const unsigned int row_count = 10;
-        using grid_t = tile_grid<column_count, row_count>;
+        using grid_t = data_types::tile_grid<column_count, row_count>;
 
 		board();
 
@@ -69,7 +69,7 @@ class board
 			SELECTED
 		};
 
-		typedef array2d<selection_state, column_count, row_count> selection_t;
+		typedef data_types::array2d<selection_state, column_count, row_count> selection_t;
 
 		void select_tiles
 		(

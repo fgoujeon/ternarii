@@ -33,7 +33,7 @@ namespace
     const auto tile_margin = cell_size * 0.05;
     const auto tile_size = cell_size - tile_margin * 2;
 
-    auto tile_coordinate_to_position(const tile_coordinate& c)
+    auto tile_coordinate_to_position(const data_types::tile_coordinate& c)
     {
         return point
         {
@@ -182,7 +182,7 @@ void grid::insert_next_input(const unsigned int x_offset, const unsigned int rot
     animations_.push(std::move(g));
 }
 
-void grid::set_next_input_items(const next_input_item_array& items)
+void grid::set_next_input_items(const data_types::next_input_item_array& items)
 {
 //    auto i = 0;
 //    for(auto& opt_item: items)
@@ -209,7 +209,7 @@ void grid::set_next_input_items(const next_input_item_array& items)
 //    }
 }
 
-void grid::set_input_items(const input_item_array& items)
+void grid::set_input_items(const data_types::input_item_array& items)
 {
 //    auto i = 0;
 //    for(auto& opt_item: items)
@@ -277,7 +277,7 @@ void grid::insert_input
         board_tiles_[tile1_dst_column_index][tile1_dst_row_index] = std::move(input_tiles_[1]);
 }
 
-void grid::drop_tiles(const std::vector<tile_drop>& drops)
+void grid::drop_tiles(const std::vector<data_types::tile_drop>& drops)
 {
     animation_group g;
 
@@ -285,7 +285,7 @@ void grid::drop_tiles(const std::vector<tile_drop>& drops)
     {
         if(auto& ptile = board_tiles_[drop.column_index][drop.src_row_index])
         {
-            const auto dst_position = tile_coordinate_to_position(tile_coordinate{drop.column_index, drop.dst_row_index});
+            const auto dst_position = tile_coordinate_to_position(data_types::tile_coordinate{drop.column_index, drop.dst_row_index});
             g.push_back(std::make_unique<translation>(*ptile, dst_position));
             board_tiles_[drop.column_index][drop.dst_row_index] = std::move(ptile);
         }
@@ -294,7 +294,7 @@ void grid::drop_tiles(const std::vector<tile_drop>& drops)
     animations_.push(std::move(g));
 }
 
-void grid::merge_tiles(const std::vector<tile_merge>& merges)
+void grid::merge_tiles(const std::vector<data_types::tile_merge>& merges)
 {
     //translate source tiles to position of destination tile
     {
@@ -361,7 +361,7 @@ void grid::merge_tiles(const std::vector<tile_merge>& merges)
     }
 }
 
-void grid::set_board_items(const board_item_array& items)
+void grid::set_board_items(const data_types::board_item_array& items)
 {
 //    fill_tiles(board_tiles_, items, 11);
 }

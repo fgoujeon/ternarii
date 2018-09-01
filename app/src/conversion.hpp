@@ -26,11 +26,11 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace conversion
 {
 
-libview::tile_coordinate to_view(const libgame::tile_coordinate& from);
+libview::data_types::tile_coordinate to_view(const libgame::data_types::tile_coordinate& from);
 
-libview::tile_drop to_view(const libgame::tile_drop& from);
+libview::data_types::tile_drop to_view(const libgame::data_types::tile_drop& from);
 
-libview::tile_merge to_view(const libgame::tile_merge& from);
+libview::data_types::tile_merge to_view(const libgame::data_types::tile_merge& from);
 
 template<class T>
 auto to_view(const std::vector<T>& from)

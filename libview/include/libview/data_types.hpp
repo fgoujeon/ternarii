@@ -26,7 +26,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include <array>
 #include <ostream>
 
-namespace libview
+namespace libview { namespace data_types
 {
 
 struct item
@@ -70,6 +70,6 @@ struct tile_merge
     unsigned int dst_tile_value;
 };
 
-} //namespace libview
+}} //namespace libview::data_types
 
 #endif

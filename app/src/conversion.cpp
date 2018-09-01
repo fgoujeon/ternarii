@@ -22,26 +22,26 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace conversion
 {
 
-libview::tile_coordinate to_view(const libgame::tile_coordinate& from)
+libview::data_types::tile_coordinate to_view(const libgame::data_types::tile_coordinate& from)
 {
-    auto to = libview::tile_coordinate{};
+    auto to = libview::data_types::tile_coordinate{};
     to.x = from.x;
     to.y = from.y;
     return to;
 }
 
-libview::tile_drop to_view(const libgame::tile_drop& from)
+libview::data_types::tile_drop to_view(const libgame::data_types::tile_drop& from)
 {
-    auto to = libview::tile_drop{};
+    auto to = libview::data_types::tile_drop{};
     to.column_index = from.column_index;
     to.src_row_index = from.src_row_index;
     to.dst_row_index = from.dst_row_index;
     return to;
 }
 
-libview::tile_merge to_view(const libgame::tile_merge& from)
+libview::data_types::tile_merge to_view(const libgame::data_types::tile_merge& from)
 {
-    auto to = libview::tile_merge{};
+    auto to = libview::data_types::tile_merge{};
     to.src_tile_coordinates = to_view(from.src_tile_coordinates);
     to.dst_tile_coordinate = to_view(from.dst_tile_coordinate);
     to.dst_tile_value = from.dst_tile_value;

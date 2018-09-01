@@ -37,12 +37,12 @@ namespace
         return (max + 1) * std::pow(random, 2);
     }
 
-    tile generate_new_tile(const unsigned int max_value)
+    data_types::tile generate_new_tile(const unsigned int max_value)
     {
-        return tile{random_value(max_value)};
+        return data_types::tile{random_value(max_value)};
     }
 
-    tile_pair generate_next_input(const unsigned int highest_unlocked_element_value)
+    data_types::tile_pair generate_next_input(const unsigned int highest_unlocked_element_value)
     {
         return
         {
@@ -67,7 +67,7 @@ struct game::impl
 
     board board_;
     board_input input_;
-    tile_pair next_input_;
+    data_types::tile_pair next_input_;
 };
 
 game::game():
@@ -82,17 +82,17 @@ unsigned int game::get_score() const
     return pimpl_->board_.get_score();
 }
 
-const tile_pair& game::get_next_input_tiles() const
+const data_types::tile_pair& game::get_next_input_tiles() const
 {
     return pimpl_->next_input_;
 }
 
-const tile_pair& game::get_input_tiles() const
+const data_types::tile_pair& game::get_input_tiles() const
 {
     return pimpl_->input_.get_tiles();
 }
 
-const board_tile_grid& game::get_board_tiles() const
+const data_types::board_tile_grid& game::get_board_tiles() const
 {
     return pimpl_->board_.tile_grid();
 }

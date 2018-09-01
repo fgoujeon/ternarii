@@ -26,7 +26,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include <memory>
 #include <ostream>
 
-namespace libgame
+namespace libgame { namespace data_types
 {
 
 template<typename T, size_t Size0, size_t Size1>
@@ -130,6 +130,6 @@ std::ostream& operator<<(std::ostream& l, const tile_merge& r)
     return l;
 }
 
-} //namespace libgame
+}} //namespace libgame::data_types
 
 #endif

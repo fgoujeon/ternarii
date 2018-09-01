@@ -236,12 +236,12 @@ void view::insert_next_input(const unsigned int x_offset, const unsigned int rot
     pimpl_->pgrid->insert_next_input(x_offset, rotation);
 }
 
-void view::set_next_input_items(const next_input_item_array& items)
+void view::set_next_input_items(const data_types::next_input_item_array& items)
 {
     pimpl_->pgrid->set_next_input_items(items);
 }
 
-void view::set_input_items(const input_item_array& items)
+void view::set_input_items(const data_types::input_item_array& items)
 {
     pimpl_->pgrid->set_input_items(items);
 }
@@ -273,17 +273,17 @@ void view::insert_input
     );
 }
 
-void view::drop_tiles(const std::vector<tile_drop>& drops)
+void view::drop_tiles(const std::vector<data_types::tile_drop>& drops)
 {
     pimpl_->pgrid->drop_tiles(drops);
 }
 
-void view::merge_tiles(const std::vector<tile_merge>& merges)
+void view::merge_tiles(const std::vector<data_types::tile_merge>& merges)
 {
     pimpl_->pgrid->merge_tiles(merges);
 }
 
-void view::set_board_items(const board_item_array& items)
+void view::set_board_items(const data_types::board_item_array& items)
 {
     pimpl_->pgrid->set_board_items(items);
 }

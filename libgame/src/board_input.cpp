@@ -28,7 +28,7 @@ namespace
     const auto default_rotation = 0;
 }
 
-board_input::board_input(const tile_pair& tiles):
+board_input::board_input(const data_types::tile_pair& tiles):
     tiles_(tiles),
     x_offset_(default_x_offset),
     rotation_(default_rotation)
@@ -36,7 +36,7 @@ board_input::board_input(const tile_pair& tiles):
 }
 
 event
-board_input::set_tiles(const tile_pair& tiles)
+board_input::set_tiles(const data_types::tile_pair& tiles)
 {
     tiles_ = tiles;
     x_offset_ = default_x_offset;

@@ -46,9 +46,9 @@ class view
 
         void insert_next_input(const unsigned int x_offset, const unsigned int rotation);
 
-        void set_next_input_items(const next_input_item_array& items);
+        void set_next_input_items(const data_types::next_input_item_array& items);
 
-        void set_input_items(const input_item_array& items);
+        void set_input_items(const data_types::input_item_array& items);
 
         void set_input_x_offset(const unsigned int value);
 
@@ -62,11 +62,11 @@ class view
             const unsigned int tile1_dst_row_index
         );
 
-        void drop_tiles(const std::vector<tile_drop>& drops);
+        void drop_tiles(const std::vector<data_types::tile_drop>& drops);
 
-        void merge_tiles(const std::vector<tile_merge>& merges);
+        void merge_tiles(const std::vector<data_types::tile_merge>& merges);
 
-        void set_board_items(const board_item_array& items);
+        void set_board_items(const data_types::board_item_array& items);
 
         void set_game_over_screen_visible(const bool visible);
 
