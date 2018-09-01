@@ -77,30 +77,33 @@ class translation: public animation
 
         void iterate(const double ellapsed_time)
         {
-            const auto distance = speed_ * ellapsed_time;
+            if(!initialized_)
+            {
+                init();
+                initialized_ = true;
+            }
 
-            const auto curr_pos = t_.get_position();
+            cumulated_ellapsed_time_ += ellapsed_time;
 
-            auto next_pos = point{};
+            if(cumulated_ellapsed_time_ < total_time_)
+            {
+                const auto step_distance = speed_ * ellapsed_time;
 
-            if(std::abs(curr_pos.x - dst_pos_.x) <= distance)
-                next_pos.x = dst_pos_.x;
-            else if(curr_pos.x < dst_pos_.x)
-                next_pos.x = curr_pos.x + distance;
+                const auto curr_pos = t_.get_position();
+
+                const auto next_pos = point
+                {
+                    curr_pos.x + step_distance * x_ratio_,
+                    curr_pos.y + step_distance * y_ratio_
+                };
+
+                t_.set_position(next_pos);
+            }
             else
-                next_pos.x = curr_pos.x - distance;
-
-            if(std::abs(curr_pos.y - dst_pos_.y) <= distance)
-                next_pos.y = dst_pos_.y;
-            else if(curr_pos.y < dst_pos_.y)
-                next_pos.y = curr_pos.y + distance;
-            else
-                next_pos.y = curr_pos.y - distance;
-
-            if(next_pos == dst_pos_)
+            {
+                t_.set_position(dst_pos_);
                 done_ = true;
-
-            t_.set_position(next_pos);
+            }
         }
 
         bool is_done() const
@@ -109,9 +112,34 @@ class translation: public animation
         }
 
     private:
+        void init()
+        {
+            const auto src_pos = t_.get_position();
+
+            const auto x_diff = dst_pos_.x - src_pos.x;
+            const auto y_diff = dst_pos_.y - src_pos.y;
+
+            const auto total_distance = std::sqrt(x_diff * x_diff + y_diff * y_diff);
+
+            x_ratio_ = x_diff / total_distance;
+            y_ratio_ = y_diff / total_distance;
+            total_time_ = total_distance / speed_;
+        }
+
+    private:
+        //initialized by constructor
         tile& t_;
         const point dst_pos_;
         const double speed_;
+
+        //initialized by init()
+        bool initialized_ = false;
+        double x_ratio_;
+        double y_ratio_;
+        double total_time_;
+
+        //updated by iterate()
+        double cumulated_ellapsed_time_ = 0;
         bool done_ = false;
 };
 
