@@ -57,7 +57,7 @@ class board
         unsigned int
         get_score() const;
 
-        std::vector<std::vector<event>>
+        std::vector<event>
         drop_input(const board_input& in);
 
 	private:

@@ -52,28 +52,30 @@ board::get_score() const
     return score;
 }
 
-std::vector<std::vector<event>>
+std::vector<event>
 board::drop_input(const board_input& in)
 {
-    std::vector<std::vector<event>> changes;
+    std::vector<event> events;
 
-    changes.push_back({insert_input(in)});
+    events.push_back(insert_input(in));
 
-    bool changes_happened;
+    bool events_happened;
     do
     {
-        const auto fall_changes = make_tiles_fall();
-        changes.push_back(fall_changes);
+        const auto fall_events = make_tiles_fall();
+        for(const auto& event: fall_events)
+            events.push_back(event);
 
-        const auto transmutation_changes = transmute_tiles();
-        changes.push_back(transmutation_changes);
+        const auto transmutation_events = transmute_tiles();
+        for(const auto& event: transmutation_events)
+            events.push_back(event);
 
-        changes.push_back({events::score_change{get_score()}});
+        events.push_back(events::score_change{get_score()});
 
-        changes_happened = !fall_changes.empty() || !transmutation_changes.empty();
-    } while(changes_happened);
+        events_happened = !fall_events.empty() || !transmutation_events.empty();
+    } while(events_happened);
 
-    return changes;
+    return events;
 }
 
 events::input_insertion
@@ -100,7 +102,7 @@ board::insert_input(const board_input& in)
 std::vector<event>
 board::make_tiles_fall()
 {
-    std::vector<event> changes;
+    std::vector<event> events;
 
     for(unsigned int column_index = 0; column_index < column_count; ++column_index)
     {
@@ -114,7 +116,7 @@ board::make_tiles_fall()
                     tile_grid_[column_index][row_index] = std::nullopt;
                     tile_grid_[column_index][*opt_empty_cell_row_index] = opt_tile;
 
-                    changes.push_back
+                    events.push_back
                     (
                         events::tile_drop
                         {
@@ -135,13 +137,13 @@ board::make_tiles_fall()
         }
     }
 
-    return changes;
+    return events;
 }
 
 std::vector<event>
 board::transmute_tiles()
 {
-    std::vector<event> changes;
+    std::vector<event> events;
 
     grid_t tile_layer;
 
@@ -191,7 +193,7 @@ board::transmute_tiles()
                     auto merged_tile = tile{current_tile.value + 1};
                     tile_layer[column_index][row_index] = merged_tile;
 
-                    changes.push_back
+                    events.push_back
                     (
                         events::tile_merge
                         {
@@ -208,7 +210,7 @@ board::transmute_tiles()
         }
     }
 
-    if(!changes.empty())
+    if(!events.empty())
     {
         //overlay the tile layer to the tile array of the board
         for(auto x = 0; x < column_count; ++x)
@@ -224,7 +226,7 @@ board::transmute_tiles()
         }
     }
 
-    return changes;
+    return events;
 }
 
 void
