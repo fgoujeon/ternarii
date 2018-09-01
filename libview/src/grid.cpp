@@ -143,14 +143,14 @@ void grid::insert_next_input(const unsigned int x_offset, const unsigned int rot
 
     const auto dst_positions = get_input_tile_positions(x_offset, rotation);
 
-    animation_group g;
+    auto pgroup = std::make_unique<animation_group>();
     for(auto i = 0; i < 2; ++i)
     {
         input_tiles_[i] = std::move(next_input_tiles_[i]);
-        g.push_back(std::make_unique<translation>(*input_tiles_[i], dst_positions[i], tile_insertion_speed));
+        pgroup->add(std::make_unique<translation>(*input_tiles_[i], dst_positions[i], tile_insertion_speed));
     }
 
-    animations_.push(std::move(g));
+    animations_.push(std::move(pgroup));
 }
 
 void grid::set_input_x_offset(const unsigned int value)
@@ -161,11 +161,11 @@ void grid::set_input_x_offset(const unsigned int value)
 
         const auto dst_positions = get_input_tile_positions(input_x_offset_, input_rotation_);
 
-        animation_group g;
+        auto pgroup = std::make_unique<animation_group>();
         for(auto i = 0; i < 2; ++i)
-            g.push_back(std::make_unique<translation>(*input_tiles_[i], dst_positions[i], tile_shift_speed));
+            pgroup->add(std::make_unique<translation>(*input_tiles_[i], dst_positions[i], tile_shift_speed));
 
-        animations_.push(std::move(g));
+        animations_.push(std::move(pgroup));
     }
 }
 
@@ -177,11 +177,11 @@ void grid::set_input_rotation(const unsigned int value)
 
         const auto dst_positions = get_input_tile_positions(input_x_offset_, input_rotation_);
 
-        animation_group g;
+        auto pgroup = std::make_unique<animation_group>();
         for(auto i = 0; i < 2; ++i)
-            g.push_back(std::make_unique<translation>(*input_tiles_[i], dst_positions[i], tile_rotation_speed));
+            pgroup->add(std::make_unique<translation>(*input_tiles_[i], dst_positions[i], tile_rotation_speed));
 
-        animations_.push(std::move(g));
+        animations_.push(std::move(pgroup));
     }
 }
 
@@ -202,30 +202,27 @@ void grid::insert_input
 
 void grid::drop_tiles(const data_types::tile_drop_list& drops)
 {
-    animation_group g;
+    auto pgroup = std::make_unique<animation_group>();
 
     for(const auto& drop: drops)
     {
         if(auto& ptile = board_tiles_[drop.column_index][drop.src_row_index])
         {
             const auto dst_position = tile_coordinate_to_position(data_types::tile_coordinate{drop.column_index, drop.dst_row_index});
-            g.push_back(std::make_unique<translation>(*ptile, dst_position, tile_drop_speed));
+            pgroup->add(std::make_unique<translation>(*ptile, dst_position, tile_drop_speed));
             board_tiles_[drop.column_index][drop.dst_row_index] = std::move(ptile);
         }
     }
 
-    animations_.push(std::move(g));
-
-    animation_group pause_group;
-    pause_group.push_back(std::make_unique<pause>(0.05));
-    animations_.push(std::move(pause_group));
+    animations_.push(std::move(pgroup));
+    animations_.push(std::make_unique<pause>(0.05));
 }
 
 void grid::merge_tiles(const data_types::tile_merge_list& merges)
 {
     //translate source tiles to position of destination tile
     {
-        animation_group g;
+        auto pgroup = std::make_unique<animation_group>();
 
         for(const auto& merge: merges)
         {
@@ -235,17 +232,17 @@ void grid::merge_tiles(const data_types::tile_merge_list& merges)
             {
                 if(auto& ptile = board_tiles_[src_tile_coordinate.x][src_tile_coordinate.y])
                 {
-                    g.push_back(std::make_unique<translation>(*ptile, dst_position, tile_merge_speed));
+                    pgroup->add(std::make_unique<translation>(*ptile, dst_position, tile_merge_speed));
                 }
             }
         }
 
-        animations_.push(std::move(g));
+        animations_.push(std::move(pgroup));
     }
 
     //make source tiles disappear
     {
-        animation_group g;
+        auto pgroup = std::make_unique<animation_group>();
 
         for(const auto& merge: merges)
         {
@@ -253,12 +250,12 @@ void grid::merge_tiles(const data_types::tile_merge_list& merges)
             {
                 if(auto& ptile = board_tiles_[src_tile_coordinate.x][src_tile_coordinate.y])
                 {
-                    g.push_back(std::make_unique<fade_out>(*ptile));
+                    pgroup->add(std::make_unique<fade_out>(*ptile));
                 }
             }
         }
 
-        animations_.push(std::move(g));
+        animations_.push(std::move(pgroup));
     }
 
     for(const auto& merge: merges)
@@ -280,19 +277,13 @@ void grid::merge_tiles(const data_types::tile_merge_list& merges)
         pdst_tile->set_size(tile_size, tile_size);
         pdst_tile->set_position(tile_coordinate_to_position(merge.dst_tile_coordinate));
 
-        animation_group g;
-        g.push_back(std::make_unique<fade_in>(*pdst_tile));
-        animations_.push(std::move(g));
+        animations_.push(std::make_unique<fade_in>(*pdst_tile));
 
         board_tiles_[merge.dst_tile_coordinate.x][merge.dst_tile_coordinate.y] = std::move(pdst_tile);
     }
 
     //make a pause
-    {
-        animation_group pause_group;
-        pause_group.push_back(std::make_unique<pause>(0.2));
-        animations_.push(std::move(pause_group));
-    }
+    animations_.push(std::make_unique<pause>(0.2));
 }
 
 void grid::draw(SDL_Renderer& renderer, const double ellapsed_time)

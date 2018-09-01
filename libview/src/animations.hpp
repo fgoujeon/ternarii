@@ -198,37 +198,49 @@ animation_group
 Group of animations running simultaneously
 */
 
-using animation_group = std::vector<std::unique_ptr<animation>>;
-
-inline
-void iterate(animation_group& g, const double ellapsed_time)
+class animation_group: public animation
 {
-    for(auto& a: g)
-        if(!a->is_done())
-            a->iterate(ellapsed_time);
-}
+    public:
+        animation_group()
+        {
+        }
 
-inline
-bool is_done(const animation_group& g)
-{
-    for(auto& a: g)
-        if(!a->is_done())
-            return false;
-    return true;
-}
+        void add(std::unique_ptr<animation>&& a)
+        {
+            animations_.push_back(std::move(a));
+        }
+
+        void iterate(const double ellapsed_time)
+        {
+            for(auto& a: animations_)
+                if(!a->is_done())
+                    a->iterate(ellapsed_time);
+        }
+
+        bool is_done() const
+        {
+            for(auto& a: animations_)
+                if(!a->is_done())
+                    return false;
+            return true;
+        }
+
+    private:
+        std::vector<std::unique_ptr<animation>> animations_;
+};
 
 
 
-using animation_queue = std::queue<animation_group>;
+using animation_queue = std::queue<std::unique_ptr<animation>>;
 
 inline
 void iterate(animation_queue& q, const double ellapsed_time)
 {
     if(!q.empty())
     {
-        auto& g = q.front();
-        iterate(g, ellapsed_time);
-        if(is_done(g))
+        auto& panimation = q.front();
+        panimation->iterate(ellapsed_time);
+        if(panimation->is_done())
             q.pop();
     }
 }
