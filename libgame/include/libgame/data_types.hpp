@@ -21,11 +21,12 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #define LIBGAME_DATA_TYPES_HPP
 
 #include <optional>
+#include <vector>
 #include <array>
 #include <memory>
 #include <ostream>
 
-namespace libgame
+namespace libgame { namespace data_types
 {
 
 template<typename T, size_t Size0, size_t Size1>
@@ -77,6 +78,62 @@ std::ostream& operator<<(std::ostream& l, const tile_coordinate& r)
     return l;
 }
 
-} //namespace libgame
+
+
+struct tile_drop
+{
+    unsigned int column_index;
+    unsigned int src_row_index;
+    unsigned int dst_row_index;
+};
+
+using tile_drop_list = std::vector<tile_drop>;
+
+inline
+std::ostream& operator<<(std::ostream& l, const tile_drop& r)
+{
+    l << "tile_drop";
+    l << "{";
+    l << "column_index: " << r.column_index << ", ";
+    l << "src_row_index: " << r.src_row_index << ", ";
+    l << "dst_row_index: " << r.dst_row_index;
+    l << "}";
+    return l;
+}
+
+
+
+struct tile_merge
+{
+    std::vector<tile_coordinate> src_tile_coordinates;
+    tile_coordinate dst_tile_coordinate;
+    unsigned int dst_tile_value;
+};
+
+using tile_merge_list = std::vector<tile_merge>;
+
+inline
+std::ostream& operator<<(std::ostream& l, const tile_merge& r)
+{
+    l << "tile_merge";
+    l << "{";
+    l << "src_tile_coordinates: {";
+    {
+        auto first = true;
+        for(const auto& coord: r.src_tile_coordinates)
+        {
+            if(!first) l << ", ";
+            l << coord;
+            first = false;
+        }
+    }
+    l << "}, ";
+    l << "dst_tile_coordinate: " << r.dst_tile_coordinate << ", ";
+    l << "dst_tile_value: " << r.dst_tile_value;
+    l << "}";
+    return l;
+}
+
+}} //namespace libgame::data_types
 
 #endif

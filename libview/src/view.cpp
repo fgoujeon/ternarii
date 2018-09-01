@@ -23,6 +23,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include "game_over_screen.hpp"
 #include "utility.hpp"
 #include <libsdl.hpp>
+#include <chrono>
 #include <string>
 #include <utility>
 #include <iostream>
@@ -90,8 +91,57 @@ struct view::impl
 
     void iterate()
     {
-        process_events();
+        const auto current_time = std::chrono::steady_clock::now();
+        const auto ellapsed_time = std::chrono::duration<double>{current_time - previous_frame_time_};
 
+        process_events();
+        draw(ellapsed_time.count());
+
+        previous_frame_time_ = current_time;
+    }
+
+    void process_events()
+    {
+        /*
+        Note: We want to ignore user inputs when we're animating, so that:
+        - we don't queue to many animations;
+        - user moves only when they knows what they're moving.
+        */
+
+        SDL_Event event;
+        while(SDL_PollEvent(&event))
+        {
+            switch(event.type)
+            {
+                case SDL_KEYDOWN:
+                    if(!pgrid->is_animating())
+                    {
+                        switch(event.key.keysym.sym)
+                        {
+                            case SDLK_LEFT:
+                                evt_handler(events::left_shift_request{});
+                                break;
+                            case SDLK_RIGHT:
+                                evt_handler(events::right_shift_request{});
+                                break;
+                            case SDLK_UP:
+                                evt_handler(events::clockwise_rotation_request{});
+                                break;
+                            case SDLK_DOWN:
+                                evt_handler(events::drop_request{});
+                                break;
+                        }
+                    }
+                    break;
+                case SDL_QUIT:
+                    quit = true;
+                    break;
+            }
+        }
+    }
+
+    void draw(const double ellapsed_time)
+    {
         //draw background
         SDL_SetRenderDrawColor(prenderer.get(), 0x44, 0x44, 0x44, 0xff);
         SDL_RenderClear(prenderer.get());
@@ -131,7 +181,7 @@ struct view::impl
                     current_y_scale * viewport.h / grid_logical_height
                 );
 
-                pgrid->draw(*prenderer);
+                pgrid->draw(*prenderer, ellapsed_time);
             }
 
             //score
@@ -157,37 +207,6 @@ struct view::impl
         SDL_RenderPresent(prenderer.get());
     }
 
-    void process_events()
-    {
-        SDL_Event event;
-        while(SDL_PollEvent(&event))
-        {
-            switch(event.type)
-            {
-                case SDL_KEYDOWN:
-                    switch(event.key.keysym.sym)
-                    {
-                        case SDLK_LEFT:
-                            evt_handler(events::left_shift_request{});
-                            break;
-                        case SDLK_RIGHT:
-                            evt_handler(events::right_shift_request{});
-                            break;
-                        case SDLK_UP:
-                            evt_handler(events::clockwise_rotation_request{});
-                            break;
-                        case SDLK_DOWN:
-                            evt_handler(events::drop_request{});
-                            break;
-                    }
-                    break;
-                case SDL_QUIT:
-                    quit = true;
-                    break;
-            }
-        }
-    }
-
     event_handler evt_handler;
     libsdl::session session;
     libsdl::unique_ptr<SDL_Window> pwindow;
@@ -195,6 +214,8 @@ struct view::impl
     std::shared_ptr<grid> pgrid;
     std::shared_ptr<score_display> pscore_display;
     std::shared_ptr<game_over_screen> pgame_over_screen;
+
+    std::chrono::time_point<std::chrono::steady_clock> previous_frame_time_;
 
     bool quit = false;
 };
@@ -236,16 +257,6 @@ void view::insert_next_input(const unsigned int x_offset, const unsigned int rot
     pimpl_->pgrid->insert_next_input(x_offset, rotation);
 }
 
-void view::set_next_input_items(const next_input_item_array& items)
-{
-    pimpl_->pgrid->set_next_input_items(items);
-}
-
-void view::set_input_items(const input_item_array& items)
-{
-    pimpl_->pgrid->set_input_items(items);
-}
-
 void view::set_input_x_offset(const unsigned int value)
 {
     pimpl_->pgrid->set_input_x_offset(value);
@@ -273,34 +284,14 @@ void view::insert_input
     );
 }
 
-void view::drop_tile
-(
-    const unsigned int column_index,
-    const unsigned int src_row_index,
-    const unsigned int dst_row_index
-)
+void view::drop_tiles(const data_types::tile_drop_list& drops)
 {
-    pimpl_->pgrid->drop_tile
-    (
-        column_index,
-        src_row_index,
-        dst_row_index
-    );
+    pimpl_->pgrid->drop_tiles(drops);
 }
 
-void view::merge_tiles
-(
-    const std::vector<tile_coordinate>& src_tiles,
-    const tile_coordinate& dst_tile,
-    const unsigned int dst_tile_value
-)
+void view::merge_tiles(const data_types::tile_merge_list& merges)
 {
-    pimpl_->pgrid->merge_tiles(src_tiles, dst_tile, dst_tile_value);
-}
-
-void view::set_board_items(const board_item_array& items)
-{
-    pimpl_->pgrid->set_board_items(items);
+    pimpl_->pgrid->merge_tiles(merges);
 }
 
 void view::set_game_over_screen_visible(const bool visible)

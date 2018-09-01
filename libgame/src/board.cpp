@@ -32,8 +32,7 @@ board::board():
 {
 }
 
-bool
-board::is_game_over() const
+bool board::is_game_over() const
 {
     for(unsigned int i = 0; i < column_count; ++i)
         if(tile_grid_[i][7]) return true;
@@ -41,8 +40,7 @@ board::is_game_over() const
     return false;
 }
 
-unsigned int
-board::get_score() const
+unsigned int board::get_score() const
 {
     auto score = 0u;
     for(const auto& cell_column: tile_grid_)
@@ -52,32 +50,32 @@ board::get_score() const
     return score;
 }
 
-std::vector<std::vector<event>>
-board::drop_input(const board_input& in)
+std::vector<event> board::drop_input(const board_input& in)
 {
-    std::vector<std::vector<event>> changes;
+    std::vector<event> events;
 
-    changes.push_back({insert_input(in)});
+    events.push_back(insert_input(in));
 
-    bool changes_happened;
+    bool events_happened;
     do
     {
-        const auto fall_changes = make_tiles_fall();
-        changes.push_back(fall_changes);
+        const auto drops = make_tiles_fall();
+        if(!drops.empty())
+            events.push_back(events::tile_drop{drops});
 
-        const auto transmutation_changes = transmute_tiles();
-        changes.push_back(transmutation_changes);
+        const auto merges = merge_tiles();
+        if(!merges.empty())
+            events.push_back(events::tile_merge{merges});
 
-        changes.push_back({events::score_change{get_score()}});
+        events.push_back(events::score_change{get_score()});
 
-        changes_happened = !fall_changes.empty() || !transmutation_changes.empty();
-    } while(changes_happened);
+        events_happened = !drops.empty() || !merges.empty();
+    } while(events_happened);
 
-    return changes;
+    return events;
 }
 
-events::input_insertion
-board::insert_input(const board_input& in)
+events::input_insertion board::insert_input(const board_input& in)
 {
     //put the input on the upper rows
 
@@ -97,10 +95,9 @@ board::insert_input(const board_input& in)
     return events::input_insertion{x0, y0, x1, y1};
 }
 
-std::vector<event>
-board::make_tiles_fall()
+data_types::tile_drop_list board::make_tiles_fall()
 {
-    std::vector<event> changes;
+    data_types::tile_drop_list drops;
 
     for(unsigned int column_index = 0; column_index < column_count; ++column_index)
     {
@@ -114,9 +111,9 @@ board::make_tiles_fall()
                     tile_grid_[column_index][row_index] = std::nullopt;
                     tile_grid_[column_index][*opt_empty_cell_row_index] = opt_tile;
 
-                    changes.push_back
+                    drops.push_back
                     (
-                        events::tile_drop
+                        data_types::tile_drop
                         {
                             column_index,
                             row_index,
@@ -135,13 +132,12 @@ board::make_tiles_fall()
         }
     }
 
-    return changes;
+    return drops;
 }
 
-std::vector<event>
-board::transmute_tiles()
+data_types::tile_merge_list board::merge_tiles()
 {
-    std::vector<event> changes;
+    data_types::tile_merge_list merges;
 
     grid_t tile_layer;
 
@@ -166,7 +162,7 @@ board::transmute_tiles()
                 if(selection_size >= 3)
                 {
                     //remove the selected tiles from the board
-                    std::vector<tile_coordinate> removed_tile_coordinates;
+                    std::vector<data_types::tile_coordinate> removed_tile_coordinates;
                     for(unsigned int row_index2 = 0; row_index2 < row_count; ++row_index2)
                     {
                         for(unsigned int column_index2 = 0; column_index2 < column_count; ++column_index2)
@@ -176,7 +172,7 @@ board::transmute_tiles()
                                 assert(tile_grid_[column_index2][row_index2]);
                                 removed_tile_coordinates.push_back
                                 (
-                                    tile_coordinate
+                                    data_types::tile_coordinate
                                     {
                                         column_index2,
                                         row_index2
@@ -188,15 +184,15 @@ board::transmute_tiles()
                     }
 
                     //put the new merged tile on the layer
-                    auto merged_tile = tile{current_tile.value + 1};
+                    auto merged_tile = data_types::tile{current_tile.value + 1};
                     tile_layer[column_index][row_index] = merged_tile;
 
-                    changes.push_back
+                    merges.push_back
                     (
-                        events::tile_merge
+                        data_types::tile_merge
                         {
                             removed_tile_coordinates,
-                            tile_coordinate{column_index, row_index},
+                            data_types::tile_coordinate{column_index, row_index},
                             merged_tile.value
                         }
                     );
@@ -208,7 +204,7 @@ board::transmute_tiles()
         }
     }
 
-    if(!changes.empty())
+    if(!merges.empty())
     {
         //overlay the tile layer to the tile array of the board
         for(auto x = 0; x < column_count; ++x)
@@ -224,11 +220,10 @@ board::transmute_tiles()
         }
     }
 
-    return changes;
+    return merges;
 }
 
-void
-board::select_tiles
+void board::select_tiles
 (
     const unsigned int tile_value,
     const unsigned int column_index,

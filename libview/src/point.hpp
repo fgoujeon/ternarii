@@ -17,31 +17,40 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef CONVERSION_HPP
-#define CONVERSION_HPP
+#ifndef LIBVIEW_POINT_HPP
+#define LIBVIEW_POINT_HPP
 
-#include <libview/data_types.hpp>
-#include <libgame/data_types.hpp>
-
-namespace conversion
+namespace libview
 {
 
-libview::data_types::tile_coordinate to_view(const libgame::data_types::tile_coordinate& from);
-
-libview::data_types::tile_drop to_view(const libgame::data_types::tile_drop& from);
-
-libview::data_types::tile_merge to_view(const libgame::data_types::tile_merge& from);
-
-template<class T>
-auto to_view(const std::vector<T>& from)
+struct point
 {
-    using to_item_t = decltype(to_view(std::declval<T>()));
-    std::vector<to_item_t> to;
-    for(const auto& from_item: from)
-        to.push_back(to_view(from_item));
-    return to;
+    point()
+    {
+    }
+
+    point(const double x, const double y):
+        x(x),
+        y(y)
+    {
+    }
+
+    double x = 0;
+    double y = 0;
+};
+
+inline
+bool operator==(const point& l, const point& r)
+{
+    return l.x == r.x && l.y == r.y;
 }
 
-} //namespace conversion
+inline
+bool operator!=(const point& l, const point& r)
+{
+    return !(l == r);
+}
+
+} //namespace libview
 
 #endif

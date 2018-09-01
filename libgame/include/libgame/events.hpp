@@ -34,7 +34,7 @@ namespace events
 {
     struct next_input_creation
     {
-        std::array<tile, 2> tiles;
+        data_types::tile_pair tiles;
     };
 
     inline
@@ -112,9 +112,7 @@ namespace events
 
     struct tile_drop
     {
-        unsigned int column_index;
-        unsigned int src_row_index;
-        unsigned int dst_row_index;
+        data_types::tile_drop_list drops;
     };
 
     inline
@@ -122,9 +120,17 @@ namespace events
     {
         l << "tile_drop";
         l << "{";
-        l << "column_index: " << r.column_index << ", ";
-        l << "src_row_index: " << r.src_row_index << ", ";
-        l << "dst_row_index: " << r.dst_row_index;
+        l << "drops: {";
+        {
+            auto first = true;
+            for(const auto& drop: r.drops)
+            {
+                if(!first) l << ", ";
+                l << drop;
+                first = false;
+            }
+        }
+        l << "}";
         l << "}";
         return l;
     }
@@ -133,9 +139,7 @@ namespace events
 
     struct tile_merge
     {
-        std::vector<tile_coordinate> src_tiles;
-        tile_coordinate dst_tile;
-        unsigned int dst_tile_value;
+        data_types::tile_merge_list merges;
     };
 
     inline
@@ -143,19 +147,17 @@ namespace events
     {
         l << "tile_merge";
         l << "{";
-        l << "src_tiles: {";
+        l << "merges: {";
         {
             auto first = true;
-            for(const auto& coord: r.src_tiles)
+            for(const auto& merge: r.merges)
             {
                 if(!first) l << ", ";
-                l << coord;
+                l << merge;
                 first = false;
             }
         }
-        l << "}, ";
-        l << "dst_tile: " << r.dst_tile << ", ";
-        l << "dst_tile_value: " << r.dst_tile_value;
+        l << "}";
         l << "}";
         return l;
     }

@@ -20,7 +20,6 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include "grid.hpp"
 #include "utility.hpp"
 #include <map>
-#include <iostream>
 
 namespace libview
 {
@@ -33,52 +32,70 @@ namespace
     const auto tile_margin = cell_size * 0.05;
     const auto tile_size = cell_size - tile_margin * 2;
 
-    auto tile_coordinate_to_area(const tile_coordinate& c)
+    //speeds, in pixels per second
+    const auto tile_insertion_speed = 600;
+    const auto tile_shift_speed = 600;
+    const auto tile_rotation_speed = 600;
+    const auto tile_drop_speed = 1200;
+    const auto tile_merge_speed = 300;
+
+    auto tile_coordinate_to_position(const data_types::tile_coordinate& c)
     {
-        return SDL_Rect
+        return point
         {
-            static_cast<int>(c.x * cell_size + tile_margin),
-            static_cast<int>((11 - c.y) * cell_size + tile_margin),
-            static_cast<int>(tile_size),
-            static_cast<int>(tile_size)
+            c.x * cell_size + tile_margin,
+            (11 - c.y) * cell_size + tile_margin
         };
     }
 
-    template<class TileArray, class ItemArray>
-    void fill_tiles(TileArray& tiles, const ItemArray& items, const unsigned int y_offset)
+    std::array<point, 2> get_input_tile_positions(const unsigned int x_offset, const unsigned int rotation)
     {
-        auto x = 0;
-        for(auto& item_column: items)
+        auto tile0_x = 0.0;
+        auto tile0_y = 0.0;
+        auto tile1_x = 0.0;
+        auto tile1_y = 0.0;
+
+        switch(rotation)
         {
-            auto y = 0;
-            for(auto& opt_item: item_column)
-            {
-                if(opt_item)
-                {
-                    auto ptile = std::make_unique<tile>();
-                    ptile->set_value(opt_item->value);
-                    ptile->set_area
-                    (
-                        SDL_Rect
-                        {
-                            static_cast<int>(x * cell_size + tile_margin),
-                            static_cast<int>((y_offset - y) * cell_size + tile_margin),
-                            static_cast<int>(tile_size),
-                            static_cast<int>(tile_size)
-                        }
-                    );
-                    tiles[x][y] = std::move(ptile);
-                }
-                else
-                {
-                    tiles[x][y] = nullptr;
-                }
-
-                ++y;
-            }
-
-            ++x;
+            case 0:
+                tile0_x = 0;
+                tile0_y = 0.5;
+                tile1_x = 1;
+                tile1_y = 0.5;
+                break;
+            case 1:
+                tile0_x = 0;
+                tile0_y = 0;
+                tile1_x = 0;
+                tile1_y = 1;
+                break;
+            case 2:
+                tile0_x = 1;
+                tile0_y = 0.5;
+                tile1_x = 0;
+                tile1_y = 0.5;
+                break;
+            case 3:
+                tile0_x = 0;
+                tile0_y = 1;
+                tile1_x = 0;
+                tile1_y = 0;
+                break;
         }
+
+        return std::array<point, 2>
+        {
+            point
+            {
+                (tile0_x + x_offset) * cell_size + tile_margin,
+                (tile0_y + 2) * cell_size + tile_margin
+            },
+            point
+            {
+                (tile1_x + x_offset) * cell_size + tile_margin,
+                (tile1_y + 2) * cell_size + tile_margin
+            }
+        };
     }
 }
 
@@ -105,90 +122,67 @@ void grid::create_next_input(const unsigned int value0, const unsigned int value
     {
         next_input_tiles_[i] = std::make_unique<tile>();
         next_input_tiles_[i]->set_value(value);
-        next_input_tiles_[i]->set_area
+        next_input_tiles_[i]->set_size(tile_size, tile_size);
+        next_input_tiles_[i]->set_position
         (
-            SDL_Rect
+            point
             {
-                static_cast<int>((2 + i) * cell_size + tile_margin),
-                static_cast<int>(tile_margin),
-                static_cast<int>(tile_size),
-                static_cast<int>(tile_size)
+                (2 + i) * cell_size + tile_margin,
+                tile_margin
             }
         );
+        next_input_tiles_[i]->set_visible(true);
         ++i;
     }
 }
 
 void grid::insert_next_input(const unsigned int x_offset, const unsigned int rotation)
 {
-    for(auto i = 0; i < 2; ++i)
-        input_tiles_[i] = std::move(next_input_tiles_[i]);
-
     input_x_offset_ = x_offset;
     input_rotation_ = rotation;
-    update_input_tile_areas();
-}
 
-void grid::set_next_input_items(const next_input_item_array& items)
-{
-    auto i = 0;
-    for(auto& opt_item: items)
+    const auto dst_positions = get_input_tile_positions(x_offset, rotation);
+
+    auto pgroup = std::make_unique<animation_group>();
+    for(auto i = 0; i < 2; ++i)
     {
-        if(opt_item)
-        {
-            next_input_tiles_[i] = std::make_unique<tile>();
-            next_input_tiles_[i]->set_value(opt_item->value);
-            next_input_tiles_[i]->set_area
-            (
-                SDL_Rect
-                {
-                    static_cast<int>((2 + i) * cell_size + tile_margin),
-                    static_cast<int>(tile_margin),
-                    static_cast<int>(tile_size),
-                    static_cast<int>(tile_size)
-                }
-            );
-        }
-        else
-        {
-            next_input_tiles_[i] = nullptr;
-        }
-
-        ++i;
-    }
-}
-
-void grid::set_input_items(const input_item_array& items)
-{
-    auto i = 0;
-    for(auto& opt_item: items)
-    {
-        if(opt_item)
-        {
-            input_tiles_[i] = std::make_unique<tile>();
-            input_tiles_[i]->set_value(opt_item->value);
-        }
-        else
-        {
-            input_tiles_[i] = nullptr;
-        }
-
-        ++i;
+        input_tiles_[i] = std::move(next_input_tiles_[i]);
+        pgroup->emplace<translation>(*input_tiles_[i], dst_positions[i], tile_insertion_speed);
     }
 
-    update_input_tile_areas();
+    animations_.push(std::move(pgroup));
 }
 
 void grid::set_input_x_offset(const unsigned int value)
 {
-    input_x_offset_ = value;
-    update_input_tile_areas();
+    if(input_x_offset_ != value)
+    {
+        input_x_offset_ = value;
+
+        const auto dst_positions = get_input_tile_positions(input_x_offset_, input_rotation_);
+
+        auto pgroup = std::make_unique<animation_group>();
+        for(auto i = 0; i < 2; ++i)
+            pgroup->emplace<translation>(*input_tiles_[i], dst_positions[i], tile_shift_speed);
+
+        animations_.push(std::move(pgroup));
+    }
 }
 
 void grid::set_input_rotation(const unsigned int value)
 {
-    input_rotation_ = value;
-    update_input_tile_areas();
+    if(input_rotation_ != value)
+    {
+        input_rotation_ = value;
+
+        const auto dst_positions = get_input_tile_positions(input_x_offset_, input_rotation_);
+
+        auto pgroup = std::make_unique<animation_group>();
+        for(auto i = 0; i < 2; ++i)
+            pgroup->emplace<translation>(*input_tiles_[i], dst_positions[i], tile_rotation_speed);
+
+        animations_.push(std::move(pgroup));
+    }
 }
 
 void grid::insert_input
@@ -206,59 +200,114 @@ void grid::insert_input
         board_tiles_[tile1_dst_column_index][tile1_dst_row_index] = std::move(input_tiles_[1]);
 }
 
-void grid::drop_tile
-(
-    const unsigned int column_index,
-    const unsigned int src_row_index,
-    const unsigned int dst_row_index
-)
+void grid::drop_tiles(const data_types::tile_drop_list& drops)
 {
-    auto& ptile = board_tiles_[column_index][src_row_index];
-    if(ptile)
+    auto pgroup = std::make_unique<animation_group>();
+
+    for(const auto& drop: drops)
     {
-        ptile->set_area(tile_coordinate_to_area(tile_coordinate{column_index, dst_row_index}));
-        board_tiles_[column_index][dst_row_index] = std::move(ptile);
+        if(auto& ptile = board_tiles_[drop.column_index][drop.src_row_index])
+        {
+            const auto dst_position = tile_coordinate_to_position(data_types::tile_coordinate{drop.column_index, drop.dst_row_index});
+            pgroup->emplace<translation>(*ptile, dst_position, tile_drop_speed);
+            board_tiles_[drop.column_index][drop.dst_row_index] = std::move(ptile);
+        }
     }
+
+    animations_.push(std::move(pgroup));
+    animations_.push(std::make_unique<pause>(0.05));
 }
 
-void grid::merge_tiles
-(
-    const std::vector<tile_coordinate>& src_tiles,
-    const tile_coordinate& dst_tile,
-    const unsigned int dst_tile_value
-)
+void grid::merge_tiles(const data_types::tile_merge_list& merges)
 {
-    for(const auto& src_tile: src_tiles)
-        board_tiles_[src_tile.x][src_tile.y] = nullptr;
+    //translate source tiles to position of destination tile
+    {
+        auto pgroup = std::make_unique<animation_group>();
 
-    auto pdst_tile = std::make_unique<tile>();
-    pdst_tile->set_value(dst_tile_value);
-    pdst_tile->set_area(tile_coordinate_to_area(dst_tile));
-    board_tiles_[dst_tile.x][dst_tile.y] = std::move(pdst_tile);
+        for(const auto& merge: merges)
+        {
+            const auto dst_position = tile_coordinate_to_position(merge.dst_tile_coordinate);
+
+            for(const auto& src_tile_coordinate: merge.src_tile_coordinates)
+            {
+                if(auto& ptile = board_tiles_[src_tile_coordinate.x][src_tile_coordinate.y])
+                {
+                    pgroup->emplace<translation>(*ptile, dst_position, tile_merge_speed);
+                }
+            }
+        }
+
+        animations_.push(std::move(pgroup));
+    }
+
+    //make source tiles disappear
+    {
+        auto pgroup = std::make_unique<animation_group>();
+
+        for(const auto& merge: merges)
+        {
+            for(const auto& src_tile_coordinate: merge.src_tile_coordinates)
+            {
+                if(auto& ptile = board_tiles_[src_tile_coordinate.x][src_tile_coordinate.y])
+                {
+                    pgroup->emplace<fade_out>(*ptile);
+                }
+            }
+        }
+
+        animations_.push(std::move(pgroup));
+    }
+
+    for(const auto& merge: merges)
+    {
+        for(const auto& src_tile_coordinate: merge.src_tile_coordinates)
+        {
+            if(auto& ptile = board_tiles_[src_tile_coordinate.x][src_tile_coordinate.y])
+            {
+                disappearing_tiles_.push_back(std::move(ptile));
+            }
+        }
+    }
+
+    //create merged tile
+    for(const auto& merge: merges)
+    {
+        auto pdst_tile = std::make_unique<tile>();
+        pdst_tile->set_value(merge.dst_tile_value);
+        pdst_tile->set_size(tile_size, tile_size);
+        pdst_tile->set_position(tile_coordinate_to_position(merge.dst_tile_coordinate));
+
+        animations_.push(std::make_unique<fade_in>(*pdst_tile));
+
+        board_tiles_[merge.dst_tile_coordinate.x][merge.dst_tile_coordinate.y] = std::move(pdst_tile);
+    }
+
+    //make a pause
+    animations_.push(std::make_unique<pause>(0.2));
 }
 
-void grid::set_board_items(const board_item_array& items)
+void grid::draw(SDL_Renderer& renderer, const double ellapsed_time)
 {
-    fill_tiles(board_tiles_, items, 11);
-}
+    //animate
+    iterate(animations_, ellapsed_time);
+    if(animations_.empty())
+        disappearing_tiles_.clear();
 
-void grid::draw(SDL_Renderer& renderer)
-{
-    //background
+    //draw background
     {
         const auto r = SDL_Rect{0, 0, 6 * cell_size, 12 * cell_size};
         SDL_SetRenderDrawColor(&renderer, 0x66, 0x66, 0x66, 255);
         SDL_RenderFillRect(&renderer, &r);
     }
 
-    //death line
+    //draw death line
     {
         const auto r = SDL_Rect{0, 5 * cell_size - 1, 6 * cell_size, 2};
         SDL_SetRenderDrawColor(&renderer, 0xff, 0xff, 0xff, 255);
         SDL_RenderFillRect(&renderer, &r);
     }
 
-    //tiles
+    //draw tiles
     {
         for(auto& ptile: next_input_tiles_)
             if(ptile)
@@ -272,71 +321,16 @@ void grid::draw(SDL_Renderer& renderer)
             for(auto& ptile: tile_column)
                 if(ptile)
                     ptile->draw(renderer);
+
+        for(auto& ptile: disappearing_tiles_)
+            if(ptile)
+                ptile->draw(renderer);
     }
 }
 
-void grid::update_input_tile_areas()
+bool grid::is_animating() const
 {
-    auto tile0_x = 0.0;
-    auto tile0_y = 0.0;
-    auto tile1_x = 0.0;
-    auto tile1_y = 0.0;
-
-    switch(input_rotation_)
-    {
-        case 0:
-            tile0_x = 0;
-            tile0_y = 0.5;
-            tile1_x = 1;
-            tile1_y = 0.5;
-            break;
-        case 1:
-            tile0_x = 0;
-            tile0_y = 0;
-            tile1_x = 0;
-            tile1_y = 1;
-            break;
-        case 2:
-            tile0_x = 1;
-            tile0_y = 0.5;
-            tile1_x = 0;
-            tile1_y = 0.5;
-            break;
-        case 3:
-            tile0_x = 0;
-            tile0_y = 1;
-            tile1_x = 0;
-            tile1_y = 0;
-            break;
-    }
-
-    if(auto& ptile = input_tiles_[0])
-    {
-        ptile->set_area
-        (
-            SDL_Rect
-            {
-                static_cast<int>((tile0_x + input_x_offset_) * cell_size + tile_margin),
-                static_cast<int>((tile0_y + 2) * cell_size + tile_margin),
-                static_cast<int>(tile_size),
-                static_cast<int>(tile_size)
-            }
-        );
-    }
-
-    if(auto& ptile = input_tiles_[1])
-    {
-        ptile->set_area
-        (
-            SDL_Rect
-            {
-                static_cast<int>((tile1_x + input_x_offset_) * cell_size + tile_margin),
-                static_cast<int>((tile1_y + 2) * cell_size + tile_margin),
-                static_cast<int>(tile_size),
-                static_cast<int>(tile_size)
-            }
-        );
-    }
+    return !animations_.empty();
 }
 
 } //namespace view

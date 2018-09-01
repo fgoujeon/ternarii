@@ -37,12 +37,12 @@ namespace
         return (max + 1) * std::pow(random, 2);
     }
 
-    tile generate_new_tile(const unsigned int max_value)
+    data_types::tile generate_new_tile(const unsigned int max_value)
     {
-        return tile{random_value(max_value)};
+        return data_types::tile{random_value(max_value)};
     }
 
-    tile_pair generate_next_input(const unsigned int highest_unlocked_element_value)
+    data_types::tile_pair generate_next_input(const unsigned int highest_unlocked_element_value)
     {
         return
         {
@@ -67,7 +67,7 @@ struct game::impl
 
     board board_;
     board_input input_;
-    tile_pair next_input_;
+    data_types::tile_pair next_input_;
 };
 
 game::game():
@@ -82,17 +82,17 @@ unsigned int game::get_score() const
     return pimpl_->board_.get_score();
 }
 
-const tile_pair& game::get_next_input_tiles() const
+const data_types::tile_pair& game::get_next_input_tiles() const
 {
     return pimpl_->next_input_;
 }
 
-const tile_pair& game::get_input_tiles() const
+const data_types::tile_pair& game::get_input_tiles() const
 {
     return pimpl_->input_.get_tiles();
 }
 
-const board_tile_grid& game::get_board_tiles() const
+const data_types::board_tile_grid& game::get_board_tiles() const
 {
     return pimpl_->board_.tile_grid();
 }
@@ -129,24 +129,23 @@ event_list game::rotate_input()
 
 event_list game::drop_input()
 {
-    event_list changes;
+    event_list events;
 
     if(!is_game_over())
     {
         //drop the input
-        const auto& change_sets = pimpl_->board_.drop_input(pimpl_->input_);
-        for(const auto& change_set: change_sets)
-            for(const auto& change: change_set)
-                changes.push_back(change);
+        const auto& board_events = pimpl_->board_.drop_input(pimpl_->input_);
+        for(const auto& event: board_events)
+            events.push_back(event);
 
         if(!is_game_over())
         {
             //move the next input into the input
-            changes.push_back(pimpl_->input_.set_tiles(pimpl_->next_input_));
+            events.push_back(pimpl_->input_.set_tiles(pimpl_->next_input_));
 
             //create a new next input
             pimpl_->next_input_ = generate_next_input(pimpl_->get_highest_unlocked_element_index());
-            changes.push_back
+            events.push_back
             (
                 events::next_input_creation
                 {
@@ -158,9 +157,9 @@ event_list game::drop_input()
     }
 
     if(is_game_over())
-        changes.push_back(events::end_of_game{});
+        events.push_back(events::end_of_game{});
 
-    return changes;
+    return events;
 }
 
 } //namespace libgame

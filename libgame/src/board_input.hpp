@@ -33,44 +33,36 @@ class board_input
 {
 	public:
 		static const unsigned int column_count = 6;
-        using tiles_t = std::array<tile, 2>;
+        using tiles_t = std::array<data_types::tile, 2>;
 
 	public:
-        board_input(const tile_pair& tiles);
+        board_input(const data_types::tile_pair& tiles);
 
-        const tile_pair&
-		get_tiles() const
+        const data_types::tile_pair& get_tiles() const
         {
             return tiles_;
         }
 
-        event
-		set_tiles(const tile_pair& rhs);
+        event set_tiles(const data_types::tile_pair& rhs);
 
-        unsigned int
-        get_x_offset() const
+        unsigned int get_x_offset() const
         {
             return x_offset_;
         }
 
-        std::vector<event>
-		shift_left();
+        std::vector<event> shift_left();
 
-        std::vector<event>
-		shift_right();
+        std::vector<event> shift_right();
 
-        unsigned int
-        get_rotation() const
+        unsigned int get_rotation() const
         {
             return rotation_;
         }
 
-        std::vector<event>
-		rotate();
+        std::vector<event> rotate();
 
     private:
-        std::vector<event>
-        apply();
+        std::vector<event> apply();
 
 	private:
         tiles_t tiles_;

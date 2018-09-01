@@ -163,22 +163,12 @@ class controller
 
         void handle_game_event(const libgame::events::tile_drop& event)
         {
-            view_.drop_tile
-            (
-                event.column_index,
-                event.src_row_index,
-                event.dst_row_index
-            );
+            view_.drop_tiles(conversion::to_view(event.drops));
         }
 
         void handle_game_event(const libgame::events::tile_merge& event)
         {
-            view_.merge_tiles
-            (
-                conversion::to_view(event.src_tiles),
-                conversion::to_view(event.dst_tile),
-                event.dst_tile_value
-            );
+            view_.merge_tiles(conversion::to_view(event.merges));
         }
 
         void handle_game_event(const libgame::events::end_of_game&)

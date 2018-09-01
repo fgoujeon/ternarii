@@ -1,11 +1,3 @@
-#ifndef LIBVIEW_GRID_HPP
-#define LIBVIEW_GRID_HPP
-
-#include "tile.hpp"
-#include <libview/data_types.hpp>
-#include <libsdl.hpp>
-#include <vector>
-#include <array>
 /*
 Copyright 2018 Florian Goujeon
 
@@ -25,6 +17,15 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+#ifndef LIBVIEW_GRID_HPP
+#define LIBVIEW_GRID_HPP
+
+#include "tile.hpp"
+#include "animations.hpp"
+#include <libview/data_types.hpp>
+#include <libsdl.hpp>
+#include <vector>
+#include <array>
 
 namespace libview
 {
@@ -46,15 +47,11 @@ class grid
 
         int get_logical_height() const;
 
-        void draw(SDL_Renderer& renderer);
+        void draw(SDL_Renderer& renderer, const double ellapsed_time);
 
         void create_next_input(const unsigned int value0, const unsigned int value1);
 
         void insert_next_input(const unsigned int x_offset, const unsigned int rotation);
-
-        void set_next_input_items(const next_input_item_array& items);
-
-        void set_input_items(const input_item_array& items);
 
         void set_input_x_offset(const unsigned int value);
 
@@ -68,24 +65,11 @@ class grid
             const unsigned int tile1_dst_row_index
         );
 
-        void drop_tile
-        (
-            const unsigned int column_index,
-            const unsigned int src_row_index,
-            const unsigned int dst_row_index
-        );
+        void drop_tiles(const data_types::tile_drop_list& drops);
 
-        void merge_tiles
-        (
-            const std::vector<tile_coordinate>& src_tiles,
-            const tile_coordinate& dst_tile,
-            const unsigned int dst_tile_value
-        );
+        void merge_tiles(const data_types::tile_merge_list& merges);
 
-        void set_board_items(const board_item_array& items);
-
-    private:
-        void update_input_tile_areas();
+        bool is_animating() const;
 
     private:
         next_input_tile_array next_input_tiles_;
@@ -93,6 +77,8 @@ class grid
         unsigned int input_x_offset_ = 0;
         unsigned int input_rotation_ = 0;
         board_tile_array board_tiles_;
+        std::vector<std::unique_ptr<tile>> disappearing_tiles_;
+        animation_queue animations_;
 };
 
 } //namespace libview

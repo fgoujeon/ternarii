@@ -36,11 +36,11 @@ struct game
 
         unsigned int get_score() const;
 
-		const tile_pair& get_next_input_tiles() const;
+		const data_types::tile_pair& get_next_input_tiles() const;
 
-		const tile_pair& get_input_tiles() const;
+		const data_types::tile_pair& get_input_tiles() const;
 
-		const board_tile_grid& get_board_tiles() const;
+		const data_types::board_tile_grid& get_board_tiles() const;
 
 		bool is_game_over() const;
 
