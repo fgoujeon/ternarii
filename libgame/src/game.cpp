@@ -21,8 +21,8 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include "board.hpp"
 #include "board_input.hpp"
 #include <algorithm>
+#include <random>
 #include <cmath>
-#include <cstdlib>
 #include <cassert>
 
 namespace libgame
@@ -30,24 +30,46 @@ namespace libgame
 
 namespace
 {
-    //return random value from 0 to max
-    unsigned int random_value(const unsigned int max)
+    class random_tile_generator
     {
-        const auto random = static_cast<double>(std::rand() - 1) / RAND_MAX; //[0, 1)
-        return (max + 1) * std::pow(random, 2);
+        public:
+            random_tile_generator():
+                gen_(rd_())
+            {
+            }
+
+            //return random value (with normal distribution) from 0 to max
+            unsigned int generate(const unsigned int max)
+            {
+                std::normal_distribution<double> dis{0, max / 4.0 + 1.5};
+                const auto r = std::abs(dis(gen_));
+                return std::min(static_cast<unsigned int>(r), max);
+            }
+
+        private:
+            std::random_device rd_;
+            std::mt19937 gen_;
+    };
+
+    data_types::tile generate_new_tile
+    (
+        random_tile_generator& rand,
+        const unsigned int max_value
+    )
+    {
+        return data_types::tile{rand.generate(max_value)};
     }
 
-    data_types::tile generate_new_tile(const unsigned int max_value)
-    {
-        return data_types::tile{random_value(max_value)};
-    }
-
-    data_types::tile_pair generate_next_input(const unsigned int highest_unlocked_element_value)
+    data_types::tile_pair generate_next_input
+    (
+        random_tile_generator& rand,
+        const unsigned int highest_unlocked_element_value
+    )
     {
         return
         {
-            generate_new_tile(highest_unlocked_element_value - 1),
-            generate_new_tile(highest_unlocked_element_value - 1)
+            generate_new_tile(rand, highest_unlocked_element_value - 1),
+            generate_new_tile(rand, highest_unlocked_element_value - 1)
         };
     }
 }
@@ -55,8 +77,8 @@ namespace
 struct game::impl
 {
     impl():
-        next_input_(generate_next_input(get_highest_unlocked_element_index())),
-        input_(generate_next_input(get_highest_unlocked_element_index()))
+        next_input_(generate_next_input(rand, get_highest_unlocked_element_index())),
+        input_(generate_next_input(rand, get_highest_unlocked_element_index()))
     {
     }
 
@@ -65,13 +87,14 @@ struct game::impl
         return board_.get_highest_tile_ever();
     }
 
+    random_tile_generator rand;
     board board_;
     board_input input_;
     data_types::tile_pair next_input_;
 };
 
 game::game():
-	pimpl_(std::make_unique<impl>())
+    pimpl_(std::make_unique<impl>())
 {
 }
 
@@ -144,7 +167,7 @@ event_list game::drop_input()
             events.push_back(pimpl_->input_.set_tiles(pimpl_->next_input_));
 
             //create a new next input
-            pimpl_->next_input_ = generate_next_input(pimpl_->get_highest_unlocked_element_index());
+            pimpl_->next_input_ = generate_next_input(pimpl_->rand, pimpl_->get_highest_unlocked_element_index());
             events.push_back
             (
                 events::next_input_creation

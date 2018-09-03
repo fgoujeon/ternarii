@@ -28,8 +28,6 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 
 #include <SDL2/SDL.h>
 #include <iostream>
-#include <ctime>
-#include <cstdlib>
 #include <cassert>
 
 #ifdef EMSCRIPTEN
@@ -232,9 +230,7 @@ class controller
 
 int main(int, char**)
 {
-    std::srand(std::time(nullptr));
-
     controller c;
     c.run();
-    return EXIT_SUCCESS;
+    return 0;
 }
