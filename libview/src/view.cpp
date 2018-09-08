@@ -63,7 +63,20 @@ struct view::impl
             )
         ),
         pgrid(std::make_shared<grid>(*prenderer)),
-        pscore_display(std::make_shared<score_display>(*prenderer)),
+        pscore_display
+        (
+            std::make_shared<score_display>
+            (
+                *prenderer,
+                SDL_Rect
+                {
+                    50,
+                    50,
+                    logical_width - 100,
+                    100
+                }
+            )
+        ),
         pgame_over_screen
         (
             std::make_shared<game_over_screen>
@@ -80,17 +93,6 @@ struct view::impl
             )
         )
     {
-        pscore_display->set_area
-        (
-            SDL_Rect
-            {
-                50,
-                50,
-                logical_width - 100,
-                100
-            }
-        );
-
         SDL_SetRenderDrawBlendMode(prenderer.get(), SDL_BLENDMODE_BLEND);
     }
 
@@ -184,9 +186,7 @@ struct view::impl
             }
 
             //score
-            {
-                pscore_display->draw(*prenderer);
-            }
+            pscore_display->draw();
 
             //game over screen
             {
