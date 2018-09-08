@@ -17,8 +17,8 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef LIBVIEW_BUTTON_HPP
-#define LIBVIEW_BUTTON_HPP
+#ifndef LIBVIEW_CLICKABLE_AREA_HPP
+#define LIBVIEW_CLICKABLE_AREA_HPP
 
 #include <libsdl.hpp>
 #include <functional>
@@ -26,15 +26,15 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libview
 {
 
-class button
+class clickable_area
 {
     public:
         using click_event_handler = std::function<void()>;
 
     public:
-        button(const click_event_handler& evt_handler);
+        clickable_area(const click_event_handler& evt_handler);
 
-        ~button();
+        ~clickable_area();
 
         void set_area(const SDL_Rect& area);
 

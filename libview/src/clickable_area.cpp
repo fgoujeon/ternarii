@@ -17,41 +17,41 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#include "button.hpp"
+#include "clickable_area.hpp"
 #include <iostream>
 
 namespace libview
 {
 
-button::button(const click_event_handler& evt_handler):
+clickable_area::clickable_area(const click_event_handler& evt_handler):
     evt_handler_(evt_handler)
 {
     SDL_AddEventWatch(&static_process_event, this);
 }
 
-button::~button()
+clickable_area::~clickable_area()
 {
     SDL_DelEventWatch(&static_process_event, this);
 }
 
-void button::set_area(const SDL_Rect& area)
+void clickable_area::set_area(const SDL_Rect& area)
 {
     area_ = area;
 }
 
-void button::draw(SDL_Renderer& renderer)
+void clickable_area::draw(SDL_Renderer& renderer)
 {
     SDL_SetRenderDrawColor(&renderer, 0xff, 0xff, 0xff, 0x40);
     SDL_RenderFillRect(&renderer, &area_);
 }
 
-int button::static_process_event
+int clickable_area::static_process_event
 (
     void* pdata,
     SDL_Event* pevent
 )
 {
-    auto pself = reinterpret_cast<button*>(pdata);
+    auto pself = reinterpret_cast<clickable_area*>(pdata);
     auto& self = *pself;
     auto& event = *pevent;
 
@@ -60,7 +60,7 @@ int button::static_process_event
     return 0;
 }
 
-void button::process_event(SDL_Event& event)
+void clickable_area::process_event(SDL_Event& event)
 {
     if(event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT)
     {

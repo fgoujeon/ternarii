@@ -20,7 +20,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #ifndef LIBVIEW_GAME_OVER_SCREEN_HPP
 #define LIBVIEW_GAME_OVER_SCREEN_HPP
 
-#include "button.hpp"
+#include "clickable_area.hpp"
 #include <libview/events.hpp>
 #include <libsdl.hpp>
 
@@ -47,7 +47,7 @@ class game_over_screen
         bool visible_ = false;
         libsdl::unique_ptr<TTF_Font> pfont_;
         libsdl::unique_ptr<SDL_Texture> pgame_over_texture_;
-        button replay_button_;
+        clickable_area replay_button_;
 };
 
 } //namespace libview
