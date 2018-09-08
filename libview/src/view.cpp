@@ -33,8 +33,8 @@ namespace libview
 
 namespace
 {
-    const auto logical_width = 900;
-    const auto logical_height = 1900;
+    const auto logical_width = 700;
+    const auto logical_height = 1300;
 }
 
 struct view::impl
@@ -70,10 +70,10 @@ struct view::impl
         (
             SDL_Rect
             {
-                static_cast<int>(0.025 * logical_width),
-                static_cast<int>(0.025 * logical_height),
-                static_cast<int>(0.95 * logical_width),
-                120
+                50,
+                50,
+                logical_width - 100,
+                100
             }
         );
 
@@ -81,10 +81,10 @@ struct view::impl
         (
             SDL_Rect
             {
-                static_cast<int>(0.02 * logical_width),
-                330,
-                static_cast<int>(0.96 * logical_width),
-                400
+                50,
+                250,
+                logical_width - 100,
+                200
             }
         );
     }
@@ -165,36 +165,21 @@ struct view::impl
             {
                 const auto grid_logical_width = pgrid->get_logical_width();
                 const auto grid_logical_height = pgrid->get_logical_height();
-                const auto grid_ratio = static_cast<double>(grid_logical_width) / grid_logical_height;
 
                 SDL_Rect viewport;
-                viewport.x = current_viewport.x + current_viewport.w * 0.025;
-                viewport.y = current_viewport.y + current_viewport.h * 0.085;
-                viewport.w = current_viewport.w * 0.95;
-                viewport.h = viewport.w / grid_ratio;
+                viewport.x = current_viewport.x + 50;
+                viewport.y = current_viewport.y + 150;
+                viewport.w = grid_logical_width;
+                viewport.h = grid_logical_height;
                 SDL_RenderSetViewport(prenderer.get(), &viewport);
 
-                SDL_RenderSetScale
-                (
-                    prenderer.get(),
-                    current_x_scale * viewport.w / grid_logical_width,
-                    current_y_scale * viewport.h / grid_logical_height
-                );
-
                 pgrid->draw(*prenderer, ellapsed_time);
+
+                SDL_RenderSetViewport(prenderer.get(), &current_viewport);
             }
 
             //score
             {
-                SDL_RenderSetScale
-                (
-                    prenderer.get(),
-                    current_x_scale,
-                    current_y_scale
-                );
-
-                SDL_RenderSetViewport(prenderer.get(), &current_viewport);
-
                 pscore_display->draw(*prenderer);
             }
 
