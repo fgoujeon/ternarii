@@ -21,6 +21,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #define LIBVIEW_TILE_HPP
 
 #include "point.hpp"
+#include "label.hpp"
 #include <libsdl.hpp>
 
 namespace libview
@@ -29,27 +30,32 @@ namespace libview
 class tile
 {
     public:
-        tile();
+        tile
+        (
+            SDL_Renderer& renderer,
+            const unsigned int value,
+            const point& position,
+            const unsigned int w,
+            const unsigned int h
+        );
 
         const point& get_position() const;
 
         void set_position(const point& position);
 
-        void set_size(const unsigned int w, const unsigned int h);
-
         void set_visible(const bool visible);
 
-        void set_value(const unsigned int value);
-
-        void draw(SDL_Renderer& renderer);
+        void draw();
 
     private:
-        libsdl::unique_ptr<TTF_Font> pfont_;
+        SDL_Renderer& renderer_;
+        unsigned int value_ = 0;
         point position_;
         unsigned int w_ = 0;
         unsigned int h_ = 0;
+        SDL_Color background_color_;
+        label label_;
         bool visible_ = false;
-        unsigned int value_ = 0;
 };
 
 } //namespace libview

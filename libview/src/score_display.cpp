@@ -58,7 +58,13 @@ score_display::score_display
     label_
     (
         renderer,
-        area,
+        point
+        {
+            static_cast<double>(area.x),
+            static_cast<double>(area.y)
+        },
+        area.w,
+        area.h,
         "0",
         horizontal_alignment::right,
         vertical_alignment::center,

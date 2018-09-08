@@ -74,6 +74,7 @@ class grid
         bool is_animating() const;
 
     private:
+        SDL_Renderer& renderer_;
         next_input_tile_array next_input_tiles_;
         input_tile_array input_tiles_;
         unsigned int input_x_offset_ = 0;

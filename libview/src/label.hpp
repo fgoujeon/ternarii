@@ -20,6 +20,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #ifndef LIBVIEW_LABEL_HPP
 #define LIBVIEW_LABEL_HPP
 
+#include "point.hpp"
 #include <libsdl.hpp>
 #include <string>
 
@@ -46,7 +47,9 @@ class label
         label
         (
             SDL_Renderer& renderer,
-            const SDL_Rect& area,
+            const point& position,
+            const unsigned int w,
+            const unsigned int h,
             const std::string& text,
             const horizontal_alignment halign,
             const vertical_alignment valign,
@@ -54,7 +57,7 @@ class label
             const SDL_Color& color
         );
 
-        void set_area(const SDL_Rect& area);
+        void set_position(const point& position);
 
         void set_text(const std::string& text);
 
@@ -63,7 +66,9 @@ class label
     private:
         SDL_Renderer& renderer_;
         libsdl::unique_ptr<TTF_Font> pfont_;
-        SDL_Rect area_ = SDL_Rect{0, 0, 0, 0};
+        point position_;
+        unsigned int w_;
+        unsigned int h_;
         SDL_Color color_ = SDL_Color{0, 0, 0, 0};
         libsdl::unique_ptr<SDL_Texture> ptexture_;
         horizontal_alignment halign_;

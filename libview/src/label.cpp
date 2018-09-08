@@ -45,7 +45,9 @@ namespace
 label::label
 (
     SDL_Renderer& renderer,
-    const SDL_Rect& area,
+    const point& position,
+    const unsigned int w,
+    const unsigned int h,
     const std::string& text,
     const horizontal_alignment halign,
     const vertical_alignment valign,
@@ -54,7 +56,9 @@ label::label
 ):
     renderer_(renderer),
     pfont_(TTF_OpenFont(font_file_path.c_str(), 90)),
-    area_(area),
+    position_(position),
+    w_(w),
+    h_(h),
     color_(color),
     ptexture_(make_texture(renderer, *pfont_, text, color)),
     halign_(halign),
@@ -62,9 +66,9 @@ label::label
 {
 }
 
-void label::set_area(const SDL_Rect& area)
+void label::set_position(const point& position)
 {
-    area_ = area;
+    position_ = position;
 }
 
 void label::set_text(const std::string& text)
@@ -90,48 +94,48 @@ void label::draw()
     ;
 
     const auto label_ratio =
-        static_cast<double>(area_.w) /
-        area_.h
+        static_cast<double>(w_) /
+        h_
     ;
 
     SDL_Rect r;
     if(texture_ratio > label_ratio)
     {
-        r.w = area_.w;
+        r.w = w_;
         r.h = r.w / texture_ratio;
 
-        r.x = area_.x;
+        r.x = position_.x;
 
         switch(valign_)
         {
             case vertical_alignment::top:
-                r.y = area_.y;
+                r.y = position_.y;
                 break;
             case vertical_alignment::center:
-                r.y = area_.y + area_.h / 2 - r.h / 2;
+                r.y = position_.y + h_ / 2 - r.h / 2;
                 break;
             default:
-                r.y = area_.y + area_.h - r.h;
+                r.y = position_.y + h_ - r.h;
         }
     }
     else
     {
-        r.h = area_.h;
+        r.h = h_;
         r.w = r.h * texture_ratio;
 
         switch(halign_)
         {
             case horizontal_alignment::left:
-                r.x = area_.x;
+                r.x = position_.x;
                 break;
             case horizontal_alignment::center:
-                r.x = area_.x + area_.w / 2 - r.w / 2;
+                r.x = position_.x + w_ / 2 - r.w / 2;
                 break;
             default:
-                r.x = area_.x + area_.w - r.w;
+                r.x = position_.x + w_ - r.w;
         }
 
-        r.y = area_.y;
+        r.y = position_.y;
     }
 
     SDL_RenderCopy(&renderer_, ptexture_.get(), nullptr, &r);
