@@ -68,6 +68,7 @@ struct view::impl
         (
             std::make_shared<game_over_screen>
             (
+                evt_handler,
                 *prenderer,
                 SDL_Rect
                 {
@@ -229,6 +230,12 @@ void view::iterate()
 bool view::must_quit() const
 {
     return pimpl_->quit;
+}
+
+void view::clear()
+{
+    pimpl_->pgrid->clear();
+    pimpl_->pgame_over_screen->set_visible(false);
 }
 
 void view::set_score(const unsigned int value)

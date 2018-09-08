@@ -49,6 +49,8 @@ class grid
 
         void draw(SDL_Renderer& renderer, const double ellapsed_time);
 
+        void clear();
+
         void create_next_input(const unsigned int value0, const unsigned int value1);
 
         void insert_next_input(const unsigned int x_offset, const unsigned int rotation);

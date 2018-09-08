@@ -34,7 +34,7 @@ using array2d = std::array<std::array<T, Size1>, Size0>;
 
 struct tile
 {
-    explicit tile(unsigned int value): value(value)
+    explicit tile(unsigned int value = 0): value(value)
     {
     }
 

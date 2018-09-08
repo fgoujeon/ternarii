@@ -93,32 +93,7 @@ class controller
         controller():
             view_([this](const libview::event& event){handle_view_event(event);})
         {
-            const auto& input_tiles = game_.get_input_tiles();
-            const auto& next_input_tiles = game_.get_next_input_tiles();
-
-            handle_game_event
-            (
-                libgame::events::next_input_creation
-                {
-                    {
-                        input_tiles[0],
-                        input_tiles[1]
-                    }
-                }
-            );
-
-            handle_game_event(libgame::events::next_input_insertion{2, 0});
-
-            handle_game_event
-            (
-                libgame::events::next_input_creation
-                {
-                    {
-                        next_input_tiles[0],
-                        next_input_tiles[1]
-                    }
-                }
-            );
+            handle_game_events(game_.start());
         }
 
         void run()
@@ -127,6 +102,11 @@ class controller
         }
 
     private:
+        void handle_game_event(const libgame::events::start& event)
+        {
+            view_.clear();
+        }
+
         void handle_game_event(const libgame::events::score_change& event)
         {
             view_.set_score(event.score);
@@ -209,6 +189,11 @@ class controller
         void handle_view_event2(const libview::events::drop_request&)
         {
             handle_game_events(game_.drop_input());
+        }
+
+        void handle_view_event2(const libview::events::clear_request&)
+        {
+            handle_game_events(game_.start());
         }
 
         void handle_view_event(const libview::event& event)

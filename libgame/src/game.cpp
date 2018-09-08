@@ -76,12 +76,6 @@ namespace
 
 struct game::impl
 {
-    impl():
-        next_input_(generate_next_input(rand, get_highest_unlocked_element_index())),
-        input_(generate_next_input(rand, get_highest_unlocked_element_index()))
-    {
-    }
-
     unsigned int get_highest_unlocked_element_index() const
     {
         return board_.get_highest_tile_ever();
@@ -133,6 +127,43 @@ unsigned int game::get_input_x_offset() const
 unsigned int game::get_input_rotation() const
 {
     return pimpl_->input_.get_rotation();
+}
+
+event_list game::start()
+{
+    event_list events;
+
+    pimpl_->board_.clear();
+
+    events.push_back(events::start{});
+    events.push_back(events::score_change{0});
+
+    //generate next input
+    pimpl_->next_input_ = generate_next_input(pimpl_->rand, pimpl_->get_highest_unlocked_element_index());
+    events.push_back
+    (
+        events::next_input_creation
+        {
+            pimpl_->next_input_[0],
+            pimpl_->next_input_[1]
+        }
+    );
+
+    //insert next input
+    events.push_back(pimpl_->input_.set_tiles(pimpl_->next_input_));
+
+    //generate next input
+    pimpl_->next_input_ = generate_next_input(pimpl_->rand, pimpl_->get_highest_unlocked_element_index());
+    events.push_back
+    (
+        events::next_input_creation
+        {
+            pimpl_->next_input_[0],
+            pimpl_->next_input_[1]
+        }
+    );
+
+    return events;
 }
 
 event_list game::shift_input_left()

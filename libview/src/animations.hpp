@@ -251,6 +251,13 @@ void iterate(animation_queue& q, const double ellapsed_time)
     }
 }
 
+inline
+void clear(animation_queue& q)
+{
+    while(!q.empty())
+        q.pop();
+}
+
 } //namespace libview
 
 #endif

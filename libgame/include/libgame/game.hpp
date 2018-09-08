@@ -29,34 +29,36 @@ namespace libgame
 
 struct game
 {
-	public:
-		game();
+    public:
+        game();
 
-		~game();
+        ~game();
 
         unsigned int get_score() const;
 
-		const data_types::tile_pair& get_next_input_tiles() const;
+        const data_types::tile_pair& get_next_input_tiles() const;
 
-		const data_types::tile_pair& get_input_tiles() const;
+        const data_types::tile_pair& get_input_tiles() const;
 
-		const data_types::board_tile_grid& get_board_tiles() const;
+        const data_types::board_tile_grid& get_board_tiles() const;
 
-		bool is_game_over() const;
+        bool is_game_over() const;
 
         unsigned int get_input_x_offset() const;
 
         unsigned int get_input_rotation() const;
 
-		event_list shift_input_left();
+        event_list start();
 
-		event_list shift_input_right();
+        event_list shift_input_left();
 
-		event_list rotate_input();
+        event_list shift_input_right();
 
-		event_list drop_input();
+        event_list rotate_input();
 
-	private:
+        event_list drop_input();
+
+    private:
         struct impl;
         std::unique_ptr<impl> pimpl_;
 };

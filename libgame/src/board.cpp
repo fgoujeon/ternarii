@@ -50,6 +50,15 @@ unsigned int board::get_score() const
     return score;
 }
 
+void board::clear()
+{
+    for(auto& cell_column: tile_grid_)
+        for(auto& opt_tile: cell_column)
+            opt_tile = std::nullopt;
+
+    highest_tile_ever_ = 3;
+}
+
 std::vector<event> board::drop_input(const board_input& in)
 {
     std::vector<event> events;

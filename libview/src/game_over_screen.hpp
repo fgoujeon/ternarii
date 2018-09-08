@@ -21,6 +21,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #define LIBVIEW_GAME_OVER_SCREEN_HPP
 
 #include "button.hpp"
+#include <libview/events.hpp>
 #include <libsdl.hpp>
 
 namespace libview
@@ -31,6 +32,7 @@ class game_over_screen
     public:
         game_over_screen
         (
+            const event_handler& evt_handler,
             SDL_Renderer& renderer,
             const SDL_Rect& area
         );

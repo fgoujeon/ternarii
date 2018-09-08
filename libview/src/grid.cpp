@@ -113,6 +113,23 @@ int grid::get_logical_height() const
     return row_count * cell_size;
 }
 
+void grid::clear()
+{
+    for(auto& ptile: next_input_tiles_)
+        ptile.reset();
+
+    for(auto& ptile: input_tiles_)
+        ptile.reset();
+
+    for(auto& tile_column: board_tiles_)
+        for(auto& ptile: tile_column)
+            ptile.reset();
+
+    disappearing_tiles_.clear();
+
+    libview::clear(animations_);
+}
+
 void grid::create_next_input(const unsigned int value0, const unsigned int value1)
 {
     const auto values = std::array<unsigned int, 2>{value0, value1};

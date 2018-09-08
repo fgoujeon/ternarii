@@ -25,6 +25,7 @@ namespace libview
 
 game_over_screen::game_over_screen
 (
+    const event_handler& evt_handler,
     SDL_Renderer& renderer,
     const SDL_Rect& area
 ):
@@ -46,10 +47,13 @@ game_over_screen::game_over_screen
     ),
     replay_button_
     (
-        [this]
+        [this, evt_handler]
         {
             if(visible_)
+            {
+                evt_handler(events::clear_request{});
                 std::cout << "clicked\n";
+            }
         }
     )
 {
