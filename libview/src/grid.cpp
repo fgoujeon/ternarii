@@ -26,25 +26,25 @@ namespace libview
 
 namespace
 {
-    const auto cell_size = 50;
+    const auto cell_size = 100;
     const auto column_count = 6;
-    const auto row_count = 12;
+    const auto row_count = 11;
     const auto tile_margin = cell_size * 0.05;
     const auto tile_size = cell_size - tile_margin * 2;
 
     //speeds, in pixels per second
-    const auto tile_insertion_speed = 600;
-    const auto tile_shift_speed = 600;
-    const auto tile_rotation_speed = 600;
-    const auto tile_drop_speed = 1200;
-    const auto tile_merge_speed = 300;
+    const auto tile_insertion_speed = 1200;
+    const auto tile_shift_speed = 1200;
+    const auto tile_rotation_speed = 1200;
+    const auto tile_drop_speed = 2400;
+    const auto tile_merge_speed = 600;
 
     auto tile_coordinate_to_position(const data_types::tile_coordinate& c)
     {
         return point
         {
             c.x * cell_size + tile_margin,
-            (11 - c.y) * cell_size + tile_margin
+            (10 - c.y) * cell_size + tile_margin
         };
     }
 
@@ -88,12 +88,12 @@ namespace
             point
             {
                 (tile0_x + x_offset) * cell_size + tile_margin,
-                (tile0_y + 2) * cell_size + tile_margin
+                (tile0_y + 1.5) * cell_size + tile_margin
             },
             point
             {
                 (tile1_x + x_offset) * cell_size + tile_margin,
-                (tile1_y + 2) * cell_size + tile_margin
+                (tile1_y + 1.5) * cell_size + tile_margin
             }
         };
     }
@@ -295,14 +295,21 @@ void grid::draw(SDL_Renderer& renderer, const double ellapsed_time)
 
     //draw background
     {
-        const auto r = SDL_Rect{0, 0, 6 * cell_size, 12 * cell_size};
+        const auto r = SDL_Rect{0, 0, column_count * cell_size, row_count * cell_size};
         SDL_SetRenderDrawColor(&renderer, 0x66, 0x66, 0x66, 255);
+        SDL_RenderFillRect(&renderer, &r);
+    }
+
+    //draw next input line
+    {
+        const auto r = SDL_Rect{0, cell_size - 1, column_count * cell_size, 2};
+        SDL_SetRenderDrawColor(&renderer, 0xff, 0xff, 0xff, 255);
         SDL_RenderFillRect(&renderer, &r);
     }
 
     //draw death line
     {
-        const auto r = SDL_Rect{0, 5 * cell_size - 1, 6 * cell_size, 2};
+        const auto r = SDL_Rect{0, 4 * cell_size - 1, column_count * cell_size, 2};
         SDL_SetRenderDrawColor(&renderer, 0xff, 0xff, 0xff, 255);
         SDL_RenderFillRect(&renderer, &r);
     }
