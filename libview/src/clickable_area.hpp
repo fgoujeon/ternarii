@@ -32,9 +32,15 @@ class clickable_area
         using click_event_handler = std::function<void()>;
 
     public:
-        clickable_area(const click_event_handler& evt_handler);
+        clickable_area
+        (
+            const SDL_Rect& area,
+            const click_event_handler& evt_handler
+        );
 
         ~clickable_area();
+
+        const SDL_Rect& get_area() const;
 
         void set_area(const SDL_Rect& area);
 
@@ -50,8 +56,8 @@ class clickable_area
         void process_event(SDL_Event& event);
 
     private:
+        SDL_Rect area_;
         click_event_handler evt_handler_;
-        SDL_Rect area_ = SDL_Rect{0, 0, 100, 100};
 };
 
 } //namespace libview

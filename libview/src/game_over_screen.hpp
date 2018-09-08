@@ -45,9 +45,10 @@ class game_over_screen
     private:
         SDL_Renderer& renderer_;
         SDL_Rect area_;
+        clickable_area restart_clickable_area_;
         label game_over_label_;
+        label restart_label_;
         bool visible_ = false;
-        clickable_area replay_button_;
 };
 
 } //namespace libview

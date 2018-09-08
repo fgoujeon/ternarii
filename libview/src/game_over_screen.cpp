@@ -31,6 +31,24 @@ game_over_screen::game_over_screen
 ):
     renderer_(renderer),
     area_(area),
+    restart_clickable_area_
+    (
+        SDL_Rect
+        {
+            area.x + 200,
+            area.y + 120,
+            200,
+            70
+        },
+        [this, evt_handler]
+        {
+            if(visible_)
+            {
+                evt_handler(events::clear_request{});
+                std::cout << "clicked\n";
+            }
+        }
+    ),
     game_over_label_
     (
         renderer,
@@ -45,30 +63,25 @@ game_over_screen::game_over_screen
         horizontal_alignment::center,
         vertical_alignment::top,
         "res/fonts/DejaVuSans.ttf",
-        SDL_Color{0x88, 0x88, 0x88, 255}
+        SDL_Color{0x88, 0x88, 0x88, 0xff}
     ),
-    replay_button_
+    restart_label_
     (
-        [this, evt_handler]
+        renderer,
+        point
         {
-            if(visible_)
-            {
-                evt_handler(events::clear_request{});
-                std::cout << "clicked\n";
-            }
-        }
+            static_cast<double>(restart_clickable_area_.get_area().x + 10),
+            static_cast<double>(restart_clickable_area_.get_area().y)
+        },
+        restart_clickable_area_.get_area().w - 20,
+        restart_clickable_area_.get_area().h,
+        "RESTART",
+        horizontal_alignment::center,
+        vertical_alignment::center,
+        "res/fonts/DejaVuSans.ttf",
+        SDL_Color{0xff, 0xff, 0xff, 0xff}
     )
 {
-    replay_button_.set_area
-    (
-        SDL_Rect
-        {
-            area.x + 200,
-            area.y + 120,
-            200,
-            70
-        }
-    );
 }
 
 void game_over_screen::set_visible(const bool value)
@@ -85,9 +98,14 @@ void game_over_screen::draw(SDL_Renderer& renderer)
     SDL_SetRenderDrawColor(&renderer, 0x44, 0x44, 0x44, 255);
     SDL_RenderFillRect(&renderer, &area_);
 
-    game_over_label_.draw();
+    //restart button background
+    {
+        SDL_SetRenderDrawColor(&renderer, 0xff, 0xff, 0xff, 0x40);
+        SDL_RenderFillRect(&renderer, &restart_clickable_area_.get_area());
+    }
 
-    replay_button_.draw(renderer);
+    game_over_label_.draw();
+    restart_label_.draw();
 }
 
 } //namespace view

@@ -23,7 +23,12 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libview
 {
 
-clickable_area::clickable_area(const click_event_handler& evt_handler):
+clickable_area::clickable_area
+(
+    const SDL_Rect& area,
+    const click_event_handler& evt_handler
+):
+    area_(area),
     evt_handler_(evt_handler)
 {
     SDL_AddEventWatch(&static_process_event, this);
@@ -32,6 +37,11 @@ clickable_area::clickable_area(const click_event_handler& evt_handler):
 clickable_area::~clickable_area()
 {
     SDL_DelEventWatch(&static_process_event, this);
+}
+
+const SDL_Rect& clickable_area::get_area() const
+{
+    return area_;
 }
 
 void clickable_area::set_area(const SDL_Rect& area)
