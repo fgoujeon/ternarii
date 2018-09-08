@@ -31,19 +31,21 @@ game_over_screen::game_over_screen
 ):
     renderer_(renderer),
     area_(area),
-    pfont_
+    game_over_label_
     (
-        TTF_OpenFont("res/fonts/DejaVuSans.ttf", 90)
-    ),
-    pgame_over_texture_
-    (
-        libsdl::make_texture
-        (
-            renderer_,
-            *pfont_,
-            "GAME OVER",
-            SDL_Color{0x88, 0x88, 0x88, 255}
-        )
+        renderer,
+        point
+        {
+            static_cast<double>(area.x),
+            static_cast<double>(area.y)
+        },
+        area.w,
+        area.h,
+        "GAME OVER",
+        horizontal_alignment::center,
+        vertical_alignment::top,
+        "res/fonts/DejaVuSans.ttf",
+        SDL_Color{0x88, 0x88, 0x88, 255}
     ),
     replay_button_
     (
@@ -83,31 +85,7 @@ void game_over_screen::draw(SDL_Renderer& renderer)
     SDL_SetRenderDrawColor(&renderer, 0x44, 0x44, 0x44, 255);
     SDL_RenderFillRect(&renderer, &area_);
 
-    //"GAME OVER"
-    {
-        int texture_width_px;
-        int texture_height_px;
-        SDL_QueryTexture
-        (
-            pgame_over_texture_.get(),
-            nullptr,
-            nullptr,
-            &texture_width_px,
-            &texture_height_px
-        );
-        const auto texture_ratio =
-            static_cast<double>(texture_width_px) /
-            texture_height_px
-        ;
-
-        SDL_Rect r;
-        r.w = area_.w;
-        r.h = r.w / texture_ratio;
-        r.x = area_.x + area_.w / 2 - r.w / 2;
-        r.y = area_.y + 10;
-
-        SDL_RenderCopy(&renderer, pgame_over_texture_.get(), nullptr, &r);
-    }
+    game_over_label_.draw();
 
     replay_button_.draw(renderer);
 }

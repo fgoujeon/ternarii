@@ -21,6 +21,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #define LIBVIEW_GAME_OVER_SCREEN_HPP
 
 #include "clickable_area.hpp"
+#include "label.hpp"
 #include <libview/events.hpp>
 #include <libsdl.hpp>
 
@@ -44,9 +45,8 @@ class game_over_screen
     private:
         SDL_Renderer& renderer_;
         SDL_Rect area_;
+        label game_over_label_;
         bool visible_ = false;
-        libsdl::unique_ptr<TTF_Font> pfont_;
-        libsdl::unique_ptr<SDL_Texture> pgame_over_texture_;
         clickable_area replay_button_;
 };
 
