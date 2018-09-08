@@ -63,30 +63,37 @@ struct view::impl
             )
         ),
         pgrid(std::make_shared<grid>(*prenderer)),
-        pscore_display(std::make_shared<score_display>(*prenderer)),
-        pgame_over_screen(std::make_shared<game_over_screen>(*prenderer))
+        pscore_display
+        (
+            std::make_shared<score_display>
+            (
+                *prenderer,
+                SDL_Rect
+                {
+                    50,
+                    50,
+                    logical_width - 100,
+                    100
+                }
+            )
+        ),
+        pgame_over_screen
+        (
+            std::make_shared<game_over_screen>
+            (
+                evt_handler,
+                *prenderer,
+                SDL_Rect
+                {
+                    50,
+                    250,
+                    logical_width - 100,
+                    200
+                }
+            )
+        )
     {
-        pscore_display->set_area
-        (
-            SDL_Rect
-            {
-                50,
-                50,
-                logical_width - 100,
-                100
-            }
-        );
-
-        pgame_over_screen->set_area
-        (
-            SDL_Rect
-            {
-                50,
-                250,
-                logical_width - 100,
-                200
-            }
-        );
+        SDL_SetRenderDrawBlendMode(prenderer.get(), SDL_BLENDMODE_BLEND);
     }
 
     void iterate()
@@ -179,9 +186,7 @@ struct view::impl
             }
 
             //score
-            {
-                pscore_display->draw(*prenderer);
-            }
+            pscore_display->draw();
 
             //game over screen
             {
@@ -225,6 +230,12 @@ void view::iterate()
 bool view::must_quit() const
 {
     return pimpl_->quit;
+}
+
+void view::clear()
+{
+    pimpl_->pgrid->clear();
+    pimpl_->pgame_over_screen->set_visible(false);
 }
 
 void view::set_score(const unsigned int value)

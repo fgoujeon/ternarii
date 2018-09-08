@@ -28,8 +28,7 @@ namespace
     const auto default_rotation = 0;
 }
 
-board_input::board_input(const data_types::tile_pair& tiles):
-    tiles_(tiles),
+board_input::board_input():
     x_offset_(default_x_offset),
     rotation_(default_rotation)
 {

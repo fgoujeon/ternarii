@@ -50,41 +50,25 @@ namespace
             std::random_device rd_;
             std::mt19937 gen_;
     };
-
-    data_types::tile generate_new_tile
-    (
-        random_tile_generator& rand,
-        const unsigned int max_value
-    )
-    {
-        return data_types::tile{rand.generate(max_value)};
-    }
-
-    data_types::tile_pair generate_next_input
-    (
-        random_tile_generator& rand,
-        const unsigned int highest_unlocked_element_value
-    )
-    {
-        return
-        {
-            generate_new_tile(rand, highest_unlocked_element_value - 1),
-            generate_new_tile(rand, highest_unlocked_element_value - 1)
-        };
-    }
 }
 
 struct game::impl
 {
-    impl():
-        next_input_(generate_next_input(rand, get_highest_unlocked_element_index())),
-        input_(generate_next_input(rand, get_highest_unlocked_element_index()))
+    events::next_input_creation generate_next_input()
     {
-    }
+        const auto highest_tile_value = board_.get_highest_tile_value();
+        const auto max_value = std::max(highest_tile_value, 3u) - 1;
+        next_input_ = data_types::tile_pair
+        {
+            data_types::tile{rand.generate(max_value)},
+            data_types::tile{rand.generate(max_value)}
+        };
 
-    unsigned int get_highest_unlocked_element_index() const
-    {
-        return board_.get_highest_tile_ever();
+        return events::next_input_creation
+        {
+            next_input_[0],
+            next_input_[1]
+        };
     }
 
     random_tile_generator rand;
@@ -135,6 +119,22 @@ unsigned int game::get_input_rotation() const
     return pimpl_->input_.get_rotation();
 }
 
+event_list game::start()
+{
+    event_list events;
+
+    pimpl_->board_.clear();
+
+    events.push_back(events::start{});
+    events.push_back(events::score_change{0});
+
+    events.push_back(pimpl_->generate_next_input());
+    events.push_back(pimpl_->input_.set_tiles(pimpl_->next_input_)); //insert next input
+    events.push_back(pimpl_->generate_next_input());
+
+    return events;
+}
+
 event_list game::shift_input_left()
 {
     return pimpl_->input_.shift_left();
@@ -167,15 +167,7 @@ event_list game::drop_input()
             events.push_back(pimpl_->input_.set_tiles(pimpl_->next_input_));
 
             //create a new next input
-            pimpl_->next_input_ = generate_next_input(pimpl_->rand, pimpl_->get_highest_unlocked_element_index());
-            events.push_back
-            (
-                events::next_input_creation
-                {
-                    pimpl_->next_input_[0],
-                    pimpl_->next_input_[1]
-                }
-            );
+            events.push_back(pimpl_->generate_next_input());
         }
     }
 

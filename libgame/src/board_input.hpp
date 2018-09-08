@@ -31,12 +31,12 @@ namespace libgame
 
 class board_input
 {
-	public:
-		static const unsigned int column_count = 6;
+    public:
+        static const unsigned int column_count = 6;
         using tiles_t = std::array<data_types::tile, 2>;
 
-	public:
-        board_input(const data_types::tile_pair& tiles);
+    public:
+        board_input();
 
         const data_types::tile_pair& get_tiles() const
         {
@@ -64,9 +64,9 @@ class board_input
     private:
         std::vector<event> apply();
 
-	private:
+    private:
         tiles_t tiles_;
-		unsigned int x_offset_;
+        unsigned int x_offset_;
 
         //rotation = 0:
         //  --

@@ -50,59 +50,38 @@ namespace
     }
 }
 
-score_display::score_display(SDL_Renderer& renderer):
-    renderer_(renderer),
-    pfont_
+score_display::score_display
+(
+    SDL_Renderer& renderer,
+    const SDL_Rect& area
+):
+    label_
     (
-        TTF_OpenFont("res/fonts/DejaVuSans.ttf", 90)
+        renderer,
+        point
+        {
+            static_cast<double>(area.x),
+            static_cast<double>(area.y)
+        },
+        area.w,
+        area.h,
+        "0",
+        horizontal_alignment::right,
+        vertical_alignment::center,
+        "res/fonts/DejaVuSans.ttf",
+        SDL_Color{0xff, 0xff, 0xff, 0xff}
     )
 {
-    set_score(0);
-}
-
-void score_display::set_area(const SDL_Rect& area)
-{
-    area_ = area;
 }
 
 void score_display::set_score(const unsigned int value)
 {
-    ptexture_ = libsdl::make_texture
-    (
-        renderer_,
-        *pfont_,
-        score_to_string(value),
-        SDL_Color{255, 255, 255, 255}
-    );
+    label_.set_text(score_to_string(value));
 }
 
-void score_display::draw(SDL_Renderer& renderer)
+void score_display::draw()
 {
-    int texture_width_px;
-    int texture_height_px;
-    SDL_QueryTexture
-    (
-        ptexture_.get(),
-        nullptr,
-        nullptr,
-        &texture_width_px,
-        &texture_height_px
-    );
-    const auto texture_ratio =
-        static_cast<double>(texture_width_px) /
-        texture_height_px
-    ;
-
-    const auto score_height_px = area_.h;
-    const auto score_width_px = score_height_px * texture_ratio;
-
-    SDL_Rect r;
-    r.x = area_.x + area_.w - score_width_px;
-    r.y = area_.y;
-    r.w = score_width_px;
-    r.h = score_height_px;
-
-    SDL_RenderCopy(&renderer, ptexture_.get(), nullptr, &r);
+    label_.draw();
 }
 
 } //namespace view

@@ -99,7 +99,8 @@ namespace
     }
 }
 
-grid::grid(SDL_Renderer& renderer)
+grid::grid(SDL_Renderer& renderer):
+    renderer_(renderer)
 {
 }
 
@@ -113,6 +114,23 @@ int grid::get_logical_height() const
     return row_count * cell_size;
 }
 
+void grid::clear()
+{
+    for(auto& ptile: next_input_tiles_)
+        ptile.reset();
+
+    for(auto& ptile: input_tiles_)
+        ptile.reset();
+
+    for(auto& tile_column: board_tiles_)
+        for(auto& ptile: tile_column)
+            ptile.reset();
+
+    disappearing_tiles_.clear();
+
+    libview::clear(animations_);
+}
+
 void grid::create_next_input(const unsigned int value0, const unsigned int value1)
 {
     const auto values = std::array<unsigned int, 2>{value0, value1};
@@ -120,16 +138,17 @@ void grid::create_next_input(const unsigned int value0, const unsigned int value
     auto i = 0;
     for(const auto value: values)
     {
-        next_input_tiles_[i] = std::make_unique<tile>();
-        next_input_tiles_[i]->set_value(value);
-        next_input_tiles_[i]->set_size(tile_size, tile_size);
-        next_input_tiles_[i]->set_position
+        next_input_tiles_[i] = std::make_unique<tile>
         (
+            renderer_,
+            value,
             point
             {
                 (2 + i) * cell_size + tile_margin,
                 tile_margin
-            }
+            },
+            tile_size,
+            tile_size
         );
         next_input_tiles_[i]->set_visible(true);
         ++i;
@@ -272,10 +291,14 @@ void grid::merge_tiles(const data_types::tile_merge_list& merges)
     //create merged tile
     for(const auto& merge: merges)
     {
-        auto pdst_tile = std::make_unique<tile>();
-        pdst_tile->set_value(merge.dst_tile_value);
-        pdst_tile->set_size(tile_size, tile_size);
-        pdst_tile->set_position(tile_coordinate_to_position(merge.dst_tile_coordinate));
+        auto pdst_tile = std::make_unique<tile>
+        (
+            renderer_,
+            merge.dst_tile_value,
+            tile_coordinate_to_position(merge.dst_tile_coordinate),
+            tile_size,
+            tile_size
+        );
 
         animations_.push(std::make_unique<fade_in>(*pdst_tile));
 
@@ -318,20 +341,20 @@ void grid::draw(SDL_Renderer& renderer, const double ellapsed_time)
     {
         for(auto& ptile: next_input_tiles_)
             if(ptile)
-                ptile->draw(renderer);
+                ptile->draw();
 
         for(auto& ptile: input_tiles_)
             if(ptile)
-                ptile->draw(renderer);
+                ptile->draw();
 
         for(auto& tile_column: board_tiles_)
             for(auto& ptile: tile_column)
                 if(ptile)
-                    ptile->draw(renderer);
+                    ptile->draw();
 
         for(auto& ptile: disappearing_tiles_)
             if(ptile)
-                ptile->draw(renderer);
+                ptile->draw();
     }
 }
 

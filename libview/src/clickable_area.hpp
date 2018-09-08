@@ -17,38 +17,59 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef LIBVIEW_GAME_OVER_SCREEN_HPP
-#define LIBVIEW_GAME_OVER_SCREEN_HPP
+#ifndef LIBVIEW_CLICKABLE_AREA_HPP
+#define LIBVIEW_CLICKABLE_AREA_HPP
 
-#include "clickable_area.hpp"
-#include "label.hpp"
-#include <libview/events.hpp>
 #include <libsdl.hpp>
+#include <functional>
 
 namespace libview
 {
 
-class game_over_screen
+class clickable_area
 {
     public:
-        game_over_screen
+        using click_event_handler = std::function<void()>;
+
+    public:
+        clickable_area
         (
-            const event_handler& evt_handler,
-            SDL_Renderer& renderer,
-            const SDL_Rect& area
+            const SDL_Rect& area,
+            const click_event_handler& evt_handler
         );
 
-        void set_visible(const bool value);
+        ~clickable_area();
+
+        const SDL_Rect& get_area() const;
+
+        bool is_clicked() const
+        {
+            return clicked_;
+        }
+
+        bool is_hovered() const
+        {
+            return hovered_;
+        }
+
+        void set_area(const SDL_Rect& area);
 
         void draw(SDL_Renderer& renderer);
 
     private:
-        SDL_Renderer& renderer_;
+        static int static_process_event
+        (
+            void* pdata,
+            SDL_Event* pevent
+        );
+
+        void process_event(SDL_Event& event);
+
+    private:
         SDL_Rect area_;
-        clickable_area restart_clickable_area_;
-        label game_over_label_;
-        label restart_label_;
-        bool visible_ = false;
+        click_event_handler evt_handler_;
+        bool clicked_ = false;
+        bool hovered_ = false;
 };
 
 } //namespace libview

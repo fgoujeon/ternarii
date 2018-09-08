@@ -40,6 +40,8 @@ class view
 
         bool must_quit() const;
 
+        void clear();
+
         void set_score(const unsigned int value);
 
         void create_next_input(const unsigned int value0, const unsigned int value1);

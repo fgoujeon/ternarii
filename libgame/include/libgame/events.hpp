@@ -32,6 +32,16 @@ namespace libgame
 
 namespace events
 {
+    struct start{};
+
+    inline
+    std::ostream& operator<<(std::ostream& l, const start& r)
+    {
+        return l << "start{}";
+    }
+
+
+
     struct next_input_creation
     {
         data_types::tile_pair tiles;
@@ -192,6 +202,7 @@ namespace events
 
 using event = std::variant
 <
+    events::start,
     events::next_input_creation,
     events::next_input_insertion,
     events::input_layout_change,

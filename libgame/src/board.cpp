@@ -28,7 +28,7 @@ namespace libgame
 {
 
 board::board():
-    highest_tile_ever_(3)
+    highest_tile_value_(0)
 {
 }
 
@@ -48,6 +48,15 @@ unsigned int board::get_score() const
             if(opt_tile)
                 score += std::pow(3, opt_tile->value);
     return score;
+}
+
+void board::clear()
+{
+    for(auto& cell_column: tile_grid_)
+        for(auto& opt_tile: cell_column)
+            opt_tile = std::nullopt;
+
+    highest_tile_value_ = 0;
 }
 
 std::vector<event> board::drop_input(const board_input& in)
@@ -197,8 +206,8 @@ data_types::tile_merge_list board::merge_tiles()
                         }
                     );
 
-                    if(highest_tile_ever_ < merged_tile.value)
-                        highest_tile_ever_ = merged_tile.value;
+                    if(highest_tile_value_ < merged_tile.value)
+                        highest_tile_value_ = merged_tile.value;
                 }
             }
         }

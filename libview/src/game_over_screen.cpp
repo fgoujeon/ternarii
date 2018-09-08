@@ -18,32 +18,70 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 #include "game_over_screen.hpp"
+#include <iostream>
 
 namespace libview
 {
 
-game_over_screen::game_over_screen(SDL_Renderer& renderer):
+game_over_screen::game_over_screen
+(
+    const event_handler& evt_handler,
+    SDL_Renderer& renderer,
+    const SDL_Rect& area
+):
     renderer_(renderer),
-    pfont_
+    area_(area),
+    restart_clickable_area_
     (
-        TTF_OpenFont("res/fonts/DejaVuSans.ttf", 90)
+        SDL_Rect
+        {
+            area.x + 200,
+            area.y + 120,
+            200,
+            70
+        },
+        [this, evt_handler]
+        {
+            if(visible_)
+            {
+                evt_handler(events::clear_request{});
+                std::cout << "clicked\n";
+            }
+        }
     ),
-    pgame_over_texture_
+    game_over_label_
     (
-        libsdl::make_texture
-        (
-            renderer_,
-            *pfont_,
-            "GAME OVER",
-            SDL_Color{0x88, 0x88, 0x88, 255}
-        )
+        renderer,
+        point
+        {
+            static_cast<double>(area.x),
+            static_cast<double>(area.y)
+        },
+        area.w,
+        area.h,
+        "GAME OVER",
+        horizontal_alignment::center,
+        vertical_alignment::top,
+        "res/fonts/DejaVuSans.ttf",
+        SDL_Color{0x88, 0x88, 0x88, 0xff}
+    ),
+    restart_label_
+    (
+        renderer,
+        point
+        {
+            static_cast<double>(restart_clickable_area_.get_area().x + 10),
+            static_cast<double>(restart_clickable_area_.get_area().y)
+        },
+        restart_clickable_area_.get_area().w - 20,
+        restart_clickable_area_.get_area().h,
+        "RESTART",
+        horizontal_alignment::center,
+        vertical_alignment::center,
+        "res/fonts/DejaVuSans.ttf",
+        SDL_Color{0xff, 0xff, 0xff, 0xff}
     )
 {
-}
-
-void game_over_screen::set_area(const SDL_Rect& area)
-{
-    area_ = area;
 }
 
 void game_over_screen::set_visible(const bool value)
@@ -60,31 +98,20 @@ void game_over_screen::draw(SDL_Renderer& renderer)
     SDL_SetRenderDrawColor(&renderer, 0x44, 0x44, 0x44, 255);
     SDL_RenderFillRect(&renderer, &area_);
 
-    //"GAME OVER"
+    //restart button background
     {
-        int texture_width_px;
-        int texture_height_px;
-        SDL_QueryTexture
-        (
-            pgame_over_texture_.get(),
-            nullptr,
-            nullptr,
-            &texture_width_px,
-            &texture_height_px
-        );
-        const auto texture_ratio =
-            static_cast<double>(texture_width_px) /
-            texture_height_px
-        ;
+        if(restart_clickable_area_.is_clicked())
+            SDL_SetRenderDrawColor(&renderer, 0xff, 0xff, 0xff, 0x80);
+        else if(restart_clickable_area_.is_hovered())
+            SDL_SetRenderDrawColor(&renderer, 0xff, 0xff, 0xff, 0x60);
+        else
+            SDL_SetRenderDrawColor(&renderer, 0xff, 0xff, 0xff, 0x40);
 
-        SDL_Rect r;
-        r.w = area_.w;
-        r.h = r.w / texture_ratio;
-        r.x = area_.x + area_.w / 2 - r.w / 2;
-        r.y = area_.y + area_.h / 2 - r.h / 2;
-
-        SDL_RenderCopy(&renderer, pgame_over_texture_.get(), nullptr, &r);
+        SDL_RenderFillRect(&renderer, &restart_clickable_area_.get_area());
     }
+
+    game_over_label_.draw();
+    restart_label_.draw();
 }
 
 } //namespace view

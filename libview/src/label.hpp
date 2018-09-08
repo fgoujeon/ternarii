@@ -17,45 +17,62 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef LIBVIEW_TILE_HPP
-#define LIBVIEW_TILE_HPP
+#ifndef LIBVIEW_LABEL_HPP
+#define LIBVIEW_LABEL_HPP
 
 #include "point.hpp"
-#include "label.hpp"
 #include <libsdl.hpp>
+#include <string>
 
 namespace libview
 {
 
-class tile
+enum class horizontal_alignment
+{
+    left,
+    center,
+    right
+};
+
+enum class vertical_alignment
+{
+    top,
+    center,
+    bottom
+};
+
+class label
 {
     public:
-        tile
+        label
         (
             SDL_Renderer& renderer,
-            const unsigned int value,
             const point& position,
             const unsigned int w,
-            const unsigned int h
+            const unsigned int h,
+            const std::string& text,
+            const horizontal_alignment halign,
+            const vertical_alignment valign,
+            const std::string& font_file_path,
+            const SDL_Color& color
         );
-
-        const point& get_position() const;
 
         void set_position(const point& position);
 
-        void set_visible(const bool visible);
+        void set_text(const std::string& text);
 
         void draw();
 
     private:
         SDL_Renderer& renderer_;
-        unsigned int value_ = 0;
+        libsdl::unique_ptr<TTF_Font> pfont_;
         point position_;
-        unsigned int w_ = 0;
-        unsigned int h_ = 0;
-        SDL_Color background_color_;
-        label label_;
-        bool visible_ = false;
+        unsigned int w_;
+        unsigned int h_;
+        SDL_Color color_ = SDL_Color{0, 0, 0, 0};
+        libsdl::unique_ptr<SDL_Texture> ptexture_;
+        horizontal_alignment halign_;
+        vertical_alignment valign_;
 };
 
 } //namespace libview

@@ -25,6 +25,9 @@ namespace libview
 
 namespace
 {
+    const auto label_vertical_margin_normalized = 0.2;
+    const auto label_height_normalized = 1 - 2 * label_vertical_margin_normalized;
+
     SDL_Color get_background_color(const unsigned int value)
     {
         const auto value_color_map = std::map<unsigned int, SDL_Color>
@@ -54,35 +57,45 @@ namespace
             return SDL_Color{0x00, 0x00, 0x00, 0xff};
     }
 
-    SDL_Texture* get_number_texture
+    point get_label_position
     (
-        SDL_Renderer& renderer,
-        TTF_Font& font,
-        const unsigned int value
+        const point& tile_position,
+        const unsigned int w,
+        const unsigned int h
     )
     {
-        static auto number_textures = std::map<unsigned int, libsdl::unique_ptr<SDL_Texture>>{};
-        auto& ptexture = number_textures[value];
-
-        if(!ptexture)
+        return point
         {
-            ptexture = libsdl::make_texture
-            (
-                renderer,
-                font,
-                std::to_string(value),
-                SDL_Color{255, 255, 255, 255}
-            );
-        }
-
-        return ptexture.get();
+            tile_position.x,
+            tile_position.y + h * label_vertical_margin_normalized,
+        };
     }
 }
 
-tile::tile():
-    pfont_
+tile::tile
+(
+    SDL_Renderer& renderer,
+    const unsigned int value,
+    const point& position,
+    const unsigned int w,
+    const unsigned int h
+):
+    renderer_(renderer),
+    position_(position),
+    w_(w),
+    h_(h),
+    background_color_(get_background_color(value)),
+    label_
     (
-        TTF_OpenFont("res/fonts/DejaVuSans.ttf", 90)
+        renderer,
+        get_label_position(position, w, h),
+        w,
+        label_height_normalized * h,
+        std::to_string(value),
+        horizontal_alignment::center,
+        vertical_alignment::center,
+        "res/fonts/DejaVuSans.ttf",
+        SDL_Color{0xff, 0xff, 0xff, 0xff}
     )
 {
 }
@@ -95,12 +108,7 @@ const point& tile::get_position() const
 void tile::set_position(const point& position)
 {
     position_ = position;
-}
-
-void tile::set_size(const unsigned int w, const unsigned int h)
-{
-    w_ = w;
-    h_ = h;
+    label_.set_position(get_label_position(position, w_, h_));
 }
 
 void tile::set_visible(const bool visible)
@@ -108,19 +116,14 @@ void tile::set_visible(const bool visible)
     visible_ = visible;
 }
 
-void tile::set_value(const unsigned int value)
-{
-    value_ = value;
-}
-
-void tile::draw(SDL_Renderer& renderer)
+void tile::draw()
 {
     if(!visible_)
         return;
 
     //draw background box
     {
-        const auto c = get_background_color(value_);
+        const auto& c = background_color_;
         const auto r = SDL_Rect
         {
             static_cast<int>(position_.x),
@@ -129,44 +132,12 @@ void tile::draw(SDL_Renderer& renderer)
             static_cast<int>(h_)
         };
 
-        SDL_SetRenderDrawColor(&renderer, c.r, c.g, c.b, c.a);
-        SDL_RenderFillRect(&renderer, &r);
+        SDL_SetRenderDrawColor(&renderer_, c.r, c.g, c.b, c.a);
+        SDL_RenderFillRect(&renderer_, &r);
     }
 
     //draw number
-    {
-        auto pnumber_texture = get_number_texture
-        (
-            renderer,
-            *pfont_,
-            value_
-        );
-
-        int number_texture_width;
-        int number_texture_height;
-        SDL_QueryTexture
-        (
-            pnumber_texture,
-            nullptr,
-            nullptr,
-            &number_texture_width,
-            &number_texture_height
-        );
-        const auto number_texture_ratio =
-            static_cast<double>(number_texture_width) /
-            number_texture_height
-        ;
-
-        const auto number_width = w_ * number_texture_ratio * 0.6;
-        const auto number_height = h_ * 0.6;
-
-        SDL_Rect r;
-        r.x = static_cast<int>(position_.x + w_ / 2.0 - number_width / 2.0);
-        r.y = static_cast<int>(position_.y + h_ / 2.0 - number_height / 2.0);
-        r.w = number_width;
-        r.h = number_height;
-        SDL_RenderCopy(&renderer, pnumber_texture, nullptr, &r);
-    }
+    label_.draw();
 }
 
 } //namespace view
