@@ -42,6 +42,16 @@ class clickable_area
 
         const SDL_Rect& get_area() const;
 
+        bool is_clicked() const
+        {
+            return clicked_;
+        }
+
+        bool is_hovered() const
+        {
+            return hovered_;
+        }
+
         void set_area(const SDL_Rect& area);
 
         void draw(SDL_Renderer& renderer);
@@ -58,6 +68,8 @@ class clickable_area
     private:
         SDL_Rect area_;
         click_event_handler evt_handler_;
+        bool clicked_ = false;
+        bool hovered_ = false;
 };
 
 } //namespace libview

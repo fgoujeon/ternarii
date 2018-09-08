@@ -100,7 +100,13 @@ void game_over_screen::draw(SDL_Renderer& renderer)
 
     //restart button background
     {
-        SDL_SetRenderDrawColor(&renderer, 0xff, 0xff, 0xff, 0x40);
+        if(restart_clickable_area_.is_clicked())
+            SDL_SetRenderDrawColor(&renderer, 0xff, 0xff, 0xff, 0x80);
+        else if(restart_clickable_area_.is_hovered())
+            SDL_SetRenderDrawColor(&renderer, 0xff, 0xff, 0xff, 0x60);
+        else
+            SDL_SetRenderDrawColor(&renderer, 0xff, 0xff, 0xff, 0x40);
+
         SDL_RenderFillRect(&renderer, &restart_clickable_area_.get_area());
     }
 

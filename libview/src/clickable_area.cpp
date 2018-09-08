@@ -72,11 +72,44 @@ int clickable_area::static_process_event
 
 void clickable_area::process_event(SDL_Event& event)
 {
-    if(event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT)
+    switch(event.type)
     {
-        const auto click_position = SDL_Point{event.button.x, event.button.y};
-        if(SDL_PointInRect(&click_position, &area_))
-            evt_handler_();
+        case SDL_MOUSEBUTTONDOWN:
+            if(event.button.button == SDL_BUTTON_LEFT)
+            {
+                const auto click_position = SDL_Point{event.button.x, event.button.y};
+                if(SDL_PointInRect(&click_position, &area_))
+                {
+                    clicked_ = true;
+                }
+            }
+            break;
+        case SDL_MOUSEBUTTONUP:
+            if(event.button.button == SDL_BUTTON_LEFT)
+            {
+                const auto click_position = SDL_Point{event.button.x, event.button.y};
+                if(SDL_PointInRect(&click_position, &area_))
+                {
+                    if(clicked_)
+                        evt_handler_();
+                    clicked_ = false;
+                }
+            }
+            break;
+        case SDL_MOUSEMOTION:
+            {
+                const auto mouse_position = SDL_Point{event.motion.x, event.motion.y};
+                if(SDL_PointInRect(&mouse_position, &area_))
+                {
+                    hovered_ = true;
+                }
+                else
+                {
+                    hovered_ = false;
+                    clicked_ = false;
+                }
+            }
+            break;
     }
 }
 
