@@ -17,35 +17,41 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef LIBVIEW_GAME_OVER_SCREEN_HPP
-#define LIBVIEW_GAME_OVER_SCREEN_HPP
+#ifndef LIBVIEW_BUTTON_HPP
+#define LIBVIEW_BUTTON_HPP
 
-#include "button.hpp"
 #include <libsdl.hpp>
+#include <functional>
 
 namespace libview
 {
 
-class game_over_screen
+class button
 {
     public:
-        game_over_screen
-        (
-            SDL_Renderer& renderer,
-            const SDL_Rect& area
-        );
+        using click_event_handler = std::function<void()>;
 
-        void set_visible(const bool value);
+    public:
+        button(const click_event_handler& evt_handler);
+
+        ~button();
+
+        void set_area(const SDL_Rect& area);
 
         void draw(SDL_Renderer& renderer);
 
     private:
-        SDL_Renderer& renderer_;
-        SDL_Rect area_;
-        bool visible_ = false;
-        libsdl::unique_ptr<TTF_Font> pfont_;
-        libsdl::unique_ptr<SDL_Texture> pgame_over_texture_;
-        button replay_button_;
+        static int static_process_event
+        (
+            void* pdata,
+            SDL_Event* pevent
+        );
+
+        void process_event(SDL_Event& event);
+
+    private:
+        click_event_handler evt_handler_;
+        SDL_Rect area_ = SDL_Rect{0, 0, 100, 100};
 };
 
 } //namespace libview

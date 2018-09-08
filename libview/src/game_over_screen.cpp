@@ -18,12 +18,18 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 #include "game_over_screen.hpp"
+#include <iostream>
 
 namespace libview
 {
 
-game_over_screen::game_over_screen(SDL_Renderer& renderer):
+game_over_screen::game_over_screen
+(
+    SDL_Renderer& renderer,
+    const SDL_Rect& area
+):
     renderer_(renderer),
+    area_(area),
     pfont_
     (
         TTF_OpenFont("res/fonts/DejaVuSans.ttf", 90)
@@ -37,13 +43,26 @@ game_over_screen::game_over_screen(SDL_Renderer& renderer):
             "GAME OVER",
             SDL_Color{0x88, 0x88, 0x88, 255}
         )
+    ),
+    replay_button_
+    (
+        [this]
+        {
+            if(visible_)
+                std::cout << "clicked\n";
+        }
     )
 {
-}
-
-void game_over_screen::set_area(const SDL_Rect& area)
-{
-    area_ = area;
+    replay_button_.set_area
+    (
+        SDL_Rect
+        {
+            area.x + 200,
+            area.y + 120,
+            200,
+            70
+        }
+    );
 }
 
 void game_over_screen::set_visible(const bool value)
@@ -81,10 +100,12 @@ void game_over_screen::draw(SDL_Renderer& renderer)
         r.w = area_.w;
         r.h = r.w / texture_ratio;
         r.x = area_.x + area_.w / 2 - r.w / 2;
-        r.y = area_.y + area_.h / 2 - r.h / 2;
+        r.y = area_.y + 10;
 
         SDL_RenderCopy(&renderer, pgame_over_texture_.get(), nullptr, &r);
     }
+
+    replay_button_.draw(renderer);
 }
 
 } //namespace view
