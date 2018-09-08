@@ -46,9 +46,9 @@ class board
 
         bool is_game_over() const;
 
-        unsigned int get_highest_tile_ever() const
+        unsigned int get_highest_tile_value() const
         {
-            return highest_tile_ever_;
+            return highest_tile_value_;
         }
 
         unsigned int get_score() const;
@@ -84,7 +84,7 @@ class board
 
     private:
         grid_t tile_grid_;
-        unsigned int highest_tile_ever_;
+        unsigned int highest_tile_value_;
 };
 
 } //namespace libgame
