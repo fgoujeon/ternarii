@@ -94,6 +94,7 @@ struct view::impl
         )
     {
         SDL_SetRenderDrawBlendMode(prenderer.get(), SDL_BLENDMODE_BLEND);
+        SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "best");
     }
 
     void iterate()
