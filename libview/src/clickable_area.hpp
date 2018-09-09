@@ -54,8 +54,6 @@ class clickable_area
 
         void set_area(const SDL_Rect& area);
 
-        void draw(SDL_Renderer& renderer);
-
     private:
         static int static_process_event
         (

@@ -49,12 +49,6 @@ void clickable_area::set_area(const SDL_Rect& area)
     area_ = area;
 }
 
-void clickable_area::draw(SDL_Renderer& renderer)
-{
-    SDL_SetRenderDrawColor(&renderer, 0xff, 0xff, 0xff, 0x40);
-    SDL_RenderFillRect(&renderer, &area_);
-}
-
 int clickable_area::static_process_event
 (
     void* pdata,
