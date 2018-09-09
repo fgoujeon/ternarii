@@ -79,7 +79,7 @@ struct view::impl
             SDL_Rect{50, 1300, 150, 150},
             [this]
             {
-                this->event_handler_(events::left_shift_request{});
+                send_move_request(events::left_shift_request{});
             }
         ),
         right_shift_clickable_area_
@@ -87,7 +87,7 @@ struct view::impl
             SDL_Rect{210, 1400, 150, 150},
             [this]
             {
-                this->event_handler_(events::right_shift_request{});
+                send_move_request(events::right_shift_request{});
             }
         ),
         drop_clickable_area_
@@ -95,7 +95,7 @@ struct view::impl
             SDL_Rect{540, 1400, 150, 150},
             [this]
             {
-                this->event_handler_(events::drop_request{});
+                send_move_request(events::drop_request{});
             }
         ),
         rotation_clickable_area_
@@ -103,7 +103,7 @@ struct view::impl
             SDL_Rect{700, 1300, 150, 150},
             [this]
             {
-                this->event_handler_(events::clockwise_rotation_request{});
+                send_move_request(events::clockwise_rotation_request{});
             }
         )
     {
@@ -124,35 +124,26 @@ struct view::impl
 
     void process_events()
     {
-        /*
-        Note: We want to ignore user inputs when we're animating, so that:
-        - we don't queue to many animations;
-        - user moves only when they knows what they're moving.
-        */
-
         SDL_Event event;
         while(SDL_PollEvent(&event))
         {
             switch(event.type)
             {
                 case SDL_KEYDOWN:
-                    if(!grid_.is_animating())
+                    switch(event.key.keysym.sym)
                     {
-                        switch(event.key.keysym.sym)
-                        {
-                            case SDLK_LEFT:
-                                event_handler_(events::left_shift_request{});
-                                break;
-                            case SDLK_RIGHT:
-                                event_handler_(events::right_shift_request{});
-                                break;
-                            case SDLK_UP:
-                                event_handler_(events::clockwise_rotation_request{});
-                                break;
-                            case SDLK_DOWN:
-                                event_handler_(events::drop_request{});
-                                break;
-                        }
+                        case SDLK_LEFT:
+                            send_move_request(events::left_shift_request{});
+                            break;
+                        case SDLK_RIGHT:
+                            send_move_request(events::right_shift_request{});
+                            break;
+                        case SDLK_UP:
+                            send_move_request(events::clockwise_rotation_request{});
+                            break;
+                        case SDLK_DOWN:
+                            send_move_request(events::drop_request{});
+                            break;
                     }
                     break;
                 case SDL_QUIT:
@@ -160,6 +151,19 @@ struct view::impl
                     break;
             }
         }
+    }
+
+    template<class Event>
+    void send_move_request(Event&& event)
+    {
+        /*
+        Note: We want to ignore user inputs when we're animating, so that:
+        - we don't queue too many animations;
+        - user moves only when they knows what they're moving.
+        */
+
+        if(!grid_.is_animating())
+            event_handler_(std::forward<Event>(event));
     }
 
     void draw(const double ellapsed_time)
