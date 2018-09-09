@@ -21,6 +21,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include "grid.hpp"
 #include "score_display.hpp"
 #include "game_over_screen.hpp"
+#include "label_button.hpp"
 #include "utility.hpp"
 #include <libsdl.hpp>
 #include <chrono>
@@ -74,33 +75,41 @@ struct view::impl
             *prenderer_,
             SDL_Rect{150, 250, 601, 200}
         ),
-        left_shift_clickable_area_
+        left_shift_button_
         (
+            *prenderer_,
             SDL_Rect{50, 1300, 150, 150},
+            "left",
             [this]
             {
                 send_move_request(events::left_shift_request{});
             }
         ),
-        right_shift_clickable_area_
+        right_shift_button_
         (
+            *prenderer_,
             SDL_Rect{210, 1400, 150, 150},
+            "right",
             [this]
             {
                 send_move_request(events::right_shift_request{});
             }
         ),
-        drop_clickable_area_
+        drop_button_
         (
+            *prenderer_,
             SDL_Rect{540, 1400, 150, 150},
+            "drop",
             [this]
             {
                 send_move_request(events::drop_request{});
             }
         ),
-        rotation_clickable_area_
+        rotation_button_
         (
+            *prenderer_,
             SDL_Rect{700, 1300, 150, 150},
+            "rotate",
             [this]
             {
                 send_move_request(events::clockwise_rotation_request{});
@@ -204,54 +213,11 @@ struct view::impl
                 SDL_RenderSetViewport(prenderer_.get(), &current_viewport);
             }
 
-            //score
             score_display_.draw();
-
-            //left shift button
-            {
-                if(left_shift_clickable_area_.is_clicked())
-                    SDL_SetRenderDrawColor(prenderer_.get(), 0xff, 0xff, 0xff, 0x80);
-                else if(left_shift_clickable_area_.is_hovered())
-                    SDL_SetRenderDrawColor(prenderer_.get(), 0xff, 0xff, 0xff, 0x60);
-                else
-                    SDL_SetRenderDrawColor(prenderer_.get(), 0xff, 0xff, 0xff, 0x40);
-                SDL_RenderFillRect(prenderer_.get(), &left_shift_clickable_area_.get_area());
-            }
-
-            //right shift button
-            {
-                if(right_shift_clickable_area_.is_clicked())
-                    SDL_SetRenderDrawColor(prenderer_.get(), 0xff, 0xff, 0xff, 0x80);
-                else if(right_shift_clickable_area_.is_hovered())
-                    SDL_SetRenderDrawColor(prenderer_.get(), 0xff, 0xff, 0xff, 0x60);
-                else
-                    SDL_SetRenderDrawColor(prenderer_.get(), 0xff, 0xff, 0xff, 0x40);
-                SDL_RenderFillRect(prenderer_.get(), &right_shift_clickable_area_.get_area());
-            }
-
-            //drop button
-            {
-                if(drop_clickable_area_.is_clicked())
-                    SDL_SetRenderDrawColor(prenderer_.get(), 0xff, 0xff, 0xff, 0x80);
-                else if(drop_clickable_area_.is_hovered())
-                    SDL_SetRenderDrawColor(prenderer_.get(), 0xff, 0xff, 0xff, 0x60);
-                else
-                    SDL_SetRenderDrawColor(prenderer_.get(), 0xff, 0xff, 0xff, 0x40);
-                SDL_RenderFillRect(prenderer_.get(), &drop_clickable_area_.get_area());
-            }
-
-            //rotation button
-            {
-                if(rotation_clickable_area_.is_clicked())
-                    SDL_SetRenderDrawColor(prenderer_.get(), 0xff, 0xff, 0xff, 0x80);
-                else if(rotation_clickable_area_.is_hovered())
-                    SDL_SetRenderDrawColor(prenderer_.get(), 0xff, 0xff, 0xff, 0x60);
-                else
-                    SDL_SetRenderDrawColor(prenderer_.get(), 0xff, 0xff, 0xff, 0x40);
-                SDL_RenderFillRect(prenderer_.get(), &rotation_clickable_area_.get_area());
-            }
-
-            //game over screen
+            left_shift_button_.draw();
+            right_shift_button_.draw();
+            drop_button_.draw();
+            rotation_button_.draw();
             game_over_screen_.draw(*prenderer_);
         }
 
@@ -266,10 +232,10 @@ struct view::impl
     score_display score_display_;
     game_over_screen game_over_screen_;
 
-    clickable_area left_shift_clickable_area_;
-    clickable_area right_shift_clickable_area_;
-    clickable_area drop_clickable_area_;
-    clickable_area rotation_clickable_area_;
+    label_button left_shift_button_;
+    label_button right_shift_button_;
+    label_button drop_button_;
+    label_button rotation_button_;
 
     std::chrono::time_point<std::chrono::steady_clock> previous_frame_time_;
 
