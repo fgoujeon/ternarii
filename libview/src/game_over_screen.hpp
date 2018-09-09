@@ -20,7 +20,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #ifndef LIBVIEW_GAME_OVER_SCREEN_HPP
 #define LIBVIEW_GAME_OVER_SCREEN_HPP
 
-#include "clickable_area.hpp"
+#include "label_button.hpp"
 #include "label.hpp"
 #include <libview/events.hpp>
 #include <libsdl.hpp>
@@ -45,9 +45,8 @@ class game_over_screen
     private:
         SDL_Renderer& renderer_;
         SDL_Rect area_;
-        clickable_area restart_clickable_area_;
         label game_over_label_;
-        label restart_label_;
+        label_button restart_button_;
         bool visible_ = false;
 };
 
