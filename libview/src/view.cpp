@@ -33,8 +33,8 @@ namespace libview
 
 namespace
 {
-    const auto logical_width = 700;
-    const auto logical_height = 1300;
+    const auto logical_width = 900;
+    const auto logical_height = 1600;
 }
 
 struct view::impl
@@ -48,8 +48,8 @@ struct view::impl
                 "Ternarii",
                 SDL_WINDOWPOS_UNDEFINED,
                 SDL_WINDOWPOS_UNDEFINED,
-                640,
-                480,
+                logical_width,
+                logical_height,
                 SDL_WINDOW_RESIZABLE
             )
         ),
@@ -66,24 +66,44 @@ struct view::impl
         score_display_
         (
             *prenderer_,
-            SDL_Rect
-            {
-                50,
-                50,
-                logical_width - 100,
-                100
-            }
+            SDL_Rect{150, 50, 600, 100}
         ),
         game_over_screen_
         (
             event_handler_,
             *prenderer_,
-            SDL_Rect
+            SDL_Rect{150, 250, 601, 200}
+        ),
+        left_shift_clickable_area_
+        (
+            SDL_Rect{50, 1300, 150, 150},
+            [this]
             {
-                50,
-                250,
-                logical_width - 100,
-                200
+                this->event_handler_(events::left_shift_request{});
+            }
+        ),
+        right_shift_clickable_area_
+        (
+            SDL_Rect{210, 1400, 150, 150},
+            [this]
+            {
+                this->event_handler_(events::right_shift_request{});
+            }
+        ),
+        drop_clickable_area_
+        (
+            SDL_Rect{540, 1400, 150, 150},
+            [this]
+            {
+                this->event_handler_(events::drop_request{});
+            }
+        ),
+        rotation_clickable_area_
+        (
+            SDL_Rect{700, 1300, 150, 150},
+            [this]
+            {
+                this->event_handler_(events::clockwise_rotation_request{});
             }
         )
     {
@@ -169,7 +189,7 @@ struct view::impl
                 const auto grid_logical_height = grid_.get_logical_height();
 
                 SDL_Rect viewport;
-                viewport.x = current_viewport.x + 50;
+                viewport.x = current_viewport.x + 150;
                 viewport.y = current_viewport.y + 150;
                 viewport.w = grid_logical_width;
                 viewport.h = grid_logical_height;
@@ -182,6 +202,50 @@ struct view::impl
 
             //score
             score_display_.draw();
+
+            //left shift button
+            {
+                if(left_shift_clickable_area_.is_clicked())
+                    SDL_SetRenderDrawColor(prenderer_.get(), 0xff, 0xff, 0xff, 0x80);
+                else if(left_shift_clickable_area_.is_hovered())
+                    SDL_SetRenderDrawColor(prenderer_.get(), 0xff, 0xff, 0xff, 0x60);
+                else
+                    SDL_SetRenderDrawColor(prenderer_.get(), 0xff, 0xff, 0xff, 0x40);
+                SDL_RenderFillRect(prenderer_.get(), &left_shift_clickable_area_.get_area());
+            }
+
+            //right shift button
+            {
+                if(right_shift_clickable_area_.is_clicked())
+                    SDL_SetRenderDrawColor(prenderer_.get(), 0xff, 0xff, 0xff, 0x80);
+                else if(right_shift_clickable_area_.is_hovered())
+                    SDL_SetRenderDrawColor(prenderer_.get(), 0xff, 0xff, 0xff, 0x60);
+                else
+                    SDL_SetRenderDrawColor(prenderer_.get(), 0xff, 0xff, 0xff, 0x40);
+                SDL_RenderFillRect(prenderer_.get(), &right_shift_clickable_area_.get_area());
+            }
+
+            //drop button
+            {
+                if(drop_clickable_area_.is_clicked())
+                    SDL_SetRenderDrawColor(prenderer_.get(), 0xff, 0xff, 0xff, 0x80);
+                else if(drop_clickable_area_.is_hovered())
+                    SDL_SetRenderDrawColor(prenderer_.get(), 0xff, 0xff, 0xff, 0x60);
+                else
+                    SDL_SetRenderDrawColor(prenderer_.get(), 0xff, 0xff, 0xff, 0x40);
+                SDL_RenderFillRect(prenderer_.get(), &drop_clickable_area_.get_area());
+            }
+
+            //rotation button
+            {
+                if(rotation_clickable_area_.is_clicked())
+                    SDL_SetRenderDrawColor(prenderer_.get(), 0xff, 0xff, 0xff, 0x80);
+                else if(rotation_clickable_area_.is_hovered())
+                    SDL_SetRenderDrawColor(prenderer_.get(), 0xff, 0xff, 0xff, 0x60);
+                else
+                    SDL_SetRenderDrawColor(prenderer_.get(), 0xff, 0xff, 0xff, 0x40);
+                SDL_RenderFillRect(prenderer_.get(), &rotation_clickable_area_.get_area());
+            }
 
             //game over screen
             game_over_screen_.draw(*prenderer_);
@@ -197,6 +261,11 @@ struct view::impl
     grid grid_;
     score_display score_display_;
     game_over_screen game_over_screen_;
+
+    clickable_area left_shift_clickable_area_;
+    clickable_area right_shift_clickable_area_;
+    clickable_area drop_clickable_area_;
+    clickable_area rotation_clickable_area_;
 
     std::chrono::time_point<std::chrono::steady_clock> previous_frame_time_;
 
