@@ -17,57 +17,36 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef LIBVIEW_CLICKABLE_AREA_HPP
-#define LIBVIEW_CLICKABLE_AREA_HPP
+#ifndef LIBVIEW_LABEL_BUTTON_HPP
+#define LIBVIEW_LABEL_BUTTON_HPP
 
+#include "clickable_area.hpp"
+#include "label.hpp"
+#include <libview/events.hpp>
 #include <libsdl.hpp>
-#include <functional>
 
 namespace libview
 {
 
-class clickable_area
+class label_button
 {
     public:
         using click_event_handler = std::function<void()>;
 
-    public:
-        clickable_area
+        label_button
         (
+            SDL_Renderer& renderer,
             const SDL_Rect& area,
+            const std::string& text,
             const click_event_handler& evt_handler
         );
 
-        ~clickable_area();
-
-        const SDL_Rect& get_area() const;
-
-        bool is_clicked() const
-        {
-            return clicked_;
-        }
-
-        bool is_hovered() const
-        {
-            return hovered_;
-        }
-
-        void set_area(const SDL_Rect& area);
+        void draw();
 
     private:
-        static int static_process_event
-        (
-            void* pdata,
-            SDL_Event* pevent
-        );
-
-        void process_event(SDL_Event& event);
-
-    private:
-        SDL_Rect area_;
-        click_event_handler evt_handler_;
-        bool clicked_ = false;
-        bool hovered_ = false;
+        SDL_Renderer& renderer_;
+        clickable_area clickable_area_;
+        label label_;
 };
 
 } //namespace libview

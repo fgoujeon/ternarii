@@ -31,24 +31,6 @@ game_over_screen::game_over_screen
 ):
     renderer_(renderer),
     area_(area),
-    restart_clickable_area_
-    (
-        SDL_Rect
-        {
-            area.x + 200,
-            area.y + 120,
-            200,
-            70
-        },
-        [this, evt_handler]
-        {
-            if(visible_)
-            {
-                evt_handler(events::clear_request{});
-                std::cout << "clicked\n";
-            }
-        }
-    ),
     game_over_label_
     (
         renderer,
@@ -65,21 +47,22 @@ game_over_screen::game_over_screen
         "res/fonts/DejaVuSans.ttf",
         SDL_Color{0x88, 0x88, 0x88, 0xff}
     ),
-    restart_label_
+    restart_button_
     (
         renderer,
-        point
+        SDL_Rect
         {
-            static_cast<double>(restart_clickable_area_.get_area().x + 10),
-            static_cast<double>(restart_clickable_area_.get_area().y)
+            area.x + 200,
+            area.y + 120,
+            200,
+            70
         },
-        restart_clickable_area_.get_area().w - 20,
-        restart_clickable_area_.get_area().h,
-        "RESTART",
-        horizontal_alignment::center,
-        vertical_alignment::center,
-        "res/fonts/DejaVuSans.ttf",
-        SDL_Color{0xff, 0xff, 0xff, 0xff}
+        "restart",
+        [this, evt_handler]
+        {
+            if(visible_)
+                evt_handler(events::clear_request{});
+        }
     )
 {
 }
@@ -98,20 +81,8 @@ void game_over_screen::draw(SDL_Renderer& renderer)
     SDL_SetRenderDrawColor(&renderer, 0x44, 0x44, 0x44, 255);
     SDL_RenderFillRect(&renderer, &area_);
 
-    //restart button background
-    {
-        if(restart_clickable_area_.is_clicked())
-            SDL_SetRenderDrawColor(&renderer, 0xff, 0xff, 0xff, 0x80);
-        else if(restart_clickable_area_.is_hovered())
-            SDL_SetRenderDrawColor(&renderer, 0xff, 0xff, 0xff, 0x60);
-        else
-            SDL_SetRenderDrawColor(&renderer, 0xff, 0xff, 0xff, 0x40);
-
-        SDL_RenderFillRect(&renderer, &restart_clickable_area_.get_area());
-    }
-
     game_over_label_.draw();
-    restart_label_.draw();
+    restart_button_.draw();
 }
 
 } //namespace view
