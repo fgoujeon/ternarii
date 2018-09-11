@@ -34,21 +34,31 @@ namespace
     {
         public:
             random_tile_generator():
-                gen_(rd_())
+                gen_(rd_()),
+                dis_(0, 4.35) //we want 1% chance to get a 10
             {
             }
 
-            //return random value (with normal distribution) from 0 to max
+            //return random value from 0 to max
             unsigned int generate(const unsigned int max)
             {
-                std::normal_distribution<double> dis{0, max / 4.0 + 1.5};
-                const auto r = std::abs(dis(gen_));
-                return std::min(static_cast<unsigned int>(r), max);
+                //generate random number with normal distribution
+                const auto real_val = dis_(gen_);
+
+                //remove negative values
+                const auto positive_real_val = std::abs(real_val);
+
+                //discretize
+                const auto natural_val = static_cast<unsigned int>(positive_real_val);
+
+                //stay inside [0, max]
+                return natural_val % (max + 1);
             }
 
         private:
             std::random_device rd_;
             std::mt19937 gen_;
+            std::normal_distribution<double> dis_;
     };
 }
 
