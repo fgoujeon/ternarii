@@ -47,14 +47,15 @@ class label
         label
         (
             SDL_Renderer& renderer,
+            const std::string& font_file_path,
+            const unsigned int font_size,
+            const SDL_Color& color,
             const point& position,
             const unsigned int w,
             const unsigned int h,
             const std::string& text,
             const horizontal_alignment halign,
-            const vertical_alignment valign,
-            const std::string& font_file_path,
-            const SDL_Color& color
+            const vertical_alignment valign
         );
 
         void set_position(const point& position);

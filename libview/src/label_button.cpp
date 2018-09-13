@@ -27,6 +27,7 @@ label_button::label_button
 (
     SDL_Renderer& renderer,
     const SDL_Rect& area,
+    const unsigned int font_size,
     const std::string& text,
     const click_event_handler& evt_handler
 ):
@@ -35,14 +36,15 @@ label_button::label_button
     label_
     (
         renderer,
+        "res/fonts/DejaVuSans.ttf",
+        font_size,
+        SDL_Color{0xff, 0xff, 0xff, 0xff},
         point{static_cast<double>(area.x), static_cast<double>(area.y)},
         area.w,
         area.h,
         text,
         horizontal_alignment::center,
-        vertical_alignment::center,
-        "res/fonts/DejaVuSans.ttf",
-        SDL_Color{0xff, 0xff, 0xff, 0xff}
+        vertical_alignment::center
     )
 {
 }

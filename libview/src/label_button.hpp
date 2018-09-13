@@ -37,6 +37,7 @@ class label_button
         (
             SDL_Renderer& renderer,
             const SDL_Rect& area,
+            const unsigned int font_size,
             const std::string& text,
             const click_event_handler& evt_handler
         );

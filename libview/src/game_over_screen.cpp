@@ -34,6 +34,9 @@ game_over_screen::game_over_screen
     game_over_label_
     (
         renderer,
+        "res/fonts/DejaVuSans.ttf",
+        100,
+        SDL_Color{0x88, 0x88, 0x88, 0xff},
         point
         {
             static_cast<double>(area.x),
@@ -43,9 +46,7 @@ game_over_screen::game_over_screen
         area.h,
         "GAME OVER",
         horizontal_alignment::center,
-        vertical_alignment::top,
-        "res/fonts/DejaVuSans.ttf",
-        SDL_Color{0x88, 0x88, 0x88, 0xff}
+        vertical_alignment::top
     ),
     restart_button_
     (
@@ -57,6 +58,7 @@ game_over_screen::game_over_screen
             200,
             70
         },
+        50,
         "restart",
         [this, evt_handler]
         {

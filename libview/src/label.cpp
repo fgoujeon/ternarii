@@ -45,17 +45,18 @@ namespace
 label::label
 (
     SDL_Renderer& renderer,
+    const std::string& font_file_path,
+    const unsigned int font_size,
+    const SDL_Color& color,
     const point& position,
     const unsigned int w,
     const unsigned int h,
     const std::string& text,
     const horizontal_alignment halign,
-    const vertical_alignment valign,
-    const std::string& font_file_path,
-    const SDL_Color& color
+    const vertical_alignment valign
 ):
     renderer_(renderer),
-    pfont_(TTF_OpenFont(font_file_path.c_str(), 90)),
+    pfont_(TTF_OpenFont(font_file_path.c_str(), font_size)),
     position_(position),
     w_(w),
     h_(h),
@@ -78,64 +79,39 @@ void label::set_text(const std::string& text)
 
 void label::draw()
 {
-    int texture_width;
-    int texture_height;
+    SDL_Rect r;
+
     SDL_QueryTexture
     (
         ptexture_.get(),
         nullptr,
         nullptr,
-        &texture_width,
-        &texture_height
+        &r.w,
+        &r.h
     );
-    const auto texture_ratio =
-        static_cast<double>(texture_width) /
-        texture_height
-    ;
 
-    const auto label_ratio =
-        static_cast<double>(w_) /
-        h_
-    ;
-
-    SDL_Rect r;
-    if(texture_ratio > label_ratio)
+    switch(halign_)
     {
-        r.w = w_;
-        r.h = r.w / texture_ratio;
-
-        r.x = position_.x;
-
-        switch(valign_)
-        {
-            case vertical_alignment::top:
-                r.y = position_.y;
-                break;
-            case vertical_alignment::center:
-                r.y = position_.y + h_ / 2 - r.h / 2;
-                break;
-            default:
-                r.y = position_.y + h_ - r.h;
-        }
+        case horizontal_alignment::left:
+            r.x = position_.x;
+            break;
+        case horizontal_alignment::center:
+            r.x = position_.x + w_ / 2 - r.w / 2;
+            break;
+        default:
+            r.x = position_.x + w_ - r.w;
     }
-    else
+
+    switch(valign_)
     {
-        r.h = h_;
-        r.w = r.h * texture_ratio;
-
-        switch(halign_)
-        {
-            case horizontal_alignment::left:
-                r.x = position_.x;
-                break;
-            case horizontal_alignment::center:
-                r.x = position_.x + w_ / 2 - r.w / 2;
-                break;
-            default:
-                r.x = position_.x + w_ - r.w;
-        }
-
-        r.y = position_.y;
+        case vertical_alignment::top:
+            r.y = position_.y;
+            break;
+        case vertical_alignment::center:
+            r.y = position_.y + h_ / 2 - r.h / 2;
+            break;
+        default:
+            r.y = position_.y + h_ - r.h;
     }
 
     SDL_RenderCopy(&renderer_, ptexture_.get(), nullptr, &r);

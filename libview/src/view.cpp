@@ -79,6 +79,7 @@ struct view::impl
         (
             *prenderer_,
             SDL_Rect{50, 1300, 150, 150},
+            50,
             "left",
             [this]
             {
@@ -89,6 +90,7 @@ struct view::impl
         (
             *prenderer_,
             SDL_Rect{210, 1400, 150, 150},
+            50,
             "right",
             [this]
             {
@@ -99,6 +101,7 @@ struct view::impl
         (
             *prenderer_,
             SDL_Rect{540, 1400, 150, 150},
+            50,
             "drop",
             [this]
             {
@@ -109,6 +112,7 @@ struct view::impl
         (
             *prenderer_,
             SDL_Rect{700, 1300, 150, 150},
+            50,
             "rotate",
             [this]
             {

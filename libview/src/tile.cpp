@@ -86,14 +86,15 @@ tile::tile
     label_
     (
         renderer,
+        "res/fonts/DejaVuSans.ttf",
+        label_height_normalized * h,
+        SDL_Color{0xff, 0xff, 0xff, 0xff},
         get_label_position(position, w, h),
         w,
         label_height_normalized * h,
         std::to_string(value),
         horizontal_alignment::center,
-        vertical_alignment::center,
-        "res/fonts/DejaVuSans.ttf",
-        SDL_Color{0xff, 0xff, 0xff, 0xff}
+        vertical_alignment::center
     )
 {
 }
