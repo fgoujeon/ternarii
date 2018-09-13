@@ -18,29 +18,10 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 #include "label.hpp"
+#include "draw.hpp"
 
 namespace libview
 {
-
-namespace
-{
-    libsdl::unique_ptr<SDL_Texture> make_texture
-    (
-        SDL_Renderer& renderer,
-        TTF_Font& font,
-        const std::string& text,
-        const SDL_Color& color
-    )
-    {
-        return libsdl::make_texture
-        (
-            renderer,
-            font,
-            text,
-            color
-        );
-    }
-}
 
 label::label
 (
@@ -56,12 +37,13 @@ label::label
     const vertical_alignment valign
 ):
     renderer_(renderer),
-    pfont_(TTF_OpenFont(font_file_path.c_str(), font_size)),
+    font_file_path_(font_file_path),
+    font_size_(font_size),
+    color_(color),
     position_(position),
     w_(w),
     h_(h),
-    color_(color),
-    ptexture_(make_texture(renderer, *pfont_, text, color)),
+    text_(text),
     halign_(halign),
     valign_(valign)
 {
@@ -74,11 +56,18 @@ void label::set_position(const point& position)
 
 void label::set_text(const std::string& text)
 {
-    ptexture_ = make_texture(renderer_, *pfont_, text, color_);
+    if(text_ != text)
+    {
+        text_ = text;
+        ptexture_.reset();
+    }
 }
 
 void label::draw(const system& sys)
 {
+    update_font(sys.x_unit);
+    update_texture();
+
     SDL_Rect r;
 
     SDL_QueryTexture
@@ -90,31 +79,61 @@ void label::draw(const system& sys)
         &r.h
     );
 
+    auto texture_x = 0.0;
     switch(halign_)
     {
         case horizontal_alignment::left:
-            r.x = sys.x_unit * (position_.x) + sys.origin.x;
+            texture_x = sys.origin.x + sys.x_unit * position_.x;
             break;
         case horizontal_alignment::center:
-            r.x = sys.x_unit * (position_.x + w_ / 2 - r.w / 2) + sys.origin.x;
+            texture_x = sys.origin.x + sys.x_unit * (position_.x + w_ / 2.0) - r.w / 2.0;
             break;
         default:
-            r.x = sys.x_unit * (position_.x + w_ - r.w) + sys.origin.x;
+            texture_x = sys.origin.x + sys.x_unit * (position_.x + w_) - r.w;
     }
 
+    auto texture_y = 0.0;
     switch(valign_)
     {
         case vertical_alignment::top:
-            r.y = sys.y_unit * (position_.y) + sys.origin.y;
+            texture_y = sys.origin.y + sys.y_unit * position_.y;
             break;
         case vertical_alignment::center:
-            r.y = sys.y_unit * (position_.y + h_ / 2 - r.h / 2) + sys.origin.y;
+            texture_y = sys.origin.y + sys.y_unit * (position_.y + h_ / 2.0) - r.h / 2.0;
             break;
         default:
-            r.y = sys.y_unit * (position_.y + h_ - r.h) + sys.origin.y;
+            texture_y = sys.origin.y + sys.y_unit * (position_.y + h_) - r.h;
     }
 
-    SDL_RenderCopy(&renderer_, ptexture_.get(), nullptr, &r);
+    {
+        const auto r2 = SDL_Rect
+        {
+            static_cast<int>(texture_x),
+            static_cast<int>(texture_y),
+            r.w,
+            r.h
+        };
+        SDL_RenderCopy(&renderer_, ptexture_.get(), nullptr, &r2);
+    }
+}
+
+void label::update_font(const double system_unit)
+{
+    if(!pfont_ || applied_system_unit_ != system_unit)
+    {
+        pfont_.reset(TTF_OpenFont(font_file_path_.c_str(), font_size_ * system_unit));
+        applied_system_unit_ = system_unit;
+
+        ptexture_.reset();
+    }
+}
+
+void label::update_texture()
+{
+    if(!ptexture_)
+    {
+        ptexture_ = libsdl::make_texture(renderer_, *pfont_, text_, color_);
+    }
 }
 
 } //namespace view

@@ -66,15 +66,25 @@ class label
         void draw(const system& sys);
 
     private:
+        void update_font(const double system_unit);
+
+        void update_texture();
+
+    private:
         SDL_Renderer& renderer_;
-        libsdl::unique_ptr<TTF_Font> pfont_;
+        std::string font_file_path_;
+        unsigned int font_size_;
+        SDL_Color color_ = SDL_Color{0, 0, 0, 0};
         point position_;
         unsigned int w_;
         unsigned int h_;
-        SDL_Color color_ = SDL_Color{0, 0, 0, 0};
-        libsdl::unique_ptr<SDL_Texture> ptexture_;
+        std::string text_;
         horizontal_alignment halign_;
         vertical_alignment valign_;
+
+        double applied_system_unit_ = 0;
+        libsdl::unique_ptr<TTF_Font> pfont_;
+        libsdl::unique_ptr<SDL_Texture> ptexture_;
 };
 
 } //namespace libview
