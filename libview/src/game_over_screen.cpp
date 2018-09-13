@@ -18,6 +18,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 #include "game_over_screen.hpp"
+#include "draw.hpp"
 #include <iostream>
 
 namespace libview
@@ -74,17 +75,17 @@ void game_over_screen::set_visible(const bool value)
     visible_ = value;
 }
 
-void game_over_screen::draw(SDL_Renderer& renderer)
+void game_over_screen::draw(SDL_Renderer& renderer, const system& sys)
 {
     if(!visible_)
         return;
 
     //background
     SDL_SetRenderDrawColor(&renderer, 0x44, 0x44, 0x44, 255);
-    SDL_RenderFillRect(&renderer, &area_);
+    draw_rect(renderer, sys, area_);
 
-    game_over_label_.draw();
-    restart_button_.draw();
+    game_over_label_.draw(sys);
+    restart_button_.draw(sys);
 }
 
 } //namespace view

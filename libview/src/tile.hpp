@@ -22,6 +22,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "point.hpp"
 #include "label.hpp"
+#include "system.hpp"
 #include <libsdl.hpp>
 
 namespace libview
@@ -45,7 +46,7 @@ class tile
 
         void set_visible(const bool visible);
 
-        void draw();
+        void draw(const system& sys);
 
     private:
         SDL_Renderer& renderer_;

@@ -18,6 +18,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 #include "tile.hpp"
+#include "draw.hpp"
 #include <map>
 
 namespace libview
@@ -115,7 +116,7 @@ void tile::set_visible(const bool visible)
     visible_ = visible;
 }
 
-void tile::draw()
+void tile::draw(const system& sys)
 {
     if(!visible_)
         return;
@@ -132,11 +133,11 @@ void tile::draw()
         };
 
         SDL_SetRenderDrawColor(&renderer_, c.r, c.g, c.b, c.a);
-        SDL_RenderFillRect(&renderer_, &r);
+        draw_rect(renderer_, sys, r);
     }
 
     //draw number
-    label_.draw();
+    label_.draw(sys);
 }
 
 } //namespace view

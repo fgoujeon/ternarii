@@ -80,9 +80,9 @@ void score_display::set_score(const unsigned int value)
     label_.set_text(score_to_string(value));
 }
 
-void score_display::draw()
+void score_display::draw(const system& sys)
 {
-    label_.draw();
+    label_.draw(sys);
 }
 
 } //namespace view

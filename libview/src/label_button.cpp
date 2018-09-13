@@ -18,6 +18,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 #include "label_button.hpp"
+#include "draw.hpp"
 #include <iostream>
 
 namespace libview
@@ -49,7 +50,7 @@ label_button::label_button
 {
 }
 
-void label_button::draw()
+void label_button::draw(const system& sys)
 {
     //background
     {
@@ -60,10 +61,10 @@ void label_button::draw()
         else
             SDL_SetRenderDrawColor(&renderer_, 0xff, 0xff, 0xff, 0x40);
 
-        SDL_RenderFillRect(&renderer_, &clickable_area_.get_area());
+        draw_rect(renderer_, sys, clickable_area_.get_area());
     }
 
-    label_.draw();
+    label_.draw(sys);
 }
 
 } //namespace view

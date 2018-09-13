@@ -77,7 +77,7 @@ void label::set_text(const std::string& text)
     ptexture_ = make_texture(renderer_, *pfont_, text, color_);
 }
 
-void label::draw()
+void label::draw(const system& sys)
 {
     SDL_Rect r;
 
@@ -93,25 +93,25 @@ void label::draw()
     switch(halign_)
     {
         case horizontal_alignment::left:
-            r.x = position_.x;
+            r.x = sys.x_unit * (position_.x) + sys.origin.x;
             break;
         case horizontal_alignment::center:
-            r.x = position_.x + w_ / 2 - r.w / 2;
+            r.x = sys.x_unit * (position_.x + w_ / 2 - r.w / 2) + sys.origin.x;
             break;
         default:
-            r.x = position_.x + w_ - r.w;
+            r.x = sys.x_unit * (position_.x + w_ - r.w) + sys.origin.x;
     }
 
     switch(valign_)
     {
         case vertical_alignment::top:
-            r.y = position_.y;
+            r.y = sys.y_unit * (position_.y) + sys.origin.y;
             break;
         case vertical_alignment::center:
-            r.y = position_.y + h_ / 2 - r.h / 2;
+            r.y = sys.y_unit * (position_.y + h_ / 2 - r.h / 2) + sys.origin.y;
             break;
         default:
-            r.y = position_.y + h_ - r.h;
+            r.y = sys.y_unit * (position_.y + h_ - r.h) + sys.origin.y;
     }
 
     SDL_RenderCopy(&renderer_, ptexture_.get(), nullptr, &r);

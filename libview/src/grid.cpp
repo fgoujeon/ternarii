@@ -18,6 +18,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 #include "grid.hpp"
+#include "draw.hpp"
 #include "utility.hpp"
 #include <map>
 
@@ -309,7 +310,7 @@ void grid::merge_tiles(const data_types::tile_merge_list& merges)
     animations_.push(std::make_unique<pause>(0.2));
 }
 
-void grid::draw(SDL_Renderer& renderer, const double ellapsed_time)
+void grid::draw(SDL_Renderer& renderer, const system& sys, const double ellapsed_time)
 {
     //animate
     iterate(animations_, ellapsed_time);
@@ -320,41 +321,41 @@ void grid::draw(SDL_Renderer& renderer, const double ellapsed_time)
     {
         const auto r = SDL_Rect{0, 0, column_count * cell_size, row_count * cell_size};
         SDL_SetRenderDrawColor(&renderer, 0x66, 0x66, 0x66, 255);
-        SDL_RenderFillRect(&renderer, &r);
+        draw_rect(renderer, sys, r);
     }
 
     //draw next input line
     {
         const auto r = SDL_Rect{0, cell_size - 1, column_count * cell_size, 2};
         SDL_SetRenderDrawColor(&renderer, 0xff, 0xff, 0xff, 255);
-        SDL_RenderFillRect(&renderer, &r);
+        draw_rect(renderer, sys, r);
     }
 
     //draw death line
     {
         const auto r = SDL_Rect{0, 4 * cell_size - 1, column_count * cell_size, 2};
         SDL_SetRenderDrawColor(&renderer, 0xff, 0xff, 0xff, 255);
-        SDL_RenderFillRect(&renderer, &r);
+        draw_rect(renderer, sys, r);
     }
 
     //draw tiles
     {
         for(auto& ptile: next_input_tiles_)
             if(ptile)
-                ptile->draw();
+                ptile->draw(sys);
 
         for(auto& ptile: input_tiles_)
             if(ptile)
-                ptile->draw();
+                ptile->draw(sys);
 
         for(auto& tile_column: board_tiles_)
             for(auto& ptile: tile_column)
                 if(ptile)
-                    ptile->draw();
+                    ptile->draw(sys);
 
         for(auto& ptile: disappearing_tiles_)
             if(ptile)
-                ptile->draw();
+                ptile->draw(sys);
     }
 }
 

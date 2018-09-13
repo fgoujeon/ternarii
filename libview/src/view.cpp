@@ -23,6 +23,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include "game_over_screen.hpp"
 #include "label_button.hpp"
 #include "utility.hpp"
+#include "system.hpp"
 #include <libsdl.hpp>
 #include <chrono>
 #include <string>
@@ -192,37 +193,25 @@ struct view::impl
             logical_height
         );
 
-        //draw children
+        //draw tile grid
         {
-            SDL_Rect current_viewport;
-            SDL_RenderGetViewport(prenderer_.get(), &current_viewport);
+            system sys;
+            sys.origin.x = 150;
+            sys.origin.y = 150;
 
-            float current_x_scale, current_y_scale;
-            SDL_RenderGetScale(prenderer_.get(), &current_x_scale, &current_y_scale);
+            grid_.draw(*prenderer_, sys, ellapsed_time);
+        }
 
-            //tile grid
-            {
-                const auto grid_logical_width = grid_.get_logical_width();
-                const auto grid_logical_height = grid_.get_logical_height();
+        //draw other children
+        {
+            system sys;
 
-                SDL_Rect viewport;
-                viewport.x = current_viewport.x + 150;
-                viewport.y = current_viewport.y + 150;
-                viewport.w = grid_logical_width;
-                viewport.h = grid_logical_height;
-                SDL_RenderSetViewport(prenderer_.get(), &viewport);
-
-                grid_.draw(*prenderer_, ellapsed_time);
-
-                SDL_RenderSetViewport(prenderer_.get(), &current_viewport);
-            }
-
-            score_display_.draw();
-            left_shift_button_.draw();
-            right_shift_button_.draw();
-            drop_button_.draw();
-            rotation_button_.draw();
-            game_over_screen_.draw(*prenderer_);
+            score_display_.draw(sys);
+            left_shift_button_.draw(sys);
+            right_shift_button_.draw(sys);
+            drop_button_.draw(sys);
+            rotation_button_.draw(sys);
+            game_over_screen_.draw(*prenderer_, sys);
         }
 
         SDL_RenderPresent(prenderer_.get());

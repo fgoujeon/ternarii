@@ -20,6 +20,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #ifndef LIBVIEW_LABEL_HPP
 #define LIBVIEW_LABEL_HPP
 
+#include "system.hpp"
 #include "point.hpp"
 #include <libsdl.hpp>
 #include <string>
@@ -62,7 +63,7 @@ class label
 
         void set_text(const std::string& text);
 
-        void draw();
+        void draw(const system& sys);
 
     private:
         SDL_Renderer& renderer_;
