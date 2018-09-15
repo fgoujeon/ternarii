@@ -65,9 +65,11 @@ class label
         void draw(const geometry::system& sys);
 
     private:
-        void update_font(const double system_unit);
+        void update_font();
 
         void update_texture();
+
+        void update_rect();
 
     private:
         SDL_Renderer& renderer_;
@@ -81,9 +83,16 @@ class label
         horizontal_alignment halign_;
         vertical_alignment valign_;
 
-        double applied_system_unit_ = 0;
+        geometry::system system_;
+
+        bool must_update_font_ = true;
         libsdl::unique_ptr<TTF_Font> pfont_;
+
+        bool must_update_texture_ = true;
         libsdl::unique_ptr<SDL_Texture> ptexture_;
+
+        bool must_update_rect_ = true;
+        SDL_Rect rect_;
 };
 
 } //namespace libview

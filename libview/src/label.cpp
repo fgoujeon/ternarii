@@ -51,7 +51,11 @@ label::label
 
 void label::set_position(const geometry::point& position)
 {
-    position_ = position;
+    if(position_ != position)
+    {
+        position_ = position;
+        must_update_rect_ = true;
+    }
 }
 
 void label::set_text(const std::string& text)
@@ -59,80 +63,87 @@ void label::set_text(const std::string& text)
     if(text_ != text)
     {
         text_ = text;
-        ptexture_.reset();
+        must_update_texture_ = true;
     }
 }
 
-void label::draw(const geometry::system& sys)
+void label::draw(const geometry::system& system)
 {
-    update_font(sys.unit);
+    if(system_ != system)
+    {
+        system_ = system;
+        must_update_font_ = true;
+    }
+
+    update_font();
     update_texture();
+    update_rect();
 
-    SDL_Rect r;
-
-    SDL_QueryTexture
-    (
-        ptexture_.get(),
-        nullptr,
-        nullptr,
-        &r.w,
-        &r.h
-    );
-
-    auto texture_x = 0.0;
-    switch(halign_)
-    {
-        case horizontal_alignment::left:
-            texture_x = sys.origin.x + sys.unit * position_.x;
-            break;
-        case horizontal_alignment::center:
-            texture_x = sys.origin.x + sys.unit * (position_.x + w_ / 2.0) - r.w / 2.0;
-            break;
-        default:
-            texture_x = sys.origin.x + sys.unit * (position_.x + w_) - r.w;
-    }
-
-    auto texture_y = 0.0;
-    switch(valign_)
-    {
-        case vertical_alignment::top:
-            texture_y = sys.origin.y + sys.unit * position_.y;
-            break;
-        case vertical_alignment::center:
-            texture_y = sys.origin.y + sys.unit * (position_.y + h_ / 2.0) - r.h / 2.0;
-            break;
-        default:
-            texture_y = sys.origin.y + sys.unit * (position_.y + h_) - r.h;
-    }
-
-    {
-        const auto r2 = SDL_Rect
-        {
-            static_cast<int>(texture_x),
-            static_cast<int>(texture_y),
-            r.w,
-            r.h
-        };
-        SDL_RenderCopy(&renderer_, ptexture_.get(), nullptr, &r2);
-    }
+    SDL_RenderCopy(&renderer_, ptexture_.get(), nullptr, &rect_);
 }
 
-void label::update_font(const double system_unit)
+void label::update_font()
 {
-    if(!pfont_ || applied_system_unit_ != system_unit)
+    if(must_update_font_)
     {
-        pfont_.reset(TTF_OpenFont(font_file_path_.c_str(), font_size_ * system_unit));
-        applied_system_unit_ = system_unit;
-
-        ptexture_.reset();
+        pfont_.reset(TTF_OpenFont(font_file_path_.c_str(), font_size_ * system_.unit));
+        must_update_font_ = false;
+        must_update_texture_ = true;
     }
 }
 
 void label::update_texture()
 {
-    if(!ptexture_)
+    if(must_update_texture_)
     {
         ptexture_ = libsdl::make_texture(renderer_, *pfont_, text_, color_);
+        must_update_texture_ = false;
+        must_update_rect_ = true;
+    }
+}
+
+void label::update_rect()
+{
+    if(must_update_rect_)
+    {
+        SDL_QueryTexture
+        (
+            ptexture_.get(),
+            nullptr,
+            nullptr,
+            &rect_.w,
+            &rect_.h
+        );
+
+        auto texture_x = 0.0;
+        switch(halign_)
+        {
+            case horizontal_alignment::left:
+                texture_x = system_.origin.x + system_.unit * position_.x;
+                break;
+            case horizontal_alignment::center:
+                texture_x = system_.origin.x + system_.unit * (position_.x + w_ / 2.0) - rect_.w / 2.0;
+                break;
+            default:
+                texture_x = system_.origin.x + system_.unit * (position_.x + w_) - rect_.w;
+        }
+        rect_.x = static_cast<int>(texture_x);
+
+        auto texture_y = 0.0;
+        switch(valign_)
+        {
+            case vertical_alignment::top:
+                texture_y = system_.origin.y + system_.unit * position_.y;
+                break;
+            case vertical_alignment::center:
+                texture_y = system_.origin.y + system_.unit * (position_.y + h_ / 2.0) - rect_.h / 2.0;
+                break;
+            default:
+                texture_y = system_.origin.y + system_.unit * (position_.y + h_) - rect_.h;
+        }
+        rect_.y = static_cast<int>(texture_y);
+
+        must_update_rect_ = false;
     }
 }
 
