@@ -75,7 +75,13 @@ tile::tile
     renderer_(renderer),
     area_(area),
     background_color_(get_background_color(value)),
-    label_
+    rectangle_
+    (
+        renderer,
+        area_,
+        get_background_color(value)
+    ),
+    number_label_
     (
         renderer,
         "res/fonts/DejaVuSans.ttf",
@@ -99,7 +105,8 @@ const geometry::point& tile::get_position() const
 void tile::set_position(const geometry::point& position)
 {
     area_.pos = position;
-    label_.set_position(get_label_position(area_));
+    rectangle_.set_position(area_.pos);
+    number_label_.set_position(get_label_position(area_));
 }
 
 void tile::set_visible(const bool visible)
@@ -112,23 +119,8 @@ void tile::draw(const geometry::system& sys)
     if(!visible_)
         return;
 
-    //draw background box
-    {
-        const auto& c = background_color_;
-        const auto r = SDL_Rect
-        {
-            static_cast<int>(area_.pos.x),
-            static_cast<int>(area_.pos.y),
-            static_cast<int>(area_.w),
-            static_cast<int>(area_.h)
-        };
-
-        SDL_SetRenderDrawColor(&renderer_, c.r, c.g, c.b, c.a);
-        draw_rect(renderer_, sys, r);
-    }
-
-    //draw number
-    label_.draw(sys);
+    rectangle_.draw(sys);
+    number_label_.draw(sys);
 }
 
 } //namespace view

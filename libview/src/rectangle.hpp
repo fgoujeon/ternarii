@@ -17,43 +17,34 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef LIBVIEW_TILE_HPP
-#define LIBVIEW_TILE_HPP
+#ifndef LIBVIEW_RECTANGLE_HPP
+#define LIBVIEW_RECTANGLE_HPP
 
 #include "label.hpp"
-#include "rectangle.hpp"
 #include "geometry.hpp"
 #include <libsdl.hpp>
 
 namespace libview
 {
 
-class tile
+class rectangle
 {
     public:
-        tile
+        rectangle
         (
             SDL_Renderer& renderer,
-            const unsigned int value,
-            const geometry::rect& area
+            const geometry::rect& area,
+            const SDL_Color& color
         );
 
-        const geometry::point& get_position() const;
-
         void set_position(const geometry::point& position);
-
-        void set_visible(const bool visible);
 
         void draw(const geometry::system& sys);
 
     private:
         SDL_Renderer& renderer_;
-        unsigned int value_ = 0;
         geometry::rect area_;
-        SDL_Color background_color_;
-        rectangle rectangle_;
-        label number_label_;
-        bool visible_ = false;
+        SDL_Color color_;
 };
 
 } //namespace libview
