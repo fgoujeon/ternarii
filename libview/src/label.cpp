@@ -65,7 +65,7 @@ void label::set_text(const std::string& text)
 
 void label::draw(const system& sys)
 {
-    update_font(sys.x_unit);
+    update_font(sys.unit);
     update_texture();
 
     SDL_Rect r;
@@ -83,26 +83,26 @@ void label::draw(const system& sys)
     switch(halign_)
     {
         case horizontal_alignment::left:
-            texture_x = sys.origin.x + sys.x_unit * position_.x;
+            texture_x = sys.origin.x + sys.unit * position_.x;
             break;
         case horizontal_alignment::center:
-            texture_x = sys.origin.x + sys.x_unit * (position_.x + w_ / 2.0) - r.w / 2.0;
+            texture_x = sys.origin.x + sys.unit * (position_.x + w_ / 2.0) - r.w / 2.0;
             break;
         default:
-            texture_x = sys.origin.x + sys.x_unit * (position_.x + w_) - r.w;
+            texture_x = sys.origin.x + sys.unit * (position_.x + w_) - r.w;
     }
 
     auto texture_y = 0.0;
     switch(valign_)
     {
         case vertical_alignment::top:
-            texture_y = sys.origin.y + sys.y_unit * position_.y;
+            texture_y = sys.origin.y + sys.unit * position_.y;
             break;
         case vertical_alignment::center:
-            texture_y = sys.origin.y + sys.y_unit * (position_.y + h_ / 2.0) - r.h / 2.0;
+            texture_y = sys.origin.y + sys.unit * (position_.y + h_ / 2.0) - r.h / 2.0;
             break;
         default:
-            texture_y = sys.origin.y + sys.y_unit * (position_.y + h_) - r.h;
+            texture_y = sys.origin.y + sys.unit * (position_.y + h_) - r.h;
     }
 
     {

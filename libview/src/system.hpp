@@ -28,8 +28,7 @@ namespace libview
 struct system
 {
     point origin; //in pixels
-    double x_unit = 1; //in pixels
-    double y_unit = 1; //in pixels
+    double unit = 1; //in pixels, for both x and y axes
 };
 
 } //namespace libview

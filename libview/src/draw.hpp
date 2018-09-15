@@ -30,10 +30,10 @@ void draw_rect(SDL_Renderer& renderer, const system& s, const SDL_Rect& r)
 {
     const auto r2 = SDL_Rect
     {
-        static_cast<int>(s.x_unit * r.x + s.origin.x),
-        static_cast<int>(s.y_unit * r.y + s.origin.y),
-        static_cast<int>(s.x_unit * r.w),
-        static_cast<int>(s.y_unit * r.h)
+        static_cast<int>(s.unit * r.x + s.origin.x),
+        static_cast<int>(s.unit * r.y + s.origin.y),
+        static_cast<int>(s.unit * r.w),
+        static_cast<int>(s.unit * r.h)
     };
     SDL_RenderFillRect(&renderer, &r2);
 }

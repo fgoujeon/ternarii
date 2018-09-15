@@ -196,25 +196,25 @@ struct view::impl
 
             if(window_ratio > logical_ratio)
             {
-                sys0.x_unit = static_cast<double>(window_height) / logical_height;
-                sys0.y_unit = sys0.x_unit;
-                sys0.origin.x = window_width / 2.0 - (logical_width * sys0.x_unit) / 2.0;
+                sys0.unit = static_cast<double>(window_height) / logical_height;
+                sys0.unit = sys0.unit;
+                sys0.origin.x = window_width / 2.0 - (logical_width * sys0.unit) / 2.0;
             }
             else
             {
-                sys0.x_unit = static_cast<double>(window_width) / logical_width;
-                sys0.y_unit = sys0.x_unit;
-                sys0.origin.y = window_height / 2.0 - (logical_height * sys0.y_unit) / 2.0;
+                sys0.unit = static_cast<double>(window_width) / logical_width;
+                sys0.unit = sys0.unit;
+                sys0.origin.y = window_height / 2.0 - (logical_height * sys0.unit) / 2.0;
             }
         }
 
         //draw tile grid
         {
             system sys;
-            sys.origin.x = sys0.origin.x + (150 * sys0.x_unit);
-            sys.origin.y = sys0.origin.y + (150 * sys0.y_unit);
-            sys.x_unit = sys0.x_unit;
-            sys.y_unit = sys0.y_unit;
+            sys.origin.x = sys0.origin.x + (150 * sys0.unit);
+            sys.origin.y = sys0.origin.y + (150 * sys0.unit);
+            sys.unit = sys0.unit;
+            sys.unit = sys0.unit;
 
             grid_.draw(*prenderer_, sys, ellapsed_time);
         }
