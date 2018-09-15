@@ -21,9 +21,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #define LIBVIEW_TILE_HPP
 
 #include "label.hpp"
-#include "system.hpp"
-#include "rect.hpp"
-#include "point.hpp"
+#include "geometry.hpp"
 #include <libsdl.hpp>
 
 namespace libview
@@ -36,21 +34,21 @@ class tile
         (
             SDL_Renderer& renderer,
             const unsigned int value,
-            const rect& area
+            const geometry::rect& area
         );
 
-        const point& get_position() const;
+        const geometry::point& get_position() const;
 
-        void set_position(const point& position);
+        void set_position(const geometry::point& position);
 
         void set_visible(const bool visible);
 
-        void draw(const system& sys);
+        void draw(const geometry::system& sys);
 
     private:
         SDL_Renderer& renderer_;
         unsigned int value_ = 0;
-        rect area_;
+        geometry::rect area_;
         SDL_Color background_color_;
         label label_;
         bool visible_ = false;

@@ -21,7 +21,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #define LIBVIEW_ANIMATIONS_HPP
 
 #include "tile.hpp"
-#include "point.hpp"
+#include "geometry.hpp"
 #include <queue>
 #include <cmath>
 
@@ -66,7 +66,7 @@ class translation: public animation
         translation
         (
             tile& t,
-            const point& dst_pos,
+            const geometry::point& dst_pos,
             const double speed //in pixels per second
         ):
             t_(t),
@@ -91,7 +91,7 @@ class translation: public animation
 
                 const auto curr_pos = t_.get_position();
 
-                const auto next_pos = point
+                const auto next_pos = geometry::point
                 {
                     curr_pos.x + step_distance * x_ratio_,
                     curr_pos.y + step_distance * y_ratio_
@@ -129,7 +129,7 @@ class translation: public animation
     private:
         //initialized by constructor
         tile& t_;
-        const point dst_pos_;
+        const geometry::point dst_pos_;
         const double speed_;
 
         //initialized by init()

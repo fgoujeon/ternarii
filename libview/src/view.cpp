@@ -24,7 +24,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include "game_over_screen.hpp"
 #include "label_button.hpp"
 #include "utility.hpp"
-#include "system.hpp"
+#include "geometry.hpp"
 #include <libsdl.hpp>
 #include <chrono>
 #include <string>
@@ -194,7 +194,7 @@ struct view::impl
         SDL_RenderClear(prenderer_.get());
 
         //compute system for letterboxing
-        system sys0;
+        geometry::system sys0;
         {
             auto window_width = 0;
             auto window_height = 0;
@@ -217,7 +217,7 @@ struct view::impl
 
         //draw tile grid
         {
-            system sys;
+            geometry::system sys;
             sys.origin.x = sys0.origin.x + (150 * sys0.unit);
             sys.origin.y = sys0.origin.y + (150 * sys0.unit);
             sys.unit = sys0.unit;

@@ -17,15 +17,96 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef LIBVIEW_SYSTEM_HPP
-#define LIBVIEW_SYSTEM_HPP
+#ifndef LIBVIEW_GEOMETRY_HPP
+#define LIBVIEW_GEOMETRY_HPP
 
-#include "point.hpp"
 #include <libsdl.hpp>
 
-namespace libview
+namespace libview { namespace geometry
 {
 
+//
+//point
+//
+
+struct point
+{
+    point()
+    {
+    }
+
+    point(const double x, const double y):
+        x(x),
+        y(y)
+    {
+    }
+
+    double x = 0;
+    double y = 0;
+};
+
+inline
+bool operator==(const point& l, const point& r)
+{
+    return l.x == r.x && l.y == r.y;
+}
+
+inline
+bool operator!=(const point& l, const point& r)
+{
+    return !(l == r);
+}
+
+
+
+//
+//rect
+//
+
+struct rect
+{
+    rect()
+    {
+    }
+
+    rect(const double x, const double y, const double w, const double h):
+        pos({x, y}),
+        w(w),
+        h(h)
+    {
+    }
+
+    rect(const point& p, const double w, const double h):
+        pos(p),
+        w(w),
+        h(h)
+    {
+    }
+
+    point pos;
+    double w = 0;
+    double h = 0;
+};
+
+inline
+bool operator==(const rect& l, const rect& r)
+{
+    return l.pos == r.pos && l.w == r.w && l.h == r.h;
+}
+
+inline
+bool operator!=(const rect& l, const rect& r)
+{
+    return !(l == r);
+}
+
+
+
+//
+//system
+//
+
+//coordinate system
 struct system
 {
     point origin; //in pixels
@@ -59,6 +140,6 @@ SDL_Rect to_window_system_rect(const system& sys, const SDL_Rect& r)
     };
 }
 
-} //namespace libview
+}} //namespace libview::geometry
 
 #endif

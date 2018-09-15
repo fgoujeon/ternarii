@@ -33,7 +33,7 @@ fps_display::fps_display
         "res/fonts/DejaVuSans.ttf",
         50,
         SDL_Color{0xff, 0xff, 0xff, 0xff},
-        point
+        geometry::point
         {
             static_cast<double>(area.x),
             static_cast<double>(area.y)
@@ -47,7 +47,7 @@ fps_display::fps_display
 {
 }
 
-void fps_display::draw(const system& sys, const double ellapsed_time)
+void fps_display::draw(const geometry::system& sys, const double ellapsed_time)
 {
     cumulated_ellapsed_time_ += ellapsed_time;
     ++counter_;

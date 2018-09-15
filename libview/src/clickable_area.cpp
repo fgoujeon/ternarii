@@ -45,7 +45,7 @@ const SDL_Rect& clickable_area::get_area() const
     return area_;
 }
 
-void clickable_area::set_system(const system& sys)
+void clickable_area::set_system(const geometry::system& sys)
 {
     if(sys_ != sys)
     {

@@ -29,7 +29,7 @@ label::label
     const std::string& font_file_path,
     const unsigned int font_size,
     const SDL_Color& color,
-    const point& position,
+    const geometry::point& position,
     const unsigned int w,
     const unsigned int h,
     const std::string& text,
@@ -49,7 +49,7 @@ label::label
 {
 }
 
-void label::set_position(const point& position)
+void label::set_position(const geometry::point& position)
 {
     position_ = position;
 }
@@ -63,7 +63,7 @@ void label::set_text(const std::string& text)
     }
 }
 
-void label::draw(const system& sys)
+void label::draw(const geometry::system& sys)
 {
     update_font(sys.unit);
     update_texture();

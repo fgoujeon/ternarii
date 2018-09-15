@@ -56,9 +56,9 @@ namespace
             return SDL_Color{0x00, 0x00, 0x00, 0xff};
     }
 
-    point get_label_position(const rect& tile_area)
+    geometry::point get_label_position(const geometry::rect& tile_area)
     {
-        return point
+        return geometry::point
         {
             tile_area.pos.x,
             tile_area.pos.y + tile_area.h * label_vertical_margin_normalized,
@@ -70,7 +70,7 @@ tile::tile
 (
     SDL_Renderer& renderer,
     const unsigned int value,
-    const rect& area
+    const geometry::rect& area
 ):
     renderer_(renderer),
     area_(area),
@@ -91,12 +91,12 @@ tile::tile
 {
 }
 
-const point& tile::get_position() const
+const geometry::point& tile::get_position() const
 {
     return area_.pos;
 }
 
-void tile::set_position(const point& position)
+void tile::set_position(const geometry::point& position)
 {
     area_.pos = position;
     label_.set_position(get_label_position(area_));
@@ -107,7 +107,7 @@ void tile::set_visible(const bool visible)
     visible_ = visible;
 }
 
-void tile::draw(const system& sys)
+void tile::draw(const geometry::system& sys)
 {
     if(!visible_)
         return;

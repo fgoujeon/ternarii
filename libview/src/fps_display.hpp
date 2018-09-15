@@ -20,8 +20,8 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #ifndef LIBVIEW_FPS_DISPLAY_HPP
 #define LIBVIEW_FPS_DISPLAY_HPP
 
+#include "geometry.hpp"
 #include "label.hpp"
-#include "system.hpp"
 #include <libsdl.hpp>
 
 namespace libview
@@ -32,7 +32,7 @@ class fps_display
     public:
         fps_display(SDL_Renderer& renderer, const SDL_Rect& area);
 
-        void draw(const system& sys, const double ellapsed_time);
+        void draw(const geometry::system& sys, const double ellapsed_time);
 
     private:
         label label_;

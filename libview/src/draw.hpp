@@ -20,13 +20,13 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #ifndef LIBVIEW_DRAW_HPP
 #define LIBVIEW_DRAW_HPP
 
-#include "system.hpp"
+#include "geometry.hpp"
 
 namespace libview
 {
 
 inline
-void draw_rect(SDL_Renderer& renderer, const system& s, const SDL_Rect& r)
+void draw_rect(SDL_Renderer& renderer, const geometry::system& s, const SDL_Rect& r)
 {
     const auto r2 = SDL_Rect
     {

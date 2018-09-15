@@ -42,14 +42,14 @@ namespace
 
     auto tile_coordinate_to_position(const data_types::tile_coordinate& c)
     {
-        return point
+        return geometry::point
         {
             c.x * cell_size + tile_margin,
             (10 - c.y) * cell_size + tile_margin
         };
     }
 
-    std::array<point, 2> get_input_tile_positions(const unsigned int x_offset, const unsigned int rotation)
+    std::array<geometry::point, 2> get_input_tile_positions(const unsigned int x_offset, const unsigned int rotation)
     {
         auto tile0_x = 0.0;
         auto tile0_y = 0.0;
@@ -84,14 +84,14 @@ namespace
                 break;
         }
 
-        return std::array<point, 2>
+        return std::array<geometry::point, 2>
         {
-            point
+            geometry::point
             {
                 (tile0_x + x_offset) * cell_size + tile_margin,
                 (tile0_y + 1.5) * cell_size + tile_margin
             },
-            point
+                geometry::point
             {
                 (tile1_x + x_offset) * cell_size + tile_margin,
                 (tile1_y + 1.5) * cell_size + tile_margin
@@ -143,7 +143,7 @@ void grid::create_next_input(const unsigned int value0, const unsigned int value
         (
             renderer_,
             value,
-            rect
+            geometry::rect
             {
                 (2 + i) * cell_size + tile_margin,
                 tile_margin,
@@ -296,7 +296,7 @@ void grid::merge_tiles(const data_types::tile_merge_list& merges)
         (
             renderer_,
             merge.dst_tile_value,
-            rect
+            geometry::rect
             {
                 tile_coordinate_to_position(merge.dst_tile_coordinate),
                 tile_size,
@@ -313,7 +313,7 @@ void grid::merge_tiles(const data_types::tile_merge_list& merges)
     animations_.push(std::make_unique<pause>(0.2));
 }
 
-void grid::draw(SDL_Renderer& renderer, const system& sys, const double ellapsed_time)
+void grid::draw(SDL_Renderer& renderer, const geometry::system& sys, const double ellapsed_time)
 {
     //animate
     iterate(animations_, ellapsed_time);

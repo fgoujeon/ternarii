@@ -22,7 +22,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "clickable_area.hpp"
 #include "label.hpp"
-#include "system.hpp"
+#include "geometry.hpp"
 #include <libview/events.hpp>
 #include <libsdl.hpp>
 
@@ -43,7 +43,7 @@ class label_button
             const click_event_handler& evt_handler
         );
 
-        void draw(const system& sys);
+        void draw(const geometry::system& sys);
 
     private:
         SDL_Renderer& renderer_;

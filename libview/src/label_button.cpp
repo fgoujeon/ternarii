@@ -40,7 +40,7 @@ label_button::label_button
         "res/fonts/DejaVuSans.ttf",
         font_size,
         SDL_Color{0xff, 0xff, 0xff, 0xff},
-        point{static_cast<double>(area.x), static_cast<double>(area.y)},
+        geometry::point{static_cast<double>(area.x), static_cast<double>(area.y)},
         area.w,
         area.h,
         text,
@@ -50,7 +50,7 @@ label_button::label_button
 {
 }
 
-void label_button::draw(const system& sys)
+void label_button::draw(const geometry::system& sys)
 {
     clickable_area_.set_system(sys);
 

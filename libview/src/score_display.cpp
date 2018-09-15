@@ -61,7 +61,7 @@ score_display::score_display
         "res/fonts/DejaVuSans.ttf",
         area.h,
         SDL_Color{0xff, 0xff, 0xff, 0xff},
-        point
+        geometry::point
         {
             static_cast<double>(area.x),
             static_cast<double>(area.y)
@@ -80,7 +80,7 @@ void score_display::set_score(const unsigned int value)
     label_.set_text(score_to_string(value));
 }
 
-void score_display::draw(const system& sys)
+void score_display::draw(const geometry::system& sys)
 {
     label_.draw(sys);
 }
