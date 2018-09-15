@@ -18,6 +18,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 #include "tile.hpp"
+#include "draw.hpp"
 #include <map>
 
 namespace libview
@@ -86,14 +87,15 @@ tile::tile
     label_
     (
         renderer,
+        "res/fonts/DejaVuSans.ttf",
+        label_height_normalized * h,
+        SDL_Color{0xff, 0xff, 0xff, 0xff},
         get_label_position(position, w, h),
         w,
         label_height_normalized * h,
         std::to_string(value),
         horizontal_alignment::center,
-        vertical_alignment::center,
-        "res/fonts/DejaVuSans.ttf",
-        SDL_Color{0xff, 0xff, 0xff, 0xff}
+        vertical_alignment::center
     )
 {
 }
@@ -114,7 +116,7 @@ void tile::set_visible(const bool visible)
     visible_ = visible;
 }
 
-void tile::draw()
+void tile::draw(const system& sys)
 {
     if(!visible_)
         return;
@@ -131,11 +133,11 @@ void tile::draw()
         };
 
         SDL_SetRenderDrawColor(&renderer_, c.r, c.g, c.b, c.a);
-        SDL_RenderFillRect(&renderer_, &r);
+        draw_rect(renderer_, sys, r);
     }
 
     //draw number
-    label_.draw();
+    label_.draw(sys);
 }
 
 } //namespace view

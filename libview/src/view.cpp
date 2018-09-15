@@ -23,6 +23,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include "game_over_screen.hpp"
 #include "label_button.hpp"
 #include "utility.hpp"
+#include "system.hpp"
 #include <libsdl.hpp>
 #include <chrono>
 #include <string>
@@ -34,8 +35,9 @@ namespace libview
 
 namespace
 {
-    const auto logical_width = 900;
-    const auto logical_height = 1600;
+    constexpr auto logical_width = 900;
+    constexpr auto logical_height = 1600;
+    constexpr auto logical_ratio = static_cast<double>(logical_width) / logical_height;
 }
 
 struct view::impl
@@ -49,8 +51,8 @@ struct view::impl
                 "Ternarii",
                 SDL_WINDOWPOS_UNDEFINED,
                 SDL_WINDOWPOS_UNDEFINED,
-                logical_width,
-                logical_height,
+                800,
+                600,
                 SDL_WINDOW_RESIZABLE
             )
         ),
@@ -79,6 +81,7 @@ struct view::impl
         (
             *prenderer_,
             SDL_Rect{50, 1300, 150, 150},
+            50,
             "left",
             [this]
             {
@@ -89,6 +92,7 @@ struct view::impl
         (
             *prenderer_,
             SDL_Rect{210, 1400, 150, 150},
+            50,
             "right",
             [this]
             {
@@ -99,6 +103,7 @@ struct view::impl
         (
             *prenderer_,
             SDL_Rect{540, 1400, 150, 150},
+            50,
             "drop",
             [this]
             {
@@ -109,6 +114,7 @@ struct view::impl
         (
             *prenderer_,
             SDL_Rect{700, 1300, 150, 150},
+            50,
             "rotate",
             [this]
             {
@@ -117,7 +123,6 @@ struct view::impl
         )
     {
         SDL_SetRenderDrawBlendMode(prenderer_.get(), SDL_BLENDMODE_BLEND);
-        SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "best");
     }
 
     void iterate()
@@ -181,44 +186,47 @@ struct view::impl
         SDL_SetRenderDrawColor(prenderer_.get(), 0x44, 0x44, 0x44, 0xff);
         SDL_RenderClear(prenderer_.get());
 
-        SDL_RenderSetLogicalSize
-        (
-            prenderer_.get(),
-            logical_width,
-            logical_height
-        );
-
-        //draw children
+        //compute system for letterboxing
+        system sys0;
         {
-            SDL_Rect current_viewport;
-            SDL_RenderGetViewport(prenderer_.get(), &current_viewport);
+            auto window_width = 0;
+            auto window_height = 0;
+            SDL_GetWindowSize(pwindow_.get(), &window_width, &window_height);
+            const auto window_ratio = static_cast<double>(window_width) / window_height;
 
-            float current_x_scale, current_y_scale;
-            SDL_RenderGetScale(prenderer_.get(), &current_x_scale, &current_y_scale);
-
-            //tile grid
+            if(window_ratio > logical_ratio)
             {
-                const auto grid_logical_width = grid_.get_logical_width();
-                const auto grid_logical_height = grid_.get_logical_height();
-
-                SDL_Rect viewport;
-                viewport.x = current_viewport.x + 150;
-                viewport.y = current_viewport.y + 150;
-                viewport.w = grid_logical_width;
-                viewport.h = grid_logical_height;
-                SDL_RenderSetViewport(prenderer_.get(), &viewport);
-
-                grid_.draw(*prenderer_, ellapsed_time);
-
-                SDL_RenderSetViewport(prenderer_.get(), &current_viewport);
+                sys0.unit = static_cast<double>(window_height) / logical_height;
+                sys0.unit = sys0.unit;
+                sys0.origin.x = window_width / 2.0 - (logical_width * sys0.unit) / 2.0;
             }
+            else
+            {
+                sys0.unit = static_cast<double>(window_width) / logical_width;
+                sys0.unit = sys0.unit;
+                sys0.origin.y = window_height / 2.0 - (logical_height * sys0.unit) / 2.0;
+            }
+        }
 
-            score_display_.draw();
-            left_shift_button_.draw();
-            right_shift_button_.draw();
-            drop_button_.draw();
-            rotation_button_.draw();
-            game_over_screen_.draw(*prenderer_);
+        //draw tile grid
+        {
+            system sys;
+            sys.origin.x = sys0.origin.x + (150 * sys0.unit);
+            sys.origin.y = sys0.origin.y + (150 * sys0.unit);
+            sys.unit = sys0.unit;
+            sys.unit = sys0.unit;
+
+            grid_.draw(*prenderer_, sys, ellapsed_time);
+        }
+
+        //draw other children
+        {
+            score_display_.draw(sys0);
+            left_shift_button_.draw(sys0);
+            right_shift_button_.draw(sys0);
+            drop_button_.draw(sys0);
+            rotation_button_.draw(sys0);
+            game_over_screen_.draw(*prenderer_, sys0);
         }
 
         SDL_RenderPresent(prenderer_.get());

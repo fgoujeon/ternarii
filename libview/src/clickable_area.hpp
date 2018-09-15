@@ -20,6 +20,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #ifndef LIBVIEW_CLICKABLE_AREA_HPP
 #define LIBVIEW_CLICKABLE_AREA_HPP
 
+#include "system.hpp"
 #include <libsdl.hpp>
 #include <functional>
 
@@ -52,6 +53,8 @@ class clickable_area
             return hovered_;
         }
 
+        void set_system(const system& sys);
+
         void set_area(const SDL_Rect& area);
 
     private:
@@ -63,8 +66,12 @@ class clickable_area
 
         void process_event(SDL_Event& event);
 
+        void update_window_system_area();
+
     private:
+        system sys_;
         SDL_Rect area_;
+        SDL_Rect window_system_area_;
         click_event_handler evt_handler_;
         bool clicked_ = false;
         bool hovered_ = false;

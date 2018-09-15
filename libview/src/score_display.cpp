@@ -58,6 +58,9 @@ score_display::score_display
     label_
     (
         renderer,
+        "res/fonts/DejaVuSans.ttf",
+        area.h,
+        SDL_Color{0xff, 0xff, 0xff, 0xff},
         point
         {
             static_cast<double>(area.x),
@@ -67,9 +70,7 @@ score_display::score_display
         area.h,
         "0",
         horizontal_alignment::right,
-        vertical_alignment::center,
-        "res/fonts/DejaVuSans.ttf",
-        SDL_Color{0xff, 0xff, 0xff, 0xff}
+        vertical_alignment::center
     )
 {
 }
@@ -79,9 +80,9 @@ void score_display::set_score(const unsigned int value)
     label_.set_text(score_to_string(value));
 }
 
-void score_display::draw()
+void score_display::draw(const system& sys)
 {
-    label_.draw();
+    label_.draw(sys);
 }
 
 } //namespace view

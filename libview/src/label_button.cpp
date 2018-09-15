@@ -18,6 +18,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 #include "label_button.hpp"
+#include "draw.hpp"
 #include <iostream>
 
 namespace libview
@@ -27,6 +28,7 @@ label_button::label_button
 (
     SDL_Renderer& renderer,
     const SDL_Rect& area,
+    const unsigned int font_size,
     const std::string& text,
     const click_event_handler& evt_handler
 ):
@@ -35,20 +37,23 @@ label_button::label_button
     label_
     (
         renderer,
+        "res/fonts/DejaVuSans.ttf",
+        font_size,
+        SDL_Color{0xff, 0xff, 0xff, 0xff},
         point{static_cast<double>(area.x), static_cast<double>(area.y)},
         area.w,
         area.h,
         text,
         horizontal_alignment::center,
-        vertical_alignment::center,
-        "res/fonts/DejaVuSans.ttf",
-        SDL_Color{0xff, 0xff, 0xff, 0xff}
+        vertical_alignment::center
     )
 {
 }
 
-void label_button::draw()
+void label_button::draw(const system& sys)
 {
+    clickable_area_.set_system(sys);
+
     //background
     {
         if(clickable_area_.is_clicked())
@@ -58,10 +63,10 @@ void label_button::draw()
         else
             SDL_SetRenderDrawColor(&renderer_, 0xff, 0xff, 0xff, 0x40);
 
-        SDL_RenderFillRect(&renderer_, &clickable_area_.get_area());
+        draw_rect(renderer_, sys, clickable_area_.get_area());
     }
 
-    label_.draw();
+    label_.draw(sys);
 }
 
 } //namespace view
