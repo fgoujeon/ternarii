@@ -42,9 +42,16 @@ class rectangle
         void draw(const geometry::system& sys);
 
     private:
+        void update_rect();
+
+    private:
         SDL_Renderer& renderer_;
         geometry::rect area_;
         SDL_Color color_;
+
+        geometry::system system_;
+        bool must_update_rect_ = true;
+        SDL_Rect rect_;
 };
 
 } //namespace libview

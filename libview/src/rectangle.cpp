@@ -36,21 +36,40 @@ rectangle::rectangle
 
 void rectangle::set_position(const geometry::point& position)
 {
-    area_.pos = position;
+    if(area_.pos != position)
+    {
+        area_.pos = position;
+        must_update_rect_ = true;
+    }
 }
 
 void rectangle::draw(const geometry::system& sys)
 {
-    SDL_SetRenderDrawColor(&renderer_, color_.r, color_.g, color_.b, color_.a);
-
-    const auto r = SDL_Rect
+    if(system_ != sys)
     {
-        static_cast<int>(sys.unit * area_.pos.x + sys.origin.x),
-        static_cast<int>(sys.unit * area_.pos.y + sys.origin.y),
-        static_cast<int>(sys.unit * area_.w),
-        static_cast<int>(sys.unit * area_.h)
+        system_ = sys;
+        must_update_rect_ = true;
+    }
+
+    if(must_update_rect_)
+    {
+        update_rect();
+        must_update_rect_ = false;
+    }
+
+    SDL_SetRenderDrawColor(&renderer_, color_.r, color_.g, color_.b, color_.a);
+    SDL_RenderFillRect(&renderer_, &rect_);
+}
+
+void rectangle::update_rect()
+{
+    rect_ = SDL_Rect
+    {
+        static_cast<int>(system_.unit * area_.pos.x + system_.origin.x),
+        static_cast<int>(system_.unit * area_.pos.y + system_.origin.y),
+        static_cast<int>(system_.unit * area_.w),
+        static_cast<int>(system_.unit * area_.h)
     };
-    SDL_RenderFillRect(&renderer_, &r);
 }
 
 } //namespace view
