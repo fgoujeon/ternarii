@@ -29,6 +29,7 @@ clickable_area::clickable_area
     const click_event_handler& evt_handler
 ):
     area_(area),
+    window_system_area_(to_window_system_rect(sys_, area_)),
     evt_handler_(evt_handler)
 {
     SDL_AddEventWatch(&static_process_event, this);
@@ -44,9 +45,19 @@ const SDL_Rect& clickable_area::get_area() const
     return area_;
 }
 
+void clickable_area::set_system(const system& sys)
+{
+    if(sys_ != sys)
+    {
+        sys_ = sys;
+        window_system_area_ = to_window_system_rect(sys_, area_);
+    }
+}
+
 void clickable_area::set_area(const SDL_Rect& area)
 {
     area_ = area;
+    window_system_area_ = to_window_system_rect(sys_, area_);
 }
 
 int clickable_area::static_process_event
@@ -72,7 +83,7 @@ void clickable_area::process_event(SDL_Event& event)
             if(event.button.button == SDL_BUTTON_LEFT)
             {
                 const auto click_position = SDL_Point{event.button.x, event.button.y};
-                if(SDL_PointInRect(&click_position, &area_))
+                if(SDL_PointInRect(&click_position, &window_system_area_))
                 {
                     clicked_ = true;
                     evt_handler_();
@@ -86,7 +97,7 @@ void clickable_area::process_event(SDL_Event& event)
         case SDL_MOUSEMOTION:
             {
                 const auto mouse_position = SDL_Point{event.motion.x, event.motion.y};
-                if(SDL_PointInRect(&mouse_position, &area_))
+                if(SDL_PointInRect(&mouse_position, &window_system_area_))
                 {
                     hovered_ = true;
                 }

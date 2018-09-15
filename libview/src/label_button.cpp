@@ -52,6 +52,8 @@ label_button::label_button
 
 void label_button::draw(const system& sys)
 {
+    clickable_area_.set_system(sys);
+
     //background
     {
         if(clickable_area_.is_clicked())

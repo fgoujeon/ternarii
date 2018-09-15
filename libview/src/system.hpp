@@ -21,6 +21,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #define LIBVIEW_SYSTEM_HPP
 
 #include "point.hpp"
+#include <libsdl.hpp>
 
 namespace libview
 {
@@ -30,6 +31,33 @@ struct system
     point origin; //in pixels
     double unit = 1; //in pixels, for both x and y axes
 };
+
+inline bool operator==(const system& l, const system& r)
+{
+    return l.origin == r.origin && l.unit == r.unit;
+}
+
+inline bool operator!=(const system& l, const system& r)
+{
+    return !(l == r);
+}
+
+/*
+Convert a rect with given system coordinates into a rect with window system
+coordinates.
+Note: Window system is system{point{0, 0}, 1}.
+*/
+inline
+SDL_Rect to_window_system_rect(const system& sys, const SDL_Rect& r)
+{
+    return SDL_Rect
+    {
+        static_cast<int>(sys.unit * r.x + sys.origin.x),
+        static_cast<int>(sys.unit * r.y + sys.origin.y),
+        static_cast<int>(sys.unit * r.w),
+        static_cast<int>(sys.unit * r.h)
+    };
+}
 
 } //namespace libview
 
