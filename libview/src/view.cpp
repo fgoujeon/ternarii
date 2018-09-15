@@ -35,8 +35,9 @@ namespace libview
 
 namespace
 {
-    const auto logical_width = 900;
-    const auto logical_height = 1600;
+    constexpr auto logical_width = 900;
+    constexpr auto logical_height = 1600;
+    constexpr auto logical_ratio = static_cast<double>(logical_width) / logical_height;
 }
 
 struct view::impl
@@ -50,8 +51,8 @@ struct view::impl
                 "Ternarii",
                 SDL_WINDOWPOS_UNDEFINED,
                 SDL_WINDOWPOS_UNDEFINED,
-                logical_width,
-                logical_height,
+                800,
+                600,
                 SDL_WINDOW_RESIZABLE
             )
         ),
@@ -122,7 +123,6 @@ struct view::impl
         )
     {
         SDL_SetRenderDrawBlendMode(prenderer_.get(), SDL_BLENDMODE_BLEND);
-        SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "best");
     }
 
     void iterate()
@@ -186,32 +186,47 @@ struct view::impl
         SDL_SetRenderDrawColor(prenderer_.get(), 0x44, 0x44, 0x44, 0xff);
         SDL_RenderClear(prenderer_.get());
 
-        SDL_RenderSetLogicalSize
-        (
-            prenderer_.get(),
-            logical_width,
-            logical_height
-        );
+        //compute system for letterboxing
+        system sys0;
+        {
+            auto window_width = 0;
+            auto window_height = 0;
+            SDL_GetWindowSize(pwindow_.get(), &window_width, &window_height);
+            const auto window_ratio = static_cast<double>(window_width) / window_height;
+
+            if(window_ratio > logical_ratio)
+            {
+                sys0.x_unit = static_cast<double>(window_height) / logical_height;
+                sys0.y_unit = sys0.x_unit;
+                sys0.origin.x = window_width / 2.0 - (logical_width * sys0.x_unit) / 2.0;
+            }
+            else
+            {
+                sys0.x_unit = static_cast<double>(window_width) / logical_width;
+                sys0.y_unit = sys0.x_unit;
+                sys0.origin.y = window_height / 2.0 - (logical_height * sys0.y_unit) / 2.0;
+            }
+        }
 
         //draw tile grid
         {
             system sys;
-            sys.origin.x = 150;
-            sys.origin.y = 150;
+            sys.origin.x = sys0.origin.x + (150 * sys0.x_unit);
+            sys.origin.y = sys0.origin.y + (150 * sys0.y_unit);
+            sys.x_unit = sys0.x_unit;
+            sys.y_unit = sys0.y_unit;
 
             grid_.draw(*prenderer_, sys, ellapsed_time);
         }
 
         //draw other children
         {
-            system sys;
-
-            score_display_.draw(sys);
-            left_shift_button_.draw(sys);
-            right_shift_button_.draw(sys);
-            drop_button_.draw(sys);
-            rotation_button_.draw(sys);
-            game_over_screen_.draw(*prenderer_, sys);
+            score_display_.draw(sys0);
+            left_shift_button_.draw(sys0);
+            right_shift_button_.draw(sys0);
+            drop_button_.draw(sys0);
+            rotation_button_.draw(sys0);
+            game_over_screen_.draw(*prenderer_, sys0);
         }
 
         SDL_RenderPresent(prenderer_.get());
