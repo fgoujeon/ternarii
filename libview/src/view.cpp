@@ -20,6 +20,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include <libview/view.hpp>
 #include "grid.hpp"
 #include "score_display.hpp"
+#include "fps_display.hpp"
 #include "game_over_screen.hpp"
 #include "label_button.hpp"
 #include "utility.hpp"
@@ -67,6 +68,11 @@ struct view::impl
         ),
         grid_(*prenderer_),
         score_display_
+        (
+            *prenderer_,
+            SDL_Rect{150, 50, 600, 100}
+        ),
+        fps_display_
         (
             *prenderer_,
             SDL_Rect{150, 50, 600, 100}
@@ -222,6 +228,7 @@ struct view::impl
 
         //draw other children
         {
+            fps_display_.draw(sys0, ellapsed_time);
             score_display_.draw(sys0);
             left_shift_button_.draw(sys0);
             right_shift_button_.draw(sys0);
@@ -239,6 +246,7 @@ struct view::impl
     libsdl::unique_ptr<SDL_Renderer> prenderer_;
     grid grid_;
     score_display score_display_;
+    fps_display fps_display_;
     game_over_screen game_over_screen_;
 
     label_button left_shift_button_;
