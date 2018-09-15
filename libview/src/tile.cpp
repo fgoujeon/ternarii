@@ -56,17 +56,12 @@ namespace
             return SDL_Color{0x00, 0x00, 0x00, 0xff};
     }
 
-    point get_label_position
-    (
-        const point& tile_position,
-        const unsigned int w,
-        const unsigned int h
-    )
+    point get_label_position(const rect& tile_area)
     {
         return point
         {
-            tile_position.x,
-            tile_position.y + h * label_vertical_margin_normalized,
+            tile_area.pos.x,
+            tile_area.pos.y + tile_area.h * label_vertical_margin_normalized,
         };
     }
 }
@@ -75,24 +70,20 @@ tile::tile
 (
     SDL_Renderer& renderer,
     const unsigned int value,
-    const point& position,
-    const unsigned int w,
-    const unsigned int h
+    const rect& area
 ):
     renderer_(renderer),
-    position_(position),
-    w_(w),
-    h_(h),
+    area_(area),
     background_color_(get_background_color(value)),
     label_
     (
         renderer,
         "res/fonts/DejaVuSans.ttf",
-        label_height_normalized * h,
+        label_height_normalized * area.h,
         SDL_Color{0xff, 0xff, 0xff, 0xff},
-        get_label_position(position, w, h),
-        w,
-        label_height_normalized * h,
+        get_label_position(area),
+        area.w,
+        label_height_normalized * area.h,
         std::to_string(value),
         horizontal_alignment::center,
         vertical_alignment::center
@@ -102,13 +93,13 @@ tile::tile
 
 const point& tile::get_position() const
 {
-    return position_;
+    return area_.pos;
 }
 
 void tile::set_position(const point& position)
 {
-    position_ = position;
-    label_.set_position(get_label_position(position, w_, h_));
+    area_.pos = position;
+    label_.set_position(get_label_position(area_));
 }
 
 void tile::set_visible(const bool visible)
@@ -126,10 +117,10 @@ void tile::draw(const system& sys)
         const auto& c = background_color_;
         const auto r = SDL_Rect
         {
-            static_cast<int>(position_.x),
-            static_cast<int>(position_.y),
-            static_cast<int>(w_),
-            static_cast<int>(h_)
+            static_cast<int>(area_.pos.x),
+            static_cast<int>(area_.pos.y),
+            static_cast<int>(area_.w),
+            static_cast<int>(area_.h)
         };
 
         SDL_SetRenderDrawColor(&renderer_, c.r, c.g, c.b, c.a);

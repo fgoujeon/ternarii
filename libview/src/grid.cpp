@@ -143,13 +143,13 @@ void grid::create_next_input(const unsigned int value0, const unsigned int value
         (
             renderer_,
             value,
-            point
+            rect
             {
                 (2 + i) * cell_size + tile_margin,
-                tile_margin
-            },
-            tile_size,
-            tile_size
+                tile_margin,
+                tile_size,
+                tile_size
+            }
         );
         next_input_tiles_[i]->set_visible(true);
         ++i;
@@ -296,9 +296,12 @@ void grid::merge_tiles(const data_types::tile_merge_list& merges)
         (
             renderer_,
             merge.dst_tile_value,
-            tile_coordinate_to_position(merge.dst_tile_coordinate),
-            tile_size,
-            tile_size
+            rect
+            {
+                tile_coordinate_to_position(merge.dst_tile_coordinate),
+                tile_size,
+                tile_size
+            }
         );
 
         animations_.push(std::make_unique<fade_in>(*pdst_tile));

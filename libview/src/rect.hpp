@@ -17,44 +17,50 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef LIBVIEW_TILE_HPP
-#define LIBVIEW_TILE_HPP
+#ifndef LIBVIEW_RECT_HPP
+#define LIBVIEW_RECT_HPP
 
-#include "label.hpp"
-#include "system.hpp"
-#include "rect.hpp"
 #include "point.hpp"
-#include <libsdl.hpp>
 
 namespace libview
 {
 
-class tile
+struct rect
 {
-    public:
-        tile
-        (
-            SDL_Renderer& renderer,
-            const unsigned int value,
-            const rect& area
-        );
+    rect()
+    {
+    }
 
-        const point& get_position() const;
+    rect(const double x, const double y, const double w, const double h):
+        pos({x, y}),
+        w(w),
+        h(h)
+    {
+    }
 
-        void set_position(const point& position);
+    rect(const point& p, const double w, const double h):
+        pos(p),
+        w(w),
+        h(h)
+    {
+    }
 
-        void set_visible(const bool visible);
-
-        void draw(const system& sys);
-
-    private:
-        SDL_Renderer& renderer_;
-        unsigned int value_ = 0;
-        rect area_;
-        SDL_Color background_color_;
-        label label_;
-        bool visible_ = false;
+    point pos;
+    double w = 0;
+    double h = 0;
 };
+
+inline
+bool operator==(const rect& l, const rect& r)
+{
+    return l.pos == r.pos && l.w == r.w && l.h == r.h;
+}
+
+inline
+bool operator!=(const rect& l, const rect& r)
+{
+    return !(l == r);
+}
 
 } //namespace libview
 
