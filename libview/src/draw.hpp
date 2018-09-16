@@ -32,8 +32,8 @@ void draw_rect(SDL_Renderer& renderer, const geometry::system& s, const SDL_Rect
     {
         static_cast<int>(s.unit * r.x + s.origin.x),
         static_cast<int>(s.unit * r.y + s.origin.y),
-        static_cast<int>(s.unit * r.w),
-        static_cast<int>(s.unit * r.h)
+        std::max(static_cast<int>(s.unit * r.w), 1),
+        std::max(static_cast<int>(s.unit * r.h), 1)
     };
     SDL_RenderFillRect(&renderer, &r2);
 }

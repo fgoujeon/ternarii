@@ -67,8 +67,8 @@ void rectangle::update_rect()
     {
         static_cast<int>(system_.unit * area_.pos.x + system_.origin.x),
         static_cast<int>(system_.unit * area_.pos.y + system_.origin.y),
-        static_cast<int>(system_.unit * area_.w),
-        static_cast<int>(system_.unit * area_.h)
+        std::max(static_cast<int>(system_.unit * area_.w), 1),
+        std::max(static_cast<int>(system_.unit * area_.h), 1)
     };
 }
 
