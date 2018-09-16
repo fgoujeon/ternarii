@@ -228,7 +228,7 @@ struct view::impl
 
         //draw other children
         {
-            fps_display_.draw(sys0, ellapsed_time);
+            //fps_display_.draw(sys0, ellapsed_time);
             score_display_.draw(sys0);
             left_shift_button_.draw(sys0);
             right_shift_button_.draw(sys0);
