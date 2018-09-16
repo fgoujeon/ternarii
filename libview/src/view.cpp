@@ -153,6 +153,7 @@ struct view::impl
                             send_move_request(events::right_shift_request{});
                             break;
                         case SDLK_UP:
+                        case SDLK_SPACE:
                             send_move_request(events::clockwise_rotation_request{});
                             break;
                         case SDLK_DOWN:
