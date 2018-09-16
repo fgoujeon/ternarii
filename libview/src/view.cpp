@@ -20,10 +20,11 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include <libview/view.hpp>
 #include "grid.hpp"
 #include "score_display.hpp"
+#include "fps_display.hpp"
 #include "game_over_screen.hpp"
 #include "label_button.hpp"
 #include "utility.hpp"
-#include "system.hpp"
+#include "geometry.hpp"
 #include <libsdl.hpp>
 #include <chrono>
 #include <string>
@@ -67,6 +68,11 @@ struct view::impl
         ),
         grid_(*prenderer_),
         score_display_
+        (
+            *prenderer_,
+            SDL_Rect{150, 50, 600, 100}
+        ),
+        fps_display_
         (
             *prenderer_,
             SDL_Rect{150, 50, 600, 100}
@@ -188,7 +194,7 @@ struct view::impl
         SDL_RenderClear(prenderer_.get());
 
         //compute system for letterboxing
-        system sys0;
+        geometry::system sys0;
         {
             auto window_width = 0;
             auto window_height = 0;
@@ -211,7 +217,7 @@ struct view::impl
 
         //draw tile grid
         {
-            system sys;
+            geometry::system sys;
             sys.origin.x = sys0.origin.x + (150 * sys0.unit);
             sys.origin.y = sys0.origin.y + (150 * sys0.unit);
             sys.unit = sys0.unit;
@@ -222,6 +228,7 @@ struct view::impl
 
         //draw other children
         {
+            //fps_display_.draw(sys0, ellapsed_time);
             score_display_.draw(sys0);
             left_shift_button_.draw(sys0);
             right_shift_button_.draw(sys0);
@@ -239,6 +246,7 @@ struct view::impl
     libsdl::unique_ptr<SDL_Renderer> prenderer_;
     grid grid_;
     score_display score_display_;
+    fps_display fps_display_;
     game_over_screen game_over_screen_;
 
     label_button left_shift_button_;

@@ -17,43 +17,27 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef LIBVIEW_TILE_HPP
-#define LIBVIEW_TILE_HPP
+#ifndef LIBVIEW_FPS_DISPLAY_HPP
+#define LIBVIEW_FPS_DISPLAY_HPP
 
-#include "label.hpp"
-#include "rectangle.hpp"
 #include "geometry.hpp"
+#include "label.hpp"
 #include <libsdl.hpp>
 
 namespace libview
 {
 
-class tile
+class fps_display
 {
     public:
-        tile
-        (
-            SDL_Renderer& renderer,
-            const unsigned int value,
-            const geometry::rect& area
-        );
+        fps_display(SDL_Renderer& renderer, const SDL_Rect& area);
 
-        const geometry::point& get_position() const;
-
-        void set_position(const geometry::point& position);
-
-        void set_visible(const bool visible);
-
-        void draw(const geometry::system& sys);
+        void draw(const geometry::system& sys, const double ellapsed_time);
 
     private:
-        SDL_Renderer& renderer_;
-        unsigned int value_ = 0;
-        geometry::rect area_;
-        SDL_Color background_color_;
-        rectangle rectangle_;
-        label number_label_;
-        bool visible_ = false;
+        label label_;
+        double cumulated_ellapsed_time_ = 0;
+        unsigned int counter_ = 0;
 };
 
 } //namespace libview

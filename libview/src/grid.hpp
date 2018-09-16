@@ -22,7 +22,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "tile.hpp"
 #include "animations.hpp"
-#include "system.hpp"
+#include "geometry.hpp"
 #include <libview/data_types.hpp>
 #include <libsdl.hpp>
 #include <vector>
@@ -48,7 +48,7 @@ class grid
 
         int get_logical_height() const;
 
-        void draw(SDL_Renderer& renderer, const system& sys, const double ellapsed_time);
+        void draw(SDL_Renderer& renderer, const geometry::system& sys, const double ellapsed_time);
 
         void clear();
 

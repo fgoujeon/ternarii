@@ -17,39 +17,42 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef LIBVIEW_POINT_HPP
-#define LIBVIEW_POINT_HPP
+#ifndef LIBVIEW_RECTANGLE_HPP
+#define LIBVIEW_RECTANGLE_HPP
+
+#include "label.hpp"
+#include "geometry.hpp"
+#include <libsdl.hpp>
 
 namespace libview
 {
 
-struct point
+class rectangle
 {
-    point()
-    {
-    }
+    public:
+        rectangle
+        (
+            SDL_Renderer& renderer,
+            const geometry::rect& area,
+            const SDL_Color& color
+        );
 
-    point(const double x, const double y):
-        x(x),
-        y(y)
-    {
-    }
+        void set_position(const geometry::point& position);
 
-    double x = 0;
-    double y = 0;
+        void draw(const geometry::system& sys);
+
+    private:
+        void update_rect();
+
+    private:
+        SDL_Renderer& renderer_;
+        geometry::rect area_;
+        SDL_Color color_;
+
+        geometry::system system_;
+        bool must_update_rect_ = true;
+        SDL_Rect rect_;
 };
-
-inline
-bool operator==(const point& l, const point& r)
-{
-    return l.x == r.x && l.y == r.y;
-}
-
-inline
-bool operator!=(const point& l, const point& r)
-{
-    return !(l == r);
-}
 
 } //namespace libview
 

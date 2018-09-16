@@ -38,7 +38,7 @@ game_over_screen::game_over_screen
         "res/fonts/DejaVuSans.ttf",
         100,
         SDL_Color{0x88, 0x88, 0x88, 0xff},
-        point
+        geometry::point
         {
             static_cast<double>(area.x),
             static_cast<double>(area.y)
@@ -75,7 +75,7 @@ void game_over_screen::set_visible(const bool value)
     visible_ = value;
 }
 
-void game_over_screen::draw(SDL_Renderer& renderer, const system& sys)
+void game_over_screen::draw(SDL_Renderer& renderer, const geometry::system& sys)
 {
     if(!visible_)
         return;

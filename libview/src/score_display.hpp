@@ -33,7 +33,7 @@ class score_display
 
         void set_score(const unsigned int value);
 
-        void draw(const system& sys);
+        void draw(const geometry::system& sys);
 
     private:
         label label_;

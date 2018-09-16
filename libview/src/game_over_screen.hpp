@@ -22,7 +22,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "label_button.hpp"
 #include "label.hpp"
-#include "system.hpp"
+#include "geometry.hpp"
 #include <libview/events.hpp>
 #include <libsdl.hpp>
 
@@ -41,7 +41,7 @@ class game_over_screen
 
         void set_visible(const bool value);
 
-        void draw(SDL_Renderer& renderer, const system& sys);
+        void draw(SDL_Renderer& renderer, const geometry::system& sys);
 
     private:
         SDL_Renderer& renderer_;
