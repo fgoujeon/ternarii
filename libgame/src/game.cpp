@@ -35,7 +35,7 @@ namespace
         public:
             random_tile_generator():
                 gen_(rd_()),
-                dis_(0, 4.35) //we want 1% chance to get a 10
+                dis_(0, 4) //with this, we have 0.66% chance to get a 10
             {
             }
 
