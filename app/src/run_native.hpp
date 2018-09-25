@@ -17,14 +17,29 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifdef EMSCRIPTEN
-#include "run_wasm.hpp"
-#else
-#include "run_native.hpp"
-#endif
+#include "controller.hpp"
+#include <SDL2/SDL.h>
+#include <cassert>
 
-int main(int, char**)
+void run()
 {
-    run();
-    return 0;
+    const unsigned int frame_duration = 1000 / 60;
+
+    controller c;
+
+    while(!c.must_quit())
+    {
+        const auto begin_time = SDL_GetTicks();
+        c.iterate();
+        const auto end_time = SDL_GetTicks();
+
+        //regulate the frame rate
+        assert(end_time >= begin_time);
+        const auto elapsed_time = end_time - begin_time;
+        if(elapsed_time < frame_duration)
+        {
+            const Uint32 remaining_time = frame_duration - elapsed_time;
+            SDL_Delay(remaining_time);
+        }
+    }
 }

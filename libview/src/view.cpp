@@ -63,7 +63,7 @@ struct view::impl
             (
                 pwindow_.get(),
                 -1,
-                0
+                SDL_RENDERER_PRESENTVSYNC
             )
         ),
         grid_(*prenderer_),
