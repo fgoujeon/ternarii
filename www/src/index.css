@@ -27,6 +27,10 @@ body, html {
     height: 100%;
 }
 
+body {
+    background-color: #444444;
+}
+
 #canvas {
     position: absolute;
     width: 100%;
