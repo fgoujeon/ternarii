@@ -19,9 +19,17 @@ cmake_minimum_required(VERSION 3.10)
 
 project(ternarii)
 
+if(EMSCRIPTEN)
+    list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake/emscripten")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s USE_SDL=2")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s USE_SDL_TTF=2")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --preload-file ${CMAKE_CURRENT_LIST_DIR}/app/res@/res")
+endif()
+
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
 
 add_subdirectory(app)
 add_subdirectory(libgame)
-add_subdirectory(libview)
 add_subdirectory(libsdl)
+add_subdirectory(libview)
+add_subdirectory(www)

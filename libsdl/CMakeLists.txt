@@ -24,9 +24,14 @@ file(GLOB_RECURSE INCLUDE_FILES include/*)
 file(GLOB_RECURSE SRC_FILES src/*)
 
 add_library(
-	libsdl
+    libsdl
     ${INCLUDE_FILES}
     ${SRC_FILES}
+)
+
+set_property(
+    TARGET libsdl
+    PROPERTY CXX_STANDARD 17
 )
 
 target_include_directories(

@@ -17,25 +17,12 @@
 
 cmake_minimum_required(VERSION 3.10)
 
+add_custom_target(www)
+
 file(GLOB_RECURSE SRC_FILES src/*)
 
-add_executable(
-    app
-    ${SRC_FILES}
+add_custom_command(
+    TARGET www POST_BUILD
+    COMMAND ${CMAKE_COMMAND} ARGS -E make_directory ${EXECUTABLE_OUTPUT_PATH}
+    COMMAND ${CMAKE_COMMAND} ARGS -E copy_if_different ${SRC_FILES} ${EXECUTABLE_OUTPUT_PATH}
 )
-
-set_property(
-    TARGET app
-    PROPERTY CXX_STANDARD 17
-)
-
-target_link_libraries(
-    app
-    PRIVATE
-        libgame
-        libview
-)
-
-if(EMSCRIPTEN)
-    add_dependencies(app www)
-endif()

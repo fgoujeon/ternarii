@@ -21,9 +21,14 @@ file(GLOB_RECURSE INCLUDE_FILES include/*)
 file(GLOB_RECURSE SRC_FILES src/*)
 
 add_library(
-	libgame
+    libgame
     ${INCLUDE_FILES}
     ${SRC_FILES}
+)
+
+set_property(
+    TARGET libgame
+    PROPERTY CXX_STANDARD 17
 )
 
 target_include_directories(

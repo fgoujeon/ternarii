@@ -21,9 +21,14 @@ file(GLOB_RECURSE INCLUDE_FILES include/*)
 file(GLOB_RECURSE SRC_FILES src/*)
 
 add_library(
-	libview
+    libview
     ${INCLUDE_FILES}
     ${SRC_FILES}
+)
+
+set_property(
+    TARGET libview
+    PROPERTY CXX_STANDARD 17
 )
 
 target_include_directories(
