@@ -323,21 +323,7 @@ void grid::draw(SDL_Renderer& renderer, const geometry::system& sys, const doubl
     //draw background
     {
         const auto r = SDL_Rect{0, 0, column_count * cell_size, row_count * cell_size};
-        SDL_SetRenderDrawColor(&renderer, 0x66, 0x66, 0x66, 255);
-        draw_rect(renderer, sys, r);
-    }
-
-    //draw next input line
-    {
-        const auto r = SDL_Rect{0, cell_size - 1, column_count * cell_size, 2};
-        SDL_SetRenderDrawColor(&renderer, 0xff, 0xff, 0xff, 255);
-        draw_rect(renderer, sys, r);
-    }
-
-    //draw death line
-    {
-        const auto r = SDL_Rect{0, 4 * cell_size - 1, column_count * cell_size, 2};
-        SDL_SetRenderDrawColor(&renderer, 0xff, 0xff, 0xff, 255);
+        SDL_SetRenderDrawColor(&renderer, 0x66, 0x66, 0x66, 0xff);
         draw_rect(renderer, sys, r);
     }
 
@@ -359,6 +345,33 @@ void grid::draw(SDL_Renderer& renderer, const geometry::system& sys, const doubl
         for(auto& ptile: disappearing_tiles_)
             if(ptile)
                 ptile->draw(sys);
+    }
+
+    //draw next input line
+    {
+        SDL_SetRenderDrawColor(&renderer, 0xff, 0xff, 0xff, 0x7f);
+        for(auto x = 0; x < column_count * cell_size; x += 16)
+        {
+            const auto r = SDL_Rect{x, cell_size - 2, 8, 4};
+            draw_rect(renderer, sys, r);
+        }
+    }
+
+    //draw death line
+    {
+        SDL_SetRenderDrawColor(&renderer, 0xff, 0xff, 0xff, 0x7f);
+        for(auto x = 0; x < column_count * cell_size; x += 16)
+        {
+            const auto r = SDL_Rect{x, 4 * cell_size - 2, 8, 4};
+            draw_rect(renderer, sys, r);
+        }
+    }
+
+    //draw semi-transparent foreground over next input
+    {
+        const auto r = SDL_Rect{0, 0, column_count * cell_size, 1 * cell_size};
+        SDL_SetRenderDrawColor(&renderer, 0x66, 0x66, 0x66, 0x7f);
+        draw_rect(renderer, sys, r);
     }
 }
 
