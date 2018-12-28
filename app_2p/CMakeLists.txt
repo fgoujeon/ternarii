@@ -17,22 +17,25 @@
 
 cmake_minimum_required(VERSION 3.10)
 
-project(ternarii)
+file(GLOB_RECURSE SRC_FILES src/*)
+
+add_executable(
+    app_2p
+    ${SRC_FILES}
+)
+
+set_property(
+    TARGET app_2p
+    PROPERTY CXX_STANDARD 17
+)
+
+target_link_libraries(
+    app_2p
+    PRIVATE
+        libgame_2p
+        libview_2p
+)
 
 if(EMSCRIPTEN)
-    list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake/emscripten")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s USE_SDL=2")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s USE_SDL_TTF=2")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --preload-file ${CMAKE_CURRENT_LIST_DIR}/app/res@/res")
+    add_dependencies(app_2p www)
 endif()
-
-set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
-
-add_subdirectory(app)
-add_subdirectory(app_2p)
-add_subdirectory(libgame)
-add_subdirectory(libgame_2p)
-add_subdirectory(libsdl)
-add_subdirectory(libview)
-add_subdirectory(libview_2p)
-add_subdirectory(www)

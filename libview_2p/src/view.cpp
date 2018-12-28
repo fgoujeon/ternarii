@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#include <libview/view.hpp>
+#include <libview_2p/view.hpp>
 #include "grid.hpp"
 #include "score_display.hpp"
 #include "fps_display.hpp"
@@ -31,7 +31,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include <utility>
 #include <iostream>
 
-namespace libview
+namespace libview_2p
 {
 
 namespace
@@ -344,4 +344,4 @@ void view::set_game_over_screen_visible(const bool visible)
     pimpl_->game_over_screen_.set_visible(visible);
 }
 
-} //namespace libview
+} //namespace libview_2p
