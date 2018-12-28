@@ -56,29 +56,45 @@ class controller
 
         void handle_game_event(const libgame_2p::events::score_change& event)
         {
-            view_.set_score(event.score);
+            view_.set_score(0, event.score);
+            view_.set_score(1, event.score);
         }
 
         void handle_game_event(const libgame_2p::events::next_input_creation& event)
         {
-            view_.create_next_input(event.tiles[0].value, event.tiles[1].value);
+            view_.create_next_input(0, event.tiles[0].value, event.tiles[1].value);
+            view_.create_next_input(1, event.tiles[0].value, event.tiles[1].value);
         }
 
         void handle_game_event(const libgame_2p::events::next_input_insertion& event)
         {
-            view_.insert_next_input(event.x_offset, event.rotation);
+            view_.insert_next_input(0, event.x_offset, event.rotation);
+            view_.insert_next_input(1, event.x_offset, event.rotation);
         }
 
         void handle_game_event(const libgame_2p::events::input_layout_change& event)
         {
-            view_.set_input_x_offset(event.x_offset);
-            view_.set_input_rotation(event.rotation);
+            view_.set_input_x_offset(0, event.x_offset);
+            view_.set_input_rotation(0, event.rotation);
+
+            view_.set_input_x_offset(1, event.x_offset);
+            view_.set_input_rotation(1, event.rotation);
         }
 
         void handle_game_event(const libgame_2p::events::input_insertion& event)
         {
             view_.insert_input
             (
+                0,
+                event.tile0_dst_column_index,
+                event.tile0_dst_row_index,
+                event.tile1_dst_column_index,
+                event.tile1_dst_row_index
+            );
+
+            view_.insert_input
+            (
+                1,
                 event.tile0_dst_column_index,
                 event.tile0_dst_row_index,
                 event.tile1_dst_column_index,
@@ -88,12 +104,14 @@ class controller
 
         void handle_game_event(const libgame_2p::events::tile_drop& event)
         {
-            view_.drop_tiles(conversion::to_view(event.drops));
+            view_.drop_tiles(0, conversion::to_view(event.drops));
+            view_.drop_tiles(1, conversion::to_view(event.drops));
         }
 
         void handle_game_event(const libgame_2p::events::tile_merge& event)
         {
-            view_.merge_tiles(conversion::to_view(event.merges));
+            view_.merge_tiles(0, conversion::to_view(event.merges));
+            view_.merge_tiles(1, conversion::to_view(event.merges));
         }
 
         void handle_game_event(const libgame_2p::events::end_of_game&)

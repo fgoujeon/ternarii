@@ -34,7 +34,7 @@ class view
 
         ~view();
 
-        void set_window_size(const unsigned int width, const unsigned int height);
+        void set_window_size(unsigned int width, unsigned int height);
 
         void iterate();
 
@@ -42,29 +42,30 @@ class view
 
         void clear();
 
-        void set_score(const unsigned int value);
+        void set_score(int player_index, unsigned int value);
 
-        void create_next_input(const unsigned int value0, const unsigned int value1);
+        void create_next_input(int player_index, unsigned int value0, unsigned int value1);
 
-        void insert_next_input(const unsigned int x_offset, const unsigned int rotation);
+        void insert_next_input(int player_index, unsigned int x_offset, unsigned int rotation);
 
-        void set_input_x_offset(const unsigned int value);
+        void set_input_x_offset(int player_index, unsigned int value);
 
-        void set_input_rotation(const unsigned int value);
+        void set_input_rotation(int player_index, unsigned int value);
 
         void insert_input
         (
-            const unsigned int tile0_dst_column_index,
-            const unsigned int tile0_dst_row_index,
-            const unsigned int tile1_dst_column_index,
-            const unsigned int tile1_dst_row_index
+            int player_index,
+            unsigned int tile0_dst_column_index,
+            unsigned int tile0_dst_row_index,
+            unsigned int tile1_dst_column_index,
+            unsigned int tile1_dst_row_index
         );
 
-        void drop_tiles(const data_types::tile_drop_list& drops);
+        void drop_tiles(int player_index, const data_types::tile_drop_list& drops);
 
-        void merge_tiles(const data_types::tile_merge_list& merges);
+        void merge_tiles(int player_index, const data_types::tile_merge_list& merges);
 
-        void set_game_over_screen_visible(const bool visible);
+        void set_game_over_screen_visible(bool visible);
 
     private:
         struct impl;
