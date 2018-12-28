@@ -68,6 +68,16 @@ namespace
 
 struct game::impl
 {
+    data_types::tile make_random_tile()
+    {
+        auto highest_tile_value = 2u;
+        for(auto& board: boards_)
+        {
+            highest_tile_value = std::max(highest_tile_value, board.get_highest_tile_value());
+        }
+        return data_types::tile{rand.generate(highest_tile_value)};
+    }
+
     events::next_input_creation generate_next_input(const int player_index)
     {
         const auto highest_tile_value = boards_[player_index].get_highest_tile_value();
@@ -130,6 +140,7 @@ struct game::impl
     std::array<board, 2> boards_ = {board{0}, board{1}};
     std::array<board_input, 2> inputs_ = {board_input{0}, board_input{1}};
     std::array<board_next_input, 2> next_inputs_;
+    data_types::tile_pool tile_pool_;
     int current_player_index_ = 0;
 };
 
@@ -179,8 +190,20 @@ event_list game::start()
 {
     event_list events;
 
+    pimpl_->current_player_index_ = 0;
+
+    //clear boards
     for(auto& board: pimpl_->boards_)
         board.clear();
+
+    //initialize tile pool
+    for(auto& tile_column: pimpl_->tile_pool_)
+    {
+        for(auto& tile: tile_column)
+        {
+            tile = pimpl_->make_random_tile();
+        }
+    }
 
     events.push_back(events::start{});
 
@@ -200,6 +223,14 @@ event_list game::start()
 
     events.push_back(pimpl_->inputs_[0].set_tiles(pimpl_->next_inputs_[0])); //insert next input
     events.push_back(pimpl_->generate_next_input(0));
+
+    events.push_back
+    (
+        events::tile_pool_change
+        {
+            pimpl_->tile_pool_
+        }
+    );
 
     return events;
 }

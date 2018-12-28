@@ -65,6 +65,8 @@ class view
 
         void merge_tiles(int player_index, const data_types::tile_merge_list& merges);
 
+        void set_tile_pool(const data_types::tile_pool& pool);
+
         void set_game_over_screen_visible(bool visible);
 
     private:

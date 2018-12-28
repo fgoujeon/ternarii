@@ -43,6 +43,8 @@ struct tile
 
 using tile_pair = std::array<tile, 2>;
 
+using tile_pool = array2d<tile, 6, 2>;
+
 /*
 Convention for accessing the tiles:
 grid[column_index][row_index]

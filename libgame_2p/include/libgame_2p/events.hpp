@@ -180,6 +180,13 @@ namespace events
 
 
 
+    struct tile_pool_change
+    {
+        data_types::tile_pool pool;
+    };
+
+
+
     struct score_change
     {
         int player_index = 0;
@@ -216,6 +223,7 @@ using event = std::variant
     events::input_insertion,
     events::tile_drop,
     events::tile_merge,
+    events::tile_pool_change,
     events::score_change,
     events::end_of_game
 >;

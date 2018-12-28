@@ -19,6 +19,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 
 #include <libview_2p/view.hpp>
 #include "grid.hpp"
+#include "tile_pool.hpp"
 #include "score_display.hpp"
 #include "fps_display.hpp"
 #include "game_over_screen.hpp"
@@ -67,6 +68,7 @@ struct view::impl
                 SDL_RENDERER_PRESENTVSYNC
             )
         ),
+        tile_pool_(*prenderer_),
         grids_{grid{*prenderer_}, grid{*prenderer_}},
         score_displays_
         {
@@ -247,6 +249,16 @@ struct view::impl
             grids_[1].draw(*prenderer_, sys, ellapsed_time);
         }
 
+        //draw tile pool
+        {
+            geometry::system sys;
+            sys.origin.x = sys0.origin.x + (50 * sys0.unit);
+            sys.origin.y = sys0.origin.y + (200 * sys0.unit);
+            sys.unit = 225.0 / tile_pool_.get_logical_width() * sys0.unit;
+
+            tile_pool_.draw(*prenderer_, sys);
+        }
+
         //draw other children
         {
             //fps_display_.draw(sys0, ellapsed_time);
@@ -268,6 +280,7 @@ struct view::impl
     libsdl::session session_;
     libsdl::unique_ptr<SDL_Window> pwindow_;
     libsdl::unique_ptr<SDL_Renderer> prenderer_;
+    tile_pool tile_pool_;
     std::array<grid, player_count> grids_;
     std::array<score_display, player_count> score_displays_;
     //fps_display fps_display_;
@@ -363,6 +376,11 @@ void view::drop_tiles(const int player_index, const data_types::tile_drop_list& 
 void view::merge_tiles(const int player_index, const data_types::tile_merge_list& merges)
 {
     pimpl_->grids_[player_index].merge_tiles(merges);
+}
+
+void view::set_tile_pool(const data_types::tile_pool& pool)
+{
+    pimpl_->tile_pool_.set_tiles(pool);
 }
 
 void view::set_game_over_screen_visible(const bool visible)

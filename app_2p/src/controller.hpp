@@ -97,6 +97,21 @@ class controller
             view_.merge_tiles(event.player_index, conversion::to_view(event.merges));
         }
 
+        void handle_game_event(const libgame_2p::events::tile_pool_change& event)
+        {
+            libview_2p::data_types::tile_pool view_pool;
+
+            for(unsigned int row_index = 0; row_index < 2; ++row_index)
+            {
+                for(unsigned int column_index = 0; column_index < 6; ++column_index)
+                {
+                    view_pool[column_index][row_index].value = event.pool[column_index][row_index].value;
+                }
+            }
+
+            view_.set_tile_pool(view_pool);
+        }
+
         void handle_game_event(const libgame_2p::events::end_of_game&)
         {
             view_.set_game_over_screen_visible(true);
