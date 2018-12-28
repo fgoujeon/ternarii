@@ -36,7 +36,7 @@ class board_input
         using tiles_t = std::array<data_types::tile, 2>;
 
     public:
-        board_input();
+        board_input(int player_index);
 
         const data_types::tile_pair& get_tiles() const
         {
@@ -65,6 +65,8 @@ class board_input
         std::vector<event> apply();
 
     private:
+        const int player_index_;
+
         tiles_t tiles_;
         unsigned int x_offset_;
 

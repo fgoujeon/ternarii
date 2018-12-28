@@ -44,6 +44,7 @@ namespace events
 
     struct next_input_creation
     {
+        int player_index = 0;
         data_types::tile_pair tiles;
     };
 
@@ -61,6 +62,7 @@ namespace events
 
     struct next_input_insertion
     {
+        int player_index = 0;
         unsigned int x_offset;
         unsigned int rotation;
     };
@@ -80,6 +82,7 @@ namespace events
 
     struct input_layout_change
     {
+        int player_index = 0;
         unsigned int x_offset;
         unsigned int rotation;
     };
@@ -99,6 +102,7 @@ namespace events
 
     struct input_insertion
     {
+        int player_index = 0;
         unsigned int tile0_dst_column_index;
         unsigned int tile0_dst_row_index;
         unsigned int tile1_dst_column_index;
@@ -122,6 +126,7 @@ namespace events
 
     struct tile_drop
     {
+        int player_index = 0;
         data_types::tile_drop_list drops;
     };
 
@@ -149,6 +154,7 @@ namespace events
 
     struct tile_merge
     {
+        int player_index = 0;
         data_types::tile_merge_list merges;
     };
 
@@ -176,6 +182,7 @@ namespace events
 
     struct score_change
     {
+        int player_index = 0;
         unsigned int score;
     };
 

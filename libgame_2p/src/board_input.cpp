@@ -28,7 +28,8 @@ namespace
     const auto default_rotation = 0;
 }
 
-board_input::board_input():
+board_input::board_input(const int player_index):
+    player_index_(player_index),
     x_offset_(default_x_offset),
     rotation_(default_rotation)
 {
@@ -46,6 +47,7 @@ board_input::set_tiles(const data_types::tile_pair& tiles)
     {
         events::next_input_insertion
         {
+            player_index_,
             x_offset_,
             rotation_
         }
@@ -92,7 +94,12 @@ board_input::apply()
 
     return
     {
-        events::input_layout_change{x_offset_, rotation_}
+        events::input_layout_change
+        {
+            player_index_,
+            x_offset_,
+            rotation_
+        }
     };
 }
 

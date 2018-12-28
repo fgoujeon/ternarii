@@ -37,7 +37,7 @@ class board
         static const unsigned int row_count = 10;
         using grid_t = data_types::tile_grid<column_count, row_count>;
 
-        board();
+        board(int player_index);
 
         const grid_t& tile_grid() const
         {
@@ -83,6 +83,7 @@ class board
         );
 
     private:
+        const int player_index_;
         grid_t tile_grid_;
         unsigned int highest_tile_value_;
 };

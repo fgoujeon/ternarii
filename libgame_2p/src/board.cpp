@@ -27,7 +27,8 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libgame_2p
 {
 
-board::board():
+board::board(int player_index):
+    player_index_(player_index),
     highest_tile_value_(0)
 {
 }
@@ -70,13 +71,13 @@ std::vector<event> board::drop_input(const board_input& in)
     {
         const auto drops = make_tiles_fall();
         if(!drops.empty())
-            events.push_back(events::tile_drop{drops});
+            events.push_back(events::tile_drop{player_index_, drops});
 
         const auto merges = merge_tiles();
         if(!merges.empty())
-            events.push_back(events::tile_merge{merges});
+            events.push_back(events::tile_merge{player_index_, merges});
 
-        events.push_back(events::score_change{get_score()});
+        events.push_back(events::score_change{player_index_, get_score()});
 
         events_happened = !drops.empty() || !merges.empty();
     } while(events_happened);
@@ -101,7 +102,7 @@ events::input_insertion board::insert_input(const board_input& in)
     tile_grid_[x0][y0] = tiles[0];
     tile_grid_[x1][y1] = tiles[1];
 
-    return events::input_insertion{x0, y0, x1, y1};
+    return events::input_insertion{player_index_, x0, y0, x1, y1};
 }
 
 data_types::tile_drop_list board::make_tiles_fall()

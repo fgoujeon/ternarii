@@ -30,6 +30,8 @@ namespace libgame_2p
 
 namespace
 {
+    using board_next_input = data_types::tile_pair;
+
     class random_tile_generator
     {
         public:
@@ -60,15 +62,17 @@ namespace
             std::mt19937 gen_;
             std::normal_distribution<double> dis_;
     };
+
+    constexpr auto player_count = 2;
 }
 
 struct game::impl
 {
-    events::next_input_creation generate_next_input()
+    events::next_input_creation generate_next_input(const int player_index)
     {
-        const auto highest_tile_value = board_.get_highest_tile_value();
+        const auto highest_tile_value = boards_[player_index].get_highest_tile_value();
         const auto max_value = std::max(highest_tile_value, 2u);
-        next_input_ = data_types::tile_pair
+        next_inputs_[player_index] = data_types::tile_pair
         {
             data_types::tile{rand.generate(max_value)},
             data_types::tile{rand.generate(max_value)}
@@ -76,15 +80,57 @@ struct game::impl
 
         return events::next_input_creation
         {
-            next_input_[0],
-            next_input_[1]
+            player_index,
+            next_inputs_[player_index][0],
+            next_inputs_[player_index][1]
         };
     }
 
+    events::next_input_creation generate_current_player_next_input()
+    {
+        return generate_next_input(current_player_index_);
+    }
+
+    const board& get_current_player_board() const
+    {
+        return boards_[current_player_index_];
+    }
+
+    board& get_current_player_board()
+    {
+        return boards_[current_player_index_];
+    }
+
+    const board_input& get_current_player_input() const
+    {
+        return inputs_[current_player_index_];
+    }
+
+    board_input& get_current_player_input()
+    {
+        return inputs_[current_player_index_];
+    }
+
+    const board_next_input& get_current_player_next_input() const
+    {
+        return next_inputs_[current_player_index_];
+    }
+
+    board_next_input& get_current_player_next_input()
+    {
+        return next_inputs_[current_player_index_];
+    }
+
+    void select_next_player()
+    {
+        current_player_index_ = (current_player_index_ + 1) % player_count;
+    }
+
     random_tile_generator rand;
-    board board_;
-    board_input input_;
-    data_types::tile_pair next_input_;
+    std::array<board, 2> boards_ = {board{0}, board{1}};
+    std::array<board_input, 2> inputs_ = {board_input{0}, board_input{1}};
+    std::array<board_next_input, 2> next_inputs_;
+    int current_player_index_ = 0;
 };
 
 game::game():
@@ -96,68 +142,81 @@ game::~game() = default;
 
 unsigned int game::get_score() const
 {
-    return pimpl_->board_.get_score();
+    return pimpl_->get_current_player_board().get_score();
 }
 
 const data_types::tile_pair& game::get_next_input_tiles() const
 {
-    return pimpl_->next_input_;
+    return pimpl_->get_current_player_next_input();
 }
 
 const data_types::tile_pair& game::get_input_tiles() const
 {
-    return pimpl_->input_.get_tiles();
+    return pimpl_->get_current_player_input().get_tiles();
 }
 
 const data_types::board_tile_grid& game::get_board_tiles() const
 {
-    return pimpl_->board_.tile_grid();
+    return pimpl_->get_current_player_board().tile_grid();
 }
 
 bool game::is_game_over() const
 {
-    return pimpl_->board_.is_game_over();
+    return pimpl_->get_current_player_board().is_game_over();
 }
 
 unsigned int game::get_input_x_offset() const
 {
-    return pimpl_->input_.get_x_offset();
+    return pimpl_->get_current_player_input().get_x_offset();
 }
 
 unsigned int game::get_input_rotation() const
 {
-    return pimpl_->input_.get_rotation();
+    return pimpl_->get_current_player_input().get_rotation();
 }
 
 event_list game::start()
 {
     event_list events;
 
-    pimpl_->board_.clear();
+    for(auto& board: pimpl_->boards_)
+        board.clear();
 
     events.push_back(events::start{});
-    events.push_back(events::score_change{0});
 
-    events.push_back(pimpl_->generate_next_input());
-    events.push_back(pimpl_->input_.set_tiles(pimpl_->next_input_)); //insert next input
-    events.push_back(pimpl_->generate_next_input());
+    for(auto player_index = 0; player_index < player_count; ++player_index)
+    {
+        events.push_back
+        (
+            events::score_change
+            {
+                player_index,
+                0
+            }
+        );
+
+        events.push_back(pimpl_->generate_next_input(player_index));
+    }
+
+    events.push_back(pimpl_->inputs_[0].set_tiles(pimpl_->next_inputs_[0])); //insert next input
+    events.push_back(pimpl_->generate_next_input(0));
 
     return events;
 }
 
 event_list game::shift_input_left()
 {
-    return pimpl_->input_.shift_left();
+    return pimpl_->get_current_player_input().shift_left();
 }
 
 event_list game::shift_input_right()
 {
-    return pimpl_->input_.shift_right();
+    return pimpl_->get_current_player_input().shift_right();
 }
 
 event_list game::rotate_input()
 {
-    return pimpl_->input_.rotate();
+    return pimpl_->get_current_player_input().rotate();
 }
 
 event_list game::drop_input()
@@ -167,17 +226,19 @@ event_list game::drop_input()
     if(!is_game_over())
     {
         //drop the input
-        const auto& board_events = pimpl_->board_.drop_input(pimpl_->input_);
+        const auto& board_events = pimpl_->get_current_player_board().drop_input(pimpl_->get_current_player_input());
         for(const auto& event: board_events)
             events.push_back(event);
 
         if(!is_game_over())
         {
+            pimpl_->select_next_player();
+
             //move the next input into the input
-            events.push_back(pimpl_->input_.set_tiles(pimpl_->next_input_));
+            events.push_back(pimpl_->get_current_player_input().set_tiles(pimpl_->get_current_player_next_input()));
 
             //create a new next input
-            events.push_back(pimpl_->generate_next_input());
+            events.push_back(pimpl_->generate_current_player_next_input());
         }
     }
 
