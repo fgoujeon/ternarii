@@ -36,8 +36,8 @@ namespace libview_2p
 
 namespace
 {
-    constexpr auto logical_width = 900;
-    constexpr auto logical_height = 1600;
+    constexpr auto logical_width = 1600;
+    constexpr auto logical_height = 900;
     constexpr auto logical_ratio = static_cast<double>(logical_width) / logical_height;
 }
 
@@ -66,27 +66,28 @@ struct view::impl
                 SDL_RENDERER_PRESENTVSYNC
             )
         ),
-        grid_(*prenderer_),
-        score_display_
+        grid_1p_(*prenderer_),
+        grid_2p_(*prenderer_),
+        score_display_1p_
         (
             *prenderer_,
-            SDL_Rect{150, 50, 600, 100}
+            SDL_Rect{50, 50, 225, 50}
         ),
-        fps_display_
+        score_display_2p_
         (
             *prenderer_,
-            SDL_Rect{150, 50, 600, 100}
+            SDL_Rect{1325, 50, 225, 50}
         ),
         game_over_screen_
         (
             event_handler_,
             *prenderer_,
-            SDL_Rect{150, 250, 601, 200}
+            SDL_Rect{325, 110, 951, 200}
         ),
         left_shift_button_
         (
             *prenderer_,
-            SDL_Rect{50, 1300, 150, 150},
+            SDL_Rect{50, 350, 225, 225},
             50,
             "left",
             [this]
@@ -97,7 +98,7 @@ struct view::impl
         right_shift_button_
         (
             *prenderer_,
-            SDL_Rect{210, 1400, 150, 150},
+            SDL_Rect{1325, 350, 225, 225},
             50,
             "right",
             [this]
@@ -108,7 +109,7 @@ struct view::impl
         drop_button_
         (
             *prenderer_,
-            SDL_Rect{540, 1400, 150, 150},
+            SDL_Rect{1325, 625, 225, 225},
             50,
             "drop",
             [this]
@@ -119,7 +120,7 @@ struct view::impl
         rotation_button_
         (
             *prenderer_,
-            SDL_Rect{700, 1300, 150, 150},
+            SDL_Rect{50, 625, 225, 225},
             50,
             "rotate",
             [this]
@@ -183,7 +184,7 @@ struct view::impl
         - user moves only when they knows what they're moving.
         */
 
-        if(!grid_.is_animating())
+        if(!grid_1p_.is_animating() && !grid_2p_.is_animating())
             event_handler_(std::forward<Event>(event));
     }
 
@@ -215,21 +216,31 @@ struct view::impl
             }
         }
 
-        //draw tile grid
+        //draw player 1 tile grid
         {
             geometry::system sys;
-            sys.origin.x = sys0.origin.x + (150 * sys0.unit);
-            sys.origin.y = sys0.origin.y + (150 * sys0.unit);
-            sys.unit = sys0.unit;
-            sys.unit = sys0.unit;
+            sys.origin.x = sys0.origin.x + (325 * sys0.unit);
+            sys.origin.y = sys0.origin.y + (25 * sys0.unit);
+            sys.unit = 450.0 / grid_1p_.get_logical_width() * sys0.unit;
 
-            grid_.draw(*prenderer_, sys, ellapsed_time);
+            grid_1p_.draw(*prenderer_, sys, ellapsed_time);
+        }
+
+        //draw player 2 tile grid
+        {
+            geometry::system sys;
+            sys.origin.x = sys0.origin.x + (825 * sys0.unit);
+            sys.origin.y = sys0.origin.y + (25 * sys0.unit);
+            sys.unit = 450.0 / grid_1p_.get_logical_width() * sys0.unit;
+
+            grid_2p_.draw(*prenderer_, sys, ellapsed_time);
         }
 
         //draw other children
         {
-            fps_display_.draw(sys0, ellapsed_time);
-            score_display_.draw(sys0);
+            //fps_display_.draw(sys0, ellapsed_time);
+            score_display_1p_.draw(sys0);
+            score_display_2p_.draw(sys0);
             left_shift_button_.draw(sys0);
             right_shift_button_.draw(sys0);
             drop_button_.draw(sys0);
@@ -244,9 +255,11 @@ struct view::impl
     libsdl::session session_;
     libsdl::unique_ptr<SDL_Window> pwindow_;
     libsdl::unique_ptr<SDL_Renderer> prenderer_;
-    grid grid_;
-    score_display score_display_;
-    fps_display fps_display_;
+    grid grid_1p_;
+    grid grid_2p_;
+    score_display score_display_1p_;
+    score_display score_display_2p_;
+    //fps_display fps_display_;
     game_over_screen game_over_screen_;
 
     label_button left_shift_button_;
@@ -283,33 +296,33 @@ bool view::must_quit() const
 
 void view::clear()
 {
-    pimpl_->grid_.clear();
+    pimpl_->grid_1p_.clear();
     pimpl_->game_over_screen_.set_visible(false);
 }
 
 void view::set_score(const unsigned int value)
 {
-    pimpl_->score_display_.set_score(value);
+    pimpl_->score_display_1p_.set_score(value);
 }
 
 void view::create_next_input(const unsigned int value0, const unsigned int value1)
 {
-    pimpl_->grid_.create_next_input(value0, value1);
+    pimpl_->grid_1p_.create_next_input(value0, value1);
 }
 
 void view::insert_next_input(const unsigned int x_offset, const unsigned int rotation)
 {
-    pimpl_->grid_.insert_next_input(x_offset, rotation);
+    pimpl_->grid_1p_.insert_next_input(x_offset, rotation);
 }
 
 void view::set_input_x_offset(const unsigned int value)
 {
-    pimpl_->grid_.set_input_x_offset(value);
+    pimpl_->grid_1p_.set_input_x_offset(value);
 }
 
 void view::set_input_rotation(const unsigned int value)
 {
-    pimpl_->grid_.set_input_rotation(value);
+    pimpl_->grid_1p_.set_input_rotation(value);
 }
 
 void view::insert_input
@@ -320,7 +333,7 @@ void view::insert_input
     const unsigned int tile1_dst_row_index
 )
 {
-    pimpl_->grid_.insert_input
+    pimpl_->grid_1p_.insert_input
     (
         tile0_dst_column_index,
         tile0_dst_row_index,
@@ -331,12 +344,12 @@ void view::insert_input
 
 void view::drop_tiles(const data_types::tile_drop_list& drops)
 {
-    pimpl_->grid_.drop_tiles(drops);
+    pimpl_->grid_1p_.drop_tiles(drops);
 }
 
 void view::merge_tiles(const data_types::tile_merge_list& merges)
 {
-    pimpl_->grid_.merge_tiles(merges);
+    pimpl_->grid_1p_.merge_tiles(merges);
 }
 
 void view::set_game_over_screen_visible(const bool visible)
