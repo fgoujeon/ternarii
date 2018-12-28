@@ -78,7 +78,7 @@ void tile_pool::set_tiles(const data_types::tile_pool& tiles)
                 geometry::rect
                 {
                     column_index * cell_size + tile_margin,
-                    row_index * cell_size + tile_margin,
+                    (1 - row_index) * cell_size + tile_margin,
                     tile_size,
                     tile_size
                 }

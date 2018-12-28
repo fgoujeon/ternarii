@@ -256,6 +256,26 @@ event_list game::drop_input()
 
     if(!is_game_over())
     {
+        //save coordinates of dropped tiles
+        auto tile0_column_index = 0u;
+        auto tile0_row_index = 0u;
+        auto tile1_column_index = 0u;
+        auto tile1_row_index = 0u;
+        {
+            const auto& in = pimpl_->get_current_player_input();
+
+            const auto row_count = 2;
+            const auto tiles = in.get_tiles();
+            const auto x_offset = in.get_x_offset();
+            const auto rotation = in.get_rotation();
+
+            tile0_column_index = x_offset + (rotation == 2 ? 1 : 0);
+            tile0_row_index = row_count - 2 + (rotation == 1 ? 1 : 0);
+
+            tile1_column_index = x_offset + (rotation == 0 ? 1 : 0);
+            tile1_row_index = row_count - 2 + (rotation == 3 ? 1 : 0);
+        }
+
         //drop the input
         const auto& board_events = pimpl_->get_current_player_board().drop_input(pimpl_->get_current_player_input());
         for(const auto& event: board_events)
@@ -268,8 +288,37 @@ event_list game::drop_input()
             //move the next input into the input
             events.push_back(pimpl_->get_current_player_input().set_tiles(pimpl_->get_current_player_next_input()));
 
-            //create a new next input
-            events.push_back(pimpl_->generate_current_player_next_input());
+            //create a new next input from pool
+            {
+                auto& next_input = pimpl_->get_current_player_next_input();
+
+                next_input[0] = pimpl_->tile_pool_[tile0_column_index][tile0_row_index];
+                next_input[1] = pimpl_->tile_pool_[tile1_column_index][tile1_row_index];
+
+                events.push_back
+                (
+                    events::next_input_creation
+                    {
+                        pimpl_->current_player_index_,
+                        next_input[0],
+                        next_input[1]
+                    }
+                );
+            }
+
+            //generate new tiles for pool
+            {
+                pimpl_->tile_pool_[tile0_column_index][tile0_row_index] = pimpl_->make_random_tile();
+                pimpl_->tile_pool_[tile1_column_index][tile1_row_index] = pimpl_->make_random_tile();
+
+                events.push_back
+                (
+                    events::tile_pool_change
+                    {
+                        pimpl_->tile_pool_
+                    }
+                );
+            }
         }
     }
 
