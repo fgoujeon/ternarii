@@ -67,7 +67,7 @@ struct game::impl
     events::next_input_creation generate_next_input()
     {
         const auto highest_tile_value = board_.get_highest_tile_value();
-        const auto max_value = std::max(highest_tile_value, 2u);
+        const auto max_value = std::clamp(highest_tile_value, 2u, 9u);
         next_input_ = data_types::tile_pair
         {
             data_types::tile{rand.generate(max_value)},
