@@ -260,53 +260,40 @@ void grid::merge_tiles(const data_types::tile_merge_list& merges)
         animations_.push(std::move(pgroup));
     }
 
-    //make source tiles disappear
+    //make source tiles disappear and create merged tile
     {
         auto pgroup = std::make_unique<animation_group>();
 
         for(const auto& merge: merges)
         {
+            //make source tiles disappear
             for(const auto& src_tile_coordinate: merge.src_tile_coordinates)
             {
                 if(auto& ptile = board_tiles_[src_tile_coordinate.x][src_tile_coordinate.y])
                 {
                     pgroup->emplace<fade_out>(*ptile);
+                    disappearing_tiles_.push_back(std::move(ptile));
                 }
             }
+
+            //create merged tile
+            auto pdst_tile = std::make_unique<tile>
+            (
+                renderer_,
+                merge.dst_tile_value,
+                geometry::rect
+                {
+                    tile_coordinate_to_position(merge.dst_tile_coordinate),
+                    tile_size,
+                    tile_size
+                }
+            );
+            pgroup->add(std::make_unique<fade_in>(*pdst_tile));
+
+            board_tiles_[merge.dst_tile_coordinate.x][merge.dst_tile_coordinate.y] = std::move(pdst_tile);
         }
 
         animations_.push(std::move(pgroup));
-    }
-
-    for(const auto& merge: merges)
-    {
-        for(const auto& src_tile_coordinate: merge.src_tile_coordinates)
-        {
-            if(auto& ptile = board_tiles_[src_tile_coordinate.x][src_tile_coordinate.y])
-            {
-                disappearing_tiles_.push_back(std::move(ptile));
-            }
-        }
-    }
-
-    //create merged tile
-    for(const auto& merge: merges)
-    {
-        auto pdst_tile = std::make_unique<tile>
-        (
-            renderer_,
-            merge.dst_tile_value,
-            geometry::rect
-            {
-                tile_coordinate_to_position(merge.dst_tile_coordinate),
-                tile_size,
-                tile_size
-            }
-        );
-
-        animations_.push(std::make_unique<fade_in>(*pdst_tile));
-
-        board_tiles_[merge.dst_tile_coordinate.x][merge.dst_tile_coordinate.y] = std::move(pdst_tile);
     }
 
     //make a pause
