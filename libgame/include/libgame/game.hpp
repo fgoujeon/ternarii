@@ -58,6 +58,8 @@ struct game
 
         event_list drop_input();
 
+        void init_hi_score(unsigned int value);
+
     private:
         struct impl;
         std::unique_ptr<impl> pimpl_;

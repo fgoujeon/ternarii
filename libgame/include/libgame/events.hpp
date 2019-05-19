@@ -191,6 +191,23 @@ namespace events
 
 
 
+    struct hi_score_change
+    {
+        unsigned int score;
+    };
+
+    inline
+    std::ostream& operator<<(std::ostream& l, const hi_score_change& r)
+    {
+        l << "hi_score_change";
+        l << "{";
+        l << "score: " << r.score;
+        l << "}";
+        return l;
+    }
+
+
+
     struct end_of_game{};
 
     inline
@@ -210,6 +227,7 @@ using event = std::variant
     events::tile_drop,
     events::tile_merge,
     events::score_change,
+    events::hi_score_change,
     events::end_of_game
 >;
 

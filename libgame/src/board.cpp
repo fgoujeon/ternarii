@@ -76,10 +76,16 @@ std::vector<event> board::drop_input(const board_input& in)
         if(!merges.empty())
             events.push_back(events::tile_merge{merges});
 
-        events.push_back(events::score_change{get_score()});
-
         events_happened = !drops.empty() || !merges.empty();
     } while(events_happened);
+
+    events.push_back(events::score_change{get_score()});
+
+    if(hi_score_ < get_score())
+    {
+        hi_score_ = get_score();
+        events.push_back(events::hi_score_change{hi_score_});
+    }
 
     return events;
 }
@@ -292,6 +298,11 @@ void board::select_tiles
             }
         }
     }
+}
+
+void board::init_hi_score(unsigned int value)
+{
+    hi_score_ = std::max(hi_score_, value);
 }
 
 } //namespace libgame

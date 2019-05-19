@@ -25,6 +25,10 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include <libgame/game.hpp>
 #include <libview/view.hpp>
 
+#ifndef NDEBUG
+#include <iostream>
+#endif
+
 class controller
 {
     private:
@@ -68,6 +72,10 @@ class controller
         void handle_game_event(const libgame::events::score_change& event)
         {
             view_.set_score(event.score);
+        }
+
+        void handle_game_event(const libgame::events::hi_score_change& event)
+        {
             database_.set_hi_score(event.score);
         }
 
@@ -121,7 +129,9 @@ class controller
                 (
                     [this](const auto& event)
                     {
-                        //std::cout << event << '\n';
+#ifndef NDEBUG
+                        std::cout << event << '\n';
+#endif
                         handle_game_event(event);
                     },
                     event
