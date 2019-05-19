@@ -21,11 +21,21 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #define CONTROLLER_HPP
 
 #include "conversion.hpp"
+#include <libdb/database.hpp>
 #include <libgame/game.hpp>
 #include <libview/view.hpp>
 
 class controller
 {
+    private:
+        enum class state
+        {
+            starting,
+            loading_persistent_filesystem,
+            loading_persistent_data,
+            iterating
+        };
+
     public:
         controller():
             view_([this](const libview::event& event){handle_view_event(event);})
@@ -40,6 +50,7 @@ class controller
 
         void iterate()
         {
+            database_.iterate();
             view_.iterate();
         }
 
@@ -57,6 +68,7 @@ class controller
         void handle_game_event(const libgame::events::score_change& event)
         {
             view_.set_score(event.score);
+            database_.set_hi_score(event.score);
         }
 
         void handle_game_event(const libgame::events::next_input_creation& event)
@@ -156,6 +168,8 @@ class controller
         }
 
     private:
+        state current_state_ = state::starting;
+        libdb::database database_;
         libgame::game game_;
         libview::view view_;
 };

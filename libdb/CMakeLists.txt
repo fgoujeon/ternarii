@@ -17,26 +17,21 @@
 
 cmake_minimum_required(VERSION 3.10)
 
+file(GLOB_RECURSE INCLUDE_FILES include/*)
 file(GLOB_RECURSE SRC_FILES src/*)
 
-add_executable(
-    app
+add_library(
+    libdb
+    ${INCLUDE_FILES}
     ${SRC_FILES}
 )
 
 set_property(
-    TARGET app
+    TARGET libdb
     PROPERTY CXX_STANDARD 17
 )
 
-target_link_libraries(
-    app
-    PRIVATE
-        libdb
-        libgame
-        libview
+target_include_directories(
+    libdb
+    PUBLIC include
 )
-
-if(EMSCRIPTEN)
-    add_dependencies(app www)
-endif()
