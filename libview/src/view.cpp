@@ -70,7 +70,12 @@ struct view::impl
         score_display_
         (
             *prenderer_,
-            SDL_Rect{150, 50, 600, 100}
+            SDL_Rect{150, 50, 600, 70}
+        ),
+        hi_score_display_
+        (
+            *prenderer_,
+            SDL_Rect{150, 120, 600, 30}
         ),
         fps_display_
         (
@@ -230,6 +235,7 @@ struct view::impl
         {
             //fps_display_.draw(sys0, ellapsed_time);
             score_display_.draw(sys0);
+            hi_score_display_.draw(sys0);
             left_shift_button_.draw(sys0);
             right_shift_button_.draw(sys0);
             drop_button_.draw(sys0);
@@ -246,6 +252,7 @@ struct view::impl
     libsdl::unique_ptr<SDL_Renderer> prenderer_;
     grid grid_;
     score_display score_display_;
+    score_display hi_score_display_;
     fps_display fps_display_;
     game_over_screen game_over_screen_;
 
@@ -290,6 +297,11 @@ void view::clear()
 void view::set_score(const unsigned int value)
 {
     pimpl_->score_display_.set_score(value);
+}
+
+void view::set_hi_score(const unsigned int value)
+{
+    pimpl_->hi_score_display_.set_score(value);
 }
 
 void view::create_next_input(const unsigned int value0, const unsigned int value1)

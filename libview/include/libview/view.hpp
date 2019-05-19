@@ -44,6 +44,8 @@ class view
 
         void set_score(const unsigned int value);
 
+        void set_hi_score(const unsigned int value);
+
         void create_next_input(const unsigned int value0, const unsigned int value1);
 
         void insert_next_input(const unsigned int x_offset, const unsigned int rotation);

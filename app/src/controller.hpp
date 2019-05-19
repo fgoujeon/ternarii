@@ -77,6 +77,7 @@ class controller
 
         void handle_game_event(const libgame::events::hi_score_change& event)
         {
+            view_.set_hi_score(event.score);
             database_.set_hi_score(event.score);
         }
 
@@ -181,7 +182,9 @@ class controller
     private:
         void handle_database_event2(const libdb::events::end_of_loading&)
         {
-            game_.init_hi_score(database_.get_hi_score());
+            const auto hi_score = database_.get_hi_score();
+            view_.set_hi_score(hi_score);
+            game_.init_hi_score(hi_score);
         }
 
         void handle_database_event(const libdb::event& event)
