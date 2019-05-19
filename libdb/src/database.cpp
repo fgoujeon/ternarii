@@ -38,7 +38,8 @@ struct database::impl
         };
 
     public:
-        impl()
+        impl(const event_handler& evt_handler):
+            event_handler_(evt_handler)
         {
         }
 
@@ -123,6 +124,7 @@ struct database::impl
             }
 
             current_state_ = state::ready;
+            event_handler_(events::end_of_loading{});
         }
 
         void async_save_filesystem()
@@ -140,12 +142,13 @@ struct database::impl
         }
 
     private:
+        event_handler event_handler_;
         state current_state_ = state::starting;
         int hi_score_ = 0;
 };
 
-database::database():
-    pimpl_(std::make_unique<impl>())
+database::database(const event_handler& evt_handler):
+    pimpl_(std::make_unique<impl>(evt_handler))
 {
 }
 

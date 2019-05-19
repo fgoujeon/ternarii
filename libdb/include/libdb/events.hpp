@@ -17,32 +17,26 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef LIBDB_DATABASE_HPP
-#define LIBDB_DATABASE_HPP
+#ifndef LIBDB_EVENTS_HPP
+#define LIBDB_EVENTS_HPP
 
-#include "events.hpp"
-#include <memory>
+#include <variant>
+#include <functional>
 
 namespace libdb
 {
 
-class database
+namespace events
 {
-    public:
-        database(const event_handler& evt_handler);
+    struct end_of_loading{};
+}
 
-        ~database();
+using event = std::variant
+<
+    events::end_of_loading
+>;
 
-        void iterate();
-
-        int get_hi_score() const;
-
-        void set_hi_score(int value);
-
-    private:
-        struct impl;
-        std::unique_ptr<impl> pimpl_;
-};
+using event_handler = std::function<void(const event&)>;
 
 } //namespace
 

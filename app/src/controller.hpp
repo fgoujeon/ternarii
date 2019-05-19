@@ -42,6 +42,7 @@ class controller
 
     public:
         controller():
+            database_([this](const libdb::event& event){handle_database_event(event);}),
             view_([this](const libview::event& event){handle_view_event(event);})
         {
             handle_game_events(game_.start());
@@ -172,6 +173,24 @@ class controller
                 [this](const auto& event)
                 {
                     handle_view_event2(event);
+                },
+                event
+            );
+        }
+
+    private:
+        void handle_database_event2(const libdb::events::end_of_loading&)
+        {
+            game_.init_hi_score(database_.get_hi_score());
+        }
+
+        void handle_database_event(const libdb::event& event)
+        {
+            std::visit
+            (
+                [this](const auto& event)
+                {
+                    handle_database_event2(event);
                 },
                 event
             );
