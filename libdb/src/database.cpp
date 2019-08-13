@@ -18,6 +18,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 #include <libdb/database.hpp>
+#include <nlohmann/json.hpp>
 #include <emscripten.h>
 #include <fstream>
 #include <iostream>
@@ -25,6 +26,11 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 
 namespace libdb
 {
+
+namespace
+{
+    const auto path = "/persistent/database.json";
+}
 
 struct database::impl
 {
@@ -72,10 +78,7 @@ struct database::impl
 
             if(current_state_ == state::ready)
             {
-                {
-                    std::ofstream ofs{"/persistent/hi_score.txt"};
-                    ofs << value;
-                }
+                save_data();
                 async_save_filesystem();
             }
         }
@@ -110,21 +113,44 @@ struct database::impl
 
         void load_data()
         {
+            try
             {
-                std::ifstream ifs{"/persistent/hi_score.txt"};
-
-                if(ifs)
-                {
-                    std::string hi_score_str;
-                    ifs >> hi_score_str;
-                    hi_score_ = std::stoi(hi_score_str);
-
-                    std::cout << "Hi-score is " << hi_score_ << std::endl;
-                }
+                auto ifs = std::ifstream{path};
+                auto json = nlohmann::json{};
+                ifs >> json;
+                hi_score_ = json["hiScore"].get<int>();
+            }
+            catch(const std::exception& e)
+            {
+                std::cerr << e.what() << '\n';
+            }
+            catch(...)
+            {
+                std::cerr << "Unknown error\n";
             }
 
             current_state_ = state::ready;
             event_handler_(events::end_of_loading{});
+        }
+
+        void save_data()
+        {
+            try
+            {
+                auto json = nlohmann::json{};
+                json["hiScore"] = hi_score_;
+
+                std::ofstream ofs{path};
+                ofs << json;
+            }
+            catch(const std::exception& e)
+            {
+                std::cerr << e.what() << '\n';
+            }
+            catch(...)
+            {
+                std::cerr << "Unknown error\n";
+            }
         }
 
         void async_save_filesystem()
