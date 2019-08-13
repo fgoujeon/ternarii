@@ -17,54 +17,33 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef GAME_HPP
-#define GAME_HPP
+#ifndef LIBDB_DATABASE_HPP
+#define LIBDB_DATABASE_HPP
 
 #include "events.hpp"
-#include "data_types.hpp"
 #include <memory>
 
-namespace libgame
+namespace libdb
 {
 
-struct game
+class database
 {
     public:
-        game();
+        database(const event_handler& evt_handler);
 
-        ~game();
+        ~database();
 
-        unsigned int get_score() const;
+        void iterate();
 
-        const data_types::tile_pair& get_next_input_tiles() const;
+        int get_hi_score() const;
 
-        const data_types::tile_pair& get_input_tiles() const;
-
-        const data_types::board_tile_grid& get_board_tiles() const;
-
-        bool is_game_over() const;
-
-        unsigned int get_input_x_offset() const;
-
-        unsigned int get_input_rotation() const;
-
-        event_list start();
-
-        event_list shift_input_left();
-
-        event_list shift_input_right();
-
-        event_list rotate_input();
-
-        event_list drop_input();
-
-        void init_hi_score(unsigned int value);
+        void set_hi_score(int value);
 
     private:
         struct impl;
         std::unique_ptr<impl> pimpl_;
 };
 
-} //namespace libgame
+} //namespace
 
 #endif

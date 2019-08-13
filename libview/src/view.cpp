@@ -70,7 +70,12 @@ struct view::impl
         score_display_
         (
             *prenderer_,
-            SDL_Rect{150, 50, 600, 100}
+            SDL_Rect{150, 50, 600, 70}
+        ),
+        hi_score_display_
+        (
+            *prenderer_,
+            SDL_Rect{150, 120, 600, 30}
         ),
         fps_display_
         (
@@ -215,26 +220,30 @@ struct view::impl
             }
         }
 
-        //draw tile grid
+        if(visible_)
         {
-            geometry::system sys;
-            sys.origin.x = sys0.origin.x + (150 * sys0.unit);
-            sys.origin.y = sys0.origin.y + (150 * sys0.unit);
-            sys.unit = sys0.unit;
-            sys.unit = sys0.unit;
+            //draw tile grid
+            {
+                geometry::system sys;
+                sys.origin.x = sys0.origin.x + (150 * sys0.unit);
+                sys.origin.y = sys0.origin.y + (150 * sys0.unit);
+                sys.unit = sys0.unit;
+                sys.unit = sys0.unit;
 
-            grid_.draw(*prenderer_, sys, ellapsed_time);
-        }
+                grid_.draw(*prenderer_, sys, ellapsed_time);
+            }
 
-        //draw other children
-        {
-            //fps_display_.draw(sys0, ellapsed_time);
-            score_display_.draw(sys0);
-            left_shift_button_.draw(sys0);
-            right_shift_button_.draw(sys0);
-            drop_button_.draw(sys0);
-            rotation_button_.draw(sys0);
-            game_over_screen_.draw(*prenderer_, sys0);
+            //draw other children
+            {
+                //fps_display_.draw(sys0, ellapsed_time);
+                score_display_.draw(sys0);
+                hi_score_display_.draw(sys0);
+                left_shift_button_.draw(sys0);
+                right_shift_button_.draw(sys0);
+                drop_button_.draw(sys0);
+                rotation_button_.draw(sys0);
+                game_over_screen_.draw(*prenderer_, sys0);
+            }
         }
 
         SDL_RenderPresent(prenderer_.get());
@@ -246,6 +255,7 @@ struct view::impl
     libsdl::unique_ptr<SDL_Renderer> prenderer_;
     grid grid_;
     score_display score_display_;
+    score_display hi_score_display_;
     fps_display fps_display_;
     game_over_screen game_over_screen_;
 
@@ -255,6 +265,7 @@ struct view::impl
     label_button rotation_button_;
 
     std::chrono::time_point<std::chrono::steady_clock> previous_frame_time_;
+    bool visible_ = false;
 
     bool quit_ = false;
 };
@@ -290,6 +301,11 @@ void view::clear()
 void view::set_score(const unsigned int value)
 {
     pimpl_->score_display_.set_score(value);
+}
+
+void view::set_hi_score(const unsigned int value)
+{
+    pimpl_->hi_score_display_.set_score(value);
 }
 
 void view::create_next_input(const unsigned int value0, const unsigned int value1)
@@ -337,6 +353,11 @@ void view::drop_tiles(const data_types::tile_drop_list& drops)
 void view::merge_tiles(const data_types::tile_merge_list& merges)
 {
     pimpl_->grid_.merge_tiles(merges);
+}
+
+void view::set_visible(const bool visible)
+{
+    pimpl_->visible_ = visible;
 }
 
 void view::set_game_over_screen_visible(const bool visible)

@@ -57,6 +57,8 @@ class board
 
         std::vector<event> drop_input(const board_input& in);
 
+        void init_hi_score(unsigned int value);
+
     private:
         events::input_insertion insert_input(const board_input& in);
 
@@ -85,6 +87,7 @@ class board
     private:
         grid_t tile_grid_;
         unsigned int highest_tile_value_;
+        unsigned int hi_score_ = 0;
 };
 
 } //namespace libgame

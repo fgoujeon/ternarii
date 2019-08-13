@@ -187,4 +187,9 @@ event_list game::drop_input()
     return events;
 }
 
+void game::init_hi_score(unsigned int value)
+{
+    pimpl_->board_.init_hi_score(value);
+}
+
 } //namespace libgame

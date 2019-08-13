@@ -21,13 +21,19 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #define CONTROLLER_HPP
 
 #include "conversion.hpp"
+#include <libdb/database.hpp>
 #include <libgame/game.hpp>
 #include <libview/view.hpp>
+
+#ifndef NDEBUG
+#include <iostream>
+#endif
 
 class controller
 {
     public:
         controller():
+            database_([this](const libdb::event& event){handle_database_event(event);}),
             view_([this](const libview::event& event){handle_view_event(event);})
         {
             handle_game_events(game_.start());
@@ -40,6 +46,7 @@ class controller
 
         void iterate()
         {
+            database_.iterate();
             view_.iterate();
         }
 
@@ -57,6 +64,12 @@ class controller
         void handle_game_event(const libgame::events::score_change& event)
         {
             view_.set_score(event.score);
+        }
+
+        void handle_game_event(const libgame::events::hi_score_change& event)
+        {
+            view_.set_hi_score(event.score);
+            database_.set_hi_score(event.score);
         }
 
         void handle_game_event(const libgame::events::next_input_creation& event)
@@ -109,7 +122,9 @@ class controller
                 (
                     [this](const auto& event)
                     {
-                        //std::cout << event << '\n';
+#ifndef NDEBUG
+                        std::cout << event << '\n';
+#endif
                         handle_game_event(event);
                     },
                     event
@@ -156,6 +171,28 @@ class controller
         }
 
     private:
+        void handle_database_event2(const libdb::events::end_of_loading&)
+        {
+            const auto hi_score = database_.get_hi_score();
+            view_.set_hi_score(hi_score);
+            game_.init_hi_score(hi_score);
+            view_.set_visible(true);
+        }
+
+        void handle_database_event(const libdb::event& event)
+        {
+            std::visit
+            (
+                [this](const auto& event)
+                {
+                    handle_database_event2(event);
+                },
+                event
+            );
+        }
+
+    private:
+        libdb::database database_;
         libgame::game game_;
         libview::view view_;
 };

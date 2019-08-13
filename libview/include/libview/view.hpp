@@ -44,6 +44,8 @@ class view
 
         void set_score(const unsigned int value);
 
+        void set_hi_score(const unsigned int value);
+
         void create_next_input(const unsigned int value0, const unsigned int value1);
 
         void insert_next_input(const unsigned int x_offset, const unsigned int rotation);
@@ -63,6 +65,8 @@ class view
         void drop_tiles(const data_types::tile_drop_list& drops);
 
         void merge_tiles(const data_types::tile_merge_list& merges);
+
+        void set_visible(const bool visible);
 
         void set_game_over_screen_visible(const bool visible);
 
