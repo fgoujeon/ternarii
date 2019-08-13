@@ -176,6 +176,7 @@ class controller
             const auto hi_score = database_.get_hi_score();
             view_.set_hi_score(hi_score);
             game_.init_hi_score(hi_score);
+            view_.set_visible(true);
         }
 
         void handle_database_event(const libdb::event& event)

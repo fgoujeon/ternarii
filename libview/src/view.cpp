@@ -220,27 +220,30 @@ struct view::impl
             }
         }
 
-        //draw tile grid
+        if(visible_)
         {
-            geometry::system sys;
-            sys.origin.x = sys0.origin.x + (150 * sys0.unit);
-            sys.origin.y = sys0.origin.y + (150 * sys0.unit);
-            sys.unit = sys0.unit;
-            sys.unit = sys0.unit;
+            //draw tile grid
+            {
+                geometry::system sys;
+                sys.origin.x = sys0.origin.x + (150 * sys0.unit);
+                sys.origin.y = sys0.origin.y + (150 * sys0.unit);
+                sys.unit = sys0.unit;
+                sys.unit = sys0.unit;
 
-            grid_.draw(*prenderer_, sys, ellapsed_time);
-        }
+                grid_.draw(*prenderer_, sys, ellapsed_time);
+            }
 
-        //draw other children
-        {
-            //fps_display_.draw(sys0, ellapsed_time);
-            score_display_.draw(sys0);
-            hi_score_display_.draw(sys0);
-            left_shift_button_.draw(sys0);
-            right_shift_button_.draw(sys0);
-            drop_button_.draw(sys0);
-            rotation_button_.draw(sys0);
-            game_over_screen_.draw(*prenderer_, sys0);
+            //draw other children
+            {
+                //fps_display_.draw(sys0, ellapsed_time);
+                score_display_.draw(sys0);
+                hi_score_display_.draw(sys0);
+                left_shift_button_.draw(sys0);
+                right_shift_button_.draw(sys0);
+                drop_button_.draw(sys0);
+                rotation_button_.draw(sys0);
+                game_over_screen_.draw(*prenderer_, sys0);
+            }
         }
 
         SDL_RenderPresent(prenderer_.get());
@@ -262,6 +265,7 @@ struct view::impl
     label_button rotation_button_;
 
     std::chrono::time_point<std::chrono::steady_clock> previous_frame_time_;
+    bool visible_ = false;
 
     bool quit_ = false;
 };
@@ -349,6 +353,11 @@ void view::drop_tiles(const data_types::tile_drop_list& drops)
 void view::merge_tiles(const data_types::tile_merge_list& merges)
 {
     pimpl_->grid_.merge_tiles(merges);
+}
+
+void view::set_visible(const bool visible)
+{
+    pimpl_->visible_ = visible;
 }
 
 void view::set_game_over_screen_visible(const bool visible)
