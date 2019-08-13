@@ -20,16 +20,15 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include <libdb/database.hpp>
 #include <nlohmann/json.hpp>
 #include <emscripten.h>
+#include <filesystem>
 #include <fstream>
 #include <iostream>
-#include <sstream>
 
 namespace libdb
 {
 
 namespace
 {
-    const auto path = "/persistent/database.json";
 }
 
 struct database::impl
@@ -87,8 +86,7 @@ struct database::impl
         void async_load_filesystem()
         {
             EM_ASM(
-                FS.mkdir('/persistent');
-                FS.mount(IDBFS, {}, '/persistent');
+                FS.mount(IDBFS, {}, '/home');
 
                 Module.savingPersistentFilesystem = 0;
                 Module.persistentFilesystemLoaded = 0;
@@ -115,7 +113,7 @@ struct database::impl
         {
             try
             {
-                auto ifs = std::ifstream{path};
+                auto ifs = std::ifstream{path_};
                 auto json = nlohmann::json{};
                 ifs >> json;
                 hi_score_ = json["hiScore"].get<int>();
@@ -140,7 +138,8 @@ struct database::impl
                 auto json = nlohmann::json{};
                 json["hiScore"] = hi_score_;
 
-                std::ofstream ofs{path};
+                std::filesystem::create_directories(path_.parent_path());
+                std::ofstream ofs{path_};
                 ofs << json;
             }
             catch(const std::exception& e)
@@ -168,6 +167,7 @@ struct database::impl
         }
 
     private:
+        const std::filesystem::path path_ = std::filesystem::path{std::getenv("HOME")} / ".config" / "ternarii" / "database.json";
         event_handler event_handler_;
         state current_state_ = state::starting;
         int hi_score_ = 0;
