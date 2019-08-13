@@ -31,15 +31,6 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 
 class controller
 {
-    private:
-        enum class state
-        {
-            starting,
-            loading_persistent_filesystem,
-            loading_persistent_data,
-            iterating
-        };
-
     public:
         controller():
             database_([this](const libdb::event& event){handle_database_event(event);}),
@@ -200,7 +191,6 @@ class controller
         }
 
     private:
-        state current_state_ = state::starting;
         libdb::database database_;
         libgame::game game_;
         libview::view view_;
