@@ -33,10 +33,18 @@ class board_input;
 class board
 {
     public:
-        static const int column_count = 6;
-        static const int row_count = 10;
-        using grid_t = data_types::tile_grid<column_count, row_count>;
+        static constexpr int total_column_count = 6;
+        static constexpr int total_row_count = 10;
 
+        //dimensions of the zone, starting from the bottom of the board, that can
+        //take tiles without causing game over
+        static constexpr int authorized_column_count = total_column_count;
+        static constexpr int authorized_row_count = 7;
+        static constexpr int authorized_cell_count = authorized_column_count * authorized_row_count;
+
+        using grid_t = data_types::tile_grid<total_column_count, total_row_count>;
+
+    public:
         board
         (
             grid_t& tiles,
@@ -53,6 +61,8 @@ class board
         int get_highest_tile_value() const;
 
         int get_score() const;
+
+        int get_free_cell_count() const;
 
         void clear();
 
@@ -72,7 +82,7 @@ class board
             selected
         };
 
-        using selection_t = data_types::array2d<selection_state, column_count, row_count>;
+        using selection_t = data_types::array2d<selection_state, total_column_count, total_row_count>;
 
         void select_tiles
         (
