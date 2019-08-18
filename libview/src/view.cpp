@@ -148,13 +148,26 @@ void view::set_hi_score(const unsigned int value){}
 void view::create_next_input(const unsigned int value0, const unsigned int value1)
 {
     pimpl_->tile_grid_.create_next_input(value0, value1);
+    pimpl_->redraw();
 }
 
-void view::insert_next_input(const unsigned int x_offset, const unsigned int rotation){}
+void view::insert_next_input(const unsigned int x_offset, const unsigned int rotation)
+{
+    pimpl_->tile_grid_.insert_next_input(x_offset, rotation);
+    pimpl_->redraw();
+}
 
-void view::set_input_x_offset(const unsigned int value){}
+void view::set_input_x_offset(const unsigned int value)
+{
+    pimpl_->tile_grid_.set_input_x_offset(value);
+    pimpl_->redraw();
+}
 
-void view::set_input_rotation(const unsigned int value){}
+void view::set_input_rotation(const unsigned int value)
+{
+    pimpl_->tile_grid_.set_input_rotation(value);
+    pimpl_->redraw();
+}
 
 void view::insert_input
 (

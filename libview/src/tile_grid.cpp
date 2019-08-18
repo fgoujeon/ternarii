@@ -23,6 +23,59 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libview
 {
 
+namespace
+{
+    std::array<Magnum::Vector2, 2> get_input_tile_positions(const unsigned int x_offset, const unsigned int rotation)
+    {
+        auto tile0_x = 0.0f;
+        auto tile0_y = 0.0f;
+        auto tile1_x = 0.0f;
+        auto tile1_y = 0.0f;
+
+        switch(rotation)
+        {
+            case 0:
+                tile0_x = -0.5f;
+                tile0_y = 0.0f;
+                tile1_x = 0.5f;
+                tile1_y = 0.0f;
+                break;
+            case 1:
+                tile0_x = -0.5f;
+                tile0_y = 0.5f;
+                tile1_x = -0.5f;
+                tile1_y = -0.5f;
+                break;
+            case 2:
+                tile0_x = 0.5f;
+                tile0_y = 0.0f;
+                tile1_x = -0.5f;
+                tile1_y = 0.0f;
+                break;
+            case 3:
+                tile0_x = -0.5f;
+                tile0_y = -0.5f;
+                tile1_x = -0.5f;
+                tile1_y = 0.5f;
+                break;
+        }
+
+        return
+        {
+            Magnum::Vector2
+            {
+                -2.0f + tile0_x + x_offset,
+                3.0f + tile0_y
+            },
+            Magnum::Vector2
+            {
+                -2.0f + tile1_x + x_offset,
+                3.0f + tile1_y
+            }
+        };
+    }
+}
+
 tile_grid::tile_grid(SceneGraph::DrawableGroup2D& drawables, Object2D* parent):
     Object2D{parent},
     drawables_(drawables)
@@ -63,6 +116,44 @@ void tile_grid::create_next_input(const unsigned int value0, const unsigned int 
     next_input_tiles_[1] = &addChild<tile>(drawables_);
     next_input_tiles_[1]->translate({0.5f, 5.0f});
     next_input_tiles_[1]->set_value(value1);
+}
+
+void tile_grid::insert_next_input(const unsigned int x_offset, const unsigned int rotation)
+{
+    input_tiles_[0] = next_input_tiles_[0];
+    input_tiles_[1] = next_input_tiles_[1];
+    input_x_offset_ = x_offset;
+    input_rotation_ = rotation;
+    update_input_tiles_positions();
+}
+
+void tile_grid::set_input_x_offset(const unsigned int value)
+{
+    if(input_x_offset_ != value)
+    {
+        input_x_offset_ = value;
+        update_input_tiles_positions();
+    }
+}
+
+void tile_grid::set_input_rotation(const unsigned int value)
+{
+    if(input_rotation_ != value)
+    {
+        input_rotation_ = value;
+        update_input_tiles_positions();
+    }
+}
+
+void tile_grid::update_input_tiles_positions()
+{
+    const auto dst_positions = get_input_tile_positions(input_x_offset_, input_rotation_);
+
+    for(auto i = 0; i < 2; ++i)
+    {
+        input_tiles_[i]->resetTransformation();
+        input_tiles_[i]->translate(dst_positions[i]);
+    }
 }
 
 } //namespace

@@ -43,6 +43,15 @@ class tile_grid: public Object2D
 
         void create_next_input(const unsigned int value0, const unsigned int value1);
 
+        void insert_next_input(const unsigned int x_offset, const unsigned int rotation);
+
+        void set_input_x_offset(const unsigned int value);
+
+        void set_input_rotation(const unsigned int value);
+
+    private:
+        void update_input_tiles_positions();
+
     private:
         SceneGraph::DrawableGroup2D& drawables_;
 
