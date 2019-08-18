@@ -44,7 +44,8 @@ class view::impl final: public Magnum::Platform::Sdl2Application
             cameraObject_(&scene_),
             camera_(cameraObject_),
             tile_grid_(scene_.addChild<tile_grid>(drawables_)),
-            score_display_(scene_.addChild<score_display>(drawables_))
+            score_display_(scene_.addChild<score_display>(drawables_)),
+            hi_score_display_(scene_.addChild<score_display>(drawables_))
         {
             camera_.setAspectRatioPolicy(SceneGraph::AspectRatioPolicy::Extend);
             camera_.setProjectionMatrix(Magnum::Matrix3::projection({9.0f, 16.0f}));
@@ -52,6 +53,8 @@ class view::impl final: public Magnum::Platform::Sdl2Application
 
             tile_grid_.translate({0.0f, 1.0f});
             score_display_.translate({3.0f, 6.8f});
+            hi_score_display_.scale({0.5f, 0.5f});
+            hi_score_display_.translate({3.0f, 6.5f});
 
             //configure renderer
             using namespace Magnum::Math::Literals;
@@ -121,6 +124,7 @@ class view::impl final: public Magnum::Platform::Sdl2Application
     public:
         tile_grid& tile_grid_;
         score_display& score_display_;
+        score_display& hi_score_display_;
 };
 
 view::view(int argc, char** argv, const event_handler& evt_handler):
@@ -143,7 +147,11 @@ void view::set_score(const unsigned int value)
     pimpl_->redraw();
 }
 
-void view::set_hi_score(const unsigned int value){}
+void view::set_hi_score(const unsigned int value)
+{
+    pimpl_->hi_score_display_.set_score(value);
+    pimpl_->redraw();
+}
 
 void view::create_next_input(const unsigned int value0, const unsigned int value1)
 {
