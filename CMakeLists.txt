@@ -15,22 +15,14 @@
 #You should have received a copy of the GNU General Public License
 #along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 
-cmake_minimum_required(VERSION 3.10)
-
+cmake_minimum_required(VERSION 3.14)
 project(ternarii)
 
-if(EMSCRIPTEN)
-    list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake/emscripten")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s USE_SDL=2")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s USE_SDL_TTF=2")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --preload-file ${CMAKE_CURRENT_LIST_DIR}/app/res@/res")
-endif()
-
+set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/modules/" ${CMAKE_MODULE_PATH})
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --preload-file ${CMAKE_CURRENT_LIST_DIR}/app/res@/res")
 
 add_subdirectory(app)
 add_subdirectory(libdb)
 add_subdirectory(libgame)
-add_subdirectory(libsdl)
 add_subdirectory(libview)
-add_subdirectory(www)

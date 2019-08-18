@@ -35,7 +35,7 @@ namespace events
     struct start{};
 
     inline
-    std::ostream& operator<<(std::ostream& l, const start& r)
+    std::ostream& operator<<(std::ostream& l, const start&)
     {
         return l << "start{}";
     }

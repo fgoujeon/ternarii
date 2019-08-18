@@ -30,15 +30,11 @@ namespace libview
 class view
 {
     public:
-        view(const event_handler& evt_handler);
+        view(int argc, char** argv, const event_handler& evt_handler);
 
         ~view();
 
-        void set_window_size(const unsigned int width, const unsigned int height);
-
-        void iterate();
-
-        bool must_quit() const;
+        int exec();
 
         void clear();
 
@@ -71,10 +67,10 @@ class view
         void set_game_over_screen_visible(const bool visible);
 
     private:
-        struct impl;
+        class impl;
         std::unique_ptr<impl> pimpl_;
 };
 
-} //namespace libview
+} //namespace
 
 #endif

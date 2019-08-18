@@ -17,14 +17,10 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifdef EMSCRIPTEN
-#include "run_wasm.hpp"
-#else
-#include "run_native.hpp"
-#endif
+#include "controller.hpp"
 
-int main(int, char**)
+int main(int argc, char** argv)
 {
-    run();
-    return 0;
+    controller c{argc, argv};
+    return c.exec();
 }

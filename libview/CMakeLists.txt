@@ -15,29 +15,44 @@
 #You should have received a copy of the GNU General Public License
 #along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.14)
+
+find_package(
+    Magnum REQUIRED
+    GL
+    SceneGraph
+    Sdl2Application
+    Shaders
+    Text
+)
+
+find_package(
+    MagnumPlugins REQUIRED
+    FreeTypeFont
+)
+
+set_directory_properties(PROPERTIES CORRADE_USE_PEDANTIC_FLAGS ON)
 
 file(GLOB_RECURSE INCLUDE_FILES include/*)
 file(GLOB_RECURSE SRC_FILES src/*)
 
-add_library(
-    libview
-    ${INCLUDE_FILES}
-    ${SRC_FILES}
-)
+add_library(libview ${INCLUDE_FILES} ${SRC_FILES})
 
 set_property(
     TARGET libview
     PROPERTY CXX_STANDARD 17
 )
 
-target_include_directories(
-    libview
-    PUBLIC include
-)
+target_include_directories(libview PUBLIC include)
 
 target_link_libraries(
     libview
     PRIVATE
-        libsdl
+        Magnum::Application
+        Magnum::GL
+        Magnum::Magnum
+        Magnum::SceneGraph
+        Magnum::Shaders
+        Magnum::Text
+        MagnumPlugins::FreeTypeFont
 )

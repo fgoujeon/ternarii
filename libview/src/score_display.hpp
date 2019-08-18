@@ -20,25 +20,24 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #ifndef LIBVIEW_SCORE_DISPLAY_HPP
 #define LIBVIEW_SCORE_DISPLAY_HPP
 
-#include "label.hpp"
-#include <libsdl.hpp>
+#include "magnum_common.hpp"
+#include <Magnum/Text/Renderer.h>
 
 namespace libview
 {
 
-class score_display
+class score_display: public Object2D, public SceneGraph::Drawable2D
 {
     public:
-        score_display(SDL_Renderer& renderer, const SDL_Rect& area);
-
-        void set_score(const unsigned int value);
-
-        void draw(const geometry::system& sys);
+        explicit score_display(SceneGraph::DrawableGroup2D& drawables, Object2D* parent);
 
     private:
-        label label_;
+        void draw(const Magnum::Matrix3& transformationMatrix, SceneGraph::Camera2D& camera) override;
+
+    private:
+        Magnum::Text::Renderer2D renderer_;
 };
 
-} //namespace libview
+} //namespace
 
 #endif

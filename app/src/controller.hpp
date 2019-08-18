@@ -32,27 +32,21 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 class controller
 {
     public:
-        controller():
+        controller(int argc, char** argv):
             database_([this](const libdb::event& event){handle_database_event(event);}),
-            view_([this](const libview::event& event){handle_view_event(event);})
+            view_(argc, argv, [this](const libview::event& event){handle_view_event(event);})
         {
             handle_game_events(game_.start());
         }
 
-        bool must_quit() const
+        int exec()
         {
-            return view_.must_quit();
+            return view_.exec();
         }
 
         void iterate()
         {
             database_.iterate();
-            view_.iterate();
-        }
-
-        void set_window_size(const unsigned int width, const unsigned int height)
-        {
-            view_.set_window_size(width, height);
         }
 
     private:

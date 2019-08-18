@@ -17,27 +17,19 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef LIBVIEW_DRAW_HPP
-#define LIBVIEW_DRAW_HPP
-
-#include "geometry.hpp"
+#include <Magnum/SceneGraph/Camera.h>
+#include <Magnum/SceneGraph/Drawable.h>
+#include <Magnum/SceneGraph/MatrixTransformation2D.h>
+#include <Magnum/SceneGraph/Object.h>
+#include <Magnum/SceneGraph/Scene.h>
 
 namespace libview
 {
 
-inline
-void draw_rect(SDL_Renderer& renderer, const geometry::system& s, const SDL_Rect& r)
-{
-    const auto r2 = SDL_Rect
-    {
-        static_cast<int>(s.unit * r.x + s.origin.x),
-        static_cast<int>(s.unit * r.y + s.origin.y),
-        std::max(static_cast<int>(s.unit * r.w), 1),
-        std::max(static_cast<int>(s.unit * r.h), 1)
-    };
-    SDL_RenderFillRect(&renderer, &r2);
-}
+using Vector2 = Magnum::Vector2;
 
-} //namespace libview
+namespace SceneGraph = Magnum::SceneGraph;
+using Object2D = SceneGraph::Object<Magnum::SceneGraph::MatrixTransformation2D>;
+using Scene2D = SceneGraph::Scene<Magnum::SceneGraph::MatrixTransformation2D>;
 
-#endif
+} //namespace

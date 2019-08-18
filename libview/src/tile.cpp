@@ -18,109 +18,106 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 #include "tile.hpp"
-#include "draw.hpp"
-#include <map>
 
 namespace libview
 {
 
 namespace
 {
-    const auto label_vertical_margin_normalized = 0.2;
-    const auto label_height_normalized = 1 - 2 * label_vertical_margin_normalized;
-
-    SDL_Color get_background_color(const unsigned int value)
+    Magnum::Color3 value_to_color(const int value)
     {
-        const auto value_color_map = std::map<unsigned int, SDL_Color>
-        {
-            {0,  SDL_Color{0xa0, 0x52, 0x52, 0xff}},
-            {1,  SDL_Color{0xdd, 0x3b, 0x3b, 0xff}},
-            {2,  SDL_Color{0xef, 0x74, 0x29, 0xff}},
-            {3,  SDL_Color{0xe5, 0xbb, 0x13, 0xff}},
-            {4,  SDL_Color{0xa1, 0xc9, 0x27, 0xff}},
-            {5,  SDL_Color{0x2b, 0xcd, 0x73, 0xff}},
-            {6,  SDL_Color{0x25, 0xd7, 0xd2, 0xff}},
-            {7,  SDL_Color{0x3f, 0x94, 0xde, 0xff}},
-            {8,  SDL_Color{0x4c, 0x52, 0xe0, 0xff}},
-            {9,  SDL_Color{0x90, 0x4c, 0xe0, 0xff}},
-            {10, SDL_Color{0xd8, 0x4c, 0xe0, 0xff}},
-            {11, SDL_Color{0xe9, 0x98, 0xed, 0xff}},
-            {12, SDL_Color{0x98, 0x98, 0x98, 0xff}},
-            {13, SDL_Color{0x46, 0x1b, 0x3f, 0xff}}
-        };
+        using namespace Magnum::Math::Literals;
 
-        const auto it = value_color_map.find(value);
-        if(it != value_color_map.end())
-            return it->second;
-        else
-            return SDL_Color{0x00, 0x00, 0x00, 0xff};
+        switch(value)
+        {
+            case 0:  return 0xa05252_rgbf;
+            case 1:  return 0xdd3b3b_rgbf;
+            case 2:  return 0xef7429_rgbf;
+            case 3:  return 0xe5bb13_rgbf;
+            case 4:  return 0xa1c927_rgbf;
+            case 5:  return 0x2bcd73_rgbf;
+            case 6:  return 0x25d7d2_rgbf;
+            case 7:  return 0x3f94de_rgbf;
+            case 8:  return 0x4c52e0_rgbf;
+            case 9:  return 0x904ce0_rgbf;
+            case 10: return 0xd84ce0_rgbf;
+            case 11: return 0xe998ed_rgbf;
+            case 12: return 0x989898_rgbf;
+            case 13: return 0x461b3f_rgbf;
+            default: return 0x000000_rgbf;
+        }
     }
 
-    geometry::point get_label_position(const geometry::rect& tile_area)
+    Magnum::GL::Mesh& get_mesh()
     {
-        return geometry::point
+        static Magnum::GL::Mesh mesh;
+        static bool initialized = false;
+
+        if(!initialized)
         {
-            tile_area.pos.x,
-            tile_area.pos.y + tile_area.h * label_vertical_margin_normalized,
-        };
+            struct vertex
+            {
+                Magnum::Vector2 position;
+            };
+
+            /*
+            A---B
+            |   |
+            D---C
+            */
+            const vertex data[]
+            {
+                {Magnum::Vector2{-0.43f,  0.43f}}, //A
+                {Magnum::Vector2{-0.43f, -0.43f}}, //D
+                {Magnum::Vector2{ 0.43f, -0.43f}}, //C
+                {Magnum::Vector2{ 0.43f,  0.43f}}, //B
+                {Magnum::Vector2{-0.43f,  0.43f}}, //A
+                {Magnum::Vector2{ 0.43f, -0.43f}}, //C
+            };
+            Magnum::GL::Buffer buffer;
+            buffer.setData(data, Magnum::GL::BufferUsage::StaticDraw);
+
+            mesh.setCount(6);
+            mesh.addVertexBuffer
+            (
+                std::move(buffer),
+                0,
+                Magnum::Shaders::Flat2D::Position{}
+            );
+
+            initialized = true;
+        }
+
+        return mesh;
+    }
+
+    Magnum::Shaders::Flat2D& get_shader()
+    {
+        static Magnum::Shaders::Flat2D shader;
+        return shader;
     }
 }
 
-tile::tile
-(
-    SDL_Renderer& renderer,
-    const unsigned int value,
-    const geometry::rect& area
-):
-    renderer_(renderer),
-    area_(area),
-    background_color_(get_background_color(value)),
-    rectangle_
+tile::tile(SceneGraph::DrawableGroup2D& drawables, Object2D* parent):
+    Object2D{parent},
+    SceneGraph::Drawable2D{*this, &drawables}
+{
+}
+
+void tile::set_value(const int value)
+{
+    value_ = value;
+}
+
+void tile::draw(const Magnum::Matrix3& transformationMatrix, SceneGraph::Camera2D& camera)
+{
+    get_shader().setColor(value_to_color(value_));
+    get_shader().setTransformationProjectionMatrix
     (
-        renderer,
-        area_,
-        get_background_color(value)
-    ),
-    number_label_
-    (
-        renderer,
-        "res/fonts/DejaVuSans.ttf",
-        label_height_normalized * area.h,
-        SDL_Color{0xff, 0xff, 0xff, 0xff},
-        get_label_position(area),
-        area.w,
-        label_height_normalized * area.h,
-        std::to_string(value),
-        horizontal_alignment::center,
-        vertical_alignment::center
-    )
-{
+        camera.projectionMatrix() *
+        transformationMatrix
+    );
+    get_mesh().draw(get_shader());
 }
 
-const geometry::point& tile::get_position() const
-{
-    return area_.pos;
-}
-
-void tile::set_position(const geometry::point& position)
-{
-    area_.pos = position;
-    rectangle_.set_position(area_.pos);
-    number_label_.set_position(get_label_position(area_));
-}
-
-void tile::set_visible(const bool visible)
-{
-    visible_ = visible;
-}
-
-void tile::draw(const geometry::system& sys)
-{
-    if(!visible_)
-        return;
-
-    rectangle_.draw(sys);
-    number_label_.draw(sys);
-}
-
-} //namespace view
+} //namespace
