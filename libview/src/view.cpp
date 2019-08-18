@@ -34,12 +34,13 @@ namespace libview
 class view::impl final: public Magnum::Platform::Sdl2Application
 {
     public:
-        impl(const Arguments& arguments):
+        impl(int argc, char** argv, const event_handler& evt_handler):
             Magnum::Platform::Sdl2Application
             {
-                arguments,
+                Arguments{argc, argv},
                 Configuration{}.setWindowFlags(Configuration::WindowFlag::Resizable)
             },
+            event_handler_(evt_handler),
             cameraObject_(&scene_),
             camera_(cameraObject_)
         {
@@ -74,7 +75,45 @@ class view::impl final: public Magnum::Platform::Sdl2Application
             camera_.setViewport(event.windowSize());
         }
 
+        void keyPressEvent(KeyEvent& event)
+        {
+            switch(event.key())
+            {
+                case KeyEvent::Key::Left:
+                    send_move_request(events::left_shift_request{});
+                    break;
+                case KeyEvent::Key::Right:
+                    send_move_request(events::right_shift_request{});
+                    break;
+                case KeyEvent::Key::Up:
+                case KeyEvent::Key::Space:
+                    send_move_request(events::clockwise_rotation_request{});
+                    break;
+                case KeyEvent::Key::Down:
+                    send_move_request(events::drop_request{});
+                    break;
+                default:
+                    break;
+            }
+        }
+
     private:
+        template<class Event>
+        void send_move_request(Event&& event)
+        {
+            /*
+            Note: We want to ignore user inputs when we're animating, so that:
+            - we don't queue too many animations;
+            - user moves only when they knows what they're moving.
+            */
+
+            //if(!grid_.is_animating())
+                event_handler_(std::forward<Event>(event));
+        }
+
+    private:
+        event_handler event_handler_;
+
         Scene2D scene_;
         Object2D cameraObject_;
         SceneGraph::Camera2D camera_;
@@ -82,7 +121,7 @@ class view::impl final: public Magnum::Platform::Sdl2Application
 };
 
 view::view(int argc, char** argv, const event_handler& evt_handler):
-    pimpl_(std::make_unique<impl>(Magnum::Platform::Sdl2Application::Arguments{argc, argv}))
+    pimpl_(std::make_unique<impl>(argc, argv, evt_handler))
 {
 }
 
