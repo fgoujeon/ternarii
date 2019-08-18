@@ -145,7 +145,10 @@ void view::set_score(const unsigned int value)
 
 void view::set_hi_score(const unsigned int value){}
 
-void view::create_next_input(const unsigned int value0, const unsigned int value1){}
+void view::create_next_input(const unsigned int value0, const unsigned int value1)
+{
+    pimpl_->tile_grid_.create_next_input(value0, value1);
+}
 
 void view::insert_next_input(const unsigned int x_offset, const unsigned int rotation){}
 

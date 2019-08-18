@@ -20,6 +20,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #ifndef LIBVIEW_TILE_GRID_HPP
 #define LIBVIEW_TILE_GRID_HPP
 
+#include "tile.hpp"
 #include "magnum_common.hpp"
 #include <Magnum/GL/Mesh.h>
 #include <Magnum/Shaders/VertexColor.h>
@@ -29,8 +30,27 @@ namespace libview
 
 class tile_grid: public Object2D
 {
+    private:
+        template<size_t Size0, size_t Size1>
+        using tile_array = std::array<std::array<tile*, Size1>, Size0>;
+
+        using next_input_tile_array = std::array<tile*, 2>;
+        using input_tile_array = std::array<tile*, 2>;
+        using board_tile_array = tile_array<6, 10>;
+
     public:
         explicit tile_grid(SceneGraph::DrawableGroup2D& drawables, Object2D* parent);
+
+        void create_next_input(const unsigned int value0, const unsigned int value1);
+
+    private:
+        SceneGraph::DrawableGroup2D& drawables_;
+
+        next_input_tile_array next_input_tiles_;
+        input_tile_array input_tiles_;
+        unsigned int input_x_offset_ = 0;
+        unsigned int input_rotation_ = 0;
+        board_tile_array board_tiles_;
 };
 
 } //namespace
