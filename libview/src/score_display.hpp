@@ -31,6 +31,8 @@ class score_display: public Object2D, public SceneGraph::Drawable2D
     public:
         explicit score_display(SceneGraph::DrawableGroup2D& drawables, Object2D* parent);
 
+        void set_score(const int value);
+
     private:
         void draw(const Magnum::Matrix3& transformationMatrix, SceneGraph::Camera2D& camera) override;
 

@@ -72,6 +72,31 @@ namespace
         static Magnum::Shaders::DistanceFieldVector2D shader;
         return shader;
     }
+
+    std::string score_to_string(const unsigned int score)
+    {
+        std::string str;
+        auto temp_score = score;
+        auto digit_index = 0;
+
+        do
+        {
+            const auto digit = temp_score % 10;
+            const auto digit_char = static_cast<char>('0' + digit);
+
+            //add thousands separator
+            if(digit_index != 0 && digit_index % 3 == 0)
+                str = ' ' + str;
+
+            //add digit
+            str = std::string{digit_char} + str;
+
+            ++digit_index;
+            temp_score /= 10;
+        } while(temp_score != 0);
+
+        return str;
+    }
 }
 
 score_display::score_display(SceneGraph::DrawableGroup2D& drawables, Object2D* parent):
@@ -80,7 +105,12 @@ score_display::score_display(SceneGraph::DrawableGroup2D& drawables, Object2D* p
     renderer_(get_font(), get_glyph_cache(), 0.7f, Magnum::Text::Alignment::LineRight)
 {
     renderer_.reserve(40, Magnum::GL::BufferUsage::DynamicDraw, Magnum::GL::BufferUsage::StaticDraw);
-    renderer_.render("1 234 567");
+    renderer_.render("0");
+}
+
+void score_display::set_score(const int value)
+{
+    renderer_.render(score_to_string(value));
 }
 
 void score_display::draw(const Magnum::Matrix3& transformationMatrix, SceneGraph::Camera2D& camera)

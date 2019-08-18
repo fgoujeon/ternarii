@@ -50,7 +50,7 @@ class controller
         }
 
     private:
-        void handle_game_event(const libgame::events::start& event)
+        void handle_game_event(const libgame::events::start&)
         {
             view_.clear();
         }
