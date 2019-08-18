@@ -193,7 +193,11 @@ void view::drop_tiles(const data_types::tile_drop_list& drops)
     pimpl_->redraw();
 }
 
-void view::merge_tiles(const data_types::tile_merge_list& merges){}
+void view::merge_tiles(const data_types::tile_merge_list& merges)
+{
+    pimpl_->tile_grid_.merge_tiles(merges);
+    pimpl_->redraw();
+}
 
 void view::set_visible(const bool visible){}
 

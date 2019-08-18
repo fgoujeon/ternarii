@@ -89,31 +89,6 @@ tile_grid::tile_grid(SceneGraph::DrawableGroup2D& drawables, Object2D* parent):
     Object2D{parent},
     drawables_(drawables)
 {
-//    for(int column_index = 0; column_index < 6; ++column_index)
-//    {
-//        for(int row_index = 0; row_index < 7; ++row_index)
-//        {
-//            auto& some_tile = addChild<tile>(drawables);
-//            some_tile.translate({-2.5f + column_index, -5.0f + row_index});
-//            some_tile.set_value(11 - (column_index + row_index));
-//        }
-//    }
-//
-//    auto& input_tile_0 = addChild<tile>(drawables);
-//    input_tile_0.translate({-1.5f, 2.5f});
-//    input_tile_0.set_value(0);
-//
-//    auto& input_tile_1 = addChild<tile>(drawables);
-//    input_tile_1.translate({-1.5f, 3.5f});
-//    input_tile_1.set_value(1);
-//
-//    auto& next_tile_0 = addChild<tile>(drawables);
-//    next_tile_0.translate({-0.5f, 5.0f});
-//    next_tile_0.set_value(2);
-//
-//    auto& next_tile_1 = addChild<tile>(drawables);
-//    next_tile_1.translate({0.5f, 5.0f});
-//    next_tile_1.set_value(3);
 }
 
 void tile_grid::create_next_input(const unsigned int value0, const unsigned int value1)
@@ -186,6 +161,27 @@ void tile_grid::drop_tiles(const data_types::tile_drop_list& drops)
             ptile->resetTransformation();
             ptile->translate(dst_position);
         }
+    }
+}
+
+void tile_grid::merge_tiles(const data_types::tile_merge_list& merges)
+{
+    for(const auto& merge: merges)
+    {
+        const auto dst_position = tile_coordinate_to_position(merge.dst_tile_coordinate);
+
+        for(const auto& src_tile_coordinate: merge.src_tile_coordinates)
+        {
+            if(auto& ptile = board_tiles_[src_tile_coordinate.x][src_tile_coordinate.y])
+            {
+                delete ptile;
+            }
+        }
+
+        auto& dst_tile = addChild<tile>(drawables_);
+        dst_tile.set_value(merge.dst_tile_value);
+        dst_tile.translate(dst_position);
+        board_tiles_[merge.dst_tile_coordinate.x][merge.dst_tile_coordinate.y] = &dst_tile;
     }
 }
 

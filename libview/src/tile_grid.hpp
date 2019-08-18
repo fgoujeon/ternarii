@@ -60,6 +60,8 @@ class tile_grid: public Object2D
 
         void drop_tiles(const data_types::tile_drop_list& drops);
 
+        void merge_tiles(const data_types::tile_merge_list& merges);
+
     private:
         void update_input_tiles_positions();
 
