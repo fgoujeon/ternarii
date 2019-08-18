@@ -25,6 +25,15 @@ namespace libview
 
 namespace
 {
+    Magnum::Vector2 tile_coordinate_to_position(const data_types::tile_coordinate& c)
+    {
+        return
+        {
+            -2.5f + c.x,
+            -5.0f + c.y
+        };
+    }
+
     std::array<Magnum::Vector2, 2> get_input_tile_positions(const unsigned int x_offset, const unsigned int rotation)
     {
         auto tile0_x = 0.0f;
@@ -142,6 +151,41 @@ void tile_grid::set_input_rotation(const unsigned int value)
     {
         input_rotation_ = value;
         update_input_tiles_positions();
+    }
+}
+
+void tile_grid::insert_input
+(
+    const unsigned int tile0_dst_column_index,
+    const unsigned int tile0_dst_row_index,
+    const unsigned int tile1_dst_column_index,
+    const unsigned int tile1_dst_row_index
+)
+{
+    if(input_tiles_[0])
+    {
+        board_tiles_[tile0_dst_column_index][tile0_dst_row_index] = input_tiles_[0];
+        input_tiles_[0] = nullptr;
+    }
+
+    if(input_tiles_[1])
+    {
+        board_tiles_[tile1_dst_column_index][tile1_dst_row_index] = input_tiles_[1];
+        input_tiles_[1] = nullptr;
+    }
+}
+
+void tile_grid::drop_tiles(const data_types::tile_drop_list& drops)
+{
+    for(const auto& drop: drops)
+    {
+        if(const auto ptile = board_tiles_[drop.column_index][drop.src_row_index])
+        {
+            const auto dst_position = tile_coordinate_to_position(data_types::tile_coordinate{drop.column_index, drop.dst_row_index});
+            board_tiles_[drop.column_index][drop.dst_row_index] = ptile;
+            ptile->resetTransformation();
+            ptile->translate(dst_position);
+        }
     }
 }
 

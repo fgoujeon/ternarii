@@ -175,9 +175,23 @@ void view::insert_input
     const unsigned int tile0_dst_row_index,
     const unsigned int tile1_dst_column_index,
     const unsigned int tile1_dst_row_index
-){}
+)
+{
+    pimpl_->tile_grid_.insert_input
+    (
+        tile0_dst_column_index,
+        tile0_dst_row_index,
+        tile1_dst_column_index,
+        tile1_dst_row_index
+    );
+    pimpl_->redraw();
+}
 
-void view::drop_tiles(const data_types::tile_drop_list& drops){}
+void view::drop_tiles(const data_types::tile_drop_list& drops)
+{
+    pimpl_->tile_grid_.drop_tiles(drops);
+    pimpl_->redraw();
+}
 
 void view::merge_tiles(const data_types::tile_merge_list& merges){}
 

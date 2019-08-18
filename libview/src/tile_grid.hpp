@@ -22,6 +22,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "tile.hpp"
 #include "magnum_common.hpp"
+#include <libview/data_types.hpp>
 #include <Magnum/GL/Mesh.h>
 #include <Magnum/Shaders/VertexColor.h>
 
@@ -48,6 +49,16 @@ class tile_grid: public Object2D
         void set_input_x_offset(const unsigned int value);
 
         void set_input_rotation(const unsigned int value);
+
+        void insert_input
+        (
+            const unsigned int tile0_dst_column_index,
+            const unsigned int tile0_dst_row_index,
+            const unsigned int tile1_dst_column_index,
+            const unsigned int tile1_dst_row_index
+        );
+
+        void drop_tiles(const data_types::tile_drop_list& drops);
 
     private:
         void update_input_tiles_positions();
