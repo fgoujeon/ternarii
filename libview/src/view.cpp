@@ -69,6 +69,7 @@ class view::impl final: public Magnum::Platform::Sdl2Application
             Magnum::GL::defaultFramebuffer.clear(Magnum::GL::FramebufferClear::Color);
             camera_.draw(drawables_);
             swapBuffers();
+            redraw();
         }
 
         void viewportEvent(ViewportEvent& event)
@@ -109,7 +110,7 @@ class view::impl final: public Magnum::Platform::Sdl2Application
             - user moves only when they knows what they're moving.
             */
 
-            //if(!grid_.is_animating())
+            if(!tile_grid_.is_animating())
                 event_handler_(std::forward<Event>(event));
         }
 
@@ -144,37 +145,31 @@ void view::clear(){}
 void view::set_score(const unsigned int value)
 {
     pimpl_->score_display_.set_score(value);
-    pimpl_->redraw();
 }
 
 void view::set_hi_score(const unsigned int value)
 {
     pimpl_->hi_score_display_.set_score(value);
-    pimpl_->redraw();
 }
 
 void view::create_next_input(const unsigned int value0, const unsigned int value1)
 {
     pimpl_->tile_grid_.create_next_input(value0, value1);
-    pimpl_->redraw();
 }
 
 void view::insert_next_input(const unsigned int x_offset, const unsigned int rotation)
 {
     pimpl_->tile_grid_.insert_next_input(x_offset, rotation);
-    pimpl_->redraw();
 }
 
 void view::set_input_x_offset(const unsigned int value)
 {
     pimpl_->tile_grid_.set_input_x_offset(value);
-    pimpl_->redraw();
 }
 
 void view::set_input_rotation(const unsigned int value)
 {
     pimpl_->tile_grid_.set_input_rotation(value);
-    pimpl_->redraw();
 }
 
 void view::insert_input
@@ -192,19 +187,16 @@ void view::insert_input
         tile1_dst_column_index,
         tile1_dst_row_index
     );
-    pimpl_->redraw();
 }
 
 void view::drop_tiles(const data_types::tile_drop_list& drops)
 {
     pimpl_->tile_grid_.drop_tiles(drops);
-    pimpl_->redraw();
 }
 
 void view::merge_tiles(const data_types::tile_merge_list& merges)
 {
     pimpl_->tile_grid_.merge_tiles(merges);
-    pimpl_->redraw();
 }
 
 void view::set_visible(const bool visible){}

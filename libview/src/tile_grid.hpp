@@ -23,13 +23,16 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include "tile.hpp"
 #include "magnum_common.hpp"
 #include <libview/data_types.hpp>
+#include <Magnum/Animation/Player.h>
 #include <Magnum/GL/Mesh.h>
 #include <Magnum/Shaders/VertexColor.h>
+#include <chrono>
+#include <list>
 
 namespace libview
 {
 
-class tile_grid: public Object2D
+class tile_grid: public Object2D, public SceneGraph::Drawable2D
 {
     private:
         template<size_t Size0, size_t Size1>
@@ -39,8 +42,13 @@ class tile_grid: public Object2D
         using input_tile_array = std::array<tile*, 2>;
         using board_tile_array = tile_array<6, 10>;
 
+        using animation_player = Magnum::Animation::Player<std::chrono::nanoseconds, Magnum::Float>;
+        using animation_player_list = std::list<animation_player>;
+
     public:
         explicit tile_grid(SceneGraph::DrawableGroup2D& drawables, Object2D* parent);
+
+        bool is_animating() const;
 
         void create_next_input(const unsigned int value0, const unsigned int value1);
 
@@ -66,7 +74,12 @@ class tile_grid: public Object2D
         void update_input_tiles_positions();
 
     private:
+        void draw(const Magnum::Matrix3& transformationMatrix, SceneGraph::Camera2D& camera) override;
+
+    private:
         SceneGraph::DrawableGroup2D& drawables_;
+
+        animation_player_list players_;
 
         next_input_tile_array next_input_tiles_;
         input_tile_array input_tiles_;

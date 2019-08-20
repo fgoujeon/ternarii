@@ -87,8 +87,14 @@ namespace
 
 tile_grid::tile_grid(SceneGraph::DrawableGroup2D& drawables, Object2D* parent):
     Object2D{parent},
+    SceneGraph::Drawable2D{*this, &drawables},
     drawables_(drawables)
 {
+}
+
+bool tile_grid::is_animating() const
+{
+    return !players_.empty();
 }
 
 void tile_grid::create_next_input(const unsigned int value0, const unsigned int value1)
@@ -191,9 +197,44 @@ void tile_grid::update_input_tiles_positions()
 
     for(auto i = 0; i < 2; ++i)
     {
-        input_tiles_[i]->resetTransformation();
-        input_tiles_[i]->translate(dst_positions[i]);
+        const auto ptranslation = new Magnum::Animation::Track<Magnum::Float, Magnum::Vector2>
+        {
+            {
+                {0.0f, input_tiles_[i]->transformation().translation()},
+                {0.1f, dst_positions[i]}
+            },
+            Magnum::Math::lerp,
+            Magnum::Animation::Extrapolation::Constant
+        };
+
+        auto& player = players_.emplace_back();
+        player.addWithCallback
+        (
+            *ptranslation,
+            [](Magnum::Float, const Magnum::Vector2& translation, tile& object)
+            {
+                object.resetTransformation();
+                object.translate(translation);
+            },
+            *input_tiles_[i]
+        );
+        player.play(std::chrono::system_clock::now().time_since_epoch());
     }
+}
+
+void tile_grid::draw(const Magnum::Matrix3& /*transformationMatrix*/, SceneGraph::Camera2D& /*camera*/)
+{
+    for(auto& player: players_)
+    {
+        player.advance(std::chrono::system_clock::now().time_since_epoch());
+    }
+    players_.remove_if
+    (
+        [](const animation_player& player)
+        {
+            return player.state() == Magnum::Animation::State::Stopped;
+        }
+    );
 }
 
 } //namespace
