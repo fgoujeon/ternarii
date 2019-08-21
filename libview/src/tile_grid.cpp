@@ -223,17 +223,7 @@ void tile_grid::merge_tiles(const data_types::tile_merge_list& merges)
             }
 
             //then, make it disappear with a fade out
-            animation1.add_alpha_transition
-            (
-                1,
-                0,
-                0.2, //duration
-                [](Magnum::Float, const float& alpha, tile& t)
-                {
-                    t.set_alpha(alpha);
-                },
-                src_tile
-            );
+            animation1.add_alpha_transition(1, 0, 0.2, src_tile);
 
             tiles_to_delete.push_back(&src_tile);
         }
@@ -245,17 +235,7 @@ void tile_grid::merge_tiles(const data_types::tile_merge_list& merges)
         board_tiles_[merge.dst_tile_coordinate.x][merge.dst_tile_coordinate.y] = &dst_tile;
 
         //make destination tile appear with a fade in
-        animation1.add_alpha_transition
-        (
-            0,
-            1,
-            0.2, //duration
-            [](Magnum::Float, const float& alpha, tile& t)
-            {
-                t.set_alpha(alpha);
-            },
-            dst_tile
-        );
+        animation1.add_alpha_transition(0, 1, 0.2, dst_tile);
     }
 
     animation1.set_cleanup_callback

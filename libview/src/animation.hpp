@@ -75,14 +75,13 @@ class animation
             );
         }
 
-        template<class Callback, class UserData>
+        template<class Object>
         void add_alpha_transition
         (
             const float start_alpha,
             const float finish_alpha,
             const float duration, //in seconds
-            Callback&& callback,
-            UserData& user_data
+            Object& object
         )
         {
             auto track = Magnum::Animation::Track<Magnum::Float, float>
@@ -100,8 +99,11 @@ class animation
             player.addWithCallback
             (
                 alpha_transitions_.back(),
-                std::forward<Callback>(callback),
-                user_data
+                [](Magnum::Float, const float& alpha, Object& obj)
+                {
+                    obj.set_alpha(alpha);
+                },
+                object
             );
         }
 
