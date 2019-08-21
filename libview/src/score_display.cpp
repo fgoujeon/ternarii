@@ -19,7 +19,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "score_display.hpp"
 #include <MagnumPlugins/FreeTypeFont/FreeTypeFont.h>
-#include <Magnum/Shaders/DistanceFieldVector.h>
+#include <Magnum/Shaders/Vector.h>
 #include <Magnum/Text/AbstractFont.h>
 #include <Magnum/Text/DistanceFieldGlyphCache.h>
 
@@ -37,7 +37,7 @@ namespace
         {
             font.initialize();
 
-            if(!font.openFile("res/fonts/DejaVuSans.ttf", 110.0f /*font size*/))
+            if(!font.openFile("res/fonts/DejaVuSans.ttf", 40.0f /*font size*/))
             {
                 std::exit(1);
             }
@@ -48,28 +48,26 @@ namespace
         return font;
     }
 
-    Magnum::Text::DistanceFieldGlyphCache& get_glyph_cache()
+    Magnum::Text::GlyphCache& get_glyph_cache()
     {
-        static Magnum::Text::DistanceFieldGlyphCache cache
+        static Magnum::Text::GlyphCache cache
         {
-            Magnum::Vector2i(2048), //Unscaled glyph cache texture size
-            Magnum::Vector2i(512), //Actual glyph cache texture size
-            22 //Distance field computation radius
+            Magnum::Vector2i(2048) //Unscaled glyph cache texture size
         };
         static bool initialized = false;
 
         if(!initialized)
         {
-            get_font().fillGlyphCache(cache, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789:-+,.! ");
+            get_font().fillGlyphCache(cache, "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 ");
             initialized = true;
         }
 
         return cache;
     }
 
-    Magnum::Shaders::DistanceFieldVector2D& get_shader()
+    Magnum::Shaders::Vector2D& get_shader()
     {
-        static Magnum::Shaders::DistanceFieldVector2D shader;
+        static Magnum::Shaders::Vector2D shader;
         return shader;
     }
 
@@ -120,7 +118,7 @@ void score_display::draw(const Magnum::Matrix3& transformationMatrix, SceneGraph
     get_shader().bindVectorTexture(get_glyph_cache().texture());
     get_shader().setTransformationProjectionMatrix(camera.projectionMatrix() * transformationMatrix);
     get_shader().setColor(0xffffff_rgbf);
-    get_shader().setSmoothness(0.025f/ transformationMatrix.uniformScaling());
+    //get_shader().setSmoothness(0.1f / transformationMatrix.uniformScaling());
     renderer_.mesh().draw(get_shader());
 }
 
