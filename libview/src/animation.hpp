@@ -39,6 +39,39 @@ class animation
         }
 
         template<class Object>
+        void add_fixed_duration_translation
+        (
+            const Magnum::Vector2& start_position,
+            const Magnum::Vector2& finish_position,
+            const float duration_s,
+            Object& object
+        )
+        {
+            auto track = Magnum::Animation::Track<Magnum::Float, Magnum::Vector2>
+            {
+                {
+                    {0.0f, start_position},
+                    {duration_s, finish_position}
+                },
+                Magnum::Math::lerp,
+                Magnum::Animation::Extrapolation::Constant
+            };
+
+            translations_.push_back(std::move(track));
+
+            player.addWithCallback
+            (
+                translations_.back(),
+                [](Magnum::Float, const Magnum::Vector2& translation, Object& obj)
+                {
+                    obj.resetTransformation();
+                    obj.translate(translation);
+                },
+                object
+            );
+        }
+
+        template<class Object>
         void add_fixed_speed_translation
         (
             const Magnum::Vector2& start_position,

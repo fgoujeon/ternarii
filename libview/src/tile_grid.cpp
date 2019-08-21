@@ -117,11 +117,11 @@ void tile_grid::create_next_input(const unsigned int value0, const unsigned int 
     {
         if(input_tiles_[i] != nullptr)
         {
-            animation.add_fixed_speed_translation
+            animation.add_fixed_duration_translation
             (
                 input_tiles_[i]->transformation().translation(),
                 dst_positions[i],
-                12,
+                animation_duration_s,
                 *input_tiles_[i]
             );
             animation.add_alpha_transition(0.5, 1, animation_duration_s, *input_tiles_[i]);
