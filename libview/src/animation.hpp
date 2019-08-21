@@ -38,14 +38,13 @@ class animation
             }
         }
 
-        template<class Callback, class UserData>
+        template<class Object>
         void add_fixed_speed_translation
         (
             const Magnum::Vector2& start_position,
             const Magnum::Vector2& finish_position,
             const float speed, //in distance unit per second
-            Callback&& callback,
-            UserData& user_data
+            Object& object
         )
         {
             const auto x1 = start_position.x();
@@ -70,8 +69,12 @@ class animation
             player.addWithCallback
             (
                 translations_.back(),
-                std::forward<Callback>(callback),
-                user_data
+                [](Magnum::Float, const Magnum::Vector2& translation, Object& obj)
+                {
+                    obj.resetTransformation();
+                    obj.translate(translation);
+                },
+                object
             );
         }
 

@@ -178,11 +178,6 @@ void tile_grid::drop_tiles(const data_types::tile_drop_list& drops)
             src_position,
             dst_position,
             24,
-            [](Magnum::Float, const Magnum::Vector2& translation, tile& object)
-            {
-                object.resetTransformation();
-                object.translate(translation);
-            },
             *ptile
         );
 
@@ -213,11 +208,6 @@ void tile_grid::merge_tiles(const data_types::tile_merge_list& merges)
                     src_position,
                     dst_position,
                     6,
-                    [](Magnum::Float, const Magnum::Vector2& translation, tile& t)
-                    {
-                        t.resetTransformation();
-                        t.translate(translation);
-                    },
                     src_tile
                 );
             }
@@ -280,11 +270,6 @@ void tile_grid::update_input_tiles_positions()
             input_tiles_[i]->transformation().translation(),
             dst_positions[i],
             12,
-            [](Magnum::Float, const Magnum::Vector2& translation, tile& object)
-            {
-                object.resetTransformation();
-                object.translate(translation);
-            },
             *input_tiles_[i]
         );
     }
