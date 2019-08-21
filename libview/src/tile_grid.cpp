@@ -94,7 +94,7 @@ tile_grid::tile_grid(SceneGraph::DrawableGroup2D& drawables, Object2D* parent):
 
 bool tile_grid::is_animating() const
 {
-    return !players_.empty();
+    return !animations_.empty();
 }
 
 void tile_grid::create_next_input(const unsigned int value0, const unsigned int value1)
@@ -195,22 +195,25 @@ void tile_grid::update_input_tiles_positions()
 {
     const auto dst_positions = get_input_tile_positions(input_x_offset_, input_rotation_);
 
+    auto& animation = animations_.emplace_back();
+
     for(auto i = 0; i < 2; ++i)
     {
-        const auto ptranslation = new Magnum::Animation::Track<Magnum::Float, Magnum::Vector2>
+        auto translation = Magnum::Animation::Track<Magnum::Float, Magnum::Vector2>
         {
             {
                 {0.0f, input_tiles_[i]->transformation().translation()},
-                {0.1f, dst_positions[i]}
+                {0.08f, dst_positions[i]}
             },
             Magnum::Math::lerp,
             Magnum::Animation::Extrapolation::Constant
         };
 
-        auto& player = players_.emplace_back();
-        player.addWithCallback
+        animation.tracks.push_back(std::move(translation));
+
+        animation.player.addWithCallback
         (
-            *ptranslation,
+            animation.tracks.back(),
             [](Magnum::Float, const Magnum::Vector2& translation, tile& object)
             {
                 object.resetTransformation();
@@ -218,21 +221,22 @@ void tile_grid::update_input_tiles_positions()
             },
             *input_tiles_[i]
         );
-        player.play(std::chrono::system_clock::now().time_since_epoch());
     }
+
+    animation.player.play(std::chrono::system_clock::now().time_since_epoch());
 }
 
 void tile_grid::draw(const Magnum::Matrix3& /*transformationMatrix*/, SceneGraph::Camera2D& /*camera*/)
 {
-    for(auto& player: players_)
+    for(auto& animation: animations_)
     {
-        player.advance(std::chrono::system_clock::now().time_since_epoch());
+        animation.player.advance(std::chrono::system_clock::now().time_since_epoch());
     }
-    players_.remove_if
+    animations_.remove_if
     (
-        [](const animation_player& player)
+        [](const animation& a)
         {
-            return player.state() == Magnum::Animation::State::Stopped;
+            return a.player.state() == Magnum::Animation::State::Stopped;
         }
     );
 }

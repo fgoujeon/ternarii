@@ -21,6 +21,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #define LIBVIEW_TILE_GRID_HPP
 
 #include "tile.hpp"
+#include "animation.hpp"
 #include "magnum_common.hpp"
 #include <libview/data_types.hpp>
 #include <Magnum/Animation/Player.h>
@@ -41,9 +42,6 @@ class tile_grid: public Object2D, public SceneGraph::Drawable2D
         using next_input_tile_array = std::array<tile*, 2>;
         using input_tile_array = std::array<tile*, 2>;
         using board_tile_array = tile_array<6, 10>;
-
-        using animation_player = Magnum::Animation::Player<std::chrono::nanoseconds, Magnum::Float>;
-        using animation_player_list = std::list<animation_player>;
 
     public:
         explicit tile_grid(SceneGraph::DrawableGroup2D& drawables, Object2D* parent);
@@ -79,7 +77,7 @@ class tile_grid: public Object2D, public SceneGraph::Drawable2D
     private:
         SceneGraph::DrawableGroup2D& drawables_;
 
-        animation_player_list players_;
+        animation_list animations_;
 
         next_input_tile_array next_input_tiles_;
         input_tile_array input_tiles_;
