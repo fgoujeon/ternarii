@@ -284,7 +284,7 @@ void tile_grid::update_input_tiles_positions()
         (
             input_tiles_[i]->transformation().translation(),
             dst_positions[i],
-            12,
+            20,
             *input_tiles_[i]
         );
     }
