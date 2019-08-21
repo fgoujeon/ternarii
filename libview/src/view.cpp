@@ -66,6 +66,8 @@ class view::impl final: public Magnum::Platform::Sdl2Application
 
         void drawEvent()
         {
+            tile_grid_.advance();
+
             Magnum::GL::defaultFramebuffer.clear(Magnum::GL::FramebufferClear::Color);
             camera_.draw(drawables_);
             swapBuffers();

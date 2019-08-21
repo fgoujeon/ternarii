@@ -30,6 +30,14 @@ namespace libview
 class animation
 {
     public:
+        ~animation()
+        {
+            if(cleanup_callback_)
+            {
+                cleanup_callback_();
+            }
+        }
+
         template<class Callback, class UserData>
         void add_fixed_speed_translation
         (
@@ -113,6 +121,12 @@ class animation
             return started_ && player.state() == Magnum::Animation::State::Stopped;
         }
 
+        template<class Callback>
+        void set_cleanup_callback(Callback&& callback)
+        {
+            cleanup_callback_ = std::forward<Callback>(callback);
+        }
+
         Magnum::Animation::Player<std::chrono::nanoseconds, Magnum::Float> player;
 
     private:
@@ -121,6 +135,7 @@ class animation
         std::list<Magnum::Animation::Track<Magnum::Float, float>> alpha_transitions_;
 
         bool started_ = false;
+        std::function<void()> cleanup_callback_;
 };
 
 using animation_list = std::list<animation>;

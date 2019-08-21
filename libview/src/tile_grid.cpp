@@ -87,7 +87,6 @@ namespace
 
 tile_grid::tile_grid(SceneGraph::DrawableGroup2D& drawables, Object2D* parent):
     Object2D{parent},
-    SceneGraph::Drawable2D{*this, &drawables},
     drawables_(drawables)
 {
 }
@@ -195,6 +194,7 @@ void tile_grid::merge_tiles(const data_types::tile_merge_list& merges)
 {
     auto& animation0 = animations_.emplace_back();
     auto& animation1 = animations_.emplace_back();
+    std::vector<tile*> tiles_to_delete;
 
     for(const auto& merge: merges)
     {
@@ -234,6 +234,8 @@ void tile_grid::merge_tiles(const data_types::tile_merge_list& merges)
                 },
                 src_tile
             );
+
+            tiles_to_delete.push_back(&src_tile);
         }
 
         //create destination tile
@@ -254,6 +256,34 @@ void tile_grid::merge_tiles(const data_types::tile_merge_list& merges)
             },
             dst_tile
         );
+    }
+
+    animation1.set_cleanup_callback
+    (
+        [this, tiles_to_delete]()
+        {
+            for(auto ptile: tiles_to_delete)
+            {
+                drawables_.remove(*ptile);
+                delete ptile;
+            }
+        }
+    );
+}
+
+void tile_grid::advance()
+{
+    if(!animations_.empty())
+    {
+        auto& animation = animations_.front();
+        if(!animation.is_done())
+        {
+            animation.advance();
+        }
+        else
+        {
+            animations_.pop_front();
+        }
     }
 }
 
@@ -277,22 +307,6 @@ void tile_grid::update_input_tiles_positions()
             },
             *input_tiles_[i]
         );
-    }
-}
-
-void tile_grid::draw(const Magnum::Matrix3& /*transformationMatrix*/, SceneGraph::Camera2D& /*camera*/)
-{
-    if(!animations_.empty())
-    {
-        auto& animation = animations_.front();
-        if(!animation.is_done())
-        {
-            animation.advance();
-        }
-        else
-        {
-            animations_.pop_front();
-        }
     }
 }
 

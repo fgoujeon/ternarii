@@ -33,7 +33,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libview
 {
 
-class tile_grid: public Object2D, public SceneGraph::Drawable2D
+class tile_grid: public Object2D
 {
     private:
         template<size_t Size0, size_t Size1>
@@ -68,11 +68,10 @@ class tile_grid: public Object2D, public SceneGraph::Drawable2D
 
         void merge_tiles(const data_types::tile_merge_list& merges);
 
-    private:
-        void update_input_tiles_positions();
+        void advance();
 
     private:
-        void draw(const Magnum::Matrix3& transformationMatrix, SceneGraph::Camera2D& camera) override;
+        void update_input_tiles_positions();
 
     private:
         SceneGraph::DrawableGroup2D& drawables_;
