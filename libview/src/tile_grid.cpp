@@ -207,21 +207,11 @@ void tile_grid::update_input_tiles_positions()
 
     for(auto i = 0; i < 2; ++i)
     {
-        auto translation = Magnum::Animation::Track<Magnum::Float, Magnum::Vector2>
-        {
-            {
-                {0.0f, input_tiles_[i]->transformation().translation()},
-                {0.08f, dst_positions[i]}
-            },
-            Magnum::Math::lerp,
-            Magnum::Animation::Extrapolation::Constant
-        };
-
-        animation.tracks.push_back(std::move(translation));
-
-        animation.player.addWithCallback
+        animation.add_fixed_speed_translation
         (
-            animation.tracks.back(),
+            input_tiles_[i]->transformation().translation(),
+            dst_positions[i],
+            12,
             [](Magnum::Float, const Magnum::Vector2& translation, tile& object)
             {
                 object.resetTransformation();
