@@ -165,37 +165,95 @@ void tile_grid::insert_input
 
 void tile_grid::drop_tiles(const data_types::tile_drop_list& drops)
 {
+    auto& animation = animations_.emplace_back();
+
     for(const auto& drop: drops)
     {
-        if(const auto ptile = board_tiles_[drop.column_index][drop.src_row_index])
-        {
-            const auto dst_position = tile_coordinate_to_position(data_types::tile_coordinate{drop.column_index, drop.dst_row_index});
-            board_tiles_[drop.column_index][drop.dst_row_index] = ptile;
-            ptile->resetTransformation();
-            ptile->translate(dst_position);
-        }
+        const auto ptile = board_tiles_[drop.column_index][drop.src_row_index];
+
+        const auto src_position = tile_coordinate_to_position(data_types::tile_coordinate{drop.column_index, drop.src_row_index});
+        const auto dst_position = tile_coordinate_to_position(data_types::tile_coordinate{drop.column_index, drop.dst_row_index});
+
+        animation.add_fixed_speed_translation
+        (
+            src_position,
+            dst_position,
+            24,
+            [](Magnum::Float, const Magnum::Vector2& translation, tile& object)
+            {
+                object.resetTransformation();
+                object.translate(translation);
+            },
+            *ptile
+        );
+
+        board_tiles_[drop.column_index][drop.dst_row_index] = ptile;
     }
 }
 
 void tile_grid::merge_tiles(const data_types::tile_merge_list& merges)
 {
+    auto& animation0 = animations_.emplace_back();
+    auto& animation1 = animations_.emplace_back();
+
     for(const auto& merge: merges)
     {
         const auto dst_position = tile_coordinate_to_position(merge.dst_tile_coordinate);
 
-        for(const auto& src_tile_coordinate: merge.src_tile_coordinates)
+        for(const auto& src_tile_coordinate: merge.src_tile_coordinates) //for each source tile
         {
-            if(auto& ptile = board_tiles_[src_tile_coordinate.x][src_tile_coordinate.y])
+            const auto src_position = tile_coordinate_to_position(src_tile_coordinate);
+            auto& src_tile = *board_tiles_[src_tile_coordinate.x][src_tile_coordinate.y];
+
+            //first, translate source tile toward position of destination tile
+            if(dst_position != src_position)
             {
-                delete ptile;
+                animation0.add_fixed_speed_translation
+                (
+                    src_position,
+                    dst_position,
+                    6,
+                    [](Magnum::Float, const Magnum::Vector2& translation, tile& t)
+                    {
+                        t.resetTransformation();
+                        t.translate(translation);
+                    },
+                    src_tile
+                );
             }
+
+            //then, make it disappear with a fade out
+            animation1.add_alpha_transition
+            (
+                1,
+                0,
+                0.2, //duration
+                [](Magnum::Float, const float& alpha, tile& t)
+                {
+                    t.set_alpha(alpha);
+                },
+                src_tile
+            );
         }
 
+        //create destination tile
         auto& dst_tile = addChild<tile>(drawables_);
         dst_tile.set_value(merge.dst_tile_value);
         dst_tile.translate(dst_position);
-        dst_tile.set_alpha(1);
         board_tiles_[merge.dst_tile_coordinate.x][merge.dst_tile_coordinate.y] = &dst_tile;
+
+        //make destination tile appear with a fade in
+        animation1.add_alpha_transition
+        (
+            0,
+            1,
+            0.2, //duration
+            [](Magnum::Float, const float& alpha, tile& t)
+            {
+                t.set_alpha(alpha);
+            },
+            dst_tile
+        );
     }
 }
 
@@ -220,23 +278,22 @@ void tile_grid::update_input_tiles_positions()
             *input_tiles_[i]
         );
     }
-
-    animation.player.play(std::chrono::system_clock::now().time_since_epoch());
 }
 
 void tile_grid::draw(const Magnum::Matrix3& /*transformationMatrix*/, SceneGraph::Camera2D& /*camera*/)
 {
-    for(auto& animation: animations_)
+    if(!animations_.empty())
     {
-        animation.player.advance(std::chrono::system_clock::now().time_since_epoch());
-    }
-    animations_.remove_if
-    (
-        [](const animation& a)
+        auto& animation = animations_.front();
+        if(!animation.is_done())
         {
-            return a.player.state() == Magnum::Animation::State::Stopped;
+            animation.advance();
         }
-    );
+        else
+        {
+            animations_.pop_front();
+        }
+    }
 }
 
 } //namespace

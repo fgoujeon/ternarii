@@ -27,47 +27,100 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libview
 {
 
-struct animation
+class animation
 {
-    template<class Callback, class UserData>
-    void add_fixed_speed_translation
-    (
-        const Magnum::Vector2& start_position,
-        const Magnum::Vector2& finish_position,
-        const float speed, //in distance unit per second
-        Callback&& callback,
-        UserData& user_data
-    )
-    {
-        const auto x1 = start_position.x();
-        const auto y1 = start_position.y();
-        const auto x2 = finish_position.x();
-        const auto y2 = finish_position.y();
-        const auto distance = std::sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
-        const auto time = distance / speed;
-
-        auto track = Magnum::Animation::Track<Magnum::Float, Magnum::Vector2>
-        {
-            {
-                {0.0f, start_position},
-                {time, finish_position}
-            },
-            Magnum::Math::lerp,
-            Magnum::Animation::Extrapolation::Constant
-        };
-
-        tracks.push_back(std::move(track));
-
-        player.addWithCallback
+    public:
+        template<class Callback, class UserData>
+        void add_fixed_speed_translation
         (
-            tracks.back(),
-            std::forward<Callback>(callback),
-            user_data
-        );
-    }
+            const Magnum::Vector2& start_position,
+            const Magnum::Vector2& finish_position,
+            const float speed, //in distance unit per second
+            Callback&& callback,
+            UserData& user_data
+        )
+        {
+            const auto x1 = start_position.x();
+            const auto y1 = start_position.y();
+            const auto x2 = finish_position.x();
+            const auto y2 = finish_position.y();
+            const auto distance = std::sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
+            const auto time = distance / speed;
 
-    Magnum::Animation::Player<std::chrono::nanoseconds, Magnum::Float> player;
-    std::list<Magnum::Animation::Track<Magnum::Float, Magnum::Vector2>> tracks; //for storage only
+            auto track = Magnum::Animation::Track<Magnum::Float, Magnum::Vector2>
+            {
+                {
+                    {0.0f, start_position},
+                    {time, finish_position}
+                },
+                Magnum::Math::lerp,
+                Magnum::Animation::Extrapolation::Constant
+            };
+
+            translations_.push_back(std::move(track));
+
+            player.addWithCallback
+            (
+                translations_.back(),
+                std::forward<Callback>(callback),
+                user_data
+            );
+        }
+
+        template<class Callback, class UserData>
+        void add_alpha_transition
+        (
+            const float start_alpha,
+            const float finish_alpha,
+            const float duration, //in seconds
+            Callback&& callback,
+            UserData& user_data
+        )
+        {
+            auto track = Magnum::Animation::Track<Magnum::Float, float>
+            {
+                {
+                    {0.0f, start_alpha},
+                    {duration, finish_alpha}
+                },
+                Magnum::Math::lerp,
+                Magnum::Animation::Extrapolation::Constant
+            };
+
+            alpha_transitions_.push_back(std::move(track));
+
+            player.addWithCallback
+            (
+                alpha_transitions_.back(),
+                std::forward<Callback>(callback),
+                user_data
+            );
+        }
+
+        void advance()
+        {
+            if(!started_)
+            {
+                player.play(std::chrono::system_clock::now().time_since_epoch());
+                started_ = true;
+            }
+
+            player.advance(std::chrono::system_clock::now().time_since_epoch());
+        }
+
+        bool is_done() const
+        {
+            return started_ && player.state() == Magnum::Animation::State::Stopped;
+        }
+
+        Magnum::Animation::Player<std::chrono::nanoseconds, Magnum::Float> player;
+
+    private:
+        //for storage only
+        std::list<Magnum::Animation::Track<Magnum::Float, Magnum::Vector2>> translations_;
+        std::list<Magnum::Animation::Track<Magnum::Float, float>> alpha_transitions_;
+
+        bool started_ = false;
 };
 
 using animation_list = std::list<animation>;
