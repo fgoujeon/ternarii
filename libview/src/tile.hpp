@@ -34,11 +34,14 @@ class tile: public Object2D, public SceneGraph::Drawable2D
 
         void set_value(const int value);
 
+        void set_alpha(const float alpha);
+
     private:
         void draw(const Magnum::Matrix3& transformationMatrix, SceneGraph::Camera2D& camera) override;
 
     private:
         int value_ = 0;
+        float alpha_ = 0;
 };
 
 } //namespace

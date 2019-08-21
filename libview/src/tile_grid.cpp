@@ -102,18 +102,25 @@ void tile_grid::create_next_input(const unsigned int value0, const unsigned int 
     next_input_tiles_[0] = &addChild<tile>(drawables_);
     next_input_tiles_[0]->translate({-0.5f, 5.0f});
     next_input_tiles_[0]->set_value(value0);
+    next_input_tiles_[0]->set_alpha(0.5f);
 
     next_input_tiles_[1] = &addChild<tile>(drawables_);
     next_input_tiles_[1]->translate({0.5f, 5.0f});
     next_input_tiles_[1]->set_value(value1);
+    next_input_tiles_[1]->set_alpha(0.5f);
 }
 
 void tile_grid::insert_next_input(const unsigned int x_offset, const unsigned int rotation)
 {
-    input_tiles_[0] = next_input_tiles_[0];
-    input_tiles_[1] = next_input_tiles_[1];
     input_x_offset_ = x_offset;
     input_rotation_ = rotation;
+
+    input_tiles_[0] = next_input_tiles_[0];
+    input_tiles_[0]->set_alpha(1);
+
+    input_tiles_[1] = next_input_tiles_[1];
+    input_tiles_[1]->set_alpha(1);
+
     update_input_tiles_positions();
 }
 
@@ -187,6 +194,7 @@ void tile_grid::merge_tiles(const data_types::tile_merge_list& merges)
         auto& dst_tile = addChild<tile>(drawables_);
         dst_tile.set_value(merge.dst_tile_value);
         dst_tile.translate(dst_position);
+        dst_tile.set_alpha(1);
         board_tiles_[merge.dst_tile_coordinate.x][merge.dst_tile_coordinate.y] = &dst_tile;
     }
 }

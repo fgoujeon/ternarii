@@ -109,9 +109,16 @@ void tile::set_value(const int value)
     value_ = value;
 }
 
+void tile::set_alpha(const float alpha)
+{
+    alpha_ = alpha;
+}
+
 void tile::draw(const Magnum::Matrix3& transformationMatrix, SceneGraph::Camera2D& camera)
 {
-    get_shader().setColor(value_to_color(value_));
+    const auto color_no_alpha = value_to_color(value_);
+    const auto color = Magnum::Color4{color_no_alpha, alpha_};
+    get_shader().setColor(color);
     get_shader().setTransformationProjectionMatrix
     (
         camera.projectionMatrix() *
