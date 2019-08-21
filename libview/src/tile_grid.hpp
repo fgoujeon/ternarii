@@ -78,11 +78,11 @@ class tile_grid: public Object2D
 
         animation_list animations_;
 
-        next_input_tile_array next_input_tiles_;
-        input_tile_array input_tiles_;
+        next_input_tile_array next_input_tiles_ = {};
+        input_tile_array input_tiles_ = {};
         unsigned int input_x_offset_ = 0;
         unsigned int input_rotation_ = 0;
-        board_tile_array board_tiles_;
+        board_tile_array board_tiles_ = {};
 };
 
 } //namespace

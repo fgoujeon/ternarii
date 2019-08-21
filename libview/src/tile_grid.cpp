@@ -99,41 +99,43 @@ bool tile_grid::is_animating() const
 void tile_grid::create_next_input(const unsigned int value0, const unsigned int value1)
 {
     auto& animation = animations_.emplace_back();
+    const auto animation_duration_s = 0.15f;
 
     next_input_tiles_[0] = &addChild<tile>(drawables_);
     next_input_tiles_[0]->translate({-0.5f, 5.0f});
     next_input_tiles_[0]->set_value(value0);
-    animation.add_alpha_transition(0, 0.5, 0.2, *next_input_tiles_[0]);
+    animation.add_alpha_transition(0, 0.5, animation_duration_s, *next_input_tiles_[0]);
 
     next_input_tiles_[1] = &addChild<tile>(drawables_);
     next_input_tiles_[1]->translate({0.5f, 5.0f});
     next_input_tiles_[1]->set_value(value1);
-    animation.add_alpha_transition(0, 0.5, 0.2, *next_input_tiles_[1]);
+    animation.add_alpha_transition(0, 0.5, animation_duration_s, *next_input_tiles_[1]);
+
+    //simultaneously animate insertion of next input
+    const auto dst_positions = get_input_tile_positions(input_x_offset_, input_rotation_);
+    for(auto i = 0; i < 2; ++i)
+    {
+        if(input_tiles_[i] != nullptr)
+        {
+            animation.add_fixed_speed_translation
+            (
+                input_tiles_[i]->transformation().translation(),
+                dst_positions[i],
+                12,
+                *input_tiles_[i]
+            );
+            animation.add_alpha_transition(0.5, 1, animation_duration_s, *input_tiles_[i]);
+        }
+    }
 }
 
 void tile_grid::insert_next_input(const unsigned int x_offset, const unsigned int rotation)
 {
     input_x_offset_ = x_offset;
     input_rotation_ = rotation;
-
     input_tiles_[0] = next_input_tiles_[0];
     input_tiles_[1] = next_input_tiles_[1];
-
-    const auto dst_positions = get_input_tile_positions(input_x_offset_, input_rotation_);
-
-    auto& animation = animations_.emplace_back();
-
-    for(auto i = 0; i < 2; ++i)
-    {
-        animation.add_fixed_speed_translation
-        (
-            input_tiles_[i]->transformation().translation(),
-            dst_positions[i],
-            12,
-            *input_tiles_[i]
-        );
-        animation.add_alpha_transition(0.5, 1, 0.2, *input_tiles_[i]);
-    }
+    //Note: Animation is done in create_next_input().
 }
 
 void tile_grid::set_input_x_offset(const unsigned int value)
