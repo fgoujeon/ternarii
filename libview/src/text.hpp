@@ -17,32 +17,22 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef LIBVIEW_TILE_HPP
-#define LIBVIEW_TILE_HPP
+#ifndef LIBVIEW_TEXT_HPP
+#define LIBVIEW_TEXT_HPP
 
 #include "magnum_common.hpp"
-#include <Magnum/Text/Renderer.h>
-#include <Magnum/Math/Color.h>
-#include <Magnum/Magnum.h>
+#include <MagnumPlugins/FreeTypeFont/FreeTypeFont.h>
+#include <Magnum/Shaders/Vector.h>
+#include <Magnum/Text/GlyphCache.h>
 
-namespace libview
+namespace libview::text
 {
 
-class tile: public Object2D, public SceneGraph::Drawable2D
-{
-    public:
-        explicit tile(const int value, SceneGraph::DrawableGroup2D& drawables, Object2D* parent);
+Magnum::Text::FreeTypeFont& get_font();
 
-        void set_alpha(const float alpha);
+Magnum::Text::GlyphCache& get_glyph_cache();
 
-    private:
-        void draw(const Magnum::Matrix3& transformationMatrix, SceneGraph::Camera2D& camera) override;
-
-    private:
-        Magnum::Text::Renderer2D text_renderer_;
-        Magnum::Color3 square_color_;
-        float alpha_ = 0;
-};
+Magnum::Shaders::Vector2D& get_shader();
 
 } //namespace
 

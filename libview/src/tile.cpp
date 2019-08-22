@@ -18,6 +18,13 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 #include "tile.hpp"
+#include "text.hpp"
+#include <MagnumPlugins/FreeTypeFont/FreeTypeFont.h>
+#include <Magnum/GL/Mesh.h>
+#include <Magnum/Shaders/Flat.h>
+#include <Magnum/Shaders/Vector.h>
+#include <Magnum/Text/AbstractFont.h>
+#include <Magnum/Text/GlyphCache.h>
 
 namespace libview
 {
@@ -48,7 +55,7 @@ namespace
         }
     }
 
-    Magnum::GL::Mesh& get_mesh()
+    Magnum::GL::Mesh& get_square_mesh()
     {
         static Magnum::GL::Mesh mesh;
         static bool initialized = false;
@@ -91,22 +98,21 @@ namespace
         return mesh;
     }
 
-    Magnum::Shaders::Flat2D& get_shader()
+    Magnum::Shaders::Flat2D& get_square_shader()
     {
         static Magnum::Shaders::Flat2D shader;
         return shader;
     }
 }
 
-tile::tile(SceneGraph::DrawableGroup2D& drawables, Object2D* parent):
+tile::tile(const int value, SceneGraph::DrawableGroup2D& drawables, Object2D* parent):
     Object2D{parent},
-    SceneGraph::Drawable2D{*this, &drawables}
+    SceneGraph::Drawable2D{*this, &drawables},
+    text_renderer_(text::get_font(), text::get_glyph_cache(), 0.5f, Magnum::Text::Alignment::MiddleCenter),
+    square_color_(value_to_color(value))
 {
-}
-
-void tile::set_value(const int value)
-{
-    value_ = value;
+    text_renderer_.reserve(3, Magnum::GL::BufferUsage::DynamicDraw, Magnum::GL::BufferUsage::StaticDraw);
+    text_renderer_.render(std::to_string(value));
 }
 
 void tile::set_alpha(const float alpha)
@@ -116,15 +122,20 @@ void tile::set_alpha(const float alpha)
 
 void tile::draw(const Magnum::Matrix3& transformationMatrix, SceneGraph::Camera2D& camera)
 {
-    const auto color_no_alpha = value_to_color(value_);
-    const auto color = Magnum::Color4{color_no_alpha, alpha_};
-    get_shader().setColor(color);
-    get_shader().setTransformationProjectionMatrix
+    using namespace Magnum::Math::Literals;
+
+    get_square_shader().setColor(Magnum::Color4{square_color_, alpha_});
+    get_square_shader().setTransformationProjectionMatrix
     (
         camera.projectionMatrix() *
         transformationMatrix
     );
-    get_mesh().draw(get_shader());
+    get_square_mesh().draw(get_square_shader());
+
+    text::get_shader().bindVectorTexture(text::get_glyph_cache().texture());
+    text::get_shader().setColor(Magnum::Color4{0xffffff_rgbf, alpha_});
+    text::get_shader().setTransformationProjectionMatrix(camera.projectionMatrix() * transformationMatrix);
+    text_renderer_.mesh().draw(text::get_shader());
 }
 
 } //namespace

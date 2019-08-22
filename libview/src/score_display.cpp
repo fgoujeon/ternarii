@@ -18,59 +18,17 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 #include "score_display.hpp"
+#include "text.hpp"
 #include <MagnumPlugins/FreeTypeFont/FreeTypeFont.h>
 #include <Magnum/Shaders/Vector.h>
 #include <Magnum/Text/AbstractFont.h>
-#include <Magnum/Text/DistanceFieldGlyphCache.h>
+#include <Magnum/Text/GlyphCache.h>
 
 namespace libview
 {
 
 namespace
 {
-    Magnum::Text::FreeTypeFont& get_font()
-    {
-        static Magnum::Text::FreeTypeFont font;
-        static bool initialized = false;
-
-        if(!initialized)
-        {
-            font.initialize();
-
-            if(!font.openFile("res/fonts/DejaVuSans.ttf", 40.0f /*font size*/))
-            {
-                std::exit(1);
-            }
-
-            initialized = true;
-        }
-
-        return font;
-    }
-
-    Magnum::Text::GlyphCache& get_glyph_cache()
-    {
-        static Magnum::Text::GlyphCache cache
-        {
-            Magnum::Vector2i(2048) //Unscaled glyph cache texture size
-        };
-        static bool initialized = false;
-
-        if(!initialized)
-        {
-            get_font().fillGlyphCache(cache, "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 ");
-            initialized = true;
-        }
-
-        return cache;
-    }
-
-    Magnum::Shaders::Vector2D& get_shader()
-    {
-        static Magnum::Shaders::Vector2D shader;
-        return shader;
-    }
-
     std::string score_to_string(const unsigned int score)
     {
         std::string str;
@@ -100,7 +58,7 @@ namespace
 score_display::score_display(SceneGraph::DrawableGroup2D& drawables, Object2D* parent):
     Object2D{parent},
     SceneGraph::Drawable2D{*this, &drawables},
-    renderer_(get_font(), get_glyph_cache(), 1.0f, Magnum::Text::Alignment::TopRight)
+    renderer_(text::get_font(), text::get_glyph_cache(), 1.0f, Magnum::Text::Alignment::TopRight)
 {
     renderer_.reserve(40, Magnum::GL::BufferUsage::DynamicDraw, Magnum::GL::BufferUsage::StaticDraw);
     renderer_.render("0");
@@ -115,10 +73,10 @@ void score_display::draw(const Magnum::Matrix3& transformationMatrix, SceneGraph
 {
     using namespace Magnum::Math::Literals;
 
-    get_shader().bindVectorTexture(get_glyph_cache().texture());
-    get_shader().setTransformationProjectionMatrix(camera.projectionMatrix() * transformationMatrix);
-    get_shader().setColor(0xffffff_rgbf);
-    renderer_.mesh().draw(get_shader());
+    text::get_shader().bindVectorTexture(text::get_glyph_cache().texture());
+    text::get_shader().setTransformationProjectionMatrix(camera.projectionMatrix() * transformationMatrix);
+    text::get_shader().setColor(0xffffff_rgbf);
+    renderer_.mesh().draw(text::get_shader());
 }
 
 } //namespace

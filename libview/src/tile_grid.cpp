@@ -101,14 +101,12 @@ void tile_grid::create_next_input(const unsigned int value0, const unsigned int 
     auto& animation = animations_.emplace_back();
     const auto animation_duration_s = 0.15f;
 
-    next_input_tiles_[0] = &addChild<tile>(drawables_);
+    next_input_tiles_[0] = &addChild<tile>(value0, drawables_);
     next_input_tiles_[0]->translate({-0.5f, 5.0f});
-    next_input_tiles_[0]->set_value(value0);
     animation.add_alpha_transition(0, 0.5, animation_duration_s, *next_input_tiles_[0]);
 
-    next_input_tiles_[1] = &addChild<tile>(drawables_);
+    next_input_tiles_[1] = &addChild<tile>(value1, drawables_);
     next_input_tiles_[1]->translate({0.5f, 5.0f});
-    next_input_tiles_[1]->set_value(value1);
     animation.add_alpha_transition(0, 0.5, animation_duration_s, *next_input_tiles_[1]);
 
     //simultaneously animate insertion of next input
@@ -234,8 +232,7 @@ void tile_grid::merge_tiles(const data_types::tile_merge_list& merges)
         }
 
         //create destination tile
-        auto& dst_tile = addChild<tile>(drawables_);
-        dst_tile.set_value(merge.dst_tile_value);
+        auto& dst_tile = addChild<tile>(merge.dst_tile_value, drawables_);
         dst_tile.translate(dst_position);
         board_tiles_[merge.dst_tile_coordinate.x][merge.dst_tile_coordinate.y] = &dst_tile;
 
