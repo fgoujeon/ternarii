@@ -52,9 +52,10 @@ class view::impl final: public Magnum::Platform::Sdl2Application
             camera_.setViewport(Magnum::GL::defaultFramebuffer.viewport().size());
 
             tile_grid_.translate({0.0f, 1.0f});
-            score_display_.translate({3.0f, 6.8f});
-            hi_score_display_.scale({0.5f, 0.5f});
-            hi_score_display_.translate({3.0f, 6.5f});
+            score_display_.scale({0.7f, 0.7f});
+            score_display_.translate({3.0f, 7.5f});
+            hi_score_display_.scale({0.3f, 0.3f});
+            hi_score_display_.translate({3.0f, 6.8f});
 
             //configure renderer
             using namespace Magnum::Math::Literals;

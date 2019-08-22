@@ -100,7 +100,7 @@ namespace
 score_display::score_display(SceneGraph::DrawableGroup2D& drawables, Object2D* parent):
     Object2D{parent},
     SceneGraph::Drawable2D{*this, &drawables},
-    renderer_(get_font(), get_glyph_cache(), 0.7f, Magnum::Text::Alignment::LineRight)
+    renderer_(get_font(), get_glyph_cache(), 1.0f, Magnum::Text::Alignment::TopRight)
 {
     renderer_.reserve(40, Magnum::GL::BufferUsage::DynamicDraw, Magnum::GL::BufferUsage::StaticDraw);
     renderer_.render("0");
@@ -118,7 +118,6 @@ void score_display::draw(const Magnum::Matrix3& transformationMatrix, SceneGraph
     get_shader().bindVectorTexture(get_glyph_cache().texture());
     get_shader().setTransformationProjectionMatrix(camera.projectionMatrix() * transformationMatrix);
     get_shader().setColor(0xffffff_rgbf);
-    //get_shader().setSmoothness(0.1f / transformationMatrix.uniformScaling());
     renderer_.mesh().draw(get_shader());
 }
 
