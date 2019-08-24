@@ -64,8 +64,9 @@ class animation
                 translations_.back(),
                 [](Magnum::Float, const Magnum::Vector2& translation, Object& obj)
                 {
-                    obj.resetTransformation();
-                    obj.translate(translation);
+                    const auto current_translation = obj.transformation().translation();
+                    const auto translation_delta = translation - current_translation;
+                    obj.translate(translation_delta);
                 },
                 object
             );
@@ -104,8 +105,9 @@ class animation
                 translations_.back(),
                 [](Magnum::Float, const Magnum::Vector2& translation, Object& obj)
                 {
-                    obj.resetTransformation();
-                    obj.translate(translation);
+                    const auto current_translation = obj.transformation().translation();
+                    const auto translation_delta = translation - current_translation;
+                    obj.translate(translation_delta);
                 },
                 object
             );
