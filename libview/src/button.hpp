@@ -20,6 +20,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #ifndef LIBVIEW_BUTTON_HPP
 #define LIBVIEW_BUTTON_HPP
 
+#include "clickable.hpp"
 #include "magnum_common.hpp"
 #include <Magnum/Text/Renderer.h>
 #include <Magnum/Math/Color.h>
@@ -28,7 +29,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libview
 {
 
-class button: public Object2D, public SceneGraph::Drawable2D
+class button: public Object2D, public SceneGraph::Drawable2D, public clickable
 {
     public:
         using mouse_press_callback = std::function<void()>;
@@ -39,6 +40,7 @@ class button: public Object2D, public SceneGraph::Drawable2D
             const char* const label,
             const mouse_press_callback& cb,
             SceneGraph::DrawableGroup2D& drawables,
+            clickable_group& clickables,
             Object2D* parent
         );
 
@@ -47,8 +49,15 @@ class button: public Object2D, public SceneGraph::Drawable2D
             mouse_press_callback_();
         }
 
+    //Drawable2D virtual functions
     private:
         void draw(const Magnum::Matrix3& transformationMatrix, SceneGraph::Camera2D& camera) override;
+
+    //clickable virtual functions
+    private:
+        bool is_inside(const Magnum::Vector2& model_space_position) const override;
+
+        void mouse_press_event() override;
 
     private:
         const mouse_press_callback mouse_press_callback_;

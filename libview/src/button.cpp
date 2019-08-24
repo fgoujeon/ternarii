@@ -86,10 +86,12 @@ button::button
     const char* const label,
     const mouse_press_callback& cb,
     SceneGraph::DrawableGroup2D& drawables,
+    clickable_group& clickables,
     Object2D* parent
 ):
     Object2D{parent},
     SceneGraph::Drawable2D{*this, &drawables},
+    clickable{*this, &clickables},
     mouse_press_callback_(cb),
     text_renderer_(text::get_font(), text::get_glyph_cache(), 0.5f, Magnum::Text::Alignment::MiddleCenter)
 {
@@ -113,6 +115,18 @@ void button::draw(const Magnum::Matrix3& transformationMatrix, SceneGraph::Camer
     text::get_shader().setColor(0x444444_rgbf);
     text::get_shader().setTransformationProjectionMatrix(camera.projectionMatrix() * transformationMatrix);
     text_renderer_.mesh().draw(text::get_shader());
+}
+
+bool button::is_inside(const Magnum::Vector2& model_space_position) const
+{
+    const auto x = model_space_position.x();
+    const auto y = model_space_position.y();
+    return -1 <= x && x <= 1 && -1 <= y && y <= 1;
+}
+
+void button::mouse_press_event()
+{
+    mouse_press_callback_();
 }
 
 } //namespace
