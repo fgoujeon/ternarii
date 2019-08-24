@@ -73,6 +73,12 @@ class tile_grid: public Object2D
     private:
         void update_input_tiles_positions();
 
+        tile& add_tile
+        (
+            const int value,
+            const Magnum::Vector2& position
+        );
+
     private:
         SceneGraph::DrawableGroup2D& drawables_;
 

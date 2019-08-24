@@ -74,12 +74,12 @@ namespace
             */
             const vertex data[]
             {
-                {Magnum::Vector2{-0.43f,  0.43f}}, //A
-                {Magnum::Vector2{-0.43f, -0.43f}}, //D
-                {Magnum::Vector2{ 0.43f, -0.43f}}, //C
-                {Magnum::Vector2{ 0.43f,  0.43f}}, //B
-                {Magnum::Vector2{-0.43f,  0.43f}}, //A
-                {Magnum::Vector2{ 0.43f, -0.43f}}, //C
+                {Magnum::Vector2{-1.0f,  1.0f}}, //A
+                {Magnum::Vector2{-1.0f, -1.0f}}, //D
+                {Magnum::Vector2{ 1.0f, -1.0f}}, //C
+                {Magnum::Vector2{ 1.0f,  1.0f}}, //B
+                {Magnum::Vector2{-1.0f,  1.0f}}, //A
+                {Magnum::Vector2{ 1.0f, -1.0f}}, //C
             };
             Magnum::GL::Buffer buffer;
             buffer.setData(data, Magnum::GL::BufferUsage::StaticDraw);
@@ -108,7 +108,7 @@ namespace
 tile::tile(const int value, SceneGraph::DrawableGroup2D& drawables, Object2D* parent):
     Object2D{parent},
     SceneGraph::Drawable2D{*this, &drawables},
-    text_renderer_(text::get_font(), text::get_glyph_cache(), 0.5f, Magnum::Text::Alignment::MiddleCenter),
+    text_renderer_(text::get_font(), text::get_glyph_cache(), 1.2f, Magnum::Text::Alignment::MiddleCenter),
     square_color_(value_to_color(value))
 {
     text_renderer_.reserve(3, Magnum::GL::BufferUsage::DynamicDraw, Magnum::GL::BufferUsage::StaticDraw);

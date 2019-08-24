@@ -101,12 +101,10 @@ void tile_grid::create_next_input(const unsigned int value0, const unsigned int 
     auto& animation = animations_.emplace_back();
     const auto animation_duration_s = 0.15f;
 
-    next_input_tiles_[0] = &addChild<tile>(value0, drawables_);
-    next_input_tiles_[0]->translate({-0.5f, 5.0f});
+    next_input_tiles_[0] = &add_tile(value0, {-0.5f, 5.0f});
     animation.add_alpha_transition(0, 0.5, animation_duration_s, *next_input_tiles_[0]);
 
-    next_input_tiles_[1] = &addChild<tile>(value1, drawables_);
-    next_input_tiles_[1]->translate({0.5f, 5.0f});
+    next_input_tiles_[1] = &add_tile(value1, {0.5f, 5.0f});
     animation.add_alpha_transition(0, 0.5, animation_duration_s, *next_input_tiles_[1]);
 
     //simultaneously animate insertion of next input
@@ -232,8 +230,7 @@ void tile_grid::merge_tiles(const data_types::tile_merge_list& merges)
         }
 
         //create destination tile
-        auto& dst_tile = addChild<tile>(merge.dst_tile_value, drawables_);
-        dst_tile.translate(dst_position);
+        auto& dst_tile = add_tile(merge.dst_tile_value, dst_position);
         board_tiles_[merge.dst_tile_coordinate.x][merge.dst_tile_coordinate.y] = &dst_tile;
 
         //make destination tile appear with a fade in
@@ -285,6 +282,18 @@ void tile_grid::update_input_tiles_positions()
             *input_tiles_[i]
         );
     }
+}
+
+tile& tile_grid::add_tile
+(
+    const int value,
+    const Magnum::Vector2& position
+)
+{
+    auto& t = addChild<tile>(value, drawables_);
+    t.scale({0.45f, 0.45f});
+    t.translate(position);
+    return t;
 }
 
 } //namespace
