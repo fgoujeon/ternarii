@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+#include "button.hpp"
 #include "tile_grid.hpp"
 #include "score_display.hpp"
 #include "magnum_common.hpp"
@@ -45,7 +46,11 @@ class view::impl final: public Magnum::Platform::Sdl2Application
             camera_(cameraObject_),
             tile_grid_(scene_.addChild<tile_grid>(drawables_)),
             score_display_(scene_.addChild<score_display>(drawables_)),
-            hi_score_display_(scene_.addChild<score_display>(drawables_))
+            hi_score_display_(scene_.addChild<score_display>(drawables_)),
+            left_button_(scene_.addChild<button>("LEFT", drawables_)),
+            right_button_(scene_.addChild<button>("RIGHT", drawables_)),
+            drop_button_(scene_.addChild<button>("DROP", drawables_)),
+            rotate_button_(scene_.addChild<button>("ROTATE", drawables_))
         {
             camera_.setAspectRatioPolicy(SceneGraph::AspectRatioPolicy::Extend);
             camera_.setProjectionMatrix(Magnum::Matrix3::projection({9.0f, 16.0f}));
@@ -56,6 +61,14 @@ class view::impl final: public Magnum::Platform::Sdl2Application
             score_display_.translate({3.0f, 7.5f});
             hi_score_display_.scale({0.3f, 0.3f});
             hi_score_display_.translate({3.0f, 6.8f});
+            left_button_.scale({0.75f, 0.75f});
+            left_button_.translate({-3.25f, -5.75f});
+            right_button_.scale({0.75f, 0.75f});
+            right_button_.translate({-1.5f, -6.75f});
+            drop_button_.scale({0.75f, 0.75f});
+            drop_button_.translate({1.5f, -6.75f});
+            rotate_button_.scale({0.75f, 0.75f});
+            rotate_button_.translate({3.25f, -5.75f});
 
             //configure renderer
             using namespace Magnum::Math::Literals;
@@ -129,6 +142,10 @@ class view::impl final: public Magnum::Platform::Sdl2Application
         tile_grid& tile_grid_;
         score_display& score_display_;
         score_display& hi_score_display_;
+        button& left_button_;
+        button& right_button_;
+        button& drop_button_;
+        button& rotate_button_;
 };
 
 view::view(int argc, char** argv, const event_handler& evt_handler):
