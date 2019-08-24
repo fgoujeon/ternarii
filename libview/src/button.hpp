@@ -31,12 +31,27 @@ namespace libview
 class button: public Object2D, public SceneGraph::Drawable2D
 {
     public:
-        explicit button(const char* const label, SceneGraph::DrawableGroup2D& drawables, Object2D* parent);
+        using mouse_press_callback = std::function<void()>;
+
+    public:
+        explicit button
+        (
+            const char* const label,
+            const mouse_press_callback& cb,
+            SceneGraph::DrawableGroup2D& drawables,
+            Object2D* parent
+        );
+
+        void call_mouse_press_callback()
+        {
+            mouse_press_callback_();
+        }
 
     private:
         void draw(const Magnum::Matrix3& transformationMatrix, SceneGraph::Camera2D& camera) override;
 
     private:
+        const mouse_press_callback mouse_press_callback_;
         Magnum::Text::Renderer2D text_renderer_;
 };
 

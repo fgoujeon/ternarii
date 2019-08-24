@@ -47,10 +47,11 @@ class view::impl final: public Magnum::Platform::Sdl2Application
             tile_grid_(scene_.addChild<tile_grid>(drawables_)),
             score_display_(scene_.addChild<score_display>(drawables_)),
             hi_score_display_(scene_.addChild<score_display>(drawables_)),
-            left_button_(scene_.addChild<button>("LEFT", drawables_)),
-            right_button_(scene_.addChild<button>("RIGHT", drawables_)),
-            drop_button_(scene_.addChild<button>("DROP", drawables_)),
-            rotate_button_(scene_.addChild<button>("ROTATE", drawables_))
+            left_button_   (scene_.addChild<button>("LEFT",   [this]{send_move_request(events::left_shift_request{});},         drawables_)),
+            right_button_  (scene_.addChild<button>("RIGHT",  [this]{send_move_request(events::right_shift_request{});},        drawables_)),
+            drop_button_   (scene_.addChild<button>("DROP",   [this]{send_move_request(events::drop_request{});},               drawables_)),
+            rotate_button_ (scene_.addChild<button>("ROTATE", [this]{send_move_request(events::clockwise_rotation_request{});}, drawables_)),
+            buttons_{&left_button_, &right_button_, &drop_button_, &rotate_button_}
         {
             camera_.setAspectRatioPolicy(SceneGraph::AspectRatioPolicy::Extend);
             camera_.setProjectionMatrix(Magnum::Matrix3::projection({9.0f, 16.0f}));
@@ -129,47 +130,19 @@ class view::impl final: public Magnum::Platform::Sdl2Application
                 * camera_.projectionSize()
             ;
 
-            //left button
+            for(const auto pbutton: buttons_)
             {
-                const auto button_space_position = left_button_.absoluteTransformationMatrix().inverted().transformPoint(world_space_position);
-                const auto x = button_space_position.x();
-                const auto y = button_space_position.y();
-                if(-1 <= x && x <= 1 && -1 <= y && y <= 1)
-                {
-                    send_move_request(events::left_shift_request{});
-                }
-            }
+                auto& button = *pbutton;
 
-            //right button
-            {
-                const auto button_space_position = right_button_.absoluteTransformationMatrix().inverted().transformPoint(world_space_position);
+                //convert to model-space coordinates of button
+                const auto button_space_position = button.absoluteTransformationMatrix().inverted().transformPoint(world_space_position);
                 const auto x = button_space_position.x();
                 const auto y = button_space_position.y();
-                if(-1 <= x && x <= 1 && -1 <= y && y <= 1)
-                {
-                    send_move_request(events::right_shift_request{});
-                }
-            }
 
-            //drop button
-            {
-                const auto button_space_position = drop_button_.absoluteTransformationMatrix().inverted().transformPoint(world_space_position);
-                const auto x = button_space_position.x();
-                const auto y = button_space_position.y();
+                //check if click position is inside button
                 if(-1 <= x && x <= 1 && -1 <= y && y <= 1)
                 {
-                    send_move_request(events::drop_request{});
-                }
-            }
-
-            //rotate button
-            {
-                const auto button_space_position = rotate_button_.absoluteTransformationMatrix().inverted().transformPoint(world_space_position);
-                const auto x = button_space_position.x();
-                const auto y = button_space_position.y();
-                if(-1 <= x && x <= 1 && -1 <= y && y <= 1)
-                {
-                    send_move_request(events::clockwise_rotation_request{});
+                    button.call_mouse_press_callback();
                 }
             }
         }
@@ -204,6 +177,7 @@ class view::impl final: public Magnum::Platform::Sdl2Application
         button& right_button_;
         button& drop_button_;
         button& rotate_button_;
+        const std::vector<button*> buttons_;
 };
 
 view::view(int argc, char** argv, const event_handler& evt_handler):

@@ -81,9 +81,16 @@ namespace
     }
 }
 
-button::button(const char* const label, SceneGraph::DrawableGroup2D& drawables, Object2D* parent):
+button::button
+(
+    const char* const label,
+    const mouse_press_callback& cb,
+    SceneGraph::DrawableGroup2D& drawables,
+    Object2D* parent
+):
     Object2D{parent},
     SceneGraph::Drawable2D{*this, &drawables},
+    mouse_press_callback_(cb),
     text_renderer_(text::get_font(), text::get_glyph_cache(), 0.5f, Magnum::Text::Alignment::MiddleCenter)
 {
     text_renderer_.reserve(10, Magnum::GL::BufferUsage::DynamicDraw, Magnum::GL::BufferUsage::StaticDraw);
