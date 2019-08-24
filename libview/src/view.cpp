@@ -78,6 +78,7 @@ class view::impl final: public Magnum::Platform::Sdl2Application
             Magnum::GL::Renderer::setBlendEquation(Magnum::GL::Renderer::BlendEquation::Add, Magnum::GL::Renderer::BlendEquation::Add);
         }
 
+    private:
         void drawEvent()
         {
             tile_grid_.advance();
@@ -113,6 +114,63 @@ class view::impl final: public Magnum::Platform::Sdl2Application
                     break;
                 default:
                     break;
+            }
+        }
+
+        void mousePressEvent(MouseEvent& event)
+        {
+            //integer window-space coordinates (with origin in top left corner and Y down)
+            const auto& window_space_position = event.position();
+
+            //convert to floating-point world-space coordinates (with origin at camera position and Y up)
+            const auto world_space_position =
+                (Magnum::Vector2{window_space_position} / Magnum::Vector2{Magnum::GL::defaultFramebuffer.viewport().size()} - Magnum::Vector2{0.5f})
+                * Magnum::Vector2::yScale(-1.0f)
+                * camera_.projectionSize()
+            ;
+
+            //left button
+            {
+                const auto button_space_position = left_button_.absoluteTransformationMatrix().inverted().transformPoint(world_space_position);
+                const auto x = button_space_position.x();
+                const auto y = button_space_position.y();
+                if(-1 <= x && x <= 1 && -1 <= y && y <= 1)
+                {
+                    send_move_request(events::left_shift_request{});
+                }
+            }
+
+            //right button
+            {
+                const auto button_space_position = right_button_.absoluteTransformationMatrix().inverted().transformPoint(world_space_position);
+                const auto x = button_space_position.x();
+                const auto y = button_space_position.y();
+                if(-1 <= x && x <= 1 && -1 <= y && y <= 1)
+                {
+                    send_move_request(events::right_shift_request{});
+                }
+            }
+
+            //drop button
+            {
+                const auto button_space_position = drop_button_.absoluteTransformationMatrix().inverted().transformPoint(world_space_position);
+                const auto x = button_space_position.x();
+                const auto y = button_space_position.y();
+                if(-1 <= x && x <= 1 && -1 <= y && y <= 1)
+                {
+                    send_move_request(events::drop_request{});
+                }
+            }
+
+            //rotate button
+            {
+                const auto button_space_position = rotate_button_.absoluteTransformationMatrix().inverted().transformPoint(world_space_position);
+                const auto x = button_space_position.x();
+                const auto y = button_space_position.y();
+                if(-1 <= x && x <= 1 && -1 <= y && y <= 1)
+                {
+                    send_move_request(events::clockwise_rotation_request{});
+                }
             }
         }
 
