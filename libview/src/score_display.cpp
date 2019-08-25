@@ -69,12 +69,12 @@ void score_display::set_score(const int value)
     renderer_.render(score_to_string(value));
 }
 
-void score_display::draw(const Magnum::Matrix3& transformationMatrix, SceneGraph::Camera2D& camera)
+void score_display::draw(const Magnum::Matrix3& transformation_matrix, SceneGraph::Camera2D& camera)
 {
     using namespace Magnum::Math::Literals;
 
     text::get_shader().bindVectorTexture(text::get_glyph_cache().texture());
-    text::get_shader().setTransformationProjectionMatrix(camera.projectionMatrix() * transformationMatrix);
+    text::get_shader().setTransformationProjectionMatrix(camera.projectionMatrix() * transformation_matrix);
     text::get_shader().setColor(0xffffff_rgbf);
     renderer_.mesh().draw(text::get_shader());
 }

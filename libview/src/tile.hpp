@@ -36,7 +36,7 @@ class tile: public Object2D, public SceneGraph::Drawable2D
         void set_alpha(const float alpha);
 
     private:
-        void draw(const Magnum::Matrix3& transformationMatrix, SceneGraph::Camera2D& camera) override;
+        void draw(const Magnum::Matrix3& transformation_matrix, SceneGraph::Camera2D& camera) override;
 
     private:
         Magnum::Text::Renderer2D text_renderer_;

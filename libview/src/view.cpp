@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+#include "game_over_screen.hpp"
 #include "button.hpp"
 #include "tile_grid.hpp"
 #include "score_display.hpp"
@@ -51,7 +52,8 @@ class view::impl final: public Magnum::Platform::Sdl2Application
             left_button_   (scene_.addChild<button>("LEFT",   [this]{send_move_request(events::left_shift_request{});},         drawables_, clickables_)),
             right_button_  (scene_.addChild<button>("RIGHT",  [this]{send_move_request(events::right_shift_request{});},        drawables_, clickables_)),
             drop_button_   (scene_.addChild<button>("DROP",   [this]{send_move_request(events::drop_request{});},               drawables_, clickables_)),
-            rotate_button_ (scene_.addChild<button>("ROTATE", [this]{send_move_request(events::clockwise_rotation_request{});}, drawables_, clickables_))
+            rotate_button_ (scene_.addChild<button>("ROTATE", [this]{send_move_request(events::clockwise_rotation_request{});}, drawables_, clickables_)),
+            game_over_screen_(scene_.addChild<game_over_screen>([this]{send_move_request(events::clear_request{});}, drawables_, clickables_))
         {
             camera_.setAspectRatioPolicy(SceneGraph::AspectRatioPolicy::Extend);
             camera_.setProjectionMatrix(Magnum::Matrix3::projection({9.0f, 16.0f}));
@@ -70,6 +72,7 @@ class view::impl final: public Magnum::Platform::Sdl2Application
             drop_button_.translate({1.5f, -6.75f});
             rotate_button_.scale({0.75f, 0.75f});
             rotate_button_.translate({3.25f, -5.75f});
+            game_over_screen_.translate({0.0f, 4.5f});
 
             //configure renderer
             using namespace Magnum::Math::Literals;
@@ -176,6 +179,7 @@ class view::impl final: public Magnum::Platform::Sdl2Application
         button& right_button_;
         button& drop_button_;
         button& rotate_button_;
+        game_over_screen& game_over_screen_;
 };
 
 view::view(int argc, char** argv, const event_handler& evt_handler):
@@ -190,7 +194,11 @@ int view::exec()
     return pimpl_->exec();
 }
 
-void view::clear(){}
+void view::clear()
+{
+    pimpl_->tile_grid_.clear();
+    pimpl_->game_over_screen_.set_visible(false);
+}
 
 void view::set_score(const unsigned int value)
 {
@@ -251,6 +259,9 @@ void view::merge_tiles(const data_types::tile_merge_list& merges)
 
 void view::set_visible(const bool visible){}
 
-void view::set_game_over_screen_visible(const bool visible){}
+void view::set_game_over_screen_visible(const bool visible)
+{
+    pimpl_->game_over_screen_.set_visible(visible);
+}
 
 } //namespace

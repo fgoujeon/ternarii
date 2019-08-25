@@ -19,12 +19,8 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "tile.hpp"
 #include "text.hpp"
-#include <MagnumPlugins/FreeTypeFont/FreeTypeFont.h>
 #include <Magnum/GL/Mesh.h>
 #include <Magnum/Shaders/Flat.h>
-#include <Magnum/Shaders/Vector.h>
-#include <Magnum/Text/AbstractFont.h>
-#include <Magnum/Text/GlyphCache.h>
 
 namespace libview
 {
@@ -120,7 +116,7 @@ void tile::set_alpha(const float alpha)
     alpha_ = alpha;
 }
 
-void tile::draw(const Magnum::Matrix3& transformationMatrix, SceneGraph::Camera2D& camera)
+void tile::draw(const Magnum::Matrix3& transformation_matrix, SceneGraph::Camera2D& camera)
 {
     using namespace Magnum::Math::Literals;
 
@@ -128,13 +124,13 @@ void tile::draw(const Magnum::Matrix3& transformationMatrix, SceneGraph::Camera2
     get_square_shader().setTransformationProjectionMatrix
     (
         camera.projectionMatrix() *
-        transformationMatrix
+        transformation_matrix
     );
     get_square_mesh().draw(get_square_shader());
 
     text::get_shader().bindVectorTexture(text::get_glyph_cache().texture());
     text::get_shader().setColor(Magnum::Color4{0xffffff_rgbf, alpha_});
-    text::get_shader().setTransformationProjectionMatrix(camera.projectionMatrix() * transformationMatrix);
+    text::get_shader().setTransformationProjectionMatrix(camera.projectionMatrix() * transformation_matrix);
     text_renderer_.mesh().draw(text::get_shader());
 }
 

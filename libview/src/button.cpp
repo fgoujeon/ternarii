@@ -99,7 +99,7 @@ button::button
     text_renderer_.render(label);
 }
 
-void button::draw(const Magnum::Matrix3& transformationMatrix, SceneGraph::Camera2D& camera)
+void button::draw(const Magnum::Matrix3& transformation_matrix, SceneGraph::Camera2D& camera)
 {
     using namespace Magnum::Math::Literals;
 
@@ -107,13 +107,13 @@ void button::draw(const Magnum::Matrix3& transformationMatrix, SceneGraph::Camer
     get_square_shader().setTransformationProjectionMatrix
     (
         camera.projectionMatrix() *
-        transformationMatrix
+        transformation_matrix
     );
     get_square_mesh().draw(get_square_shader());
 
     text::get_shader().bindVectorTexture(text::get_glyph_cache().texture());
     text::get_shader().setColor(0x444444_rgbf);
-    text::get_shader().setTransformationProjectionMatrix(camera.projectionMatrix() * transformationMatrix);
+    text::get_shader().setTransformationProjectionMatrix(camera.projectionMatrix() * transformation_matrix);
     text_renderer_.mesh().draw(text::get_shader());
 }
 

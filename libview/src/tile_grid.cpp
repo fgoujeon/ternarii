@@ -96,6 +96,30 @@ bool tile_grid::is_animating() const
     return !animations_.empty();
 }
 
+void tile_grid::clear()
+{
+    for(const auto ptile: next_input_tiles_)
+    {
+        delete ptile;
+    }
+    next_input_tiles_.fill(nullptr);
+
+    for(const auto ptile: input_tiles_)
+    {
+        delete ptile;
+    }
+    input_tiles_.fill(nullptr);
+
+    for(auto& tiles: board_tiles_)
+    {
+        for(const auto ptile: tiles)
+        {
+            delete ptile;
+        }
+        tiles.fill(nullptr);
+    }
+}
+
 void tile_grid::create_next_input(const unsigned int value0, const unsigned int value1)
 {
     auto& animation = animations_.emplace_back();
@@ -129,8 +153,8 @@ void tile_grid::insert_next_input(const unsigned int x_offset, const unsigned in
 {
     input_x_offset_ = x_offset;
     input_rotation_ = rotation;
-    input_tiles_[0] = next_input_tiles_[0];
-    input_tiles_[1] = next_input_tiles_[1];
+    std::swap(input_tiles_[0], next_input_tiles_[0]);
+    std::swap(input_tiles_[1], next_input_tiles_[1]);
     //Note: Animation is done in create_next_input().
 }
 
@@ -162,14 +186,20 @@ void tile_grid::insert_input
 {
     if(input_tiles_[0])
     {
-        board_tiles_[tile0_dst_column_index][tile0_dst_row_index] = input_tiles_[0];
-        input_tiles_[0] = nullptr;
+        std::swap
+        (
+            board_tiles_[tile0_dst_column_index][tile0_dst_row_index],
+            input_tiles_[0]
+        );
     }
 
     if(input_tiles_[1])
     {
-        board_tiles_[tile1_dst_column_index][tile1_dst_row_index] = input_tiles_[1];
-        input_tiles_[1] = nullptr;
+        std::swap
+        (
+            board_tiles_[tile1_dst_column_index][tile1_dst_row_index],
+            input_tiles_[1]
+        );
     }
 }
 
@@ -179,7 +209,7 @@ void tile_grid::drop_tiles(const data_types::tile_drop_list& drops)
 
     for(const auto& drop: drops)
     {
-        const auto ptile = board_tiles_[drop.column_index][drop.src_row_index];
+        auto& ptile = board_tiles_[drop.column_index][drop.src_row_index];
 
         const auto src_position = tile_coordinate_to_position(data_types::tile_coordinate{drop.column_index, drop.src_row_index});
         const auto dst_position = tile_coordinate_to_position(data_types::tile_coordinate{drop.column_index, drop.dst_row_index});
@@ -192,7 +222,7 @@ void tile_grid::drop_tiles(const data_types::tile_drop_list& drops)
             *ptile
         );
 
-        board_tiles_[drop.column_index][drop.dst_row_index] = ptile;
+        std::swap(board_tiles_[drop.column_index][drop.dst_row_index], ptile);
     }
 }
 
@@ -227,6 +257,7 @@ void tile_grid::merge_tiles(const data_types::tile_merge_list& merges)
             animation1.add_alpha_transition(1, 0, 0.2, src_tile);
 
             tiles_to_delete.push_back(&src_tile);
+            board_tiles_[src_tile_coordinate.x][src_tile_coordinate.y] = nullptr;
         }
 
         //create destination tile

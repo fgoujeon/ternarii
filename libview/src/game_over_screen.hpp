@@ -17,46 +17,41 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef LIBVIEW_BUTTON_HPP
-#define LIBVIEW_BUTTON_HPP
+#ifndef LIBVIEW_GAME_OVER_SCREEN_HPP
+#define LIBVIEW_GAME_OVER_SCREEN_HPP
 
 #include "clickable.hpp"
 #include "magnum_common.hpp"
 #include <Magnum/Text/Renderer.h>
-#include <Magnum/Math/Color.h>
-#include <Magnum/Magnum.h>
 
 namespace libview
 {
 
-class button: public Object2D, public SceneGraph::Drawable2D, public clickable
+class game_over_screen: public Object2D, public SceneGraph::Drawable2D
 {
-    public:
-        using mouse_press_callback = std::function<void()>;
+    private:
+        class new_game_button;
 
     public:
-        explicit button
+        explicit game_over_screen
         (
-            const char* const label,
-            const mouse_press_callback& cb,
+            const std::function<void()>& new_game_button_press_callback,
             SceneGraph::DrawableGroup2D& drawables,
             clickable_group& clickables,
             Object2D* parent
         );
 
-    //Drawable2D virtual functions
+        void set_visible(const bool visible);
+
     private:
         void draw(const Magnum::Matrix3& transformation_matrix, SceneGraph::Camera2D& camera) override;
 
-    //clickable virtual functions
     private:
-        bool is_inside(const Magnum::Vector2& model_space_position) const override;
-
-        void mouse_press_event() override;
-
-    private:
-        const mouse_press_callback mouse_press_callback_;
+        SceneGraph::DrawableGroup2D& drawables_;
+        SceneGraph::DrawableGroup2D internal_drawables_;
+        bool visible_ = false;
         Magnum::Text::Renderer2D text_renderer_;
+        new_game_button& new_game_button_;
 };
 
 } //namespace
