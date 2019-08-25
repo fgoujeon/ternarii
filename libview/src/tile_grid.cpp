@@ -102,10 +102,10 @@ void tile_grid::create_next_input(const unsigned int value0, const unsigned int 
     const auto animation_duration_s = 0.15f;
 
     next_input_tiles_[0] = &add_tile(value0, {-0.5f, 5.0f});
-    animation.add_alpha_transition(0, 0.5, animation_duration_s, *next_input_tiles_[0]);
+    animation.add_alpha_transition(0, 0.4, animation_duration_s, *next_input_tiles_[0]);
 
     next_input_tiles_[1] = &add_tile(value1, {0.5f, 5.0f});
-    animation.add_alpha_transition(0, 0.5, animation_duration_s, *next_input_tiles_[1]);
+    animation.add_alpha_transition(0, 0.4, animation_duration_s, *next_input_tiles_[1]);
 
     //simultaneously animate insertion of next input
     const auto dst_positions = get_input_tile_positions(input_x_offset_, input_rotation_);
@@ -120,7 +120,7 @@ void tile_grid::create_next_input(const unsigned int value0, const unsigned int 
                 animation_duration_s,
                 *input_tiles_[i]
             );
-            animation.add_alpha_transition(0.5, 1, animation_duration_s, *input_tiles_[i]);
+            animation.add_alpha_transition(0.4, 1, animation_duration_s, *input_tiles_[i]);
         }
     }
 }
