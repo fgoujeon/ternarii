@@ -77,6 +77,7 @@ void score_display::draw(const Magnum::Matrix3& transformation_matrix, SceneGrap
     text::get_shader().bindVectorTexture(text::get_glyph_cache().texture());
     text::get_shader().setTransformationProjectionMatrix(camera.projectionMatrix() * transformation_matrix);
     text::get_shader().setColor(colors::white);
+    text::get_shader().setSmoothness(0.035f / transformation_matrix.uniformScaling());
     renderer_.mesh().draw(text::get_shader());
 }
 

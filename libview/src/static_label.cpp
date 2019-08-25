@@ -51,6 +51,7 @@ void static_label::draw(const Magnum::Matrix3& transformation_matrix, SceneGraph
     text::get_shader().bindVectorTexture(text::get_glyph_cache().texture());
     text::get_shader().setTransformationProjectionMatrix(camera.projectionMatrix() * transformation_matrix);
     text::get_shader().setColor(color_);
+    text::get_shader().setSmoothness(0.035f / transformation_matrix.uniformScaling());
     renderer_.mesh().draw(text::get_shader());
 }
 

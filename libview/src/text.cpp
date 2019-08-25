@@ -22,16 +22,16 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libview::text
 {
 
-Magnum::Text::FreeTypeFont& get_font()
+Magnum::Text::MagnumFont& get_font()
 {
-    static Magnum::Text::FreeTypeFont font;
+    static Magnum::Text::MagnumFont font;
     static bool initialized = false;
 
     if(!initialized)
     {
         font.initialize();
 
-        if(!font.openFile("res/fonts/DejaVuSans.ttf", 40.0f /*font size*/))
+        if(!font.openFile("res/fonts/DejaVuSans.conf", 0.0f /*dummy*/))
         {
             std::exit(1);
         }
@@ -44,24 +44,19 @@ Magnum::Text::FreeTypeFont& get_font()
 
 Magnum::Text::GlyphCache& get_glyph_cache()
 {
-    static Magnum::Text::GlyphCache cache
-    {
-        Magnum::Vector2i(2048) //Unscaled glyph cache texture size
-    };
-    static bool initialized = false;
+    static Corrade::Containers::Pointer<Magnum::Text::GlyphCache> pcache;
 
-    if(!initialized)
+    if(!pcache)
     {
-        get_font().fillGlyphCache(cache, "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 ");
-        initialized = true;
+        pcache = Corrade::Containers::pointerCast<Magnum::Text::GlyphCache>(get_font().createGlyphCache());
     }
 
-    return cache;
+    return *pcache;
 }
 
-Magnum::Shaders::Vector2D& get_shader()
+Magnum::Shaders::DistanceFieldVector2D& get_shader()
 {
-    static Magnum::Shaders::Vector2D shader;
+    static Magnum::Shaders::DistanceFieldVector2D shader;
     return shader;
 }
 

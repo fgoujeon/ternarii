@@ -41,7 +41,7 @@ class game_over_screen::new_game_button: public Object2D, public clickable
             clickable{*this, &clickables},
             mouse_press_callback_(cb),
             background_rectangle_(addChild<square>(colors::dark_gray, drawables)),
-            label_(addChild<static_label>("NEW GAME", 0.5f, Magnum::Text::Alignment::MiddleCenter, colors::light_gray, drawables))
+            label_(addChild<static_label>("NEW GAME", 0.4f, Magnum::Text::Alignment::MiddleCenter, colors::light_gray, drawables))
         {
             background_rectangle_.scale({1.5f, 0.35f});
         }

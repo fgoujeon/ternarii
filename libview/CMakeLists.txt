@@ -20,15 +20,13 @@ cmake_minimum_required(VERSION 3.14)
 find_package(
     Magnum REQUIRED
     GL
+    MagnumFont
     SceneGraph
     Sdl2Application
     Shaders
     Text
-)
-
-find_package(
-    MagnumPlugins REQUIRED
-    FreeTypeFont
+    TgaImporter
+    Trade
 )
 
 set_directory_properties(PROPERTIES CORRADE_USE_PEDANTIC_FLAGS ON)
@@ -54,5 +52,6 @@ target_link_libraries(
         Magnum::SceneGraph
         Magnum::Shaders
         Magnum::Text
-        MagnumPlugins::FreeTypeFont
+        Magnum::Trade
+        Magnum::MagnumFont
 )

@@ -21,18 +21,18 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #define LIBVIEW_TEXT_HPP
 
 #include "magnum_common.hpp"
-#include <MagnumPlugins/FreeTypeFont/FreeTypeFont.h>
-#include <Magnum/Shaders/Vector.h>
+#include <MagnumPlugins/MagnumFont/MagnumFont.h>
+#include <Magnum/Shaders/DistanceFieldVector.h>
 #include <Magnum/Text/GlyphCache.h>
 
 namespace libview::text
 {
 
-Magnum::Text::FreeTypeFont& get_font();
+Magnum::Text::MagnumFont& get_font();
 
 Magnum::Text::GlyphCache& get_glyph_cache();
 
-Magnum::Shaders::Vector2D& get_shader();
+Magnum::Shaders::DistanceFieldVector2D& get_shader();
 
 } //namespace
 

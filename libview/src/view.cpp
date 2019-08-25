@@ -60,11 +60,11 @@ class view::impl final: public Magnum::Platform::Sdl2Application
             camera_.setProjectionMatrix(Magnum::Matrix3::projection({9.0f, 16.0f}));
             camera_.setViewport(Magnum::GL::defaultFramebuffer.viewport().size());
 
-            tile_grid_.translate({0.0f, 1.0f});
             score_display_.scale({0.7f, 0.7f});
-            score_display_.translate({3.0f, 7.5f});
+            score_display_.translate({3.1f, 7.6f});
             hi_score_display_.scale({0.3f, 0.3f});
             hi_score_display_.translate({3.0f, 6.8f});
+            tile_grid_.translate({0.0f, 1.0f});
             left_button_.scale({0.75f, 0.75f});
             left_button_.translate({-3.25f, -5.75f});
             right_button_.scale({0.75f, 0.75f});
