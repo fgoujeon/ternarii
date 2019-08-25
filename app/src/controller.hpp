@@ -44,11 +44,6 @@ class controller
             return view_.exec();
         }
 
-        void iterate()
-        {
-            database_.iterate();
-        }
-
     private:
         void handle_game_event(const libgame::events::start&)
         {
@@ -150,6 +145,11 @@ class controller
         void handle_view_event2(const libview::events::clear_request&)
         {
             handle_game_events(game_.start());
+        }
+
+        void handle_view_event2(const libview::events::draw&)
+        {
+            database_.iterate();
         }
 
         void handle_view_event(const libview::event& event)

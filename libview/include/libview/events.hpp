@@ -34,6 +34,7 @@ namespace events
     struct left_shift_request{};
     struct right_shift_request{};
     struct clear_request{};
+    struct draw{};
 }
 
 using event = std::variant
@@ -42,7 +43,8 @@ using event = std::variant
     events::drop_request,
     events::left_shift_request,
     events::right_shift_request,
-    events::clear_request
+    events::clear_request,
+    events::draw
 >;
 
 using event_handler = std::function<void(const event&)>;

@@ -85,10 +85,16 @@ class view::impl final: public Magnum::Platform::Sdl2Application
     private:
         void drawEvent()
         {
+            event_handler_(events::draw{});
             tile_grid_.advance();
 
             Magnum::GL::defaultFramebuffer.clear(Magnum::GL::FramebufferClear::Color);
-            camera_.draw(drawables_);
+
+            if(visible_)
+            {
+                camera_.draw(drawables_);
+            }
+
             swapBuffers();
             redraw();
         }
@@ -172,6 +178,8 @@ class view::impl final: public Magnum::Platform::Sdl2Application
         clickable_group clickables_;
 
     public:
+        bool visible_ = false;
+
         tile_grid& tile_grid_;
         score_display& score_display_;
         score_display& hi_score_display_;
@@ -257,7 +265,10 @@ void view::merge_tiles(const data_types::tile_merge_list& merges)
     pimpl_->tile_grid_.merge_tiles(merges);
 }
 
-void view::set_visible(const bool visible){}
+void view::set_visible(const bool visible)
+{
+    pimpl_->visible_ = visible;
+}
 
 void view::set_game_over_screen_visible(const bool visible)
 {
