@@ -158,21 +158,27 @@ void tile_grid::insert_next_input(const unsigned int x_offset, const unsigned in
     //Note: Animation is done in create_next_input().
 }
 
-void tile_grid::set_input_x_offset(const unsigned int value)
+void tile_grid::set_input_layout(const unsigned int x_offset, const unsigned int rotation)
 {
-    if(input_x_offset_ != value)
+    if(input_x_offset_ != x_offset || input_rotation_ != rotation)
     {
-        input_x_offset_ = value;
-        update_input_tiles_positions();
-    }
-}
+        input_x_offset_ = x_offset;
+        input_rotation_ = rotation;
 
-void tile_grid::set_input_rotation(const unsigned int value)
-{
-    if(input_rotation_ != value)
-    {
-        input_rotation_ = value;
-        update_input_tiles_positions();
+        const auto dst_positions = get_input_tile_positions(input_x_offset_, input_rotation_);
+
+        auto& animation = animations_.emplace_back();
+
+        for(auto i = 0; i < 2; ++i)
+        {
+            animation.add_fixed_speed_translation
+            (
+                input_tiles_[i]->transformation().translation(),
+                dst_positions[i],
+                20,
+                *input_tiles_[i]
+            );
+        }
     }
 }
 
@@ -294,24 +300,6 @@ void tile_grid::advance()
         {
             animations_.pop_front();
         }
-    }
-}
-
-void tile_grid::update_input_tiles_positions()
-{
-    const auto dst_positions = get_input_tile_positions(input_x_offset_, input_rotation_);
-
-    auto& animation = animations_.emplace_back();
-
-    for(auto i = 0; i < 2; ++i)
-    {
-        animation.add_fixed_speed_translation
-        (
-            input_tiles_[i]->transformation().translation(),
-            dst_positions[i],
-            20,
-            *input_tiles_[i]
-        );
     }
 }
 

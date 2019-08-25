@@ -228,14 +228,9 @@ void view::insert_next_input(const unsigned int x_offset, const unsigned int rot
     pimpl_->tile_grid_.insert_next_input(x_offset, rotation);
 }
 
-void view::set_input_x_offset(const unsigned int value)
+void view::set_input_layout(const unsigned int x_offset, const unsigned int rotation)
 {
-    pimpl_->tile_grid_.set_input_x_offset(value);
-}
-
-void view::set_input_rotation(const unsigned int value)
-{
-    pimpl_->tile_grid_.set_input_rotation(value);
+    pimpl_->tile_grid_.set_input_layout(x_offset, rotation);
 }
 
 void view::insert_input

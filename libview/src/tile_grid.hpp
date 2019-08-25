@@ -54,9 +54,7 @@ class tile_grid: public Object2D
 
         void insert_next_input(const unsigned int x_offset, const unsigned int rotation);
 
-        void set_input_x_offset(const unsigned int value);
-
-        void set_input_rotation(const unsigned int value);
+        void set_input_layout(const unsigned int x_offset, const unsigned int rotation);
 
         void insert_input
         (
@@ -73,8 +71,6 @@ class tile_grid: public Object2D
         void advance();
 
     private:
-        void update_input_tiles_positions();
-
         tile& add_tile
         (
             const int value,

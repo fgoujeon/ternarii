@@ -73,8 +73,7 @@ class controller
 
         void handle_game_event(const libgame::events::input_layout_change& event)
         {
-            view_.set_input_x_offset(event.x_offset);
-            view_.set_input_rotation(event.rotation);
+            view_.set_input_layout(event.x_offset, event.rotation);
         }
 
         void handle_game_event(const libgame::events::input_insertion& event)
