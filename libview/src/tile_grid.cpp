@@ -89,6 +89,31 @@ tile_grid::tile_grid(SceneGraph::DrawableGroup2D& drawables, Object2D* parent):
     Object2D{parent},
     drawables_(drawables)
 {
+    //board corner lines
+    {
+        const auto color = 0xffffff_rgbf;
+        const auto length = 0.5f;
+        const auto thickness = 0.1f;
+        const auto padding = 0.05f;
+
+        const auto hori_scaling = Magnum::Vector2{length / 2, thickness / 2};
+        const auto hori_x_shift = thickness + padding - length / 2;
+        const auto hori_y_shift = padding + thickness / 2;
+
+        const auto vert_scaling = Magnum::Vector2{thickness / 2, length / 2};
+        const auto vert_x_shift = hori_y_shift;
+        const auto vert_y_shift = hori_x_shift;
+
+        //clockwise from noon
+        addChild<square>(color, drawables_).scale(hori_scaling).translate({+3.0f + hori_x_shift, +1.5f + hori_y_shift});
+        addChild<square>(color, drawables_).scale(vert_scaling).translate({+3.0f + vert_x_shift, +1.5f + vert_y_shift});
+        addChild<square>(color, drawables_).scale(vert_scaling).translate({+3.0f + vert_x_shift, -5.5f - vert_y_shift});
+        addChild<square>(color, drawables_).scale(hori_scaling).translate({+3.0f + hori_x_shift, -5.5f - hori_y_shift});
+        addChild<square>(color, drawables_).scale(hori_scaling).translate({-3.0f - hori_x_shift, -5.5f - hori_y_shift});
+        addChild<square>(color, drawables_).scale(vert_scaling).translate({-3.0f - vert_x_shift, -5.5f - vert_y_shift});
+        addChild<square>(color, drawables_).scale(vert_scaling).translate({-3.0f - vert_x_shift, +1.5f + vert_y_shift});
+        addChild<square>(color, drawables_).scale(hori_scaling).translate({-3.0f - hori_x_shift, +1.5f + hori_y_shift});
+    }
 }
 
 bool tile_grid::is_animating() const
