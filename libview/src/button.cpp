@@ -38,24 +38,11 @@ button::button
     Object2D* parent
 ):
     Object2D{parent},
-    SceneGraph::Drawable2D{*this, &drawables},
     clickable{*this, &clickables},
     mouse_press_callback_(cb),
-    square_(addChild<square>(0xffffff_rgbf, drawable_children_)),
-    text_renderer_(text::get_font(), text::get_glyph_cache(), 0.5f, Magnum::Text::Alignment::MiddleCenter)
+    square_(addChild<square>(0xffffff_rgbf, drawables)),
+    label_(addChild<static_label>(label, 0.5f, Magnum::Text::Alignment::MiddleCenter, 0x444444_rgbf, drawables))
 {
-    text_renderer_.reserve(10, Magnum::GL::BufferUsage::DynamicDraw, Magnum::GL::BufferUsage::StaticDraw);
-    text_renderer_.render(label);
-}
-
-void button::draw(const Magnum::Matrix3& transformation_matrix, SceneGraph::Camera2D& camera)
-{
-    camera.draw(drawable_children_);
-
-    text::get_shader().bindVectorTexture(text::get_glyph_cache().texture());
-    text::get_shader().setColor(0x444444_rgbf);
-    text::get_shader().setTransformationProjectionMatrix(camera.projectionMatrix() * transformation_matrix);
-    text_renderer_.mesh().draw(text::get_shader());
 }
 
 bool button::is_inside(const Magnum::Vector2& model_space_position) const

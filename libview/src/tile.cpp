@@ -57,26 +57,19 @@ tile::tile(const int value, SceneGraph::DrawableGroup2D& drawables, Object2D* pa
     SceneGraph::Drawable2D{*this, &drawables},
     square_color_(value_to_color(value)),
     square_(addChild<square>(Magnum::Color4{square_color_, 0.0f}, drawable_children_)),
-    text_renderer_(text::get_font(), text::get_glyph_cache(), 1.2f, Magnum::Text::Alignment::MiddleCenter)
+    label_(addChild<static_label>(std::to_string(value).c_str(), 1.2f, Magnum::Text::Alignment::MiddleCenter, 0xffffff00_rgbaf, drawable_children_))
 {
-    text_renderer_.reserve(3, Magnum::GL::BufferUsage::DynamicDraw, Magnum::GL::BufferUsage::StaticDraw);
-    text_renderer_.render(std::to_string(value));
 }
 
 void tile::set_alpha(const float alpha)
 {
     square_.set_color({square_color_, alpha});
-    alpha_ = alpha;
+    label_.set_color({0xffffff_rgbf, alpha});
 }
 
-void tile::draw(const Magnum::Matrix3& transformation_matrix, SceneGraph::Camera2D& camera)
+void tile::draw(const Magnum::Matrix3& /*transformation_matrix*/, SceneGraph::Camera2D& camera)
 {
     camera.draw(drawable_children_);
-
-    text::get_shader().bindVectorTexture(text::get_glyph_cache().texture());
-    text::get_shader().setColor(Magnum::Color4{0xffffff_rgbf, alpha_});
-    text::get_shader().setTransformationProjectionMatrix(camera.projectionMatrix() * transformation_matrix);
-    text_renderer_.mesh().draw(text::get_shader());
 }
 
 } //namespace

@@ -19,13 +19,11 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "game_over_screen.hpp"
 #include "text.hpp"
-#include <Magnum/GL/Mesh.h>
-#include <Magnum/Shaders/Flat.h>
 
 namespace libview
 {
 
-class game_over_screen::new_game_button: public Object2D, public SceneGraph::Drawable2D, public clickable
+class game_over_screen::new_game_button: public Object2D, public clickable
 {
     public:
         using mouse_press_callback = std::function<void()>;
@@ -39,31 +37,17 @@ class game_over_screen::new_game_button: public Object2D, public SceneGraph::Dra
             Object2D* parent
         ):
             Object2D{parent},
-            SceneGraph::Drawable2D{*this, &drawables},
             clickable{*this, &clickables},
             mouse_press_callback_(cb),
             background_rectangle_(addChild<square>(0x444444_rgbf, drawables)),
-            text_renderer_(text::get_font(), text::get_glyph_cache(), 0.5f, Magnum::Text::Alignment::MiddleCenter)
+            label_(addChild<static_label>("NEW GAME", 0.5f, Magnum::Text::Alignment::MiddleCenter, 0xffffff_rgbf, drawables))
         {
             background_rectangle_.scale({1.5f, 0.35f});
-
-            text_renderer_.reserve(10, Magnum::GL::BufferUsage::DynamicDraw, Magnum::GL::BufferUsage::StaticDraw);
-            text_renderer_.render("NEW GAME");
         }
 
         void set_enabled(const bool enabled)
         {
             enabled_ = enabled;
-        }
-
-    //Drawable2D virtual functions
-    private:
-        void draw(const Magnum::Matrix3& transformation_matrix, SceneGraph::Camera2D& camera) override
-        {
-            text::get_shader().bindVectorTexture(text::get_glyph_cache().texture());
-            text::get_shader().setColor(0xffffff_rgbf);
-            text::get_shader().setTransformationProjectionMatrix(camera.projectionMatrix() * transformation_matrix);
-            text_renderer_.mesh().draw(text::get_shader());
         }
 
     //clickable virtual functions
@@ -88,7 +72,7 @@ class game_over_screen::new_game_button: public Object2D, public SceneGraph::Dra
     private:
         const mouse_press_callback mouse_press_callback_;
         square& background_rectangle_;
-        Magnum::Text::Renderer2D text_renderer_;
+        static_label& label_;
         bool enabled_ = false;
 };
 
@@ -103,13 +87,11 @@ game_over_screen::game_over_screen
     SceneGraph::Drawable2D{*this, &drawables},
     drawables_(drawables),
     background_rectangle_(addChild<square>(0xffffff_rgbf, drawable_children_)),
-    text_renderer_(text::get_font(), text::get_glyph_cache(), 1.0f, Magnum::Text::Alignment::MiddleCenter),
+    label_(addChild<static_label>("GAME OVER", 1.0f, Magnum::Text::Alignment::MiddleCenter, 0x444444_rgbf, drawable_children_)),
     new_game_button_(addChild<new_game_button>(new_game_button_press_callback, drawable_children_, clickables))
 {
     background_rectangle_.scale({50.0f, 1.0f});
-
-    text_renderer_.reserve(10, Magnum::GL::BufferUsage::DynamicDraw, Magnum::GL::BufferUsage::StaticDraw);
-    text_renderer_.render("GAME OVER");
+    label_.translate({0.0f, 0.5f});
 
     new_game_button_.translate({0.0f, -0.5f});
 }
@@ -124,22 +106,11 @@ void game_over_screen::set_visible(const bool visible)
     drawables_.add(*this);
 }
 
-void game_over_screen::draw(const Magnum::Matrix3& transformation_matrix, SceneGraph::Camera2D& camera)
+void game_over_screen::draw(const Magnum::Matrix3& /*transformation_matrix*/, SceneGraph::Camera2D& camera)
 {
     if(visible_)
     {
         camera.draw(drawable_children_);
-
-        //"GAME OVER" text
-        text::get_shader().bindVectorTexture(text::get_glyph_cache().texture());
-        text::get_shader().setTransformationProjectionMatrix
-        (
-            camera.projectionMatrix() *
-            transformation_matrix *
-            Magnum::Matrix3::translation({0.0f, 0.5f})
-        );
-        text::get_shader().setColor(0x444444_rgbf);
-        text_renderer_.mesh().draw(text::get_shader());
     }
 }
 

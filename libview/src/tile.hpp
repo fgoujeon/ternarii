@@ -21,8 +21,8 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #define LIBVIEW_TILE_HPP
 
 #include "square.hpp"
+#include "static_label.hpp"
 #include "magnum_common.hpp"
-#include <Magnum/Text/Renderer.h>
 #include <Magnum/Math/Color.h>
 #include <Magnum/Magnum.h>
 
@@ -43,8 +43,7 @@ class tile: public Object2D, public SceneGraph::Drawable2D
         SceneGraph::DrawableGroup2D drawable_children_;
         Magnum::Color3 square_color_;
         square& square_;
-        Magnum::Text::Renderer2D text_renderer_;
-        float alpha_ = 0;
+        static_label& label_;
 };
 
 } //namespace

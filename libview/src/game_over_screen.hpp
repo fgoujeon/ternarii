@@ -21,9 +21,9 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #define LIBVIEW_GAME_OVER_SCREEN_HPP
 
 #include "square.hpp"
+#include "static_label.hpp"
 #include "clickable.hpp"
 #include "magnum_common.hpp"
-#include <Magnum/Text/Renderer.h>
 
 namespace libview
 {
@@ -51,9 +51,9 @@ class game_over_screen: public Object2D, public SceneGraph::Drawable2D
         SceneGraph::DrawableGroup2D& drawables_;
         SceneGraph::DrawableGroup2D drawable_children_;
         square& background_rectangle_;
-        bool visible_ = false;
-        Magnum::Text::Renderer2D text_renderer_;
+        static_label& label_;
         new_game_button& new_game_button_;
+        bool visible_ = false;
 };
 
 } //namespace
