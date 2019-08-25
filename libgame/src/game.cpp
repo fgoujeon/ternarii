@@ -147,17 +147,38 @@ event_list game::start()
 
 event_list game::shift_input_left()
 {
-    return pimpl_->input_.shift_left();
+    if(!is_game_over())
+    {
+        return pimpl_->input_.shift_left();
+    }
+    else
+    {
+        return {};
+    }
 }
 
 event_list game::shift_input_right()
 {
-    return pimpl_->input_.shift_right();
+    if(!is_game_over())
+    {
+        return pimpl_->input_.shift_right();
+    }
+    else
+    {
+        return {};
+    }
 }
 
 event_list game::rotate_input()
 {
-    return pimpl_->input_.rotate();
+    if(!is_game_over())
+    {
+        return pimpl_->input_.rotate();
+    }
+    else
+    {
+        return {};
+    }
 }
 
 event_list game::drop_input()
@@ -182,7 +203,9 @@ event_list game::drop_input()
     }
 
     if(is_game_over())
+    {
         events.push_back(events::end_of_game{});
+    }
 
     return events;
 }
