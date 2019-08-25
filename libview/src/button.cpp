@@ -29,58 +29,6 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libview
 {
 
-namespace
-{
-    Magnum::GL::Mesh& get_square_mesh()
-    {
-        static Magnum::GL::Mesh mesh;
-        static bool initialized = false;
-
-        if(!initialized)
-        {
-            struct vertex
-            {
-                Magnum::Vector2 position;
-            };
-
-            /*
-            A---B
-            |   |
-            D---C
-            */
-            const vertex data[]
-            {
-                {Magnum::Vector2{-1.0f,  1.0f}}, //A
-                {Magnum::Vector2{-1.0f, -1.0f}}, //D
-                {Magnum::Vector2{ 1.0f, -1.0f}}, //C
-                {Magnum::Vector2{ 1.0f,  1.0f}}, //B
-                {Magnum::Vector2{-1.0f,  1.0f}}, //A
-                {Magnum::Vector2{ 1.0f, -1.0f}}, //C
-            };
-            Magnum::GL::Buffer buffer;
-            buffer.setData(data, Magnum::GL::BufferUsage::StaticDraw);
-
-            mesh.setCount(6);
-            mesh.addVertexBuffer
-            (
-                std::move(buffer),
-                0,
-                Magnum::Shaders::Flat2D::Position{}
-            );
-
-            initialized = true;
-        }
-
-        return mesh;
-    }
-
-    Magnum::Shaders::Flat2D& get_square_shader()
-    {
-        static Magnum::Shaders::Flat2D shader;
-        return shader;
-    }
-}
-
 button::button
 (
     const char* const label,
@@ -93,6 +41,7 @@ button::button
     SceneGraph::Drawable2D{*this, &drawables},
     clickable{*this, &clickables},
     mouse_press_callback_(cb),
+    square_(addChild<square>(0xffffff_rgbf, drawable_children_)),
     text_renderer_(text::get_font(), text::get_glyph_cache(), 0.5f, Magnum::Text::Alignment::MiddleCenter)
 {
     text_renderer_.reserve(10, Magnum::GL::BufferUsage::DynamicDraw, Magnum::GL::BufferUsage::StaticDraw);
@@ -101,15 +50,7 @@ button::button
 
 void button::draw(const Magnum::Matrix3& transformation_matrix, SceneGraph::Camera2D& camera)
 {
-    using namespace Magnum::Math::Literals;
-
-    get_square_shader().setColor(0xffffff_rgbf);
-    get_square_shader().setTransformationProjectionMatrix
-    (
-        camera.projectionMatrix() *
-        transformation_matrix
-    );
-    get_square_mesh().draw(get_square_shader());
+    camera.draw(drawable_children_);
 
     text::get_shader().bindVectorTexture(text::get_glyph_cache().texture());
     text::get_shader().setColor(0x444444_rgbf);

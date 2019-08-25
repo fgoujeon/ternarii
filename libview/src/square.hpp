@@ -17,21 +17,30 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#include <Magnum/SceneGraph/Camera.h>
-#include <Magnum/SceneGraph/Drawable.h>
-#include <Magnum/SceneGraph/MatrixTransformation2D.h>
-#include <Magnum/SceneGraph/Object.h>
-#include <Magnum/SceneGraph/Scene.h>
+#ifndef LIBVIEW_SQUARE_HPP
+#define LIBVIEW_SQUARE_HPP
+
+#include "magnum_common.hpp"
+#include <Magnum/Math/Color.h>
+#include <Magnum/Magnum.h>
 
 namespace libview
 {
 
-using namespace Magnum::Math::Literals;
+class square: public Object2D, public SceneGraph::Drawable2D
+{
+    public:
+        explicit square(const Magnum::Color4& color, SceneGraph::DrawableGroup2D& drawables, Object2D* parent);
 
-using Vector2 = Magnum::Vector2;
+        void set_color(const Magnum::Color4& color);
 
-namespace SceneGraph = Magnum::SceneGraph;
-using Object2D = SceneGraph::Object<Magnum::SceneGraph::MatrixTransformation2D>;
-using Scene2D = SceneGraph::Scene<Magnum::SceneGraph::MatrixTransformation2D>;
+    private:
+        void draw(const Magnum::Matrix3& transformation_matrix, SceneGraph::Camera2D& camera) override;
+
+    private:
+        Magnum::Color4 color_;
+};
 
 } //namespace
+
+#endif

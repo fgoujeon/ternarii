@@ -20,6 +20,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #ifndef LIBVIEW_BUTTON_HPP
 #define LIBVIEW_BUTTON_HPP
 
+#include "square.hpp"
 #include "clickable.hpp"
 #include "magnum_common.hpp"
 #include <Magnum/Text/Renderer.h>
@@ -56,6 +57,8 @@ class button: public Object2D, public SceneGraph::Drawable2D, public clickable
 
     private:
         const mouse_press_callback mouse_press_callback_;
+        SceneGraph::DrawableGroup2D drawable_children_;
+        square& square_;
         Magnum::Text::Renderer2D text_renderer_;
 };
 
