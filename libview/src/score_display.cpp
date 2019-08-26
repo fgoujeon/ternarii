@@ -19,6 +19,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "score_display.hpp"
 #include "text.hpp"
+#include "colors.hpp"
 #include <MagnumPlugins/FreeTypeFont/FreeTypeFont.h>
 #include <Magnum/Shaders/Vector.h>
 #include <Magnum/Text/AbstractFont.h>
@@ -75,7 +76,7 @@ void score_display::draw(const Magnum::Matrix3& transformation_matrix, SceneGrap
 
     text::get_shader().bindVectorTexture(text::get_glyph_cache().texture());
     text::get_shader().setTransformationProjectionMatrix(camera.projectionMatrix() * transformation_matrix);
-    text::get_shader().setColor(0xffffff_rgbf);
+    text::get_shader().setColor(colors::white);
     renderer_.mesh().draw(text::get_shader());
 }
 

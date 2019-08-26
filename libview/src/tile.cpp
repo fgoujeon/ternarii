@@ -19,6 +19,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "tile.hpp"
 #include "text.hpp"
+#include "colors.hpp"
 #include <Magnum/GL/Mesh.h>
 #include <Magnum/Shaders/Flat.h>
 
@@ -57,14 +58,24 @@ tile::tile(const int value, SceneGraph::DrawableGroup2D& drawables, Object2D* pa
     SceneGraph::Drawable2D{*this, &drawables},
     square_color_(value_to_color(value)),
     square_(addChild<square>(Magnum::Color4{square_color_, 0.0f}, drawable_children_)),
-    label_(addChild<static_label>(std::to_string(value).c_str(), 1.2f, Magnum::Text::Alignment::MiddleCenter, 0xffffff00_rgbaf, drawable_children_))
+    label_
+    (
+        addChild<static_label>
+        (
+            std::to_string(value).c_str(),
+            1.2f,
+            Magnum::Text::Alignment::MiddleCenter,
+            Magnum::Color4{colors::white, 0},
+            drawable_children_
+        )
+    )
 {
 }
 
 void tile::set_alpha(const float alpha)
 {
     square_.set_color({square_color_, alpha});
-    label_.set_color({0xffffff_rgbf, alpha});
+    label_.set_color({colors::white, alpha});
 }
 
 void tile::draw(const Magnum::Matrix3& /*transformation_matrix*/, SceneGraph::Camera2D& camera)

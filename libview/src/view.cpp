@@ -21,6 +21,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include "button.hpp"
 #include "tile_grid.hpp"
 #include "score_display.hpp"
+#include "colors.hpp"
 #include "clickable.hpp"
 #include "magnum_common.hpp"
 #include <libview/view.hpp>
@@ -76,7 +77,7 @@ class view::impl final: public Magnum::Platform::Sdl2Application
 
             //configure renderer
             using namespace Magnum::Math::Literals;
-            Magnum::GL::Renderer::setClearColor(0x444444_rgbf);
+            Magnum::GL::Renderer::setClearColor(colors::dark_gray);
             Magnum::GL::Renderer::enable(Magnum::GL::Renderer::Feature::Blending);
             Magnum::GL::Renderer::setBlendFunction(Magnum::GL::Renderer::BlendFunction::SourceAlpha, Magnum::GL::Renderer::BlendFunction::OneMinusSourceAlpha);
             Magnum::GL::Renderer::setBlendEquation(Magnum::GL::Renderer::BlendEquation::Add, Magnum::GL::Renderer::BlendEquation::Add);

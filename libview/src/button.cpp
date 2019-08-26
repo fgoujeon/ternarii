@@ -19,6 +19,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "button.hpp"
 #include "text.hpp"
+#include "colors.hpp"
 #include <MagnumPlugins/FreeTypeFont/FreeTypeFont.h>
 #include <Magnum/GL/Mesh.h>
 #include <Magnum/Shaders/Flat.h>
@@ -40,8 +41,8 @@ button::button
     Object2D{parent},
     clickable{*this, &clickables},
     mouse_press_callback_(cb),
-    square_(addChild<square>(0xffffff_rgbf, drawables)),
-    label_(addChild<static_label>(label, 0.5f, Magnum::Text::Alignment::MiddleCenter, 0x444444_rgbf, drawables))
+    square_(addChild<square>(colors::light_gray, drawables)),
+    label_(addChild<static_label>(label, 0.5f, Magnum::Text::Alignment::MiddleCenter, colors::dark_gray, drawables))
 {
 }
 

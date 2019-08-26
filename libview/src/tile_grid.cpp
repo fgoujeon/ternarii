@@ -19,6 +19,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "tile_grid.hpp"
 #include "tile.hpp"
+#include "colors.hpp"
 
 namespace libview
 {
@@ -91,7 +92,7 @@ tile_grid::tile_grid(SceneGraph::DrawableGroup2D& drawables, Object2D* parent):
 {
     //board corner lines
     {
-        const auto color = 0xffffff_rgbf;
+        const auto color = colors::light_gray;
         const auto length = 0.5f;
         const auto thickness = 0.1f;
         const auto padding = 0.05f;
