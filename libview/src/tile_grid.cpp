@@ -238,11 +238,29 @@ void tile_grid::drop_tiles(const data_types::tile_drop_list& drops)
 {
     auto& animation = animations_.emplace_back();
 
+    /*
+    When the input is in vertical position, we don't actually draw the tiles
+    on rows #8 and #9, but half a row below. We must manager this case here.
+    */
+    const bool falling_from_vertical_input =
+        drops.size() == 2 &&
+        drops[0].src_row_index + drops[1].src_row_index == 8 + 9
+    ;
+    const auto src_position_extra_shift =
+        falling_from_vertical_input ?
+        Magnum::Vector2{0, -0.5} :
+        Magnum::Vector2{0, 0}
+    ;
+
     for(const auto& drop: drops)
     {
         auto& ptile = board_tiles_[drop.column_index][drop.src_row_index];
 
-        const auto src_position = tile_coordinate_to_position(data_types::tile_coordinate{drop.column_index, drop.src_row_index});
+        const auto src_position =
+            tile_coordinate_to_position(data_types::tile_coordinate{drop.column_index, drop.src_row_index}) +
+            src_position_extra_shift
+        ;
+
         const auto dst_position = tile_coordinate_to_position(data_types::tile_coordinate{drop.column_index, drop.dst_row_index});
 
         animation.add_fixed_speed_translation
