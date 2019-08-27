@@ -41,9 +41,10 @@ class game_over_screen::new_game_button: public Object2D, public clickable
             clickable{*this, &clickables},
             mouse_press_callback_(cb),
             background_rectangle_(addChild<square>(colors::dark_gray, drawables)),
-            label_(addChild<static_label>("NEW GAME", 0.4f, Magnum::Text::Alignment::MiddleCenter, colors::light_gray, drawables))
+            label_(addChild<static_label>("NEW GAME", 0.4f, Magnum::Text::Alignment::MiddleCenter, drawables))
         {
             background_rectangle_.scale({1.5f, 0.35f});
+            label_.set_color(colors::light_gray);
         }
 
         void set_enabled(const bool enabled)
@@ -88,10 +89,13 @@ game_over_screen::game_over_screen
     SceneGraph::Drawable2D{*this, &drawables},
     drawables_(drawables),
     background_rectangle_(addChild<square>(colors::light_gray, drawable_children_)),
-    label_(addChild<static_label>("GAME OVER", 1.0f, Magnum::Text::Alignment::MiddleCenter, colors::dark_gray, drawable_children_)),
+    label_(addChild<static_label>("GAME OVER", 1.0f, Magnum::Text::Alignment::MiddleCenter, drawable_children_)),
     new_game_button_(addChild<new_game_button>(new_game_button_press_callback, drawable_children_, clickables))
 {
     background_rectangle_.scale({50.0f, 1.0f});
+    label_.set_color(colors::dark_gray);
+    label_.set_outline_color(colors::dark_gray);
+    label_.set_outline_range(0.47, 0.5);
     label_.translate({0.0f, 0.5f});
 
     new_game_button_.translate({0.0f, -0.5f});

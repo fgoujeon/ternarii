@@ -36,12 +36,30 @@ class static_label: public Object2D, public SceneGraph::Drawable2D
             const char* const value,
             const float font_size,
             const Magnum::Text::Alignment alignment,
-            const Magnum::Color4& color,
             SceneGraph::DrawableGroup2D& drawables,
             Object2D* parent
         );
 
-        void set_color(const Magnum::Color4& color);
+        void set_color(const Magnum::Color4& color)
+        {
+            color_ = color;
+        }
+
+        void set_outline_color(const Magnum::Color4& outline_color)
+        {
+            outline_color_ = outline_color;
+        }
+
+        void set_outline_range(const float start, const float end)
+        {
+            outline_start_ = start;
+            outline_end_ = end;
+        }
+
+        void remove_outline()
+        {
+            set_outline_range(0.5f, 1.0f);
+        }
 
     private:
         void draw(const Magnum::Matrix3& transformation_matrix, SceneGraph::Camera2D& camera) override;
@@ -49,6 +67,9 @@ class static_label: public Object2D, public SceneGraph::Drawable2D
     private:
         Magnum::Text::Renderer2D renderer_;
         Magnum::Color4 color_;
+        Magnum::Color4 outline_color_;
+        float outline_start_ = 0.5f;
+        float outline_end_ = 1.0f;
 };
 
 } //namespace

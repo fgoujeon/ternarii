@@ -28,22 +28,15 @@ static_label::static_label
     const char* const value,
     const float font_size,
     const Magnum::Text::Alignment alignment,
-    const Magnum::Color4& color,
     SceneGraph::DrawableGroup2D& drawables,
     Object2D* parent
 ):
     Object2D{parent},
     SceneGraph::Drawable2D{*this, &drawables},
-    renderer_(text::get_font(), text::get_glyph_cache(), font_size, alignment),
-    color_(color)
+    renderer_(text::get_font(), text::get_glyph_cache(), font_size, alignment)
 {
     renderer_.reserve(std::strlen(value), Magnum::GL::BufferUsage::DynamicDraw, Magnum::GL::BufferUsage::StaticDraw);
     renderer_.render(value);
-}
-
-void static_label::set_color(const Magnum::Color4& color)
-{
-    color_ = color;
 }
 
 void static_label::draw(const Magnum::Matrix3& transformation_matrix, SceneGraph::Camera2D& camera)
@@ -52,6 +45,9 @@ void static_label::draw(const Magnum::Matrix3& transformation_matrix, SceneGraph
     text::get_shader().setTransformationProjectionMatrix(camera.projectionMatrix() * transformation_matrix);
     text::get_shader().setColor(color_);
     text::get_shader().setSmoothness(0.035f / transformation_matrix.uniformScaling());
+    text::get_shader().setOutlineColor(outline_color_);
+    text::get_shader().setOutlineRange(outline_start_, outline_end_);
+
     renderer_.mesh().draw(text::get_shader());
 }
 

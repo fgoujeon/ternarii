@@ -65,17 +65,20 @@ tile::tile(const int value, SceneGraph::DrawableGroup2D& drawables, Object2D* pa
             std::to_string(value).c_str(),
             1.2f,
             Magnum::Text::Alignment::MiddleCenter,
-            Magnum::Color4{colors::white, 0},
             drawable_children_
         )
     )
 {
+    label_.set_color(Magnum::Color4{colors::white, 0});
+    label_.set_outline_color(Magnum::Color4{colors::dark_gray, 0});
+    label_.set_outline_range(0.45, 0.40);
 }
 
 void tile::set_alpha(const float alpha)
 {
     square_.set_color({square_color_, alpha});
     label_.set_color({colors::white, alpha});
+    label_.set_outline_color({colors::dark_gray, alpha});
 }
 
 void tile::draw(const Magnum::Matrix3& /*transformation_matrix*/, SceneGraph::Camera2D& camera)

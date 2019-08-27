@@ -42,8 +42,9 @@ button::button
     clickable{*this, &clickables},
     mouse_press_callback_(cb),
     square_(addChild<square>(colors::light_gray, drawables)),
-    label_(addChild<static_label>(label, 0.4f, Magnum::Text::Alignment::MiddleCenter, colors::dark_gray, drawables))
+    label_(addChild<static_label>(label, 0.4f, Magnum::Text::Alignment::MiddleCenter, drawables))
 {
+    label_.set_color(colors::dark_gray);
 }
 
 bool button::is_inside(const Magnum::Vector2& model_space_position) const
