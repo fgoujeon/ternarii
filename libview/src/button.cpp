@@ -41,7 +41,7 @@ button::button
     Object2D{parent},
     clickable{*this, &clickables},
     mouse_press_callback_(cb),
-    square_(addChild<square>(colors::light_gray, drawables)),
+    square_(addChild<circle>(colors::light_gray, drawables)),
     label_(addChild<static_label>(label, 0.4f, Magnum::Text::Alignment::MiddleCenter, drawables))
 {
     label_.set_color(colors::dark_gray);
@@ -51,7 +51,8 @@ bool button::is_inside(const Magnum::Vector2& model_space_position) const
 {
     const auto x = model_space_position.x();
     const auto y = model_space_position.y();
-    return -1 <= x && x <= 1 && -1 <= y && y <= 1;
+    const auto squared_distance = x * x + y * y;
+    return squared_distance <= 1;
 }
 
 void button::mouse_press_event()

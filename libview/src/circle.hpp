@@ -17,42 +17,28 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef LIBVIEW_BUTTON_HPP
-#define LIBVIEW_BUTTON_HPP
+#ifndef LIBVIEW_CIRCLE_HPP
+#define LIBVIEW_CIRCLE_HPP
 
-#include "circle.hpp"
-#include "static_label.hpp"
-#include "clickable.hpp"
 #include "magnum_common.hpp"
+#include <Magnum/Math/Color.h>
+#include <Magnum/Magnum.h>
 
 namespace libview
 {
 
-class button: public Object2D, public clickable
+class circle: public Object2D, public SceneGraph::Drawable2D
 {
     public:
-        using mouse_press_callback = std::function<void()>;
+        explicit circle(const Magnum::Color4& color, SceneGraph::DrawableGroup2D& drawables, Object2D* parent);
 
-    public:
-        explicit button
-        (
-            const char* const label,
-            const mouse_press_callback& cb,
-            SceneGraph::DrawableGroup2D& drawables,
-            clickable_group& clickables,
-            Object2D* parent
-        );
-
-    //clickable virtual functions
-    private:
-        bool is_inside(const Magnum::Vector2& model_space_position) const override;
-
-        void mouse_press_event() override;
+        void set_color(const Magnum::Color4& color);
 
     private:
-        const mouse_press_callback mouse_press_callback_;
-        circle& square_;
-        static_label& label_;
+        void draw(const Magnum::Matrix3& transformation_matrix, SceneGraph::Camera2D& camera) override;
+
+    private:
+        Magnum::Color4 color_;
 };
 
 } //namespace

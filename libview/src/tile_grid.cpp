@@ -19,6 +19,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "tile_grid.hpp"
 #include "tile.hpp"
+#include "square.hpp"
 #include "colors.hpp"
 
 namespace libview

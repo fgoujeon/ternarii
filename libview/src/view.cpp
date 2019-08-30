@@ -65,13 +65,13 @@ class view::impl final: public Magnum::Platform::Sdl2Application
             hi_score_display_.scale({0.3f, 0.3f});
             hi_score_display_.translate({3.0f, 6.8f});
             tile_grid_.translate({0.0f, 1.0f});
-            left_button_.scale({0.75f, 0.75f});
+            left_button_.scale({0.85f, 0.85f});
             left_button_.translate({-3.25f, -5.75f});
-            right_button_.scale({0.75f, 0.75f});
+            right_button_.scale({0.85f, 0.85f});
             right_button_.translate({-1.5f, -6.75f});
-            drop_button_.scale({0.75f, 0.75f});
+            drop_button_.scale({0.85f, 0.85f});
             drop_button_.translate({1.5f, -6.75f});
-            rotate_button_.scale({0.75f, 0.75f});
+            rotate_button_.scale({0.85f, 0.85f});
             rotate_button_.translate({3.25f, -5.75f});
             game_over_screen_.translate({0.0f, 4.5f});
 
