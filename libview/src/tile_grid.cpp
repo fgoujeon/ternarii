@@ -355,7 +355,7 @@ tile& tile_grid::add_tile
 )
 {
     auto& t = addChild<tile>(value, drawables_);
-    t.scale({0.45f, 0.45f});
+    t.scale({0.47f, 0.47f});
     t.translate(position);
     return t;
 }

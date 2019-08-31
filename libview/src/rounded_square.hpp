@@ -17,11 +17,9 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef LIBVIEW_TILE_HPP
-#define LIBVIEW_TILE_HPP
+#ifndef LIBVIEW_ROUNDED_SQUARE_HPP
+#define LIBVIEW_ROUNDED_SQUARE_HPP
 
-#include "rounded_square.hpp"
-#include "static_label.hpp"
 #include "magnum_common.hpp"
 #include <Magnum/Math/Color.h>
 #include <Magnum/Magnum.h>
@@ -29,21 +27,18 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libview
 {
 
-class tile: public Object2D, public SceneGraph::Drawable2D
+class rounded_square: public Object2D, public SceneGraph::Drawable2D
 {
     public:
-        explicit tile(const int value, SceneGraph::DrawableGroup2D& drawables, Object2D* parent);
+        explicit rounded_square(const Magnum::Color4& color, SceneGraph::DrawableGroup2D& drawables, Object2D* parent);
 
-        void set_alpha(const float alpha);
+        void set_color(const Magnum::Color4& color);
 
     private:
         void draw(const Magnum::Matrix3& transformation_matrix, SceneGraph::Camera2D& camera) override;
 
     private:
-        SceneGraph::DrawableGroup2D drawable_children_;
-        Magnum::Color3 square_color_;
-        rounded_square& square_;
-        static_label& label_;
+        Magnum::Color4 color_;
 };
 
 } //namespace

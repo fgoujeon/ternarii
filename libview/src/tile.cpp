@@ -57,7 +57,7 @@ tile::tile(const int value, SceneGraph::DrawableGroup2D& drawables, Object2D* pa
     Object2D{parent},
     SceneGraph::Drawable2D{*this, &drawables},
     square_color_(value_to_color(value)),
-    square_(addChild<square>(Magnum::Color4{square_color_, 0.0f}, drawable_children_)),
+    square_(addChild<rounded_square>(Magnum::Color4{square_color_, 0.0f}, drawable_children_)),
     label_
     (
         addChild<static_label>
