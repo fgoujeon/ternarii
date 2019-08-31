@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+#include "background.hpp"
 #include "game_over_screen.hpp"
 #include "button.hpp"
 #include "tile_grid.hpp"
@@ -47,6 +48,7 @@ class view::impl final: public Magnum::Platform::Sdl2Application
             event_handler_(evt_handler),
             cameraObject_(&scene_),
             camera_(cameraObject_),
+            background_(scene_.addChild<background>(drawables_)),
             tile_grid_(scene_.addChild<tile_grid>(drawables_)),
             score_display_(scene_.addChild<score_display>(drawables_)),
             hi_score_display_(scene_.addChild<score_display>(drawables_)),
@@ -60,19 +62,30 @@ class view::impl final: public Magnum::Platform::Sdl2Application
             camera_.setProjectionMatrix(Magnum::Matrix3::projection({9.0f, 16.0f}));
             camera_.setViewport(Magnum::GL::defaultFramebuffer.viewport().size());
 
+            background_.scale({16.0f, 16.0f});
+            background_.translate({0.0f, -1.0f});
+            background_.set_color(Magnum::Color4{1.0, 1.0, 1.0, 0.02});
+
             score_display_.scale({0.7f, 0.7f});
             score_display_.translate({3.1f, 7.6f});
+
             hi_score_display_.scale({0.3f, 0.3f});
             hi_score_display_.translate({3.0f, 6.8f});
+
             tile_grid_.translate({0.0f, 1.0f});
+
             left_button_.scale({0.85f, 0.85f});
             left_button_.translate({-3.25f, -5.75f});
+
             right_button_.scale({0.85f, 0.85f});
             right_button_.translate({-1.5f, -6.75f});
+
             drop_button_.scale({0.85f, 0.85f});
             drop_button_.translate({1.5f, -6.75f});
+
             rotate_button_.scale({0.85f, 0.85f});
             rotate_button_.translate({3.25f, -5.75f});
+
             game_over_screen_.translate({0.0f, 4.5f});
 
             //configure renderer
@@ -181,6 +194,7 @@ class view::impl final: public Magnum::Platform::Sdl2Application
     public:
         bool visible_ = false;
 
+        background& background_;
         tile_grid& tile_grid_;
         score_display& score_display_;
         score_display& hi_score_display_;
