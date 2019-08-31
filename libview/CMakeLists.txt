@@ -21,6 +21,8 @@ find_package(
     Magnum REQUIRED
     GL
     MagnumFont
+    MeshTools
+    Primitives
     SceneGraph
     Sdl2Application
     Shaders
@@ -49,9 +51,11 @@ target_link_libraries(
         Magnum::Application
         Magnum::GL
         Magnum::Magnum
+        Magnum::MagnumFont
+        Magnum::MeshTools
+        Magnum::Primitives
         Magnum::SceneGraph
         Magnum::Shaders
         Magnum::Text
         Magnum::Trade
-        Magnum::MagnumFont
 )

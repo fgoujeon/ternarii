@@ -20,6 +20,10 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include "circle.hpp"
 #include "shaders/flat_circle.hpp"
 #include <Magnum/GL/Mesh.h>
+#include <Magnum/MeshTools/Compile.h>
+#include <Magnum/Primitives/Square.h>
+#include <Magnum/Shaders/Flat.h>
+#include <Magnum/Trade/MeshData2D.h>
 
 namespace libview
 {
@@ -28,44 +32,7 @@ namespace
 {
     Magnum::GL::Mesh& get_mesh()
     {
-        static Magnum::GL::Mesh mesh;
-        static bool initialized = false;
-
-        if(!initialized)
-        {
-            struct vertex
-            {
-                Magnum::Vector2 position;
-            };
-
-            /*
-            A---B
-            |   |
-            D---C
-            */
-            const vertex data[]
-            {
-                {Magnum::Vector2{-1.0f,  1.0f}}, //A
-                {Magnum::Vector2{-1.0f, -1.0f}}, //D
-                {Magnum::Vector2{ 1.0f, -1.0f}}, //C
-                {Magnum::Vector2{ 1.0f,  1.0f}}, //B
-                {Magnum::Vector2{-1.0f,  1.0f}}, //A
-                {Magnum::Vector2{ 1.0f, -1.0f}}, //C
-            };
-            Magnum::GL::Buffer buffer;
-            buffer.setData(data, Magnum::GL::BufferUsage::StaticDraw);
-
-            mesh.setCount(6);
-            mesh.addVertexBuffer
-            (
-                std::move(buffer),
-                0,
-                shaders::flat_circle::Position{}
-            );
-
-            initialized = true;
-        }
-
+        static Magnum::GL::Mesh mesh = Magnum::MeshTools::compile(Magnum::Primitives::squareSolid());
         return mesh;
     }
 
