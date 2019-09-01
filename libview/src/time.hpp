@@ -17,20 +17,17 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-R"^(
+#ifndef LIBVIEW_TIME_HPP
+#define LIBVIEW_TIME_HPP
 
-#define POSITION_ATTRIBUTE_LOCATION 0
+#include <chrono>
 
-attribute highp vec2 position;
-
-uniform highp mat3 u_transformation_projection_matrix;
-
-varying highp vec2 v_position;
-
-void main()
+namespace libview
 {
-    v_position = position;
-    gl_Position.xywz = vec4(u_transformation_projection_matrix * vec3(position, 1.0), 0.0);
-}
 
-)^"
+using clock = std::chrono::steady_clock;
+using time_point = std::chrono::time_point<clock>;
+
+} //namespace
+
+#endif

@@ -55,11 +55,18 @@ sunshine::sunshine()
 
     CORRADE_INTERNAL_ASSERT_OUTPUT(link());
 
-    transformationProjectionMatrixUniform_ = uniformLocation("transformationProjectionMatrix");
-    colorUniform_ = uniformLocation("color");
+    transformationProjectionMatrixUniform_ = uniformLocation("u_transformation_projection_matrix");
+    colorUniform_ = uniformLocation("u_color");
+    timeUniform_ = uniformLocation("u_now_s");
 
     setTransformationProjectionMatrix({});
     setColor(Magnum::Color4{1.0f});
+}
+
+void sunshine::set_time(const time_point& now)
+{
+    const auto now_us = std::chrono::duration_cast<std::chrono::microseconds>(now.time_since_epoch()).count();
+    setUniform(timeUniform_, now_us / 1000000.0f);
 }
 
 } //namespace

@@ -22,6 +22,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "tile.hpp"
 #include "animation.hpp"
+#include "time.hpp"
 #include "magnum_common.hpp"
 #include <libview/data_types.hpp>
 #include <Magnum/Animation/Player.h>
@@ -68,7 +69,7 @@ class tile_grid: public Object2D
 
         void merge_tiles(const data_types::tile_merge_list& merges);
 
-        void advance();
+        void advance(const time_point& now);
 
     private:
         tile& add_tile

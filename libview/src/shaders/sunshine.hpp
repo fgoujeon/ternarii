@@ -20,9 +20,10 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #ifndef LIBVIEW_SHADERS_SUNSHINE_HPP
 #define LIBVIEW_SHADERS_SUNSHINE_HPP
 
-#include "Magnum/GL/AbstractShaderProgram.h"
-#include "Magnum/Math/Color.h"
-#include "Magnum/Math/Matrix3.h"
+#include "../time.hpp"
+#include <Magnum/GL/AbstractShaderProgram.h>
+#include <Magnum/Math/Color.h>
+#include <Magnum/Math/Matrix3.h>
 
 namespace libview::shaders
 {
@@ -55,8 +56,10 @@ class sunshine: public Magnum::GL::AbstractShaderProgram
             return *this;
         }
 
+        void set_time(const time_point& now);
+
     private:
-        Magnum::Int transformationProjectionMatrixUniform_{0}, colorUniform_{1};
+        Magnum::Int transformationProjectionMatrixUniform_{0}, colorUniform_{1}, timeUniform_{2};
 };
 
 } //namespace

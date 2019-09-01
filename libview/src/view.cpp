@@ -24,6 +24,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include "score_display.hpp"
 #include "colors.hpp"
 #include "clickable.hpp"
+#include "time.hpp"
 #include "magnum_common.hpp"
 #include <libview/view.hpp>
 #include <Magnum/GL/Context.h>
@@ -99,8 +100,13 @@ class view::impl final: public Magnum::Platform::Sdl2Application
     private:
         void drawEvent()
         {
+            const auto now = std::chrono::steady_clock::now();
+
             event_handler_(events::draw{});
-            tile_grid_.advance();
+
+            //advance animations
+            background_.advance(now);
+            tile_grid_.advance(now);
 
             Magnum::GL::defaultFramebuffer.clear(Magnum::GL::FramebufferClear::Color);
 

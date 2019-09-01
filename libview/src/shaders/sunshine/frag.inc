@@ -21,35 +21,46 @@ R"^(
 
 #define PI2 6.28318530718
 #define RAY_COUNT 16.0
+#define RAY_WIDTH 0.5 //[0,1]
+#define SPEED_RPS (1.0 / 64.0) //in rotations per second
 
 #ifdef GL_ES
 precision mediump float;
 #endif
 
-uniform lowp vec4 color;
+uniform lowp vec4 u_color;
+uniform float u_now_s; //current time, in seconds
 
-varying highp vec2 var_position;
+varying highp vec2 v_position;
 
 void main()
 {
-    float angle = atan(var_position.y, var_position.x);
-    float normalized_angle = angle / PI2 + 0.5 /*+ mod(time / 24.0, 1.0)*/;
-    float normalized_angle_mod = mod(normalized_angle, 1.0 / RAY_COUNT) * RAY_COUNT;
-    float normalized_angle_saw_wave = abs(normalized_angle_mod - 0.5) * 2.0;
+    //compute polar coordinate of current position
+    float angle = atan(v_position.y, v_position.x); //[-pi,pi], in radians
+    float radius = length(v_position);
 
-    if(normalized_angle_saw_wave > 0.5)
+    //normalize angle
+    angle = angle / PI2 + 0.5; //[0,1]
+
+    //shift angle according to time, for animation
+    angle = mod(angle + u_now_s * SPEED_RPS, 1.0); //[0,1]
+
+    //make saw wave function with angle
+    angle = mod(angle, 1.0 / RAY_COUNT) * RAY_COUNT; //[0,1]
+    angle = abs(angle - 0.5) * 2.0; //[0,1]
+
+    if(angle > RAY_WIDTH)
     {
         discard;
     }
 
-    float radius = length(var_position);
-    float radius_alpha = (1.0 - radius);
+    //we want rays to be opaque in center and transparent at end of radius
+    float alpha = (1.0 - radius);
 
-    float angle_alpha = smoothstep(0.5, 0.45, normalized_angle_saw_wave);
+    //smooth ray borders
+    alpha = alpha * smoothstep(RAY_WIDTH, RAY_WIDTH - 0.05, angle);
 
-    float alpha = color.w * radius_alpha * angle_alpha;
-
-    gl_FragColor = vec4(color.xyz, alpha);
+    gl_FragColor = vec4(u_color.xyz, u_color.w * alpha);
 }
 
 )^"

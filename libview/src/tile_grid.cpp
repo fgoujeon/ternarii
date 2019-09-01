@@ -332,14 +332,14 @@ void tile_grid::merge_tiles(const data_types::tile_merge_list& merges)
     );
 }
 
-void tile_grid::advance()
+void tile_grid::advance(const time_point& now)
 {
     if(!animations_.empty())
     {
         auto& animation = animations_.front();
         if(!animation.is_done())
         {
-            animation.advance();
+            animation.advance(now);
         }
         else
         {

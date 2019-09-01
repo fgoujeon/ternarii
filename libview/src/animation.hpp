@@ -20,6 +20,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #ifndef LIBVIEW_ANIMATION_HPP
 #define LIBVIEW_ANIMATION_HPP
 
+#include "time.hpp"
 #include <Magnum/Animation/Player.h>
 #include <chrono>
 #include <list>
@@ -145,15 +146,15 @@ class animation
             );
         }
 
-        void advance()
+        void advance(const time_point& now)
         {
             if(!started_)
             {
-                player.play(std::chrono::system_clock::now().time_since_epoch());
+                player.play(now.time_since_epoch());
                 started_ = true;
             }
 
-            player.advance(std::chrono::system_clock::now().time_since_epoch());
+            player.advance(now.time_since_epoch());
         }
 
         bool is_done() const

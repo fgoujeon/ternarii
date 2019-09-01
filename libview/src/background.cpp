@@ -53,6 +53,11 @@ void background::set_color(const Magnum::Color4& color)
     color_ = color;
 }
 
+void background::advance(const time_point& now)
+{
+    get_shader().set_time(now);
+}
+
 void background::draw(const Magnum::Matrix3& transformation_matrix, SceneGraph::Camera2D& camera)
 {
     get_shader().setColor(color_);
