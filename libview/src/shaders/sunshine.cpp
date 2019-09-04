@@ -65,8 +65,15 @@ sunshine::sunshine()
 
 void sunshine::set_time(const time_point& now)
 {
-    const auto now_us = std::chrono::duration_cast<std::chrono::microseconds>(now.time_since_epoch()).count();
-    setUniform(timeUniform_, now_us / 1000000.0f);
+    const auto now_ms = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count();
+
+    //This time value will be added to a normalized angle, so we can modulo it
+    //before casting it to float, so that we don't lose precision.
+    const auto slowness_spr = 128; //in seconds per rotation
+    const auto now_ms2 = now_ms % (1000 * slowness_spr);
+    const auto now_s = now_ms2 / 1000.0f;
+
+    setUniform(timeUniform_, now_s);
 }
 
 } //namespace

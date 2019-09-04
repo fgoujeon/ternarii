@@ -21,8 +21,8 @@ R"^(
 
 #define PI2 6.28318530718
 #define RAY_COUNT 16.0
-#define RAY_WIDTH 0.5 //[0,1]
-#define SPEED_RPS (1.0 / 64.0) //in rotations per second
+#define RAY_WIDTH 0.6 //[0,1]
+#define SLOWNESS_SPR 128.0 //in seconds per rotation
 
 #ifdef GL_ES
 precision mediump float;
@@ -43,7 +43,7 @@ void main()
     angle = angle / PI2 + 0.5; //[0,1]
 
     //shift angle according to time, for animation
-    angle = mod(angle + u_now_s * SPEED_RPS, 1.0); //[0,1]
+    angle = mod(angle + u_now_s / SLOWNESS_SPR, 1.0); //[0,1]
 
     //make saw wave function with angle
     angle = mod(angle, 1.0 / RAY_COUNT) * RAY_COUNT; //[0,1]

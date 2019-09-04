@@ -100,7 +100,7 @@ class view::impl final: public Magnum::Platform::Sdl2Application
     private:
         void drawEvent()
         {
-            const auto now = std::chrono::steady_clock::now();
+            const auto now = clock::now();
 
             event_handler_(events::draw{});
 
