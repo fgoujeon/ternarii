@@ -31,6 +31,11 @@ find_package(
     Trade
 )
 
+find_package(
+    MagnumPlugins REQUIRED
+    PngImporter
+)
+
 set_directory_properties(PROPERTIES CORRADE_USE_PEDANTIC_FLAGS ON)
 
 file(GLOB_RECURSE INCLUDE_FILES include/*)
@@ -58,4 +63,5 @@ target_link_libraries(
         Magnum::Shaders
         Magnum::Text
         Magnum::Trade
+        MagnumPlugins::PngImporter
 )

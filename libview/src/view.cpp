@@ -20,6 +20,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include "background.hpp"
 #include "game_over_screen.hpp"
 #include "button.hpp"
+#include "sdf_image.hpp"
 #include "tile_grid.hpp"
 #include "score_display.hpp"
 #include "colors.hpp"
@@ -53,10 +54,10 @@ class view::impl final: public Magnum::Platform::Sdl2Application
             tile_grid_(scene_.addChild<tile_grid>(drawables_)),
             score_display_(scene_.addChild<score_display>(drawables_)),
             hi_score_display_(scene_.addChild<score_display>(drawables_)),
-            left_button_   (scene_.addChild<button>("LEFT",   [this]{send_move_request(events::left_shift_request{});},         drawables_, clickables_)),
-            right_button_  (scene_.addChild<button>("RIGHT",  [this]{send_move_request(events::right_shift_request{});},        drawables_, clickables_)),
-            drop_button_   (scene_.addChild<button>("DROP",   [this]{send_move_request(events::drop_request{});},               drawables_, clickables_)),
-            rotate_button_ (scene_.addChild<button>("ROTATE", [this]{send_move_request(events::clockwise_rotation_request{});}, drawables_, clickables_)),
+            left_button_   (scene_.addChild<button>("/res/images/move_button.png",   [this]{send_move_request(events::left_shift_request{});},         drawables_, clickables_)),
+            right_button_  (scene_.addChild<button>("/res/images/move_button.png",   [this]{send_move_request(events::right_shift_request{});},        drawables_, clickables_)),
+            drop_button_   (scene_.addChild<button>("/res/images/move_button.png",   [this]{send_move_request(events::drop_request{});},               drawables_, clickables_)),
+            rotate_button_ (scene_.addChild<button>("/res/images/rotate_button.png", [this]{send_move_request(events::clockwise_rotation_request{});}, drawables_, clickables_)),
             game_over_screen_(scene_.addChild<game_over_screen>([this]{send_move_request(events::clear_request{});}, drawables_, clickables_))
         {
             camera_.setAspectRatioPolicy(SceneGraph::AspectRatioPolicy::Extend);
@@ -78,9 +79,11 @@ class view::impl final: public Magnum::Platform::Sdl2Application
             left_button_.scale({0.85f, 0.85f});
             left_button_.translate({-3.25f, -5.75f});
 
+            right_button_.rotate(180.0_degf);
             right_button_.scale({0.85f, 0.85f});
             right_button_.translate({-1.5f, -6.75f});
 
+            drop_button_.rotate(90.0_degf);
             drop_button_.scale({0.85f, 0.85f});
             drop_button_.translate({1.5f, -6.75f});
 

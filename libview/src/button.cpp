@@ -32,7 +32,7 @@ namespace libview
 
 button::button
 (
-    const char* const label,
+    const std::filesystem::path& image_path,
     const mouse_press_callback& cb,
     SceneGraph::DrawableGroup2D& drawables,
     clickable_group& clickables,
@@ -41,10 +41,10 @@ button::button
     Object2D{parent},
     clickable{*this, &clickables},
     mouse_press_callback_(cb),
-    square_(addChild<circle>(colors::light_gray, drawables)),
-    label_(addChild<static_label>(label, 0.4f, Magnum::Text::Alignment::MiddleCenter, drawables))
+    image_(addChild<sdf_image>(image_path, drawables))
 {
-    label_.set_color(colors::dark_gray);
+    image_.set_color(colors::light_gray);
+    image_.set_outline_color(colors::dark_gray);
 }
 
 bool button::is_inside(const Magnum::Vector2& model_space_position) const
