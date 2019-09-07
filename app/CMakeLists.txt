@@ -38,6 +38,8 @@ target_link_libraries(
         libview
 )
 
+add_dependencies(app res)
+
 add_custom_command(
     TARGET app POST_BUILD
 
