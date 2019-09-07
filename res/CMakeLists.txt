@@ -57,6 +57,7 @@ endfunction()
 add_ttf_to_sdf_command(DejaVuSans)
 add_svg_to_sdf_command(move_button)
 add_svg_to_sdf_command(rotate_button)
+add_svg_to_sdf_command(board_corner)
 
 add_custom_target(
     res ALL
@@ -65,4 +66,5 @@ add_custom_target(
         "${CMAKE_CURRENT_BINARY_DIR}/out/fonts/DejaVuSans.conf"
         "${CMAKE_CURRENT_BINARY_DIR}/out/images/move_button.png"
         "${CMAKE_CURRENT_BINARY_DIR}/out/images/rotate_button.png"
+        "${CMAKE_CURRENT_BINARY_DIR}/out/images/board_corner.png"
 )

@@ -19,7 +19,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "tile_grid.hpp"
 #include "tile.hpp"
-#include "square.hpp"
+#include "sdf_image.hpp"
 #include "colors.hpp"
 
 namespace libview
@@ -91,30 +91,28 @@ tile_grid::tile_grid(SceneGraph::DrawableGroup2D& drawables, Object2D* parent):
     Object2D{parent},
     drawables_(drawables)
 {
-    //board corner lines
+    //board corners
     {
-        const auto color = colors::light_gray;
-        const auto length = 0.5f;
-        const auto thickness = 0.1f;
-        const auto padding = 0.05f;
+        auto add_corner = [&](const float x, const float y, const auto rotation)
+        {
+            auto& obj = addChild<sdf_image>("/res/images/board_corner.png", drawables_);
+            obj.rotate(rotation);
+            obj.scale({0.46f, 0.46f});
+            obj.translate({x, y});
+            obj.set_color(colors::light_gray);
+            obj.set_outline_color(colors::dark_gray);
+        };
 
-        const auto hori_scaling = Magnum::Vector2{length / 2, thickness / 2};
-        const auto hori_x_shift = thickness + padding - length / 2;
-        const auto hori_y_shift = padding + thickness / 2;
+        const auto shift  = 0.3f;
+        const auto right  = 2.5f + shift;
+        const auto left   = -right;
+        const auto top    = 1.0f + shift;
+        const auto bottom = -5.0f - shift;
 
-        const auto vert_scaling = Magnum::Vector2{thickness / 2, length / 2};
-        const auto vert_x_shift = hori_y_shift;
-        const auto vert_y_shift = hori_x_shift;
-
-        //clockwise from noon
-        addChild<square>(color, drawables_).scale(hori_scaling).translate({+3.0f + hori_x_shift, +1.5f + hori_y_shift});
-        addChild<square>(color, drawables_).scale(vert_scaling).translate({+3.0f + vert_x_shift, +1.5f + vert_y_shift});
-        addChild<square>(color, drawables_).scale(vert_scaling).translate({+3.0f + vert_x_shift, -5.5f - vert_y_shift});
-        addChild<square>(color, drawables_).scale(hori_scaling).translate({+3.0f + hori_x_shift, -5.5f - hori_y_shift});
-        addChild<square>(color, drawables_).scale(hori_scaling).translate({-3.0f - hori_x_shift, -5.5f - hori_y_shift});
-        addChild<square>(color, drawables_).scale(vert_scaling).translate({-3.0f - vert_x_shift, -5.5f - vert_y_shift});
-        addChild<square>(color, drawables_).scale(vert_scaling).translate({-3.0f - vert_x_shift, +1.5f + vert_y_shift});
-        addChild<square>(color, drawables_).scale(hori_scaling).translate({-3.0f - hori_x_shift, +1.5f + hori_y_shift});
+        add_corner(right, top,    180.0_degf);
+        add_corner(right, bottom,  90.0_degf);
+        add_corner(left,  bottom,   0.0_degf);
+        add_corner(left,  top,    -90.0_degf);
     }
 }
 
@@ -355,7 +353,7 @@ tile& tile_grid::add_tile
 )
 {
     auto& t = addChild<tile>(value, drawables_);
-    t.scale({0.47f, 0.47f});
+    t.scale({0.46f, 0.46f});
     t.translate(position);
     return t;
 }
