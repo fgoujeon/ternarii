@@ -21,7 +21,7 @@ R"^(
 
 #define PI2 6.28318530718
 #define RAY_COUNT 16.0
-#define RAY_WIDTH 0.6 //[0,1]
+#define RAY_WIDTH 0.55 //[0,1]
 #define SLOWNESS_SPR 128.0 //in seconds per rotation
 
 #ifdef GL_ES
@@ -49,16 +49,11 @@ void main()
     angle = mod(angle, 1.0 / RAY_COUNT) * RAY_COUNT; //[0,1]
     angle = abs(angle - 0.5) * 2.0; //[0,1]
 
-    if(angle > RAY_WIDTH)
-    {
-        discard;
-    }
-
     //we want rays to be opaque in center and transparent at end of radius
     float alpha = (1.0 - radius);
 
     //smooth ray borders
-    alpha = alpha * smoothstep(RAY_WIDTH, RAY_WIDTH - 0.05, angle);
+    alpha = alpha * smoothstep(RAY_WIDTH + 0.01 / radius, RAY_WIDTH, angle);
 
     gl_FragColor = vec4(u_color.xyz, u_color.w * alpha);
 }
