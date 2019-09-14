@@ -15,7 +15,7 @@
    version="1.1"
    id="svg8"
    inkscape:version="0.92.4 5da689c313, 2019-01-14"
-   sodipodi:docname="move-button.svg"
+   sodipodi:docname="move_button.svg"
    inkscape:export-filename="/home/florian/Development/ternarii/art/move_button.png"
    inkscape:export-xdpi="960"
    inkscape:export-ydpi="960">
@@ -29,8 +29,8 @@
      inkscape:pageopacity="1"
      inkscape:pageshadow="2"
      inkscape:zoom="5.6"
-     inkscape:cx="37.779255"
-     inkscape:cy="48.06989"
+     inkscape:cx="27.767857"
+     inkscape:cy="47.355604"
      inkscape:document-units="px"
      inkscape:current-layer="layer2"
      showgrid="false"
@@ -56,31 +56,13 @@
      inkscape:label="button"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(0,-270.54165)"
-     sodipodi:insensitive="true">
+     transform="translate(0,-270.54165)">
     <path
-       style="opacity:1;fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:4.72224426;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
-       d="m 13.229167,271.07082 c -7.0140161,0 -12.70000019,5.68599 -12.70000033,12.7 1.4e-7,7.01401 5.68598423,12.7 12.70000033,12.7 7.014017,0 12.699999,-5.68599 12.699999,-12.7 0,-7.01401 -5.685982,-12.7 -12.699999,-12.7 z"
+       style="opacity:1;fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:4.91900492;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
+       d="M 13.229167,270.54165 C 5.9229004,270.54165 1.5e-7,276.46455 0,283.77081 c 1.5e-7,7.30626 5.9229004,13.22917 13.229167,13.22917 7.306268,0 13.229166,-5.92291 13.229166,-13.22917 0,-7.30626 -5.922898,-13.22916 -13.229166,-13.22916 z"
        id="path815"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="sssss" />
-  </g>
-  <g
-     transform="translate(0,-270.54165)"
-     id="g824"
-     inkscape:groupmode="layer"
-     inkscape:label="arrow line"
-     style="display:none">
-    <path
-       inkscape:connector-curvature="0"
-       id="path820"
-       d="m 13.229167,271.07082 c -7.0140161,0 -12.70000019,5.68599 -12.70000033,12.7 1.4e-7,7.01401 5.68598423,12.7 12.70000033,12.7 7.014017,0 12.699999,-5.68599 12.699999,-12.7 0,-7.01401 -5.685982,-12.7 -12.699999,-12.7 z m 3.997028,5.7646 v 6.88629 6.88679 l -5.964039,-3.44342 -5.9635438,-3.44337 5.9635438,-3.44289 z"
-       style="opacity:1;fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:4.72224426;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal" />
-    <path
-       inkscape:connector-curvature="0"
-       id="path822"
-       d="m 14.967858,283.77082 h 5.905878"
-       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1.984375;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
   </g>
   <g
      inkscape:groupmode="layer"
@@ -88,19 +70,19 @@
      inkscape:label="arrow head">
     <path
        sodipodi:type="star"
-       style="opacity:1;fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1.86380303;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
+       style="opacity:1;fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1.94146156;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
        id="path827"
        sodipodi:sides="3"
-       sodipodi:cx="13.92462"
-       sodipodi:cy="13.22917"
-       sodipodi:r1="8.2974091"
-       sodipodi:r2="4.1487045"
+       sodipodi:cx="13.953598"
+       sodipodi:cy="13.229166"
+       sodipodi:r1="8.6431351"
+       sodipodi:r2="4.3215675"
        sodipodi:arg1="1.0471976"
        sodipodi:arg2="2.0943951"
        inkscape:flatsided="true"
        inkscape:rounded="0.05"
        inkscape:randomized="0"
-       d="M 18.073324,20.414937 C 17.451018,20.774225 5.6272106,13.947746 5.6272106,13.229169 c 1e-7,-0.718576 11.8238084,-7.5450544 12.4461144,-7.185766 0.622305,0.3592884 0.622305,14.012246 -1e-6,14.371534 z"
-       inkscape:transform-center-x="2.0743526" />
+       d="M 18.275165,20.714341 C 17.62693,21.088599 5.3104629,13.977683 5.310463,13.229166 c 0,-0.748518 12.316468,-7.8594331 12.964703,-7.4851743 0.648235,0.3742588 0.648234,14.5960903 -10e-7,14.9703493 z"
+       inkscape:transform-center-x="2.1607838" />
   </g>
 </svg>

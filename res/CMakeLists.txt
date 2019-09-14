@@ -35,6 +35,7 @@ function(add_ttf_to_sdf_command FILENAME)
     )
 endfunction()
 
+#expects 100x100 px SVG
 function(add_svg_to_sdf_command FILENAME)
     set(SVG_FILE "${CMAKE_CURRENT_SOURCE_DIR}/src/images/${FILENAME}.svg")
     set(INTERMEDIATE_PNG_FILE ${FILENAME}.svg.png)
@@ -43,14 +44,14 @@ function(add_svg_to_sdf_command FILENAME)
     add_custom_command(
         DEPENDS ${SVG_FILE}
         OUTPUT ${INTERMEDIATE_PNG_FILE}
-        COMMAND ${INKSCAPE_PROGRAM} ARGS -z -e ${INTERMEDIATE_PNG_FILE} -w 1000 -h 1000 ${SVG_FILE}
+        COMMAND ${INKSCAPE_PROGRAM} ARGS -z -e ${INTERMEDIATE_PNG_FILE} -a -4:-4:104:104 -w 1024 -h 1024 ${SVG_FILE}
     )
 
     add_custom_command(
         DEPENDS ${INTERMEDIATE_PNG_FILE}
         OUTPUT ${SDF_TGA_FILE}
         COMMAND ${CMAKE_COMMAND} ARGS -E make_directory "${CMAKE_CURRENT_BINARY_DIR}/out/images"
-        COMMAND ${MAGNUM_DISTANCEFIELDCONVERTER_PROGRAM} ARGS --output-size "128 128" --radius 32 --converter TgaImageConverter ${INTERMEDIATE_PNG_FILE} ${SDF_TGA_FILE}
+        COMMAND ${MAGNUM_DISTANCEFIELDCONVERTER_PROGRAM} ARGS --output-size "64 64" --radius 32 --converter TgaImageConverter ${INTERMEDIATE_PNG_FILE} ${SDF_TGA_FILE}
     )
 endfunction()
 

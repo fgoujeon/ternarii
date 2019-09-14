@@ -76,18 +76,18 @@ class view::impl final: public Magnum::Platform::Sdl2Application
 
             tile_grid_.translate({0.0f, 1.0f});
 
-            left_button_.scale({0.85f, 0.85f});
+            left_button_.scale({0.90f, 0.90f});
             left_button_.translate({-3.25f, -5.75f});
 
             right_button_.rotate(180.0_degf);
-            right_button_.scale({0.85f, 0.85f});
+            right_button_.scale({0.90f, 0.90f});
             right_button_.translate({-1.5f, -6.75f});
 
             drop_button_.rotate(90.0_degf);
-            drop_button_.scale({0.85f, 0.85f});
+            drop_button_.scale({0.90f, 0.90f});
             drop_button_.translate({1.5f, -6.75f});
 
-            rotate_button_.scale({0.85f, 0.85f});
+            rotate_button_.scale({0.90f, 0.90f});
             rotate_button_.translate({3.25f, -5.75f});
 
             game_over_screen_.translate({0.0f, 4.5f});

@@ -97,7 +97,7 @@ tile_grid::tile_grid(SceneGraph::DrawableGroup2D& drawables, Object2D* parent):
         {
             auto& obj = addChild<sdf_image>("/res/images/board_corner.tga", drawables_);
             obj.rotate(rotation);
-            obj.scale({0.46f, 0.46f});
+            obj.scale({0.50f, 0.50f});
             obj.translate({x, y});
             obj.set_color(colors::light_gray);
             obj.set_outline_color(colors::dark_gray);
