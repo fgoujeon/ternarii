@@ -18,7 +18,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 #include "sdf_image.hpp"
-#include <MagnumPlugins/PngImporter/PngImporter.h>
+#include <MagnumPlugins/TgaImporter/TgaImporter.h>
 #include <Magnum/GL/Mesh.h>
 #include <Magnum/GL/TextureFormat.h>
 #include <Magnum/MeshTools/Compile.h>
@@ -53,7 +53,7 @@ namespace
 
     auto make_texture(const std::filesystem::path& image_path)
     {
-        auto importer = Magnum::Trade::PngImporter{};
+        auto importer = Magnum::Trade::TgaImporter{};
         importer.openFile(image_path);
 
         auto optImage = importer.image2D(0);

@@ -95,7 +95,7 @@ tile_grid::tile_grid(SceneGraph::DrawableGroup2D& drawables, Object2D* parent):
     {
         auto add_corner = [&](const float x, const float y, const auto rotation)
         {
-            auto& obj = addChild<sdf_image>("/res/images/board_corner.png", drawables_);
+            auto& obj = addChild<sdf_image>("/res/images/board_corner.tga", drawables_);
             obj.rotate(rotation);
             obj.scale({0.46f, 0.46f});
             obj.translate({x, y});

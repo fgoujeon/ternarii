@@ -38,7 +38,7 @@ endfunction()
 function(add_svg_to_sdf_command FILENAME)
     set(SVG_FILE "${CMAKE_CURRENT_SOURCE_DIR}/src/images/${FILENAME}.svg")
     set(INTERMEDIATE_PNG_FILE ${FILENAME}.svg.png)
-    set(SDF_PNG_FILE "${CMAKE_CURRENT_BINARY_DIR}/out/images/${FILENAME}.png")
+    set(SDF_TGA_FILE "${CMAKE_CURRENT_BINARY_DIR}/out/images/${FILENAME}.tga")
 
     add_custom_command(
         DEPENDS ${SVG_FILE}
@@ -48,9 +48,9 @@ function(add_svg_to_sdf_command FILENAME)
 
     add_custom_command(
         DEPENDS ${INTERMEDIATE_PNG_FILE}
-        OUTPUT ${SDF_PNG_FILE}
+        OUTPUT ${SDF_TGA_FILE}
         COMMAND ${CMAKE_COMMAND} ARGS -E make_directory "${CMAKE_CURRENT_BINARY_DIR}/out/images"
-        COMMAND ${MAGNUM_DISTANCEFIELDCONVERTER_PROGRAM} ARGS --output-size "128 128" --radius 32 ${INTERMEDIATE_PNG_FILE} ${SDF_PNG_FILE}
+        COMMAND ${MAGNUM_DISTANCEFIELDCONVERTER_PROGRAM} ARGS --output-size "128 128" --radius 32 --converter TgaImageConverter ${INTERMEDIATE_PNG_FILE} ${SDF_TGA_FILE}
     )
 endfunction()
 
@@ -64,7 +64,7 @@ add_custom_target(
     SOURCES
         "${CMAKE_CURRENT_BINARY_DIR}/out/fonts/DejaVuSans.tga"
         "${CMAKE_CURRENT_BINARY_DIR}/out/fonts/DejaVuSans.conf"
-        "${CMAKE_CURRENT_BINARY_DIR}/out/images/move_button.png"
-        "${CMAKE_CURRENT_BINARY_DIR}/out/images/rotate_button.png"
-        "${CMAKE_CURRENT_BINARY_DIR}/out/images/board_corner.png"
+        "${CMAKE_CURRENT_BINARY_DIR}/out/images/move_button.tga"
+        "${CMAKE_CURRENT_BINARY_DIR}/out/images/rotate_button.tga"
+        "${CMAKE_CURRENT_BINARY_DIR}/out/images/board_corner.tga"
 )

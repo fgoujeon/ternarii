@@ -54,10 +54,10 @@ class view::impl final: public Magnum::Platform::Sdl2Application
             tile_grid_(scene_.addChild<tile_grid>(drawables_)),
             score_display_(scene_.addChild<score_display>(drawables_)),
             hi_score_display_(scene_.addChild<score_display>(drawables_)),
-            left_button_   (scene_.addChild<button>("/res/images/move_button.png",   [this]{send_move_request(events::left_shift_request{});},         drawables_, clickables_)),
-            right_button_  (scene_.addChild<button>("/res/images/move_button.png",   [this]{send_move_request(events::right_shift_request{});},        drawables_, clickables_)),
-            drop_button_   (scene_.addChild<button>("/res/images/move_button.png",   [this]{send_move_request(events::drop_request{});},               drawables_, clickables_)),
-            rotate_button_ (scene_.addChild<button>("/res/images/rotate_button.png", [this]{send_move_request(events::clockwise_rotation_request{});}, drawables_, clickables_)),
+            left_button_   (scene_.addChild<button>("/res/images/move_button.tga",   [this]{send_move_request(events::left_shift_request{});},         drawables_, clickables_)),
+            right_button_  (scene_.addChild<button>("/res/images/move_button.tga",   [this]{send_move_request(events::right_shift_request{});},        drawables_, clickables_)),
+            drop_button_   (scene_.addChild<button>("/res/images/move_button.tga",   [this]{send_move_request(events::drop_request{});},               drawables_, clickables_)),
+            rotate_button_ (scene_.addChild<button>("/res/images/rotate_button.tga", [this]{send_move_request(events::clockwise_rotation_request{});}, drawables_, clickables_)),
             game_over_screen_(scene_.addChild<game_over_screen>([this]{send_move_request(events::clear_request{});}, drawables_, clickables_))
         {
             camera_.setAspectRatioPolicy(SceneGraph::AspectRatioPolicy::Extend);
