@@ -61,8 +61,8 @@ namespace events
 
     struct next_input_insertion
     {
-        unsigned int x_offset;
-        unsigned int rotation;
+        int x_offset = 0;
+        int rotation = 0;
     };
 
     inline
@@ -80,8 +80,8 @@ namespace events
 
     struct input_layout_change
     {
-        unsigned int x_offset;
-        unsigned int rotation;
+        int x_offset = 0;
+        int rotation = 0;
     };
 
     inline
@@ -99,10 +99,10 @@ namespace events
 
     struct input_insertion
     {
-        unsigned int tile0_dst_column_index;
-        unsigned int tile0_dst_row_index;
-        unsigned int tile1_dst_column_index;
-        unsigned int tile1_dst_row_index;
+        int tile0_dst_column_index = 0;
+        int tile0_dst_row_index = 0;
+        int tile1_dst_column_index = 0;
+        int tile1_dst_row_index = 0;
     };
 
     inline
@@ -176,7 +176,7 @@ namespace events
 
     struct score_change
     {
-        unsigned int score;
+        int score = 0;
     };
 
     inline
@@ -193,7 +193,7 @@ namespace events
 
     struct hi_score_change
     {
-        unsigned int score;
+        int score = 0;
     };
 
     inline
@@ -233,6 +233,6 @@ using event = std::variant
 
 using event_list = std::vector<event>;
 
-} //namespace libgame
+} //namespace
 
 #endif

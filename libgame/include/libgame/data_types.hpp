@@ -26,7 +26,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include <memory>
 #include <ostream>
 
-namespace libgame { namespace data_types
+namespace libgame::data_types
 {
 
 template<typename T, size_t Size0, size_t Size1>
@@ -34,11 +34,7 @@ using array2d = std::array<std::array<T, Size1>, Size0>;
 
 struct tile
 {
-    explicit tile(unsigned int value = 0): value(value)
-    {
-    }
-
-    unsigned int value;
+    int value = 0;
 };
 
 using tile_pair = std::array<tile, 2>;
@@ -54,7 +50,7 @@ Convention of rows and columns:
 [R2]
 [R1]
 [R0]
-	[C0][C1][C2][C3][..]
+    [C0][C1][C2][C3][..]
 */
 template<size_t ColumnCount, size_t RowCount>
 using tile_grid = array2d<std::optional<tile>, ColumnCount, RowCount>;
@@ -63,8 +59,8 @@ using board_tile_grid = tile_grid<6, 10>;
 
 struct tile_coordinate
 {
-    unsigned int x;
-    unsigned int y;
+    int x = 0;
+    int y = 0;
 };
 
 inline
@@ -82,9 +78,9 @@ std::ostream& operator<<(std::ostream& l, const tile_coordinate& r)
 
 struct tile_drop
 {
-    unsigned int column_index;
-    unsigned int src_row_index;
-    unsigned int dst_row_index;
+    int column_index = 0;
+    int src_row_index = 0;
+    int dst_row_index = 0;
 };
 
 using tile_drop_list = std::vector<tile_drop>;
@@ -107,7 +103,7 @@ struct tile_merge
 {
     std::vector<tile_coordinate> src_tile_coordinates;
     tile_coordinate dst_tile_coordinate;
-    unsigned int dst_tile_value;
+    int dst_tile_value = 0;
 };
 
 using tile_merge_list = std::vector<tile_merge>;
@@ -134,6 +130,6 @@ std::ostream& operator<<(std::ostream& l, const tile_merge& r)
     return l;
 }
 
-}} //namespace libgame::data_types
+} //namespace
 
 #endif

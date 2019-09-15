@@ -34,7 +34,7 @@ struct game
 
         ~game();
 
-        unsigned int get_score() const;
+        int get_score() const;
 
         const data_types::tile_pair& get_next_input_tiles() const;
 
@@ -44,9 +44,9 @@ struct game
 
         bool is_game_over() const;
 
-        unsigned int get_input_x_offset() const;
+        int get_input_x_offset() const;
 
-        unsigned int get_input_rotation() const;
+        int get_input_rotation() const;
 
         event_list start();
 
@@ -58,13 +58,13 @@ struct game
 
         event_list drop_input();
 
-        void init_hi_score(unsigned int value);
+        void init_hi_score(int value);
 
     private:
         struct impl;
         std::unique_ptr<impl> pimpl_;
 };
 
-} //namespace libgame
+} //namespace
 
 #endif

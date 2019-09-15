@@ -33,11 +33,11 @@ class board_input;
 class board
 {
     public:
-        static const unsigned int column_count = 6;
-        static const unsigned int row_count = 10;
+        static const int column_count = 6;
+        static const int row_count = 10;
         using grid_t = data_types::tile_grid<column_count, row_count>;
 
-        board();
+        board() = default;
 
         const grid_t& tile_grid() const
         {
@@ -46,18 +46,18 @@ class board
 
         bool is_game_over() const;
 
-        unsigned int get_highest_tile_value() const
+        int get_highest_tile_value() const
         {
             return highest_tile_value_;
         }
 
-        unsigned int get_score() const;
+        int get_score() const;
 
         void clear();
 
         std::vector<event> drop_input(const board_input& in);
 
-        void init_hi_score(unsigned int value);
+        void init_hi_score(int value);
 
     private:
         events::input_insertion insert_input(const board_input& in);
@@ -68,28 +68,28 @@ class board
 
         enum class selection_state
         {
-            UNSELECTED,
-            VISITED,
-            SELECTED
+            unselected,
+            visited,
+            selected
         };
 
         typedef data_types::array2d<selection_state, column_count, row_count> selection_t;
 
         void select_tiles
         (
-            const unsigned int tile_value,
-            const unsigned int column_index,
-            const unsigned int row_index,
+            const int tile_value,
+            const int column_index,
+            const int row_index,
             selection_t& selection,
-            unsigned int& selection_size
+            int& selection_size
         );
 
     private:
         grid_t tile_grid_;
-        unsigned int highest_tile_value_;
-        unsigned int hi_score_ = 0;
+        int highest_tile_value_ = 0;
+        int hi_score_ = 0;
 };
 
-} //namespace libgame
+} //namespace
 
 #endif

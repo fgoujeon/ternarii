@@ -40,7 +40,7 @@ namespace
             }
 
             //return random value from 0 to max
-            unsigned int generate(const unsigned int max)
+            int generate(const int max)
             {
                 //generate random number with normal distribution
                 const auto real_val = dis_(gen_);
@@ -49,7 +49,7 @@ namespace
                 const auto positive_real_val = std::abs(real_val);
 
                 //discretize
-                const auto natural_val = static_cast<unsigned int>(positive_real_val);
+                const auto natural_val = static_cast<int>(positive_real_val);
 
                 //stay inside [0, max]
                 return natural_val % (max + 1);
@@ -67,7 +67,7 @@ struct game::impl
     events::next_input_creation generate_next_input()
     {
         const auto highest_tile_value = board_.get_highest_tile_value();
-        const auto max_value = std::clamp(highest_tile_value, 2u, 9u);
+        const auto max_value = std::clamp(highest_tile_value, 2, 9);
         next_input_ = data_types::tile_pair
         {
             data_types::tile{rand.generate(max_value)},
@@ -94,7 +94,7 @@ game::game():
 
 game::~game() = default;
 
-unsigned int game::get_score() const
+int game::get_score() const
 {
     return pimpl_->board_.get_score();
 }
@@ -119,12 +119,12 @@ bool game::is_game_over() const
     return pimpl_->board_.is_game_over();
 }
 
-unsigned int game::get_input_x_offset() const
+int game::get_input_x_offset() const
 {
     return pimpl_->input_.get_x_offset();
 }
 
-unsigned int game::get_input_rotation() const
+int game::get_input_rotation() const
 {
     return pimpl_->input_.get_rotation();
 }
@@ -190,7 +190,9 @@ event_list game::drop_input()
         //drop the input
         const auto& board_events = pimpl_->board_.drop_input(pimpl_->input_);
         for(const auto& event: board_events)
+        {
             events.push_back(event);
+        }
 
         if(!is_game_over())
         {
@@ -210,9 +212,9 @@ event_list game::drop_input()
     return events;
 }
 
-void game::init_hi_score(unsigned int value)
+void game::init_hi_score(int value)
 {
     pimpl_->board_.init_hi_score(value);
 }
 
-} //namespace libgame
+} //namespace

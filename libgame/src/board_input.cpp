@@ -96,4 +96,4 @@ board_input::apply()
     };
 }
 
-} //namespace libgame
+} //namespace
