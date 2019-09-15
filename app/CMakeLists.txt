@@ -46,9 +46,9 @@ add_custom_command(
     COMMAND ${CMAKE_COMMAND} ARGS -E make_directory ${EXECUTABLE_OUTPUT_PATH}
 
     COMMAND ${CMAKE_COMMAND} ARGS -E copy_if_different
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/index.html
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/index.css
         ${CMAKE_CURRENT_SOURCE_DIR}/src/icon.png
-        ${MAGNUM_EMSCRIPTENAPPLICATION_JS}
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/index.css
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/index.html
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/index.js
         ${EXECUTABLE_OUTPUT_PATH}
 )
