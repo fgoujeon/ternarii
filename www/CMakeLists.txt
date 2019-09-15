@@ -17,25 +17,15 @@
 
 cmake_minimum_required(VERSION 3.14)
 
-find_package(Magnum)
+add_custom_target(
+    www ALL
 
-set_directory_properties(PROPERTIES CORRADE_USE_PEDANTIC_FLAGS ON)
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
 
-file(GLOB_RECURSE SRC_FILES src/*)
-
-add_executable(app ${SRC_FILES})
-
-set_property(
-    TARGET app
-    PROPERTY CXX_STANDARD 17
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        ${CMAKE_CURRENT_SOURCE_DIR}/res/icon.png
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/index.css
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/index.html
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/index.js
+        ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
 )
-
-target_link_libraries(
-    app
-    PRIVATE
-        libdb
-        libgame
-        libview
-)
-
-add_dependencies(app res)

@@ -19,7 +19,7 @@ cmake_minimum_required(VERSION 3.14)
 project(ternarii)
 
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/modules/" ${CMAKE_MODULE_PATH})
-set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --preload-file ${CMAKE_BINARY_DIR}/res/out@/res")
 
 add_subdirectory(res)
@@ -27,3 +27,4 @@ add_subdirectory(app)
 add_subdirectory(libdb)
 add_subdirectory(libgame)
 add_subdirectory(libview)
+add_subdirectory(www)
