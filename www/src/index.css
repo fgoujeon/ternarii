@@ -28,7 +28,21 @@ body, html {
 }
 
 body {
+    font-family: sans-serif;
+    color: #dddddd;
     background-color: #404044;
+}
+
+#status-container {
+    position: absolute;
+    width: 100%;
+
+    /*center horizontally*/
+    text-align: center;
+
+    /*center vertically*/
+    margin-top: 50vh;
+    transform: translateY(-50%);
 }
 
 canvas {
