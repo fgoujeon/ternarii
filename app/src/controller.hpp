@@ -32,31 +32,20 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 class controller
 {
     public:
-        controller():
+        controller(int argc, char** argv):
             database_([this](const libdb::event& event){handle_database_event(event);}),
-            view_([this](const libview::event& event){handle_view_event(event);})
+            view_(argc, argv, [this](const libview::event& event){handle_view_event(event);})
         {
             handle_game_events(game_.start());
         }
 
-        bool must_quit() const
+        int exec()
         {
-            return view_.must_quit();
-        }
-
-        void iterate()
-        {
-            database_.iterate();
-            view_.iterate();
-        }
-
-        void set_window_size(const unsigned int width, const unsigned int height)
-        {
-            view_.set_window_size(width, height);
+            return view_.exec();
         }
 
     private:
-        void handle_game_event(const libgame::events::start& event)
+        void handle_game_event(const libgame::events::start&)
         {
             view_.clear();
         }
@@ -84,8 +73,7 @@ class controller
 
         void handle_game_event(const libgame::events::input_layout_change& event)
         {
-            view_.set_input_x_offset(event.x_offset);
-            view_.set_input_rotation(event.rotation);
+            view_.set_input_layout(event.x_offset, event.rotation);
         }
 
         void handle_game_event(const libgame::events::input_insertion& event)
@@ -156,6 +144,11 @@ class controller
         void handle_view_event2(const libview::events::clear_request&)
         {
             handle_game_events(game_.start());
+        }
+
+        void handle_view_event2(const libview::events::draw&)
+        {
+            database_.iterate();
         }
 
         void handle_view_event(const libview::event& event)

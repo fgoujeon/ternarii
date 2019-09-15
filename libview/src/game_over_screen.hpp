@@ -20,37 +20,42 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #ifndef LIBVIEW_GAME_OVER_SCREEN_HPP
 #define LIBVIEW_GAME_OVER_SCREEN_HPP
 
-#include "label_button.hpp"
-#include "label.hpp"
-#include "geometry.hpp"
-#include <libview/events.hpp>
-#include <libsdl.hpp>
+#include "square.hpp"
+#include "static_label.hpp"
+#include "clickable.hpp"
+#include "magnum_common.hpp"
 
 namespace libview
 {
 
-class game_over_screen
+class game_over_screen: public Object2D, public SceneGraph::Drawable2D
 {
+    private:
+        class new_game_button;
+
     public:
-        game_over_screen
+        explicit game_over_screen
         (
-            const event_handler& evt_handler,
-            SDL_Renderer& renderer,
-            const SDL_Rect& area
+            const std::function<void()>& new_game_button_press_callback,
+            SceneGraph::DrawableGroup2D& drawables,
+            clickable_group& clickables,
+            Object2D* parent
         );
 
-        void set_visible(const bool value);
-
-        void draw(SDL_Renderer& renderer, const geometry::system& sys);
+        void set_visible(const bool visible);
 
     private:
-        SDL_Renderer& renderer_;
-        SDL_Rect area_;
-        label game_over_label_;
-        label_button restart_button_;
+        void draw(const Magnum::Matrix3& transformation_matrix, SceneGraph::Camera2D& camera) override;
+
+    private:
+        SceneGraph::DrawableGroup2D& drawables_;
+        SceneGraph::DrawableGroup2D drawable_children_;
+        square& background_rectangle_;
+        static_label& label_;
+        new_game_button& new_game_button_;
         bool visible_ = false;
 };
 
-} //namespace libview
+} //namespace
 
 #endif

@@ -18,6 +18,12 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 #include "score_display.hpp"
+#include "text.hpp"
+#include "colors.hpp"
+#include <MagnumPlugins/FreeTypeFont/FreeTypeFont.h>
+#include <Magnum/Shaders/Vector.h>
+#include <Magnum/Text/AbstractFont.h>
+#include <Magnum/Text/GlyphCache.h>
 
 namespace libview
 {
@@ -50,39 +56,32 @@ namespace
     }
 }
 
-score_display::score_display
-(
-    SDL_Renderer& renderer,
-    const SDL_Rect& area
-):
-    label_
-    (
-        renderer,
-        "res/fonts/DejaVuSans.ttf",
-        area.h,
-        SDL_Color{0xff, 0xff, 0xff, 0xff},
-        geometry::point
-        {
-            static_cast<double>(area.x),
-            static_cast<double>(area.y)
-        },
-        area.w,
-        area.h,
-        "0",
-        horizontal_alignment::right,
-        vertical_alignment::center
-    )
+score_display::score_display(SceneGraph::DrawableGroup2D& drawables, Object2D* parent):
+    Object2D{parent},
+    SceneGraph::Drawable2D{*this, &drawables},
+    renderer_(text::get_font(), text::get_glyph_cache(), 1.0f, Magnum::Text::Alignment::TopRight)
 {
+    renderer_.reserve(40, Magnum::GL::BufferUsage::DynamicDraw, Magnum::GL::BufferUsage::StaticDraw);
+    renderer_.render("0");
 }
 
-void score_display::set_score(const unsigned int value)
+void score_display::set_score(const int value)
 {
-    label_.set_text(score_to_string(value));
+    renderer_.render(score_to_string(value));
 }
 
-void score_display::draw(const geometry::system& sys)
+void score_display::draw(const Magnum::Matrix3& transformation_matrix, SceneGraph::Camera2D& camera)
 {
-    label_.draw(sys);
+    using namespace Magnum::Math::Literals;
+
+    text::get_shader().bindVectorTexture(text::get_glyph_cache().texture());
+    text::get_shader().setTransformationProjectionMatrix(camera.projectionMatrix() * transformation_matrix);
+    text::get_shader().setColor(colors::white);
+    text::get_shader().setSmoothness(0.035f / transformation_matrix.uniformScaling());
+    text::get_shader().setOutlineColor(colors::dark_gray);
+    text::get_shader().setOutlineRange(0.47, 0.40);
+
+    renderer_.mesh().draw(text::get_shader());
 }
 
-} //namespace view
+} //namespace

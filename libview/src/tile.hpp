@@ -20,42 +20,32 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #ifndef LIBVIEW_TILE_HPP
 #define LIBVIEW_TILE_HPP
 
-#include "label.hpp"
-#include "rectangle.hpp"
-#include "geometry.hpp"
-#include <libsdl.hpp>
+#include "rounded_square.hpp"
+#include "static_label.hpp"
+#include "magnum_common.hpp"
+#include <Magnum/Math/Color.h>
+#include <Magnum/Magnum.h>
 
 namespace libview
 {
 
-class tile
+class tile: public Object2D, public SceneGraph::Drawable2D
 {
     public:
-        tile
-        (
-            SDL_Renderer& renderer,
-            const unsigned int value,
-            const geometry::rect& area
-        );
+        explicit tile(const int value, SceneGraph::DrawableGroup2D& drawables, Object2D* parent);
 
-        const geometry::point& get_position() const;
-
-        void set_position(const geometry::point& position);
-
-        void set_visible(const bool visible);
-
-        void draw(const geometry::system& sys);
+        void set_alpha(const float alpha);
 
     private:
-        SDL_Renderer& renderer_;
-        unsigned int value_ = 0;
-        geometry::rect area_;
-        SDL_Color background_color_;
-        rectangle rectangle_;
-        label number_label_;
-        bool visible_ = false;
+        void draw(const Magnum::Matrix3& transformation_matrix, SceneGraph::Camera2D& camera) override;
+
+    private:
+        SceneGraph::DrawableGroup2D drawable_children_;
+        Magnum::Color3 square_color_;
+        rounded_square& square_;
+        static_label& label_;
 };
 
-} //namespace libview
+} //namespace
 
 #endif

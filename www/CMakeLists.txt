@@ -15,14 +15,17 @@
 #You should have received a copy of the GNU General Public License
 #along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.14)
 
-add_custom_target(www)
+add_custom_target(
+    www ALL
 
-file(GLOB_RECURSE SRC_FILES src/*)
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
 
-add_custom_command(
-    TARGET www POST_BUILD
-    COMMAND ${CMAKE_COMMAND} ARGS -E make_directory ${EXECUTABLE_OUTPUT_PATH}
-    COMMAND ${CMAKE_COMMAND} ARGS -E copy_if_different ${SRC_FILES} ${EXECUTABLE_OUTPUT_PATH}
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        ${CMAKE_CURRENT_SOURCE_DIR}/res/icon.png
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/index.css
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/index.html
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/index.js
+        ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
 )

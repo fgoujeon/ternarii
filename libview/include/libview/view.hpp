@@ -30,15 +30,11 @@ namespace libview
 class view
 {
     public:
-        view(const event_handler& evt_handler);
+        view(int argc, char** argv, const event_handler& evt_handler);
 
         ~view();
 
-        void set_window_size(const unsigned int width, const unsigned int height);
-
-        void iterate();
-
-        bool must_quit() const;
+        int exec();
 
         void clear();
 
@@ -50,9 +46,7 @@ class view
 
         void insert_next_input(const unsigned int x_offset, const unsigned int rotation);
 
-        void set_input_x_offset(const unsigned int value);
-
-        void set_input_rotation(const unsigned int value);
+        void set_input_layout(const unsigned int x_offset, const unsigned int rotation);
 
         void insert_input
         (
@@ -71,10 +65,10 @@ class view
         void set_game_over_screen_visible(const bool visible);
 
     private:
-        struct impl;
+        class impl;
         std::unique_ptr<impl> pimpl_;
 };
 
-} //namespace libview
+} //namespace
 
 #endif

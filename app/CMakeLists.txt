@@ -15,14 +15,15 @@
 #You should have received a copy of the GNU General Public License
 #along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.14)
+
+find_package(Magnum)
+
+set_directory_properties(PROPERTIES CORRADE_USE_PEDANTIC_FLAGS ON)
 
 file(GLOB_RECURSE SRC_FILES src/*)
 
-add_executable(
-    app
-    ${SRC_FILES}
-)
+add_executable(app ${SRC_FILES})
 
 set_property(
     TARGET app
@@ -37,6 +38,4 @@ target_link_libraries(
         libview
 )
 
-if(EMSCRIPTEN)
-    add_dependencies(app www)
-endif()
+add_dependencies(app res)

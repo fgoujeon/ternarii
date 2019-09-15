@@ -18,109 +18,72 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 #include "tile.hpp"
-#include "draw.hpp"
-#include <map>
+#include "text.hpp"
+#include "colors.hpp"
+#include <Magnum/GL/Mesh.h>
+#include <Magnum/Shaders/Flat.h>
 
 namespace libview
 {
 
 namespace
 {
-    const auto label_vertical_margin_normalized = 0.2;
-    const auto label_height_normalized = 1 - 2 * label_vertical_margin_normalized;
-
-    SDL_Color get_background_color(const unsigned int value)
+    Magnum::Color3 value_to_color(const int value)
     {
-        const auto value_color_map = std::map<unsigned int, SDL_Color>
-        {
-            {0,  SDL_Color{0xa0, 0x52, 0x52, 0xff}},
-            {1,  SDL_Color{0xdd, 0x3b, 0x3b, 0xff}},
-            {2,  SDL_Color{0xef, 0x74, 0x29, 0xff}},
-            {3,  SDL_Color{0xe5, 0xbb, 0x13, 0xff}},
-            {4,  SDL_Color{0xa1, 0xc9, 0x27, 0xff}},
-            {5,  SDL_Color{0x2b, 0xcd, 0x73, 0xff}},
-            {6,  SDL_Color{0x25, 0xd7, 0xd2, 0xff}},
-            {7,  SDL_Color{0x3f, 0x94, 0xde, 0xff}},
-            {8,  SDL_Color{0x4c, 0x52, 0xe0, 0xff}},
-            {9,  SDL_Color{0x90, 0x4c, 0xe0, 0xff}},
-            {10, SDL_Color{0xd8, 0x4c, 0xe0, 0xff}},
-            {11, SDL_Color{0xe9, 0x98, 0xed, 0xff}},
-            {12, SDL_Color{0x98, 0x98, 0x98, 0xff}},
-            {13, SDL_Color{0x46, 0x1b, 0x3f, 0xff}}
-        };
+        using namespace Magnum::Math::Literals;
 
-        const auto it = value_color_map.find(value);
-        if(it != value_color_map.end())
-            return it->second;
-        else
-            return SDL_Color{0x00, 0x00, 0x00, 0xff};
-    }
-
-    geometry::point get_label_position(const geometry::rect& tile_area)
-    {
-        return geometry::point
+        switch(value)
         {
-            tile_area.pos.x,
-            tile_area.pos.y + tile_area.h * label_vertical_margin_normalized,
-        };
+            case 0:  return 0xa05252_rgbf;
+            case 1:  return 0xdd3b3b_rgbf;
+            case 2:  return 0xef7429_rgbf;
+            case 3:  return 0xe5bb13_rgbf;
+            case 4:  return 0xa1c927_rgbf;
+            case 5:  return 0x2bcd73_rgbf;
+            case 6:  return 0x25d7d2_rgbf;
+            case 7:  return 0x3f94de_rgbf;
+            case 8:  return 0x4c52e0_rgbf;
+            case 9:  return 0x904ce0_rgbf;
+            case 10: return 0xd84ce0_rgbf;
+            case 11: return 0xe998ed_rgbf;
+            case 12: return 0x989898_rgbf;
+            case 13: return 0x461b3f_rgbf;
+            default: return 0x000000_rgbf;
+        }
     }
 }
 
-tile::tile
-(
-    SDL_Renderer& renderer,
-    const unsigned int value,
-    const geometry::rect& area
-):
-    renderer_(renderer),
-    area_(area),
-    background_color_(get_background_color(value)),
-    rectangle_
+tile::tile(const int value, SceneGraph::DrawableGroup2D& drawables, Object2D* parent):
+    Object2D{parent},
+    SceneGraph::Drawable2D{*this, &drawables},
+    square_color_(value_to_color(value)),
+    square_(addChild<rounded_square>(Magnum::Color4{square_color_, 0.0f}, drawable_children_)),
+    label_
     (
-        renderer,
-        area_,
-        get_background_color(value)
-    ),
-    number_label_
-    (
-        renderer,
-        "res/fonts/DejaVuSans.ttf",
-        label_height_normalized * area.h,
-        SDL_Color{0xff, 0xff, 0xff, 0xff},
-        get_label_position(area),
-        area.w,
-        label_height_normalized * area.h,
-        std::to_string(value),
-        horizontal_alignment::center,
-        vertical_alignment::center
+        addChild<static_label>
+        (
+            std::to_string(value).c_str(),
+            1.2f,
+            Magnum::Text::Alignment::MiddleCenter,
+            drawable_children_
+        )
     )
 {
+    label_.set_color(Magnum::Color4{colors::white, 0});
+    label_.set_outline_color(Magnum::Color4{colors::dark_gray, 0});
+    label_.set_outline_range(0.45, 0.40);
 }
 
-const geometry::point& tile::get_position() const
+void tile::set_alpha(const float alpha)
 {
-    return area_.pos;
+    square_.set_color({square_color_, alpha});
+    label_.set_color({colors::white, alpha});
+    label_.set_outline_color({colors::dark_gray, alpha});
 }
 
-void tile::set_position(const geometry::point& position)
+void tile::draw(const Magnum::Matrix3& /*transformation_matrix*/, SceneGraph::Camera2D& camera)
 {
-    area_.pos = position;
-    rectangle_.set_position(area_.pos);
-    number_label_.set_position(get_label_position(area_));
+    camera.draw(drawable_children_);
 }
 
-void tile::set_visible(const bool visible)
-{
-    visible_ = visible;
-}
-
-void tile::draw(const geometry::system& sys)
-{
-    if(!visible_)
-        return;
-
-    rectangle_.draw(sys);
-    number_label_.draw(sys);
-}
-
-} //namespace view
+} //namespace
