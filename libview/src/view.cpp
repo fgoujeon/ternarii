@@ -41,24 +41,29 @@ namespace libview
 class view::impl final: public Magnum::Platform::Sdl2Application
 {
     public:
-        impl(int argc, char** argv, const event_handler& evt_handler):
+        impl
+        (
+            int argc,
+            char** argv,
+            const callback_set& callbacks
+        ):
             Magnum::Platform::Sdl2Application
             {
                 Arguments{argc, argv},
                 Configuration{}.setWindowFlags(Configuration::WindowFlag::Resizable)
             },
-            event_handler_(evt_handler),
+            callbacks_(callbacks),
             cameraObject_(&scene_),
             camera_(cameraObject_),
             background_(scene_.addChild<background>(drawables_)),
             tile_grid_(scene_.addChild<tile_grid>(drawables_)),
             score_display_(scene_.addChild<score_display>(drawables_)),
             hi_score_display_(scene_.addChild<score_display>(drawables_)),
-            left_button_   (scene_.addChild<button>("/res/images/move_button.tga",   [this]{send_move_request(events::left_shift_request{});},         drawables_, clickables_)),
-            right_button_  (scene_.addChild<button>("/res/images/move_button.tga",   [this]{send_move_request(events::right_shift_request{});},        drawables_, clickables_)),
-            drop_button_   (scene_.addChild<button>("/res/images/move_button.tga",   [this]{send_move_request(events::drop_request{});},               drawables_, clickables_)),
-            rotate_button_ (scene_.addChild<button>("/res/images/rotate_button.tga", [this]{send_move_request(events::clockwise_rotation_request{});}, drawables_, clickables_)),
-            game_over_screen_(scene_.addChild<game_over_screen>([this]{send_move_request(events::clear_request{});}, drawables_, clickables_))
+            left_button_   (scene_.addChild<button>("/res/images/move_button.tga",   [this]{send_move_request(data_types::move::left_shift);},         drawables_, clickables_)),
+            right_button_  (scene_.addChild<button>("/res/images/move_button.tga",   [this]{send_move_request(data_types::move::right_shift);},        drawables_, clickables_)),
+            drop_button_   (scene_.addChild<button>("/res/images/move_button.tga",   [this]{send_move_request(data_types::move::drop);},               drawables_, clickables_)),
+            rotate_button_ (scene_.addChild<button>("/res/images/rotate_button.tga", [this]{send_move_request(data_types::move::clockwise_rotation);}, drawables_, clickables_)),
+            game_over_screen_(scene_.addChild<game_over_screen>([this]{callbacks_.handle_clear_request();}, drawables_, clickables_))
         {
             camera_.setAspectRatioPolicy(SceneGraph::AspectRatioPolicy::Extend);
             camera_.setProjectionMatrix(Magnum::Matrix3::projection({9.0f, 16.0f}));
@@ -105,7 +110,7 @@ class view::impl final: public Magnum::Platform::Sdl2Application
         {
             const auto now = clock::now();
 
-            event_handler_(events::draw{});
+            callbacks_.handle_draw_event();
 
             //advance animations
             background_.advance(now);
@@ -133,17 +138,17 @@ class view::impl final: public Magnum::Platform::Sdl2Application
             switch(event.key())
             {
                 case KeyEvent::Key::Left:
-                    send_move_request(events::left_shift_request{});
+                    send_move_request(data_types::move::left_shift);
                     break;
                 case KeyEvent::Key::Right:
-                    send_move_request(events::right_shift_request{});
+                    send_move_request(data_types::move::right_shift);
                     break;
                 case KeyEvent::Key::Up:
                 case KeyEvent::Key::Space:
-                    send_move_request(events::clockwise_rotation_request{});
+                    send_move_request(data_types::move::clockwise_rotation);
                     break;
                 case KeyEvent::Key::Down:
-                    send_move_request(events::drop_request{});
+                    send_move_request(data_types::move::drop);
                     break;
                 default:
                     break;
@@ -178,8 +183,7 @@ class view::impl final: public Magnum::Platform::Sdl2Application
         }
 
     private:
-        template<class Event>
-        void send_move_request(Event&& event)
+        void send_move_request(const data_types::move move)
         {
             /*
             Note: We want to ignore user inputs when we're animating, so that:
@@ -188,11 +192,13 @@ class view::impl final: public Magnum::Platform::Sdl2Application
             */
 
             if(!tile_grid_.is_animating())
-                event_handler_(std::forward<Event>(event));
+            {
+                callbacks_.handle_move_request(move);
+            }
         }
 
     private:
-        event_handler event_handler_;
+        callback_set callbacks_;
 
         Scene2D scene_;
         Object2D cameraObject_;
@@ -214,8 +220,13 @@ class view::impl final: public Magnum::Platform::Sdl2Application
         game_over_screen& game_over_screen_;
 };
 
-view::view(int argc, char** argv, const event_handler& evt_handler):
-    pimpl_(std::make_unique<impl>(argc, argv, evt_handler))
+view::view
+(
+    int argc,
+    char** argv,
+    const callback_set& callbacks
+):
+    pimpl_(std::make_unique<impl>(argc, argv, callbacks))
 {
 }
 

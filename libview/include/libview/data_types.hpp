@@ -26,8 +26,16 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include <array>
 #include <ostream>
 
-namespace libview { namespace data_types
+namespace libview::data_types
 {
+
+enum class move
+{
+    clockwise_rotation,
+    drop,
+    left_shift,
+    right_shift
+};
 
 struct item
 {
@@ -76,6 +84,6 @@ struct tile_merge
 
 using tile_merge_list = std::vector<tile_merge>;
 
-}} //namespace libview::data_types
+} //namespace
 
 #endif

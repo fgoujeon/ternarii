@@ -17,21 +17,14 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef LIBVIEW_EVENTS_HPP
-#define LIBVIEW_EVENTS_HPP
+#ifndef LIBUTIL_CONSTANT_HPP
+#define LIBUTIL_CONSTANT_HPP
 
-#include "data_types.hpp"
-#include <libutil/callback.hpp>
-
-namespace libview
+namespace libutil
 {
 
-struct callback_set
-{
-    libutil::callback<void(data_types::move)> handle_move_request;
-    libutil::callback<void()> handle_clear_request;
-    libutil::callback<void()> handle_draw_event;
-};
+template<auto v>
+struct constant{};
 
 } //namespace
 

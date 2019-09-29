@@ -15,17 +15,11 @@
 #You should have received a copy of the GNU General Public License
 #along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 
-cmake_minimum_required(VERSION 3.14)
-project(ternarii)
+cmake_minimum_required(VERSION 3.10)
 
-set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/modules/" ${CMAKE_MODULE_PATH})
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --preload-file ${CMAKE_BINARY_DIR}/res/out@/res")
+add_library(libutil INTERFACE)
 
-add_subdirectory(res)
-add_subdirectory(app)
-add_subdirectory(libdb)
-add_subdirectory(libgame)
-add_subdirectory(libutil)
-add_subdirectory(libview)
-add_subdirectory(www)
+target_include_directories(
+    libutil
+    INTERFACE include
+)

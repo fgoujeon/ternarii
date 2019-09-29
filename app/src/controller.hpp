@@ -34,7 +34,7 @@ class controller
     public:
         controller(int argc, char** argv):
             database_([this](const libdb::event& event){handle_database_event(event);}),
-            view_(argc, argv, [this](const libview::event& event){handle_view_event(event);})
+            view_(argc, argv, make_view_callbacks())
         {
             handle_game_events(game_.start());
         }
@@ -121,46 +121,44 @@ class controller
         }
 
     private:
-        void handle_view_event2(const libview::events::left_shift_request&)
+        libview::callback_set make_view_callbacks()
         {
-            handle_game_events(game_.shift_input_left());
+            auto callbacks = libview::callback_set{};
+            callbacks.handle_clear_request. assign<&controller::handle_view_clear_request> (*this);
+            callbacks.handle_draw_event.    assign<&controller::handle_view_draw_event>    (*this);
+            callbacks.handle_move_request.  assign<&controller::handle_view_move_request>  (*this);
+            return callbacks;
         }
 
-        void handle_view_event2(const libview::events::right_shift_request&)
-        {
-            handle_game_events(game_.shift_input_right());
-        }
-
-        void handle_view_event2(const libview::events::clockwise_rotation_request&)
-        {
-            handle_game_events(game_.rotate_input());
-        }
-
-        void handle_view_event2(const libview::events::drop_request&)
-        {
-            handle_game_events(game_.drop_input());
-        }
-
-        void handle_view_event2(const libview::events::clear_request&)
+        void handle_view_clear_request()
         {
             handle_game_events(game_.start());
         }
 
-        void handle_view_event2(const libview::events::draw&)
+        void handle_view_draw_event()
         {
             database_.iterate();
         }
 
-        void handle_view_event(const libview::event& event)
+        void handle_view_move_request(const libview::data_types::move m)
         {
-            std::visit
-            (
-                [this](const auto& event)
-                {
-                    handle_view_event2(event);
-                },
-                event
-            );
+            using move = libview::data_types::move;
+
+            switch(m)
+            {
+                case move::left_shift:
+                    handle_game_events(game_.shift_input_left());
+                    break;
+                case move::right_shift:
+                    handle_game_events(game_.shift_input_right());
+                    break;
+                case move::clockwise_rotation:
+                    handle_game_events(game_.rotate_input());
+                    break;
+                case move::drop:
+                    handle_game_events(game_.drop_input());
+                    break;
+            }
         }
 
     private:

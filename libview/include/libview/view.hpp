@@ -30,7 +30,12 @@ namespace libview
 class view
 {
     public:
-        view(int argc, char** argv, const event_handler& evt_handler);
+        view
+        (
+            int argc,
+            char** argv,
+            const callback_set& callbacks
+        );
 
         ~view();
 
