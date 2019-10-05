@@ -66,7 +66,8 @@ struct game::impl
 {
     impl(const data_types::game_state& s):
         state(s),
-        board_(state.board_tiles, state.hi_score)
+        board_(state.board_tiles, state.hi_score),
+        input_(state.input)
     {
     }
 
@@ -74,7 +75,7 @@ struct game::impl
     {
         const auto highest_tile_value = board_.get_highest_tile_value();
         const auto max_value = std::clamp(highest_tile_value, 2, 9);
-        next_input_ = data_types::tile_pair
+        state.next_input_tiles = data_types::tile_pair
         {
             data_types::tile{rand.generate(max_value)},
             data_types::tile{rand.generate(max_value)}
@@ -82,8 +83,8 @@ struct game::impl
 
         return events::next_input_creation
         {
-            next_input_[0],
-            next_input_[1]
+            state.next_input_tiles[0],
+            state.next_input_tiles[1]
         };
     }
 
@@ -91,7 +92,6 @@ struct game::impl
     data_types::game_state state;
     board board_;
     board_input input_;
-    data_types::tile_pair next_input_;
 };
 
 game::game(const data_types::game_state& state):
@@ -108,7 +108,7 @@ int game::get_score() const
 
 const data_types::tile_pair& game::get_next_input_tiles() const
 {
-    return pimpl_->next_input_;
+    return pimpl_->state.next_input_tiles;
 }
 
 const data_types::input_state& game::get_input_state() const
@@ -136,7 +136,7 @@ event_list game::start()
     events.push_back(events::score_change{0});
 
     events.push_back(pimpl_->generate_next_input());
-    events.push_back(pimpl_->input_.set_tiles(pimpl_->next_input_)); //insert next input
+    events.push_back(pimpl_->input_.set_tiles(pimpl_->state.next_input_tiles)); //insert next input
     events.push_back(pimpl_->generate_next_input());
 
     return events;
@@ -194,7 +194,7 @@ event_list game::drop_input()
         if(!is_game_over())
         {
             //move the next input into the input
-            events.push_back(pimpl_->input_.set_tiles(pimpl_->next_input_));
+            events.push_back(pimpl_->input_.set_tiles(pimpl_->state.next_input_tiles));
 
             //create a new next input
             events.push_back(pimpl_->generate_next_input());

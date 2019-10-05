@@ -168,14 +168,19 @@ class controller
         {
             if(pgame_) return;
 
+            //load game state from database
             auto game_state = libgame::data_types::game_state{};
             game_state.hi_score = database_.get_hi_score();
 
+            //create game
             pgame_ = std::make_unique<libgame::game>(game_state);
-            handle_game_events(pgame_->start());
 
+            //initialize view
             view_.set_hi_score(game_state.hi_score);
             view_.set_visible(true);
+            view_.create_next_input(game_state.input.tiles[0].value, game_state.input.tiles[1].value);
+            view_.insert_next_input(game_state.input.x_offset, game_state.input.rotation);
+            view_.create_next_input(game_state.next_input_tiles[0].value, game_state.next_input_tiles[1].value);
         }
 
         void handle_database_event(const libdb::event& event)

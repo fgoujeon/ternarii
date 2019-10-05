@@ -32,14 +32,14 @@ namespace libgame
 class board_input
 {
     public:
-        using state = data_types::input_state;
+        using state_t = data_types::input_state;
 
         static const int column_count = 6;
 
     public:
-        board_input();
+        board_input(state_t& state);
 
-        const state& get_state() const
+        const state_t& get_state() const
         {
             return state_;
         }
@@ -56,7 +56,7 @@ class board_input
         std::vector<event> apply();
 
     private:
-        state state_;
+        state_t& state_;
 
         data_types::tile_pair& tiles_ = state_.tiles;
         int& x_offset_ = state_.x_offset;

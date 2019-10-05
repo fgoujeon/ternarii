@@ -97,7 +97,7 @@ struct input_state
 {
     tile_pair tiles;
 
-    int x_offset = 0;
+    int x_offset = 2;
 
     //rotation = 0:
     //  --
