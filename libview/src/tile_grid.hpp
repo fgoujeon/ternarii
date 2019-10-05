@@ -51,18 +51,18 @@ class tile_grid: public Object2D
 
         void clear();
 
-        void create_next_input(const unsigned int value0, const unsigned int value1);
+        void create_next_input(const int value0, const int value1);
 
-        void insert_next_input(const unsigned int x_offset, const unsigned int rotation);
+        void insert_next_input(const int x_offset, const int rotation);
 
-        void set_input_layout(const unsigned int x_offset, const unsigned int rotation);
+        void set_input_layout(const int x_offset, const int rotation);
 
         void insert_input
         (
-            const unsigned int tile0_dst_column_index,
-            const unsigned int tile0_dst_row_index,
-            const unsigned int tile1_dst_column_index,
-            const unsigned int tile1_dst_row_index
+            const int tile0_dst_column_index,
+            const int tile0_dst_row_index,
+            const int tile1_dst_column_index,
+            const int tile1_dst_row_index
         );
 
         void drop_tiles(const data_types::tile_drop_list& drops);
@@ -87,8 +87,8 @@ class tile_grid: public Object2D
 
         next_input_tile_array next_input_tiles_ = {};
         input_tile_array input_tiles_ = {};
-        unsigned int input_x_offset_ = 0;
-        unsigned int input_rotation_ = 0;
+        int input_x_offset_ = 0;
+        int input_rotation_ = 0;
         board_tile_array board_tiles_ = {};
 };
 

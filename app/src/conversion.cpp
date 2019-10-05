@@ -34,7 +34,7 @@ libview::data_types::board_item_array to_view(const libgame::data_types::board_t
         {
             if(opt_tile.has_value())
             {
-                to[column_index][row_index] = libview::data_types::item{static_cast<unsigned int>(opt_tile.value().value)};
+                to[column_index][row_index] = libview::data_types::item{opt_tile.value().value};
             }
             ++row_index;
         }

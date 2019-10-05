@@ -39,12 +39,12 @@ enum class move
 
 struct item
 {
-    item(unsigned int value = 0):
+    item(int value = 0):
         value(value)
     {
     }
 
-    unsigned int value;
+    int value;
 };
 
 using opt_item = std::optional<item>;
@@ -60,17 +60,17 @@ using board_item_array = item_array<6, 10>;
 
 struct tile_coordinate
 {
-    unsigned int x;
-    unsigned int y;
+    int x;
+    int y;
 };
 
 using tile_coordinate_list = std::vector<tile_coordinate>;
 
 struct tile_drop
 {
-    unsigned int column_index;
-    unsigned int src_row_index;
-    unsigned int dst_row_index;
+    int column_index;
+    int src_row_index;
+    int dst_row_index;
 };
 
 using tile_drop_list = std::vector<tile_drop>;
@@ -79,7 +79,7 @@ struct tile_merge
 {
     tile_coordinate_list src_tile_coordinates;
     tile_coordinate dst_tile_coordinate;
-    unsigned int dst_tile_value;
+    int dst_tile_value;
 };
 
 using tile_merge_list = std::vector<tile_merge>;
