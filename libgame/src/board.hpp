@@ -50,10 +50,7 @@ class board
 
         bool is_game_over() const;
 
-        int get_highest_tile_value() const
-        {
-            return highest_tile_value_;
-        }
+        int get_highest_tile_value() const;
 
         int get_score() const;
 
@@ -89,7 +86,6 @@ class board
     private:
         grid_t& tile_grid_;
         int& hi_score_;
-        int highest_tile_value_ = 0;
 };
 
 } //namespace

@@ -45,6 +45,22 @@ bool board::is_game_over() const
     return false;
 }
 
+int board::get_highest_tile_value() const
+{
+    auto value = 0;
+    for(const auto& cell_column: tile_grid_)
+    {
+        for(const auto& opt_tile: cell_column)
+        {
+            if(opt_tile)
+            {
+                value = std::max(value, opt_tile->value);
+            }
+        }
+    }
+    return value;
+}
+
 int board::get_score() const
 {
     auto score = 0;
@@ -70,8 +86,6 @@ void board::clear()
             opt_tile = std::nullopt;
         }
     }
-
-    highest_tile_value_ = 0;
 }
 
 std::vector<event> board::drop_input(const board_input& in)
@@ -230,11 +244,6 @@ data_types::tile_merge_list board::merge_tiles()
                             merged_tile.value
                         }
                     );
-
-                    if(highest_tile_value_ < merged_tile.value)
-                    {
-                        highest_tile_value_ = merged_tile.value;
-                    }
                 }
             }
         }
