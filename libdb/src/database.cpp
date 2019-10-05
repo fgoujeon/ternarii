@@ -154,16 +154,15 @@ struct database::impl
 
         void async_save_filesystem()
         {
-            if(emscripten_run_script_int("Module.savingPersistentFilesystem") == 0)
-            {
-                EM_ASM(
+            EM_ASM(
+                if(Module.savingPersistentFilesystem == 0) {
                     Module.savingPersistentFilesystem = 1;
                     FS.syncfs(false, function(err) {
                         assert(!err);
                         Module.savingPersistentFilesystem = 0;
                     });
-                );
-            }
+                }
+            );
         }
 
     private:
