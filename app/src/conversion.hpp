@@ -26,7 +26,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace conversion
 {
 
-libview::data_types::board_item_array to_view(const libgame::data_types::board_tile_grid& from);
+libview::data_types::board_tile_array to_view(const libgame::data_types::board_tile_grid& from);
 
 libview::data_types::tile_coordinate to_view(const libgame::data_types::tile_coordinate& from);
 
@@ -44,6 +44,6 @@ auto to_view(const std::vector<T>& from)
     return to;
 }
 
-} //namespace conversion
+} //namespace
 
 #endif

@@ -330,7 +330,7 @@ void tile_grid::merge_tiles(const data_types::tile_merge_list& merges)
     );
 }
 
-void tile_grid::set_board_tiles(const data_types::board_item_array& tiles)
+void tile_grid::set_board_tiles(const data_types::board_tile_array& tiles)
 {
     int column_index = 0;
     for(const auto& column_tiles: tiles)

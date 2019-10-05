@@ -37,24 +37,19 @@ enum class move
     right_shift
 };
 
-struct item
+struct tile
 {
-    item(int value = 0):
-        value(value)
-    {
-    }
-
-    int value;
+    int value = 0;
 };
 
-using opt_item = std::optional<item>;
+using opt_tile = std::optional<tile>;
 
 template<size_t Size0, size_t Size1>
-using item_array = std::array<std::array<opt_item, Size1>, Size0>;
+using tile_array = std::array<std::array<opt_tile, Size1>, Size0>;
 
-using next_input_item_array = std::array<opt_item, 2>;
-using input_item_array = std::array<opt_item, 2>;
-using board_item_array = item_array<6, 10>;
+using next_input_tile_array = std::array<opt_tile, 2>;
+using input_tile_array = std::array<opt_tile, 2>;
+using board_tile_array = tile_array<6, 10>;
 
 
 
