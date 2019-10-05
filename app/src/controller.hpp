@@ -182,6 +182,7 @@ class controller
             view_.insert_next_input(game_state.input.x_offset, game_state.input.rotation);
             view_.create_next_input(game_state.next_input_tiles[0].value, game_state.next_input_tiles[1].value);
             view_.set_board_tiles(conversion::to_view(game_state.board_tiles));
+            view_.set_game_over_screen_visible(pgame_->is_game_over());
             view_.set_visible(true);
         }
 
