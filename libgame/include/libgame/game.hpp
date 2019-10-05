@@ -30,7 +30,7 @@ namespace libgame
 struct game
 {
     public:
-        game();
+        game(int hi_score);
 
         ~game();
 
@@ -57,8 +57,6 @@ struct game
         event_list rotate_input();
 
         event_list drop_input();
-
-        void init_hi_score(int value);
 
     private:
         struct impl;

@@ -37,7 +37,7 @@ class board
         static const int row_count = 10;
         using grid_t = data_types::tile_grid<column_count, row_count>;
 
-        board() = default;
+        board(int hi_score);
 
         const grid_t& tile_grid() const
         {
@@ -56,8 +56,6 @@ class board
         void clear();
 
         std::vector<event> drop_input(const board_input& in);
-
-        void init_hi_score(int value);
 
     private:
         events::input_insertion insert_input(const board_input& in);

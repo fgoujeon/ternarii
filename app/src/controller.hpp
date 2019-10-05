@@ -36,7 +36,6 @@ class controller
             database_([this](const libdb::event& event){handle_database_event(event);}),
             view_(argc, argv, make_view_callbacks())
         {
-            handle_game_events(game_.start());
         }
 
         int exec()
@@ -132,7 +131,8 @@ class controller
 
         void handle_view_clear_request()
         {
-            handle_game_events(game_.start());
+            if(!pgame_) return;
+            handle_game_events(pgame_->start());
         }
 
         void handle_view_draw_event()
@@ -142,21 +142,23 @@ class controller
 
         void handle_view_move_request(const libview::data_types::move m)
         {
+            if(!pgame_) return;
+
             using move = libview::data_types::move;
 
             switch(m)
             {
                 case move::left_shift:
-                    handle_game_events(game_.shift_input_left());
+                    handle_game_events(pgame_->shift_input_left());
                     break;
                 case move::right_shift:
-                    handle_game_events(game_.shift_input_right());
+                    handle_game_events(pgame_->shift_input_right());
                     break;
                 case move::clockwise_rotation:
-                    handle_game_events(game_.rotate_input());
+                    handle_game_events(pgame_->rotate_input());
                     break;
                 case move::drop:
-                    handle_game_events(game_.drop_input());
+                    handle_game_events(pgame_->drop_input());
                     break;
             }
         }
@@ -164,9 +166,14 @@ class controller
     private:
         void handle_database_event2(const libdb::events::end_of_loading&)
         {
+            if(pgame_) return;
+
             const auto hi_score = database_.get_hi_score();
+
+            pgame_ = std::make_unique<libgame::game>(hi_score);
+            handle_game_events(pgame_->start());
+
             view_.set_hi_score(hi_score);
-            game_.init_hi_score(hi_score);
             view_.set_visible(true);
         }
 
@@ -184,8 +191,8 @@ class controller
 
     private:
         libdb::database database_;
-        libgame::game game_;
         libview::view view_;
+        std::unique_ptr<libgame::game> pgame_;
 };
 
 #endif

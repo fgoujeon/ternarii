@@ -64,6 +64,11 @@ namespace
 
 struct game::impl
 {
+    impl(const int hi_score):
+        board_(hi_score)
+    {
+    }
+
     events::next_input_creation generate_next_input()
     {
         const auto highest_tile_value = board_.get_highest_tile_value();
@@ -87,8 +92,8 @@ struct game::impl
     data_types::tile_pair next_input_;
 };
 
-game::game():
-    pimpl_(std::make_unique<impl>())
+game::game(const int hi_score):
+    pimpl_(std::make_unique<impl>(hi_score))
 {
 }
 
@@ -210,11 +215,6 @@ event_list game::drop_input()
     }
 
     return events;
-}
-
-void game::init_hi_score(int value)
-{
-    pimpl_->board_.init_hi_score(value);
 }
 
 } //namespace

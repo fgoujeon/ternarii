@@ -27,6 +27,11 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libgame
 {
 
+board::board(const int hi_score):
+    hi_score_(hi_score)
+{
+}
+
 bool board::is_game_over() const
 {
     for(int i = 0; i < column_count; ++i)
@@ -311,11 +316,6 @@ void board::select_tiles
             }
         }
     }
-}
-
-void board::init_hi_score(int value)
-{
-    hi_score_ = std::max(hi_score_, value);
 }
 
 } //namespace
