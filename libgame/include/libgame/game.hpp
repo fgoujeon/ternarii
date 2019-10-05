@@ -38,15 +38,11 @@ struct game
 
         const data_types::tile_pair& get_next_input_tiles() const;
 
-        const data_types::tile_pair& get_input_tiles() const;
+        const data_types::input_state& get_input_state() const;
 
         const data_types::board_tile_grid& get_board_tiles() const;
 
         bool is_game_over() const;
-
-        int get_input_x_offset() const;
-
-        int get_input_rotation() const;
 
         event_list start();
 

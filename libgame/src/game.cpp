@@ -109,9 +109,9 @@ const data_types::tile_pair& game::get_next_input_tiles() const
     return pimpl_->next_input_;
 }
 
-const data_types::tile_pair& game::get_input_tiles() const
+const data_types::input_state& game::get_input_state() const
 {
-    return pimpl_->input_.get_tiles();
+    return pimpl_->input_.get_state();
 }
 
 const data_types::board_tile_grid& game::get_board_tiles() const
@@ -122,16 +122,6 @@ const data_types::board_tile_grid& game::get_board_tiles() const
 bool game::is_game_over() const
 {
     return pimpl_->board_.is_game_over();
-}
-
-int game::get_input_x_offset() const
-{
-    return pimpl_->input_.get_x_offset();
-}
-
-int game::get_input_rotation() const
-{
-    return pimpl_->input_.get_rotation();
 }
 
 event_list game::start()

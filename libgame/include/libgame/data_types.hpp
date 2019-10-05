@@ -63,16 +63,7 @@ struct tile_coordinate
     int y = 0;
 };
 
-inline
-std::ostream& operator<<(std::ostream& l, const tile_coordinate& r)
-{
-    l << "tile_coordinate";
-    l << "{";
-    l << "x: " << r.x << ", ";
-    l << "y: " << r.y;
-    l << "}";
-    return l;
-}
+std::ostream& operator<<(std::ostream& l, const tile_coordinate& r);
 
 
 
@@ -85,17 +76,7 @@ struct tile_drop
 
 using tile_drop_list = std::vector<tile_drop>;
 
-inline
-std::ostream& operator<<(std::ostream& l, const tile_drop& r)
-{
-    l << "tile_drop";
-    l << "{";
-    l << "column_index: " << r.column_index << ", ";
-    l << "src_row_index: " << r.src_row_index << ", ";
-    l << "dst_row_index: " << r.dst_row_index;
-    l << "}";
-    return l;
-}
+std::ostream& operator<<(std::ostream& l, const tile_drop& r);
 
 
 
@@ -108,27 +89,30 @@ struct tile_merge
 
 using tile_merge_list = std::vector<tile_merge>;
 
-inline
-std::ostream& operator<<(std::ostream& l, const tile_merge& r)
+std::ostream& operator<<(std::ostream& l, const tile_merge& r);
+
+
+
+struct input_state
 {
-    l << "tile_merge";
-    l << "{";
-    l << "src_tile_coordinates: {";
-    {
-        auto first = true;
-        for(const auto& coord: r.src_tile_coordinates)
-        {
-            if(!first) l << ", ";
-            l << coord;
-            first = false;
-        }
-    }
-    l << "}, ";
-    l << "dst_tile_coordinate: " << r.dst_tile_coordinate << ", ";
-    l << "dst_tile_value: " << r.dst_tile_value;
-    l << "}";
-    return l;
-}
+    tile_pair tiles;
+
+    int x_offset = 0;
+
+        //rotation = 0:
+        //  --
+        //  01
+        //rotation = 1:
+        //  0-
+        //  1-
+        //rotation = 2:
+        //  --
+        //  10
+        //rotation = 3:
+        //  1-
+        //  0-
+    int rotation = 0;
+};
 
 } //namespace
 

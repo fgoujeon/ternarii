@@ -32,32 +32,23 @@ namespace libgame
 class board_input
 {
     public:
+        using state = data_types::input_state;
+
         static const int column_count = 6;
-        using tiles_t = std::array<data_types::tile, 2>;
 
     public:
         board_input();
 
-        const data_types::tile_pair& get_tiles() const
+        const state& get_state() const
         {
-            return tiles_;
+            return state_;
         }
 
         event set_tiles(const data_types::tile_pair& rhs);
 
-        int get_x_offset() const
-        {
-            return x_offset_;
-        }
-
         std::vector<event> shift_left();
 
         std::vector<event> shift_right();
-
-        int get_rotation() const
-        {
-            return rotation_;
-        }
 
         std::vector<event> rotate();
 
@@ -65,22 +56,11 @@ class board_input
         std::vector<event> apply();
 
     private:
-        tiles_t tiles_;
-        int x_offset_ = 0;
+        state state_;
 
-        //rotation = 0:
-        //  --
-        //  01
-        //rotation = 1:
-        //  0-
-        //  1-
-        //rotation = 2:
-        //  --
-        //  10
-        //rotation = 3:
-        //  1-
-        //  0-
-        int rotation_ = 0;
+        data_types::tile_pair& tiles_ = state_.tiles;
+        int& x_offset_ = state_.x_offset;
+        int& rotation_ = state_.rotation;
 };
 
 } //namespace

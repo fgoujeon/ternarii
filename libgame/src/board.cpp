@@ -108,18 +108,16 @@ events::input_insertion board::insert_input(const board_input& in)
 {
     //put the input on the upper rows
 
-    const auto tiles = in.get_tiles();
-    const auto x_offset = in.get_x_offset();
-    const auto rotation = in.get_rotation();
+    const auto& state = in.get_state();
 
-    const int x0 = x_offset + (rotation == 2 ? 1 : 0);
-    const int y0 = row_count - 2 + (rotation == 1 ? 1 : 0);
+    const int x0 = state.x_offset + (state.rotation == 2 ? 1 : 0);
+    const int y0 = row_count - 2 + (state.rotation == 1 ? 1 : 0);
 
-    const int x1 = x_offset + (rotation == 0 ? 1 : 0);
-    const int y1 = row_count - 2 + (rotation == 3 ? 1 : 0);
+    const int x1 = state.x_offset + (state.rotation == 0 ? 1 : 0);
+    const int y1 = row_count - 2 + (state.rotation == 3 ? 1 : 0);
 
-    tile_grid_[x0][y0] = tiles[0];
-    tile_grid_[x1][y1] = tiles[1];
+    tile_grid_[x0][y0] = state.tiles[0];
+    tile_grid_[x1][y1] = state.tiles[1];
 
     return events::input_insertion{x0, y0, x1, y1};
 }
