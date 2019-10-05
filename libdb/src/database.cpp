@@ -66,14 +66,14 @@ struct database::impl
             }
         }
 
-        int get_hi_score() const
+        const data_types::game_state& get_game_state() const
         {
-            return hi_score_;
+            return game_state_;
         }
 
-        void set_hi_score(int value)
+        void set_game_state(const data_types::game_state& state)
         {
-            hi_score_ = value;
+            game_state_ = state;
 
             if(current_state_ == state::ready)
             {
@@ -114,9 +114,35 @@ struct database::impl
             try
             {
                 auto ifs = std::ifstream{path_};
+
                 auto json = nlohmann::json{};
                 ifs >> json;
-                hi_score_ = json["hiScore"].get<int>();
+
+                auto game_state = data_types::game_state{};
+                game_state.hi_score                  = json["hiScore"].get<int>();
+                game_state.next_input_tiles[0].value = json["nextInputTiles"][0].get<int>();
+                game_state.next_input_tiles[1].value = json["nextInputTiles"][1].get<int>();
+                game_state.input.tiles[0].value      = json["inputTiles"][0].get<int>();
+                game_state.input.tiles[1].value      = json["inputTiles"][1].get<int>();
+                game_state.input.x_offset            = json["inputXOffset"].get<int>();
+                game_state.input.rotation            = json["inputRotation"].get<int>();
+
+                int column_index = 0;
+                for(const auto& column_tiles: json["boardTiles"])
+                {
+                    int row_index = 0;
+                    for(const auto& opt_tile: column_tiles)
+                    {
+                        if(!opt_tile.is_null())
+                        {
+                            game_state.board_tiles[column_index][row_index] = data_types::tile{opt_tile.get<int>()};
+                        }
+                        ++row_index;
+                    }
+                    ++column_index;
+                }
+
+                game_state_ = game_state;
             }
             catch(const std::exception& e)
             {
@@ -136,7 +162,32 @@ struct database::impl
             try
             {
                 auto json = nlohmann::json{};
-                json["hiScore"] = hi_score_;
+                json["hiScore"] = game_state_.hi_score;
+                json["nextInputTiles"][0] = game_state_.next_input_tiles[0].value;
+                json["nextInputTiles"][1] = game_state_.next_input_tiles[1].value;
+                json["inputTiles"][0] = game_state_.input.tiles[0].value;
+                json["inputTiles"][1] = game_state_.input.tiles[1].value;
+                json["inputXOffset"] = game_state_.input.x_offset;
+                json["inputRotation"] = game_state_.input.rotation;
+
+                int column_index = 0;
+                for(const auto& column_tiles: game_state_.board_tiles)
+                {
+                    int row_index = 0;
+                    for(const auto& opt_tile: column_tiles)
+                    {
+                        if(opt_tile.has_value())
+                        {
+                            json["boardTiles"][column_index][row_index] = opt_tile->value;
+                        }
+                        else
+                        {
+                            json["boardTiles"][column_index][row_index] = nullptr;
+                        }
+                        ++row_index;
+                    }
+                    ++column_index;
+                }
 
                 std::filesystem::create_directories(path_.parent_path());
                 std::ofstream ofs{path_};
@@ -169,7 +220,7 @@ struct database::impl
         const std::filesystem::path path_ = std::filesystem::path{std::getenv("HOME")} / ".config" / "ternarii" / "database.json";
         event_handler event_handler_;
         state current_state_ = state::starting;
-        int hi_score_ = 0;
+        data_types::game_state game_state_;
 };
 
 database::database(const event_handler& evt_handler):
@@ -184,14 +235,14 @@ void database::iterate()
     pimpl_->iterate();
 }
 
-int database::get_hi_score() const
+const data_types::game_state& database::get_game_state() const
 {
-    return pimpl_->get_hi_score();
+    return pimpl_->get_game_state();
 }
 
-void database::set_hi_score(int value)
+void database::set_game_state(const data_types::game_state& state)
 {
-    pimpl_->set_hi_score(value);
+    pimpl_->set_game_state(state);
 }
 
 } //namespace

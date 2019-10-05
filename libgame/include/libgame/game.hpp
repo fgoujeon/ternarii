@@ -34,6 +34,8 @@ struct game
 
         ~game();
 
+        const data_types::game_state& get_state() const;
+
         int get_score() const;
 
         const data_types::tile_pair& get_next_input_tiles() const;

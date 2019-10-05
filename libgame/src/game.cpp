@@ -101,6 +101,11 @@ game::game(const data_types::game_state& state):
 
 game::~game() = default;
 
+const data_types::game_state& game::get_state() const
+{
+    return pimpl_->state;
+}
+
 int game::get_score() const
 {
     return pimpl_->board_.get_score();
