@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+#include "json_conversion.hpp"
 #include <libdb/database.hpp>
 #include <nlohmann/json.hpp>
 #include <emscripten.h>
@@ -26,10 +27,6 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 
 namespace libdb
 {
-
-namespace
-{
-}
 
 struct database::impl
 {
@@ -113,36 +110,16 @@ struct database::impl
         {
             try
             {
+                //read json from file
                 auto ifs = std::ifstream{path_};
-
                 auto json = nlohmann::json{};
                 ifs >> json;
 
-                auto game_state = data_types::game_state{};
-                game_state.hi_score                  = json["hiScore"].get<int>();
-                game_state.next_input_tiles[0].value = json["nextInputTiles"][0].get<int>();
-                game_state.next_input_tiles[1].value = json["nextInputTiles"][1].get<int>();
-                game_state.input.tiles[0].value      = json["inputTiles"][0].get<int>();
-                game_state.input.tiles[1].value      = json["inputTiles"][1].get<int>();
-                game_state.input.x_offset            = json["inputXOffset"].get<int>();
-                game_state.input.rotation            = json["inputRotation"].get<int>();
+                //load at least this one, in case an exception occurs later
+                game_state_.hi_score = json["hiScore"].get<int>();
 
-                int column_index = 0;
-                for(const auto& column_tiles: json["boardTiles"])
-                {
-                    int row_index = 0;
-                    for(const auto& opt_tile: column_tiles)
-                    {
-                        if(!opt_tile.is_null())
-                        {
-                            game_state.board_tiles[column_index][row_index] = data_types::tile{opt_tile.get<int>()};
-                        }
-                        ++row_index;
-                    }
-                    ++column_index;
-                }
-
-                game_state_ = game_state;
+                //convert json to state
+                game_state_ = json;
             }
             catch(const std::exception& e)
             {
@@ -161,36 +138,9 @@ struct database::impl
         {
             try
             {
-                auto json = nlohmann::json{};
-                json["hiScore"] = game_state_.hi_score;
-                json["nextInputTiles"][0] = game_state_.next_input_tiles[0].value;
-                json["nextInputTiles"][1] = game_state_.next_input_tiles[1].value;
-                json["inputTiles"][0] = game_state_.input.tiles[0].value;
-                json["inputTiles"][1] = game_state_.input.tiles[1].value;
-                json["inputXOffset"] = game_state_.input.x_offset;
-                json["inputRotation"] = game_state_.input.rotation;
-
-                int column_index = 0;
-                for(const auto& column_tiles: game_state_.board_tiles)
-                {
-                    int row_index = 0;
-                    for(const auto& opt_tile: column_tiles)
-                    {
-                        if(opt_tile.has_value())
-                        {
-                            json["boardTiles"][column_index][row_index] = opt_tile->value;
-                        }
-                        else
-                        {
-                            json["boardTiles"][column_index][row_index] = nullptr;
-                        }
-                        ++row_index;
-                    }
-                    ++column_index;
-                }
-
                 std::filesystem::create_directories(path_.parent_path());
                 std::ofstream ofs{path_};
+                const auto json = nlohmann::json(game_state_);
                 ofs << json;
             }
             catch(const std::exception& e)
