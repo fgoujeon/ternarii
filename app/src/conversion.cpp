@@ -22,6 +22,28 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace conversion
 {
 
+libview::data_types::board_tile_array to_view(const libgame::data_types::board_tile_grid& from)
+{
+    auto to = libview::data_types::board_tile_array{};
+
+    int column_index = 0;
+    for(const auto& column_tiles: from)
+    {
+        int row_index = 0;
+        for(const auto& opt_tile: column_tiles)
+        {
+            if(opt_tile.has_value())
+            {
+                to[column_index][row_index] = libview::data_types::tile{opt_tile.value().value};
+            }
+            ++row_index;
+        }
+        ++column_index;
+    }
+
+    return to;
+}
+
 libview::data_types::tile_coordinate to_view(const libgame::data_types::tile_coordinate& from)
 {
     auto to = libview::data_types::tile_coordinate{};
@@ -48,4 +70,4 @@ libview::data_types::tile_merge to_view(const libgame::data_types::tile_merge& f
     return to;
 }
 
-} //namespace conversion
+} //namespace

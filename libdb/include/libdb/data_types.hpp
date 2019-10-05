@@ -17,33 +17,16 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef LIBDB_DATABASE_HPP
-#define LIBDB_DATABASE_HPP
+#ifndef LIBDB_DATA_TYPES_HPP
+#define LIBDB_DATA_TYPES_HPP
 
-#include "events.hpp"
-#include "data_types.hpp"
-#include <memory>
+#include <libgame/data_types.hpp>
 
-namespace libdb
+namespace libdb::data_types
 {
 
-class database
-{
-    public:
-        database(const event_handler& evt_handler);
-
-        ~database();
-
-        void iterate();
-
-        const data_types::game_state& get_game_state() const;
-
-        void set_game_state(const data_types::game_state& state);
-
-    private:
-        struct impl;
-        std::unique_ptr<impl> pimpl_;
-};
+using tile = libgame::data_types::tile;
+using game_state = libgame::data_types::game_state;
 
 } //namespace
 

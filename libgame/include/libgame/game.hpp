@@ -30,23 +30,21 @@ namespace libgame
 struct game
 {
     public:
-        game();
+        game(const data_types::game_state& state);
 
         ~game();
 
-        unsigned int get_score() const;
+        const data_types::game_state& get_state() const;
+
+        int get_score() const;
 
         const data_types::tile_pair& get_next_input_tiles() const;
 
-        const data_types::tile_pair& get_input_tiles() const;
+        const data_types::input_state& get_input_state() const;
 
         const data_types::board_tile_grid& get_board_tiles() const;
 
         bool is_game_over() const;
-
-        unsigned int get_input_x_offset() const;
-
-        unsigned int get_input_rotation() const;
 
         event_list start();
 
@@ -58,13 +56,11 @@ struct game
 
         event_list drop_input();
 
-        void init_hi_score(unsigned int value);
-
     private:
         struct impl;
         std::unique_ptr<impl> pimpl_;
 };
 
-} //namespace libgame
+} //namespace
 
 #endif

@@ -36,7 +36,6 @@ class controller
             database_([this](const libdb::event& event){handle_database_event(event);}),
             view_(argc, argv, make_view_callbacks())
         {
-            handle_game_events(game_.start());
         }
 
         int exec()
@@ -58,7 +57,6 @@ class controller
         void handle_game_event(const libgame::events::hi_score_change& event)
         {
             view_.set_hi_score(event.score);
-            database_.set_hi_score(event.score);
         }
 
         void handle_game_event(const libgame::events::next_input_creation& event)
@@ -118,6 +116,8 @@ class controller
                     event
                 );
             }
+
+            database_.set_game_state(pgame_->get_state());
         }
 
     private:
@@ -132,7 +132,8 @@ class controller
 
         void handle_view_clear_request()
         {
-            handle_game_events(game_.start());
+            if(!pgame_) return;
+            handle_game_events(pgame_->start());
         }
 
         void handle_view_draw_event()
@@ -142,21 +143,23 @@ class controller
 
         void handle_view_move_request(const libview::data_types::move m)
         {
+            if(!pgame_) return;
+
             using move = libview::data_types::move;
 
             switch(m)
             {
                 case move::left_shift:
-                    handle_game_events(game_.shift_input_left());
+                    handle_game_events(pgame_->shift_input_left());
                     break;
                 case move::right_shift:
-                    handle_game_events(game_.shift_input_right());
+                    handle_game_events(pgame_->shift_input_right());
                     break;
                 case move::clockwise_rotation:
-                    handle_game_events(game_.rotate_input());
+                    handle_game_events(pgame_->rotate_input());
                     break;
                 case move::drop:
-                    handle_game_events(game_.drop_input());
+                    handle_game_events(pgame_->drop_input());
                     break;
             }
         }
@@ -164,9 +167,22 @@ class controller
     private:
         void handle_database_event2(const libdb::events::end_of_loading&)
         {
-            const auto hi_score = database_.get_hi_score();
-            view_.set_hi_score(hi_score);
-            game_.init_hi_score(hi_score);
+            if(pgame_) return;
+
+            //load game state from database
+            const auto& game_state = database_.get_game_state();
+
+            //create game
+            pgame_ = std::make_unique<libgame::game>(game_state);
+
+            //initialize view
+            view_.set_score(pgame_->get_score());
+            view_.set_hi_score(game_state.hi_score);
+            view_.create_next_input(game_state.input.tiles[0].value, game_state.input.tiles[1].value);
+            view_.insert_next_input(game_state.input.x_offset, game_state.input.rotation);
+            view_.create_next_input(game_state.next_input_tiles[0].value, game_state.next_input_tiles[1].value);
+            view_.set_board_tiles(conversion::to_view(game_state.board_tiles));
+            view_.set_game_over_screen_visible(pgame_->is_game_over());
             view_.set_visible(true);
         }
 
@@ -184,8 +200,8 @@ class controller
 
     private:
         libdb::database database_;
-        libgame::game game_;
         libview::view view_;
+        std::unique_ptr<libgame::game> pgame_;
 };
 
 #endif

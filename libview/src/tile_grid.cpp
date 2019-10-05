@@ -36,7 +36,7 @@ namespace
         };
     }
 
-    std::array<Magnum::Vector2, 2> get_input_tile_positions(const unsigned int x_offset, const unsigned int rotation)
+    std::array<Magnum::Vector2, 2> get_input_tile_positions(const int x_offset, const int rotation)
     {
         auto tile0_x = 0.0f;
         auto tile0_y = 0.0f;
@@ -145,7 +145,7 @@ void tile_grid::clear()
     }
 }
 
-void tile_grid::create_next_input(const unsigned int value0, const unsigned int value1)
+void tile_grid::create_next_input(const int value0, const int value1)
 {
     auto& animation = animations_.emplace_back();
     const auto animation_duration_s = 0.15f;
@@ -174,7 +174,7 @@ void tile_grid::create_next_input(const unsigned int value0, const unsigned int 
     }
 }
 
-void tile_grid::insert_next_input(const unsigned int x_offset, const unsigned int rotation)
+void tile_grid::insert_next_input(const int x_offset, const int rotation)
 {
     input_x_offset_ = x_offset;
     input_rotation_ = rotation;
@@ -183,7 +183,7 @@ void tile_grid::insert_next_input(const unsigned int x_offset, const unsigned in
     //Note: Animation is done in create_next_input().
 }
 
-void tile_grid::set_input_layout(const unsigned int x_offset, const unsigned int rotation)
+void tile_grid::set_input_layout(const int x_offset, const int rotation)
 {
     if(input_x_offset_ != x_offset || input_rotation_ != rotation)
     {
@@ -209,10 +209,10 @@ void tile_grid::set_input_layout(const unsigned int x_offset, const unsigned int
 
 void tile_grid::insert_input
 (
-    const unsigned int tile0_dst_column_index,
-    const unsigned int tile0_dst_row_index,
-    const unsigned int tile1_dst_column_index,
-    const unsigned int tile1_dst_row_index
+    const int tile0_dst_column_index,
+    const int tile0_dst_row_index,
+    const int tile1_dst_column_index,
+    const int tile1_dst_row_index
 )
 {
     if(input_tiles_[0])
@@ -328,6 +328,37 @@ void tile_grid::merge_tiles(const data_types::tile_merge_list& merges)
             }
         }
     );
+}
+
+void tile_grid::set_board_tiles(const data_types::board_tile_array& tiles)
+{
+    int column_index = 0;
+    for(const auto& column_tiles: tiles)
+    {
+        int row_index = 0;
+        for(const auto& opt_tile: column_tiles)
+        {
+            if(opt_tile.has_value())
+            {
+                auto ptile = &add_tile
+                (
+                    opt_tile.value().value,
+                    tile_coordinate_to_position
+                    (
+                        data_types::tile_coordinate
+                        {
+                            column_index,
+                            row_index
+                        }
+                    )
+                );
+                ptile->set_alpha(1);
+                board_tiles_[column_index][row_index] = ptile;
+            }
+            ++row_index;
+        }
+        ++column_index;
+    }
 }
 
 void tile_grid::advance(const time_point& now)

@@ -243,37 +243,37 @@ void view::clear()
     pimpl_->game_over_screen_.set_visible(false);
 }
 
-void view::set_score(const unsigned int value)
+void view::set_score(const int value)
 {
     pimpl_->score_display_.set_score(value);
 }
 
-void view::set_hi_score(const unsigned int value)
+void view::set_hi_score(const int value)
 {
     pimpl_->hi_score_display_.set_score(value);
 }
 
-void view::create_next_input(const unsigned int value0, const unsigned int value1)
+void view::create_next_input(const int value0, const int value1)
 {
     pimpl_->tile_grid_.create_next_input(value0, value1);
 }
 
-void view::insert_next_input(const unsigned int x_offset, const unsigned int rotation)
+void view::insert_next_input(const int x_offset, const int rotation)
 {
     pimpl_->tile_grid_.insert_next_input(x_offset, rotation);
 }
 
-void view::set_input_layout(const unsigned int x_offset, const unsigned int rotation)
+void view::set_input_layout(const int x_offset, const int rotation)
 {
     pimpl_->tile_grid_.set_input_layout(x_offset, rotation);
 }
 
 void view::insert_input
 (
-    const unsigned int tile0_dst_column_index,
-    const unsigned int tile0_dst_row_index,
-    const unsigned int tile1_dst_column_index,
-    const unsigned int tile1_dst_row_index
+    const int tile0_dst_column_index,
+    const int tile0_dst_row_index,
+    const int tile1_dst_column_index,
+    const int tile1_dst_row_index
 )
 {
     pimpl_->tile_grid_.insert_input
@@ -293,6 +293,11 @@ void view::drop_tiles(const data_types::tile_drop_list& drops)
 void view::merge_tiles(const data_types::tile_merge_list& merges)
 {
     pimpl_->tile_grid_.merge_tiles(merges);
+}
+
+void view::set_board_tiles(const data_types::board_tile_array& tiles)
+{
+    pimpl_->tile_grid_.set_board_tiles(tiles);
 }
 
 void view::set_visible(const bool visible)

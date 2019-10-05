@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+#include "json_conversion.hpp"
 #include <libdb/database.hpp>
 #include <nlohmann/json.hpp>
 #include <emscripten.h>
@@ -26,10 +27,6 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 
 namespace libdb
 {
-
-namespace
-{
-}
 
 struct database::impl
 {
@@ -66,14 +63,14 @@ struct database::impl
             }
         }
 
-        int get_hi_score() const
+        const data_types::game_state& get_game_state() const
         {
-            return hi_score_;
+            return game_state_;
         }
 
-        void set_hi_score(int value)
+        void set_game_state(const data_types::game_state& state)
         {
-            hi_score_ = value;
+            game_state_ = state;
 
             if(current_state_ == state::ready)
             {
@@ -113,10 +110,16 @@ struct database::impl
         {
             try
             {
+                //read json from file
                 auto ifs = std::ifstream{path_};
                 auto json = nlohmann::json{};
                 ifs >> json;
-                hi_score_ = json["hiScore"].get<int>();
+
+                //load at least this one, in case an exception occurs later
+                game_state_.hi_score = json["hiScore"].get<int>();
+
+                //convert json to state
+                game_state_ = json;
             }
             catch(const std::exception& e)
             {
@@ -135,11 +138,9 @@ struct database::impl
         {
             try
             {
-                auto json = nlohmann::json{};
-                json["hiScore"] = hi_score_;
-
                 std::filesystem::create_directories(path_.parent_path());
                 std::ofstream ofs{path_};
+                const auto json = nlohmann::json(game_state_);
                 ofs << json;
             }
             catch(const std::exception& e)
@@ -154,23 +155,22 @@ struct database::impl
 
         void async_save_filesystem()
         {
-            if(emscripten_run_script_int("Module.savingPersistentFilesystem") == 0)
-            {
-                EM_ASM(
+            EM_ASM(
+                if(Module.savingPersistentFilesystem == 0) {
                     Module.savingPersistentFilesystem = 1;
                     FS.syncfs(false, function(err) {
                         assert(!err);
                         Module.savingPersistentFilesystem = 0;
                     });
-                );
-            }
+                }
+            );
         }
 
     private:
         const std::filesystem::path path_ = std::filesystem::path{std::getenv("HOME")} / ".config" / "ternarii" / "database.json";
         event_handler event_handler_;
         state current_state_ = state::starting;
-        int hi_score_ = 0;
+        data_types::game_state game_state_;
 };
 
 database::database(const event_handler& evt_handler):
@@ -185,14 +185,14 @@ void database::iterate()
     pimpl_->iterate();
 }
 
-int database::get_hi_score() const
+const data_types::game_state& database::get_game_state() const
 {
-    return pimpl_->get_hi_score();
+    return pimpl_->get_game_state();
 }
 
-void database::set_hi_score(int value)
+void database::set_game_state(const data_types::game_state& state)
 {
-    pimpl_->set_hi_score(value);
+    pimpl_->set_game_state(state);
 }
 
 } //namespace

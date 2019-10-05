@@ -40,5 +40,6 @@ target_include_directories(
 
 target_link_libraries(
     libdb
+    PUBLIC libgame
     PRIVATE nlohmann_json::nlohmann_json
 )

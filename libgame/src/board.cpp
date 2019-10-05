@@ -27,36 +27,65 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libgame
 {
 
-board::board():
-    highest_tile_value_(0)
+board::board
+(
+    grid_t& tiles,
+    int& hi_score
+):
+    tile_grid_(tiles),
+    hi_score_(hi_score)
 {
 }
 
 bool board::is_game_over() const
 {
-    for(unsigned int i = 0; i < column_count; ++i)
+    for(int i = 0; i < column_count; ++i)
         if(tile_grid_[i][7]) return true;
 
     return false;
 }
 
-unsigned int board::get_score() const
+int board::get_highest_tile_value() const
 {
-    auto score = 0u;
+    auto value = 0;
     for(const auto& cell_column: tile_grid_)
+    {
         for(const auto& opt_tile: cell_column)
+        {
             if(opt_tile)
+            {
+                value = std::max(value, opt_tile->value);
+            }
+        }
+    }
+    return value;
+}
+
+int board::get_score() const
+{
+    auto score = 0;
+    for(const auto& cell_column: tile_grid_)
+    {
+        for(const auto& opt_tile: cell_column)
+        {
+            if(opt_tile)
+            {
                 score += std::pow(3, opt_tile->value);
+            }
+        }
+    }
     return score;
 }
 
 void board::clear()
 {
     for(auto& cell_column: tile_grid_)
+    {
         for(auto& opt_tile: cell_column)
+        {
             opt_tile = std::nullopt;
-
-    highest_tile_value_ = 0;
+        }
+    }
 }
 
 std::vector<event> board::drop_input(const board_input& in)
@@ -70,11 +99,15 @@ std::vector<event> board::drop_input(const board_input& in)
     {
         const auto drops = make_tiles_fall();
         if(!drops.empty())
+        {
             events.push_back(events::tile_drop{drops});
+        }
 
         const auto merges = merge_tiles();
         if(!merges.empty())
+        {
             events.push_back(events::tile_merge{merges});
+        }
 
         events_happened = !drops.empty() || !merges.empty();
     } while(events_happened);
@@ -94,18 +127,16 @@ events::input_insertion board::insert_input(const board_input& in)
 {
     //put the input on the upper rows
 
-    const auto tiles = in.get_tiles();
-    const auto x_offset = in.get_x_offset();
-    const auto rotation = in.get_rotation();
+    const auto& state = in.get_state();
 
-    const unsigned int x0 = x_offset + (rotation == 2 ? 1 : 0);
-    const unsigned int y0 = row_count - 2 + (rotation == 1 ? 1 : 0);
+    const int x0 = state.x_offset + (state.rotation == 2 ? 1 : 0);
+    const int y0 = row_count - 2 + (state.rotation == 1 ? 1 : 0);
 
-    const unsigned int x1 = x_offset + (rotation == 0 ? 1 : 0);
-    const unsigned int y1 = row_count - 2 + (rotation == 3 ? 1 : 0);
+    const int x1 = state.x_offset + (state.rotation == 0 ? 1 : 0);
+    const int y1 = row_count - 2 + (state.rotation == 3 ? 1 : 0);
 
-    tile_grid_[x0][y0] = tiles[0];
-    tile_grid_[x1][y1] = tiles[1];
+    tile_grid_[x0][y0] = state.tiles[0];
+    tile_grid_[x1][y1] = state.tiles[1];
 
     return events::input_insertion{x0, y0, x1, y1};
 }
@@ -114,10 +145,10 @@ data_types::tile_drop_list board::make_tiles_fall()
 {
     data_types::tile_drop_list drops;
 
-    for(unsigned int column_index = 0; column_index < column_count; ++column_index)
+    for(int column_index = 0; column_index < column_count; ++column_index)
     {
-        std::optional<unsigned int> opt_empty_cell_row_index;
-        for(unsigned int row_index = 0; row_index < row_count; ++row_index) //from bottom to top
+        std::optional<int> opt_empty_cell_row_index;
+        for(int row_index = 0; row_index < row_count; ++row_index) //from bottom to top
         {
             if(const auto opt_tile = tile_grid_[column_index][row_index])
             {
@@ -142,7 +173,9 @@ data_types::tile_drop_list board::make_tiles_fall()
             else
             {
                 if(!opt_empty_cell_row_index)
+                {
                     opt_empty_cell_row_index = row_index;
+                }
             }
         }
     }
@@ -158,9 +191,9 @@ data_types::tile_merge_list board::merge_tiles()
 
     //select the identical adjacent tiles
     //scan row by row, from the bottom left corner to the top right corner
-    for(unsigned int row_index = 0; row_index < row_count; ++row_index)
+    for(int row_index = 0; row_index < row_count; ++row_index)
     {
-        for(unsigned int column_index = 0; column_index < column_count; ++column_index)
+        for(int column_index = 0; column_index < column_count; ++column_index)
         {
             const auto& opt_tile = tile_grid_[column_index][row_index];
 
@@ -169,7 +202,7 @@ data_types::tile_merge_list board::merge_tiles()
                 const auto& current_tile = *opt_tile;
 
                 selection_t selection = {}; //fill with unselected
-                unsigned int selection_size = 0;
+                int selection_size = 0;
 
                 select_tiles(current_tile.value, column_index, row_index, selection, selection_size);
 
@@ -178,11 +211,11 @@ data_types::tile_merge_list board::merge_tiles()
                 {
                     //remove the selected tiles from the board
                     std::vector<data_types::tile_coordinate> removed_tile_coordinates;
-                    for(unsigned int row_index2 = 0; row_index2 < row_count; ++row_index2)
+                    for(int row_index2 = 0; row_index2 < row_count; ++row_index2)
                     {
-                        for(unsigned int column_index2 = 0; column_index2 < column_count; ++column_index2)
+                        for(int column_index2 = 0; column_index2 < column_count; ++column_index2)
                         {
-                            if(selection[column_index2][row_index2] == selection_state::SELECTED)
+                            if(selection[column_index2][row_index2] == selection_state::selected)
                             {
                                 assert(tile_grid_[column_index2][row_index2]);
                                 removed_tile_coordinates.push_back
@@ -211,9 +244,6 @@ data_types::tile_merge_list board::merge_tiles()
                             merged_tile.value
                         }
                     );
-
-                    if(highest_tile_value_ < merged_tile.value)
-                        highest_tile_value_ = merged_tile.value;
                 }
             }
         }
@@ -240,28 +270,28 @@ data_types::tile_merge_list board::merge_tiles()
 
 void board::select_tiles
 (
-    const unsigned int tile_value,
-    const unsigned int column_index,
-    const unsigned int row_index,
+    const int tile_value,
+    const int column_index,
+    const int row_index,
     selection_t& selection,
-    unsigned int& selection_size
+    int& selection_size
 )
 {
-    selection[column_index][row_index] = selection_state::VISITED;
+    selection[column_index][row_index] = selection_state::visited;
 
     if(auto opt_tile = tile_grid_[column_index][row_index])
     {
         auto tile = *opt_tile;
         if(tile.value == tile_value)
         {
-            selection[column_index][row_index] = selection_state::SELECTED;
+            selection[column_index][row_index] = selection_state::selected;
             ++selection_size;
 
             //above tile
             if
             (
                 row_index + 1 < row_count &&
-                selection[column_index][row_index + 1] == selection_state::UNSELECTED
+                selection[column_index][row_index + 1] == selection_state::unselected
             )
             {
                 select_tiles(tile_value, column_index, row_index + 1, selection, selection_size);
@@ -271,7 +301,7 @@ void board::select_tiles
             if
             (
                 row_index >= 1 &&
-                selection[column_index][row_index - 1] == selection_state::UNSELECTED
+                selection[column_index][row_index - 1] == selection_state::unselected
             )
             {
                 select_tiles(tile_value, column_index, row_index - 1, selection, selection_size);
@@ -281,7 +311,7 @@ void board::select_tiles
             if
             (
                 column_index + 1 < column_count &&
-                selection[column_index + 1][row_index] == selection_state::UNSELECTED
+                selection[column_index + 1][row_index] == selection_state::unselected
             )
             {
                 select_tiles(tile_value, column_index + 1, row_index, selection, selection_size);
@@ -291,7 +321,7 @@ void board::select_tiles
             if
             (
                 column_index >= 1 &&
-                selection[column_index - 1][row_index] == selection_state::UNSELECTED
+                selection[column_index - 1][row_index] == selection_state::unselected
             )
             {
                 select_tiles(tile_value, column_index - 1, row_index, selection, selection_size);
@@ -300,9 +330,4 @@ void board::select_tiles
     }
 }
 
-void board::init_hi_score(unsigned int value)
-{
-    hi_score_ = std::max(hi_score_, value);
-}
-
-} //namespace libgame
+} //namespace

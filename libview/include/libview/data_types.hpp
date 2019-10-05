@@ -37,40 +37,35 @@ enum class move
     right_shift
 };
 
-struct item
+struct tile
 {
-    item(unsigned int value = 0):
-        value(value)
-    {
-    }
-
-    unsigned int value;
+    int value = 0;
 };
 
-using opt_item = std::optional<item>;
+using opt_tile = std::optional<tile>;
 
 template<size_t Size0, size_t Size1>
-using item_array = std::array<std::array<opt_item, Size1>, Size0>;
+using tile_array = std::array<std::array<opt_tile, Size1>, Size0>;
 
-using next_input_item_array = std::array<opt_item, 2>;
-using input_item_array = std::array<opt_item, 2>;
-using board_item_array = item_array<6, 10>;
+using next_input_tile_array = std::array<opt_tile, 2>;
+using input_tile_array = std::array<opt_tile, 2>;
+using board_tile_array = tile_array<6, 10>;
 
 
 
 struct tile_coordinate
 {
-    unsigned int x;
-    unsigned int y;
+    int x;
+    int y;
 };
 
 using tile_coordinate_list = std::vector<tile_coordinate>;
 
 struct tile_drop
 {
-    unsigned int column_index;
-    unsigned int src_row_index;
-    unsigned int dst_row_index;
+    int column_index;
+    int src_row_index;
+    int dst_row_index;
 };
 
 using tile_drop_list = std::vector<tile_drop>;
@@ -79,7 +74,7 @@ struct tile_merge
 {
     tile_coordinate_list src_tile_coordinates;
     tile_coordinate dst_tile_coordinate;
-    unsigned int dst_tile_value;
+    int dst_tile_value;
 };
 
 using tile_merge_list = std::vector<tile_merge>;
