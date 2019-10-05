@@ -330,6 +330,37 @@ void tile_grid::merge_tiles(const data_types::tile_merge_list& merges)
     );
 }
 
+void tile_grid::set_board_tiles(const data_types::board_item_array& tiles)
+{
+    int column_index = 0;
+    for(const auto& column_tiles: tiles)
+    {
+        int row_index = 0;
+        for(const auto& opt_tile: column_tiles)
+        {
+            if(opt_tile.has_value())
+            {
+                auto ptile = &add_tile
+                (
+                    opt_tile.value().value,
+                    tile_coordinate_to_position
+                    (
+                        data_types::tile_coordinate
+                        {
+                            static_cast<unsigned int>(column_index),
+                            static_cast<unsigned int>(row_index)
+                        }
+                    )
+                );
+                ptile->set_alpha(1);
+                board_tiles_[column_index][row_index] = ptile;
+            }
+            ++row_index;
+        }
+        ++column_index;
+    }
+}
+
 void tile_grid::advance(const time_point& now)
 {
     if(!animations_.empty())

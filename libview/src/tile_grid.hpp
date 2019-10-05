@@ -69,6 +69,8 @@ class tile_grid: public Object2D
 
         void merge_tiles(const data_types::tile_merge_list& merges);
 
+        void set_board_tiles(const data_types::board_item_array& tiles);
+
         void advance(const time_point& now);
 
     private:

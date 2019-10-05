@@ -65,6 +65,8 @@ class view
 
         void merge_tiles(const data_types::tile_merge_list& merges);
 
+        void set_board_tiles(const data_types::board_item_array& tiles);
+
         void set_visible(const bool visible);
 
         void set_game_over_screen_visible(const bool visible);
