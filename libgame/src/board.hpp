@@ -37,7 +37,11 @@ class board
         static const int row_count = 10;
         using grid_t = data_types::tile_grid<column_count, row_count>;
 
-        board(int hi_score);
+        board
+        (
+            grid_t& tiles,
+            int& hi_score
+        );
 
         const grid_t& tile_grid() const
         {
@@ -71,7 +75,7 @@ class board
             selected
         };
 
-        typedef data_types::array2d<selection_state, column_count, row_count> selection_t;
+        using selection_t = data_types::array2d<selection_state, column_count, row_count>;
 
         void select_tiles
         (
@@ -83,9 +87,9 @@ class board
         );
 
     private:
-        grid_t tile_grid_;
+        grid_t& tile_grid_;
+        int& hi_score_;
         int highest_tile_value_ = 0;
-        int hi_score_ = 0;
 };
 
 } //namespace

@@ -30,7 +30,7 @@ namespace libgame
 struct game
 {
     public:
-        game(int hi_score);
+        game(const data_types::game_state& state);
 
         ~game();
 

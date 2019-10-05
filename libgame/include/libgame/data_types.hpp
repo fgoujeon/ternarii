@@ -99,19 +99,29 @@ struct input_state
 
     int x_offset = 0;
 
-        //rotation = 0:
-        //  --
-        //  01
-        //rotation = 1:
-        //  0-
-        //  1-
-        //rotation = 2:
-        //  --
-        //  10
-        //rotation = 3:
-        //  1-
-        //  0-
+    //rotation = 0:
+    //  --
+    //  01
+    //rotation = 1:
+    //  0-
+    //  1-
+    //rotation = 2:
+    //  --
+    //  10
+    //rotation = 3:
+    //  1-
+    //  0-
     int rotation = 0;
+};
+
+
+
+struct game_state
+{
+    int hi_score = 0;
+    tile_pair next_input_tiles;
+    input_state input;
+    board_tile_grid board_tiles;
 };
 
 } //namespace

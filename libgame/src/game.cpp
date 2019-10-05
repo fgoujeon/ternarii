@@ -64,8 +64,9 @@ namespace
 
 struct game::impl
 {
-    impl(const int hi_score):
-        board_(hi_score)
+    impl(const data_types::game_state& s):
+        state(s),
+        board_(state.board_tiles, state.hi_score)
     {
     }
 
@@ -87,13 +88,14 @@ struct game::impl
     }
 
     random_tile_generator rand;
+    data_types::game_state state;
     board board_;
     board_input input_;
     data_types::tile_pair next_input_;
 };
 
-game::game(const int hi_score):
-    pimpl_(std::make_unique<impl>(hi_score))
+game::game(const data_types::game_state& state):
+    pimpl_(std::make_unique<impl>(state))
 {
 }
 

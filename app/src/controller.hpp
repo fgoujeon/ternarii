@@ -168,12 +168,13 @@ class controller
         {
             if(pgame_) return;
 
-            const auto hi_score = database_.get_hi_score();
+            auto game_state = libgame::data_types::game_state{};
+            game_state.hi_score = database_.get_hi_score();
 
-            pgame_ = std::make_unique<libgame::game>(hi_score);
+            pgame_ = std::make_unique<libgame::game>(game_state);
             handle_game_events(pgame_->start());
 
-            view_.set_hi_score(hi_score);
+            view_.set_hi_score(game_state.hi_score);
             view_.set_visible(true);
         }
 

@@ -27,7 +27,12 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libgame
 {
 
-board::board(const int hi_score):
+board::board
+(
+    grid_t& tiles,
+    int& hi_score
+):
+    tile_grid_(tiles),
     hi_score_(hi_score)
 {
 }
