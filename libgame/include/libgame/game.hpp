@@ -46,15 +46,15 @@ struct game
 
         bool is_game_over() const;
 
-        event_list start();
+        void start(event_list& events);
 
-        event_list shift_input_left();
+        void shift_input_left(event_list& events);
 
-        event_list shift_input_right();
+        void shift_input_right(event_list& events);
 
-        event_list rotate_input();
+        void rotate_input(event_list& events);
 
-        event_list drop_input();
+        void drop_input(event_list& events);
 
     private:
         struct impl;

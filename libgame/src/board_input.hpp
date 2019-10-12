@@ -46,14 +46,14 @@ class board_input
 
         event set_tiles(const data_types::tile_pair& rhs);
 
-        std::vector<event> shift_left();
+        void shift_left(event_list& events);
 
-        std::vector<event> shift_right();
+        void shift_right(event_list& events);
 
-        std::vector<event> rotate();
+        void rotate(event_list& events);
 
     private:
-        std::vector<event> apply();
+        events::input_layout_change apply();
 
     private:
         state_t& state_;

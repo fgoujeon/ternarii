@@ -50,35 +50,31 @@ event board_input::set_tiles(const data_types::tile_pair& tiles)
     };
 }
 
-std::vector<event> board_input::shift_left()
+void board_input::shift_left(event_list& events)
 {
     if(x_offset_ > 0)
     {
         --x_offset_;
-        return apply();
+        events.push_back(apply());
     }
-
-    return std::vector<event>();
 }
 
-std::vector<event> board_input::shift_right()
+void board_input::shift_right(event_list& events)
 {
     if(x_offset_ < column_count - 1)
     {
         ++x_offset_;
-        return apply();
+        events.push_back(apply());
     }
-
-    return std::vector<event>();
 }
 
-std::vector<event> board_input::rotate()
+void board_input::rotate(event_list& events)
 {
     rotation_ = (rotation_ + 1) % 4;
-    return apply();
+    events.push_back(apply());
 }
 
-std::vector<event> board_input::apply()
+events::input_layout_change board_input::apply()
 {
     //adjust the offset so that the tiles stay inside the board
     if(x_offset_ >= column_count - 1 && (rotation_ == 0 || rotation_ == 2))
@@ -86,10 +82,7 @@ std::vector<event> board_input::apply()
         x_offset_ = column_count - 2;
     }
 
-    return
-    {
-        events::input_layout_change{x_offset_, rotation_}
-    };
+    return events::input_layout_change{x_offset_, rotation_};
 }
 
 } //namespace

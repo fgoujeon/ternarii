@@ -88,10 +88,8 @@ void board::clear()
     }
 }
 
-std::vector<event> board::drop_input(const board_input& in)
+void board::drop_input(const board_input& in, event_list& events)
 {
-    std::vector<event> events;
-
     events.push_back(insert_input(in));
 
     bool events_happened;
@@ -119,8 +117,6 @@ std::vector<event> board::drop_input(const board_input& in)
         hi_score_ = get_score();
         events.push_back(events::hi_score_change{hi_score_});
     }
-
-    return events;
 }
 
 events::input_insertion board::insert_input(const board_input& in)

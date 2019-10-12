@@ -120,6 +120,23 @@ class controller
             database_.set_game_state(pgame_->get_state());
         }
 
+        /*
+        Call given libgame::game's modifier function and handle the returned
+        events.
+        */
+        template<class Fn>
+        void modify_game(Fn&& fn)
+        {
+            if(!pgame_)
+            {
+                return;
+            }
+
+            game_events_.clear();
+            std::invoke(fn, *pgame_, game_events_);
+            handle_game_events(game_events_);
+        }
+
     private:
         libview::callback_set make_view_callbacks()
         {
@@ -132,8 +149,7 @@ class controller
 
         void handle_view_clear_request()
         {
-            if(!pgame_) return;
-            handle_game_events(pgame_->start());
+            modify_game(&libgame::game::start);
         }
 
         void handle_view_draw_event()
@@ -143,23 +159,21 @@ class controller
 
         void handle_view_move_request(const libview::data_types::move m)
         {
-            if(!pgame_) return;
-
             using move = libview::data_types::move;
 
             switch(m)
             {
                 case move::left_shift:
-                    handle_game_events(pgame_->shift_input_left());
+                    modify_game(&libgame::game::shift_input_left);
                     break;
                 case move::right_shift:
-                    handle_game_events(pgame_->shift_input_right());
+                    modify_game(&libgame::game::shift_input_right);
                     break;
                 case move::clockwise_rotation:
-                    handle_game_events(pgame_->rotate_input());
+                    modify_game(&libgame::game::rotate_input);
                     break;
                 case move::drop:
-                    handle_game_events(pgame_->drop_input());
+                    modify_game(&libgame::game::drop_input);
                     break;
             }
         }
@@ -202,6 +216,9 @@ class controller
         libdb::database database_;
         libview::view view_;
         std::unique_ptr<libgame::game> pgame_;
+
+        //used by modify_game()
+        libgame::event_list game_events_;
 };
 
 #endif

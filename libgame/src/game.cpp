@@ -131,10 +131,8 @@ bool game::is_game_over() const
     return pimpl_->board_.is_game_over();
 }
 
-event_list game::start()
+void game::start(event_list& events)
 {
-    event_list events;
-
     pimpl_->board_.clear();
 
     events.push_back(events::start{});
@@ -143,58 +141,38 @@ event_list game::start()
     events.push_back(pimpl_->generate_next_input());
     events.push_back(pimpl_->input_.set_tiles(pimpl_->state.next_input_tiles)); //insert next input
     events.push_back(pimpl_->generate_next_input());
-
-    return events;
 }
 
-event_list game::shift_input_left()
+void game::shift_input_left(event_list& events)
 {
     if(!is_game_over())
     {
-        return pimpl_->input_.shift_left();
-    }
-    else
-    {
-        return {};
+        pimpl_->input_.shift_left(events);
     }
 }
 
-event_list game::shift_input_right()
+void game::shift_input_right(event_list& events)
 {
     if(!is_game_over())
     {
-        return pimpl_->input_.shift_right();
-    }
-    else
-    {
-        return {};
+        pimpl_->input_.shift_right(events);
     }
 }
 
-event_list game::rotate_input()
+void game::rotate_input(event_list& events)
 {
     if(!is_game_over())
     {
-        return pimpl_->input_.rotate();
-    }
-    else
-    {
-        return {};
+        pimpl_->input_.rotate(events);
     }
 }
 
-event_list game::drop_input()
+void game::drop_input(event_list& events)
 {
-    event_list events;
-
     if(!is_game_over())
     {
         //drop the input
-        const auto& board_events = pimpl_->board_.drop_input(pimpl_->input_);
-        for(const auto& event: board_events)
-        {
-            events.push_back(event);
-        }
+        pimpl_->board_.drop_input(pimpl_->input_, events);
 
         if(!is_game_over())
         {
@@ -210,8 +188,6 @@ event_list game::drop_input()
     {
         events.push_back(events::end_of_game{});
     }
-
-    return events;
 }
 
 } //namespace
