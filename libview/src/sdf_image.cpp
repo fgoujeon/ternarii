@@ -26,6 +26,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include <Magnum/Shaders/DistanceFieldVector.h>
 #include <Magnum/Trade/MeshData2D.h>
 #include <Magnum/Trade/ImageData.h>
+#include <Magnum/ImageView.h>
 #include <Corrade/Containers/Optional.h>
 
 namespace libview

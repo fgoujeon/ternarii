@@ -17,20 +17,6 @@
 
 cmake_minimum_required(VERSION 3.14)
 
-find_package(
-    Magnum REQUIRED
-    GL
-    MagnumFont
-    MeshTools
-    Primitives
-    SceneGraph
-    Sdl2Application
-    Shaders
-    Text
-    TgaImporter
-    Trade
-)
-
 set_directory_properties(PROPERTIES CORRADE_USE_PEDANTIC_FLAGS ON)
 
 file(GLOB_RECURSE INCLUDE_FILES include/*)

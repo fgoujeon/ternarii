@@ -27,14 +27,22 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     </head>
     <body>
-        <canvas id="module"></canvas>
+        <div id="container">
+            <div id="sizer">
+                <div id="expander">
+                    <div id="listener">
+                        <canvas id="canvas"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <div id="status-container">
             <div id="status">Initializing...</div>
             <div id="status-description"></div>
         </div>
 
-        <script src="index.js"></script>
+        <script src="EmscriptenApplication.js"></script>
         <script async="async" src="app.js"></script>
     </body>
 </html>

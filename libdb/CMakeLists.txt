@@ -17,8 +17,6 @@
 
 cmake_minimum_required(VERSION 3.10)
 
-find_package(nlohmann_json 3.2.0 REQUIRED)
-
 file(GLOB_RECURSE INCLUDE_FILES include/*)
 file(GLOB_RECURSE SRC_FILES src/*)
 

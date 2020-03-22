@@ -26,6 +26,6 @@ add_custom_target(
         ${CMAKE_CURRENT_SOURCE_DIR}/res/icon.png
         ${CMAKE_CURRENT_SOURCE_DIR}/src/index.css
         ${CMAKE_CURRENT_SOURCE_DIR}/src/index.html
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/index.js
+        ${MAGNUM_EMSCRIPTENAPPLICATION_JS}
         ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
 )

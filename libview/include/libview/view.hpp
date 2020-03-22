@@ -22,6 +22,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "events.hpp"
 #include "data_types.hpp"
+#include <Magnum/Platform/Sdl2Application.h>
 #include <memory>
 
 namespace libview
@@ -30,17 +31,25 @@ namespace libview
 class view
 {
     public:
-        view
-        (
-            int argc,
-            char** argv,
-            const callback_set& callbacks
-        );
+        using key_event = Magnum::Platform::Sdl2Application::KeyEvent;
+        using mouse_event = Magnum::Platform::Sdl2Application::MouseEvent;
+
+    public:
+        view(const callback_set& callbacks);
 
         ~view();
 
-        int exec();
+    //Magnum event handling
+    public:
+        void draw();
 
+        void set_viewport(const Magnum::Vector2i& size);
+
+        void handle_key_press(key_event& event);
+
+        void handle_mouse_press(mouse_event& event);
+
+    public:
         void clear();
 
         void set_score(const int value);

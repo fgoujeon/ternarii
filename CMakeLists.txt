@@ -22,6 +22,21 @@ set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/modules/" ${CMAKE_MODULE_PATH
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --preload-file ${CMAKE_BINARY_DIR}/res/out@/res")
 
+find_package(
+    Magnum 2019.10 REQUIRED
+    GL
+    MagnumFont
+    MeshTools
+    Primitives
+    SceneGraph
+    Sdl2Application
+    Shaders
+    Text
+    TgaImporter
+    Trade
+)
+find_package(nlohmann_json 3.2.0 REQUIRED)
+
 add_subdirectory(res)
 add_subdirectory(app)
 add_subdirectory(libdb)

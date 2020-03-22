@@ -22,6 +22,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include <Magnum/SceneGraph/MatrixTransformation2D.h>
 #include <Magnum/SceneGraph/Object.h>
 #include <Magnum/SceneGraph/Scene.h>
+#include <Magnum/Math/Color.h>
 
 namespace libview
 {

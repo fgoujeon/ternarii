@@ -17,8 +17,6 @@
 
 cmake_minimum_required(VERSION 3.14)
 
-find_package(Magnum)
-
 set_directory_properties(PROPERTIES CORRADE_USE_PEDANTIC_FLAGS ON)
 
 file(GLOB_RECURSE SRC_FILES src/*)

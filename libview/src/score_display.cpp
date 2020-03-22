@@ -20,7 +20,6 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include "score_display.hpp"
 #include "text.hpp"
 #include "colors.hpp"
-#include <MagnumPlugins/FreeTypeFont/FreeTypeFont.h>
 #include <Magnum/Shaders/Vector.h>
 #include <Magnum/Text/AbstractFont.h>
 #include <Magnum/Text/GlyphCache.h>

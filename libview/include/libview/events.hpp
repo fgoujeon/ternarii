@@ -30,7 +30,6 @@ struct callback_set
 {
     libutil::callback<void(data_types::move)> handle_move_request;
     libutil::callback<void()> handle_clear_request;
-    libutil::callback<void()> handle_draw_event;
 };
 
 } //namespace

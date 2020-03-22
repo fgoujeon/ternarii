@@ -38,20 +38,10 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libview
 {
 
-class view::impl final: public Magnum::Platform::Sdl2Application
+class view::impl final
 {
     public:
-        impl
-        (
-            int argc,
-            char** argv,
-            const callback_set& callbacks
-        ):
-            Magnum::Platform::Sdl2Application
-            {
-                Arguments{argc, argv},
-                Configuration{}.setWindowFlags(Configuration::WindowFlag::Resizable)
-            },
+        impl(const callback_set& callbacks):
             callbacks_(callbacks),
             cameraObject_(&scene_),
             camera_(cameraObject_),
@@ -105,49 +95,40 @@ class view::impl final: public Magnum::Platform::Sdl2Application
             Magnum::GL::Renderer::setBlendEquation(Magnum::GL::Renderer::BlendEquation::Add, Magnum::GL::Renderer::BlendEquation::Add);
         }
 
-    private:
-        void drawEvent()
+        void draw()
         {
             const auto now = clock::now();
-
-            callbacks_.handle_draw_event();
 
             //advance animations
             background_.advance(now);
             tile_grid_.advance(now);
 
-            Magnum::GL::defaultFramebuffer.clear(Magnum::GL::FramebufferClear::Color);
-
             if(visible_)
             {
                 camera_.draw(drawables_);
             }
-
-            swapBuffers();
-            redraw();
         }
 
-        void viewportEvent(ViewportEvent& event)
+        void set_viewport(const Magnum::Vector2i& size)
         {
-            Magnum::GL::defaultFramebuffer.setViewport({{}, event.framebufferSize()});
-            camera_.setViewport(event.windowSize());
+            camera_.setViewport(size);
         }
 
-        void keyPressEvent(KeyEvent& event)
+        void handle_key_press(key_event& event)
         {
             switch(event.key())
             {
-                case KeyEvent::Key::Left:
+                case key_event::Key::Left:
                     send_move_request(data_types::move::left_shift);
                     break;
-                case KeyEvent::Key::Right:
+                case key_event::Key::Right:
                     send_move_request(data_types::move::right_shift);
                     break;
-                case KeyEvent::Key::Up:
-                case KeyEvent::Key::Space:
+                case key_event::Key::Up:
+                case key_event::Key::Space:
                     send_move_request(data_types::move::clockwise_rotation);
                     break;
-                case KeyEvent::Key::Down:
+                case key_event::Key::Down:
                     send_move_request(data_types::move::drop);
                     break;
                 default:
@@ -155,7 +136,7 @@ class view::impl final: public Magnum::Platform::Sdl2Application
             }
         }
 
-        void mousePressEvent(MouseEvent& event)
+        void handle_mouse_press(mouse_event& event)
         {
             //integer window-space coordinates (with origin in top left corner and Y down)
             const auto& window_space_position = event.position();
@@ -220,21 +201,31 @@ class view::impl final: public Magnum::Platform::Sdl2Application
         game_over_screen& game_over_screen_;
 };
 
-view::view
-(
-    int argc,
-    char** argv,
-    const callback_set& callbacks
-):
-    pimpl_(std::make_unique<impl>(argc, argv, callbacks))
+view::view(const callback_set& callbacks):
+    pimpl_(std::make_unique<impl>(callbacks))
 {
 }
 
 view::~view() = default;
 
-int view::exec()
+void view::draw()
 {
-    return pimpl_->exec();
+    pimpl_->draw();
+}
+
+void view::set_viewport(const Magnum::Vector2i& size)
+{
+    pimpl_->set_viewport(size);
+}
+
+void view::handle_key_press(key_event& event)
+{
+    pimpl_->handle_key_press(event);
+}
+
+void view::handle_mouse_press(mouse_event& event)
+{
+    pimpl_->handle_mouse_press(event);
 }
 
 void view::clear()
