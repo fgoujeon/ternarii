@@ -39,8 +39,13 @@ board::board
 
 bool board::is_game_over() const
 {
-    for(int i = 0; i < column_count; ++i)
-        if(tile_grid_[i][7]) return true;
+    for(int i = 0; i < total_column_count; ++i)
+    {
+        if(tile_grid_[i][authorized_row_count])
+        {
+            return true;
+        }
+    }
 
     return false;
 }
@@ -75,6 +80,24 @@ int board::get_score() const
         }
     }
     return score;
+}
+
+int board::get_free_cell_count() const
+{
+    auto count = authorized_cell_count;
+
+    for(int row_index = 0; row_index < authorized_row_count; ++row_index)
+    {
+        for(int column_index = 0; column_index < authorized_column_count; ++column_index)
+        {
+            if(tile_grid_[column_index][row_index])
+            {
+                --count;
+            }
+        }
+    }
+
+    return count;
 }
 
 void board::clear()
@@ -126,10 +149,10 @@ events::input_insertion board::insert_input(const board_input& in)
     const auto& state = in.get_state();
 
     const int x0 = state.x_offset + (state.rotation == 2 ? 1 : 0);
-    const int y0 = row_count - 2 + (state.rotation == 1 ? 1 : 0);
+    const int y0 = total_row_count - 2 + (state.rotation == 1 ? 1 : 0);
 
     const int x1 = state.x_offset + (state.rotation == 0 ? 1 : 0);
-    const int y1 = row_count - 2 + (state.rotation == 3 ? 1 : 0);
+    const int y1 = total_row_count - 2 + (state.rotation == 3 ? 1 : 0);
 
     tile_grid_[x0][y0] = state.tiles[0];
     tile_grid_[x1][y1] = state.tiles[1];
@@ -141,10 +164,10 @@ data_types::tile_drop_list board::make_tiles_fall()
 {
     data_types::tile_drop_list drops;
 
-    for(int column_index = 0; column_index < column_count; ++column_index)
+    for(int column_index = 0; column_index < total_column_count; ++column_index)
     {
         std::optional<int> opt_empty_cell_row_index;
-        for(int row_index = 0; row_index < row_count; ++row_index) //from bottom to top
+        for(int row_index = 0; row_index < total_row_count; ++row_index) //from bottom to top
         {
             if(const auto opt_tile = tile_grid_[column_index][row_index])
             {
@@ -187,9 +210,9 @@ data_types::tile_merge_list board::merge_tiles()
 
     //select the identical adjacent tiles
     //scan row by row, from the bottom left corner to the top right corner
-    for(int row_index = 0; row_index < row_count; ++row_index)
+    for(int row_index = 0; row_index < total_row_count; ++row_index)
     {
-        for(int column_index = 0; column_index < column_count; ++column_index)
+        for(int column_index = 0; column_index < total_column_count; ++column_index)
         {
             const auto& opt_tile = tile_grid_[column_index][row_index];
 
@@ -207,9 +230,9 @@ data_types::tile_merge_list board::merge_tiles()
                 {
                     //remove the selected tiles from the board
                     std::vector<data_types::tile_coordinate> removed_tile_coordinates;
-                    for(int row_index2 = 0; row_index2 < row_count; ++row_index2)
+                    for(int row_index2 = 0; row_index2 < total_row_count; ++row_index2)
                     {
-                        for(int column_index2 = 0; column_index2 < column_count; ++column_index2)
+                        for(int column_index2 = 0; column_index2 < total_column_count; ++column_index2)
                         {
                             if(selection[column_index2][row_index2] == selection_state::selected)
                             {
@@ -248,9 +271,9 @@ data_types::tile_merge_list board::merge_tiles()
     if(!merges.empty())
     {
         //overlay the tile layer to the tile array of the board
-        for(auto x = 0; x < column_count; ++x)
+        for(auto x = 0; x < total_column_count; ++x)
         {
-            for(auto y = 0; y < row_count; ++y)
+            for(auto y = 0; y < total_row_count; ++y)
             {
                 if(tile_layer[x][y])
                 {
@@ -286,7 +309,7 @@ void board::select_tiles
             //above tile
             if
             (
-                row_index + 1 < row_count &&
+                row_index + 1 < total_row_count &&
                 selection[column_index][row_index + 1] == selection_state::unselected
             )
             {
@@ -306,7 +329,7 @@ void board::select_tiles
             //right tile
             if
             (
-                column_index + 1 < column_count &&
+                column_index + 1 < total_column_count &&
                 selection[column_index + 1][row_index] == selection_state::unselected
             )
             {
