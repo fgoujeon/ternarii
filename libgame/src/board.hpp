@@ -42,18 +42,16 @@ class board
         static constexpr int authorized_row_count = 7;
         static constexpr int authorized_cell_count = authorized_column_count * authorized_row_count;
 
-        using grid_t = data_types::tile_grid<total_column_count, total_row_count>;
-
     public:
         board
         (
-            grid_t& tiles,
+            data_types::board_tile_array& tiles,
             int& hi_score
         );
 
-        const grid_t& tile_grid() const
+        const data_types::board_tile_array& tile_array() const
         {
-            return tile_grid_;
+            return tile_array_;
         }
 
         bool is_game_over() const;
@@ -94,7 +92,7 @@ class board
         );
 
     private:
-        grid_t& tile_grid_;
+        data_types::board_tile_array& tile_array_;
         int& hi_score_;
 };
 

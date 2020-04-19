@@ -29,10 +29,10 @@ namespace libgame
 
 board::board
 (
-    grid_t& tiles,
+    data_types::board_tile_array& tiles,
     int& hi_score
 ):
-    tile_grid_(tiles),
+    tile_array_(tiles),
     hi_score_(hi_score)
 {
 }
@@ -41,7 +41,7 @@ bool board::is_game_over() const
 {
     for(int i = 0; i < total_column_count; ++i)
     {
-        if(tile_grid_[i][authorized_row_count])
+        if(tile_array_[i][authorized_row_count])
         {
             return true;
         }
@@ -53,7 +53,7 @@ bool board::is_game_over() const
 int board::get_highest_tile_value() const
 {
     auto value = 0;
-    for(const auto& cell_column: tile_grid_)
+    for(const auto& cell_column: tile_array_)
     {
         for(const auto& opt_tile: cell_column)
         {
@@ -69,7 +69,7 @@ int board::get_highest_tile_value() const
 int board::get_score() const
 {
     auto score = 0;
-    for(const auto& cell_column: tile_grid_)
+    for(const auto& cell_column: tile_array_)
     {
         for(const auto& opt_tile: cell_column)
         {
@@ -90,7 +90,7 @@ int board::get_free_cell_count() const
     {
         for(int column_index = 0; column_index < authorized_column_count; ++column_index)
         {
-            if(tile_grid_[column_index][row_index])
+            if(tile_array_[column_index][row_index])
             {
                 --count;
             }
@@ -102,7 +102,7 @@ int board::get_free_cell_count() const
 
 void board::clear()
 {
-    for(auto& cell_column: tile_grid_)
+    for(auto& cell_column: tile_array_)
     {
         for(auto& opt_tile: cell_column)
         {
@@ -154,8 +154,8 @@ events::input_insertion board::insert_input(const board_input& in)
     const int x1 = state.x_offset + (state.rotation == 0 ? 1 : 0);
     const int y1 = total_row_count - 2 + (state.rotation == 3 ? 1 : 0);
 
-    tile_grid_[x0][y0] = state.tiles[0];
-    tile_grid_[x1][y1] = state.tiles[1];
+    tile_array_[x0][y0] = state.tiles[0];
+    tile_array_[x1][y1] = state.tiles[1];
 
     return events::input_insertion{x0, y0, x1, y1};
 }
@@ -169,12 +169,12 @@ data_types::tile_drop_list board::make_tiles_fall()
         std::optional<int> opt_empty_cell_row_index;
         for(int row_index = 0; row_index < total_row_count; ++row_index) //from bottom to top
         {
-            if(const auto opt_tile = tile_grid_[column_index][row_index])
+            if(const auto opt_tile = tile_array_[column_index][row_index])
             {
                 if(opt_empty_cell_row_index) //if the tile is floating
                 {
-                    tile_grid_[column_index][row_index] = std::nullopt;
-                    tile_grid_[column_index][*opt_empty_cell_row_index] = opt_tile;
+                    tile_array_[column_index][row_index] = std::nullopt;
+                    tile_array_[column_index][*opt_empty_cell_row_index] = opt_tile;
 
                     drops.push_back
                     (
@@ -206,7 +206,7 @@ data_types::tile_merge_list board::merge_tiles()
 {
     data_types::tile_merge_list merges;
 
-    grid_t tile_layer;
+    data_types::board_tile_array tile_layer;
 
     //select the identical adjacent tiles
     //scan row by row, from the bottom left corner to the top right corner
@@ -214,7 +214,7 @@ data_types::tile_merge_list board::merge_tiles()
     {
         for(int column_index = 0; column_index < total_column_count; ++column_index)
         {
-            const auto& opt_tile = tile_grid_[column_index][row_index];
+            const auto& opt_tile = tile_array_[column_index][row_index];
 
             if(opt_tile)
             {
@@ -236,7 +236,7 @@ data_types::tile_merge_list board::merge_tiles()
                         {
                             if(selection[column_index2][row_index2] == selection_state::selected)
                             {
-                                assert(tile_grid_[column_index2][row_index2]);
+                                assert(tile_array_[column_index2][row_index2]);
                                 removed_tile_coordinates.push_back
                                 (
                                     data_types::tile_coordinate
@@ -245,7 +245,7 @@ data_types::tile_merge_list board::merge_tiles()
                                         row_index2
                                     }
                                 );
-                                tile_grid_[column_index2][row_index2] = std::nullopt;
+                                tile_array_[column_index2][row_index2] = std::nullopt;
                             }
                         }
                     }
@@ -277,8 +277,8 @@ data_types::tile_merge_list board::merge_tiles()
             {
                 if(tile_layer[x][y])
                 {
-                    assert(!tile_grid_[x][y]);
-                    tile_grid_[x][y] = tile_layer[x][y];
+                    assert(!tile_array_[x][y]);
+                    tile_array_[x][y] = tile_layer[x][y];
                 }
             }
         }
@@ -298,7 +298,7 @@ void board::select_tiles
 {
     selection[column_index][row_index] = selection_state::visited;
 
-    if(auto opt_tile = tile_grid_[column_index][row_index])
+    if(auto opt_tile = tile_array_[column_index][row_index])
     {
         auto tile = *opt_tile;
         if(tile.value == tile_value)

@@ -41,7 +41,7 @@ using tile_pair = std::array<tile, 2>;
 
 /*
 Convention for accessing the tiles:
-grid[column_index][row_index]
+tiles[column_index][row_index]
 
 Convention of rows and columns:
 [..]
@@ -53,9 +53,9 @@ Convention of rows and columns:
     [C0][C1][C2][C3][..]
 */
 template<size_t ColumnCount, size_t RowCount>
-using tile_grid = array2d<std::optional<tile>, ColumnCount, RowCount>;
+using basic_tile_array = array2d<std::optional<tile>, ColumnCount, RowCount>;
 
-using board_tile_grid = tile_grid<6, 10>;
+using board_tile_array = basic_tile_array<6, 10>;
 
 struct tile_coordinate
 {
@@ -121,7 +121,7 @@ struct game_state
     int hi_score = 0;
     tile_pair next_input_tiles;
     input_state input;
-    board_tile_grid board_tiles;
+    board_tile_array board_tiles;
 };
 
 } //namespace

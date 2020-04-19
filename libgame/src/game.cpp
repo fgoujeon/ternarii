@@ -167,9 +167,9 @@ const data_types::input_state& game::get_input_state() const
     return pimpl_->input_.get_state();
 }
 
-const data_types::board_tile_grid& game::get_board_tiles() const
+const data_types::board_tile_array& game::get_board_tiles() const
 {
-    return pimpl_->board_.tile_grid();
+    return pimpl_->board_.tile_array();
 }
 
 bool game::is_game_over() const
