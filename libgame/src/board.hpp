@@ -80,7 +80,7 @@ class board
             selected
         };
 
-        using selection_t = data_types::array2d<selection_state, total_column_count, total_row_count>;
+        using selection_t = libutil::array2d<selection_state, total_column_count, total_row_count>;
 
         void select_tiles
         (

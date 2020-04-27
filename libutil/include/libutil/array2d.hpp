@@ -17,16 +17,16 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef LIBDB_DATA_TYPES_HPP
-#define LIBDB_DATA_TYPES_HPP
+#ifndef LIBUTIL_ARRAY2D_HPP
+#define LIBUTIL_ARRAY2D_HPP
 
-#include <libgame/data_types.hpp>
+#include <array>
 
-namespace libdb::data_types
+namespace libutil
 {
 
-using tile = libcommon::data_types::tile;
-using game_state = libgame::data_types::game_state;
+template<typename T, size_t Size0, size_t Size1>
+using array2d = std::array<std::array<T, Size1>, Size0>;
 
 } //namespace
 

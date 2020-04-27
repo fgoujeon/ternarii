@@ -17,7 +17,6 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#include "conversion.hpp"
 #include <libdb/database.hpp>
 #include <libgame/game.hpp>
 #include <libview/view.hpp>
@@ -118,12 +117,12 @@ class app: public Magnum::Platform::Sdl2Application
 
         void handle_game_event(const libgame::events::tile_drop& event)
         {
-            view_.drop_tiles(conversion::to_view(event.drops));
+            view_.drop_tiles(event.drops);
         }
 
         void handle_game_event(const libgame::events::tile_merge& event)
         {
-            view_.merge_tiles(conversion::to_view(event.merges));
+            view_.merge_tiles(event.merges);
         }
 
         void handle_game_event(const libgame::events::end_of_game&)
@@ -219,7 +218,7 @@ class app: public Magnum::Platform::Sdl2Application
             view_.create_next_input(game_state.input.tiles[0].value, game_state.input.tiles[1].value);
             view_.insert_next_input(game_state.input.x_offset, game_state.input.rotation);
             view_.create_next_input(game_state.next_input_tiles[0].value, game_state.next_input_tiles[1].value);
-            view_.set_board_tiles(conversion::to_view(game_state.board_tiles));
+            view_.set_board_tiles(game_state.board_tiles);
             view_.set_game_over_screen_visible(pgame_->is_game_over());
             view_.set_visible(true);
         }

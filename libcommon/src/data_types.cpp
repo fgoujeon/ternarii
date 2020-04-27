@@ -17,9 +17,9 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#include <libgame/data_types.hpp>
+#include <libcommon/data_types.hpp>
 
-namespace libgame::data_types
+namespace libcommon::data_types
 {
 
 std::ostream& operator<<(std::ostream& l, const tile_coordinate& r)

@@ -34,6 +34,7 @@ target_include_directories(libview PUBLIC include)
 target_link_libraries(
     libview
     PUBLIC
+        libcommon
         libutil
     PRIVATE
         Magnum::Application

@@ -21,23 +21,22 @@ file(GLOB_RECURSE INCLUDE_FILES include/*)
 file(GLOB_RECURSE SRC_FILES src/*)
 
 add_library(
-    libgame
+    libcommon
     ${INCLUDE_FILES}
     ${SRC_FILES}
 )
 
 set_property(
-    TARGET libgame
+    TARGET libcommon
     PROPERTY CXX_STANDARD 20
 )
 
 target_include_directories(
-    libgame
+    libcommon
     PUBLIC include
 )
 
 target_link_libraries(
-    libgame
-    PUBLIC
-        libcommon
+    libcommon
+    PUBLIC libutil
 )

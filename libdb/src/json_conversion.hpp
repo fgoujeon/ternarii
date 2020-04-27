@@ -54,7 +54,7 @@ namespace nlohmann
     };
 }
 
-namespace libgame::data_types
+namespace libcommon::data_types
 {
 
 void to_json(nlohmann::json& to, const tile& from)
@@ -67,7 +67,11 @@ void from_json(const nlohmann::json& from, tile& to)
     to.value = from.get<int>();
 }
 
+} //namespace
 
+
+namespace libgame::data_types
+{
 
 void to_json(nlohmann::json& to, const game_state& from)
 {
