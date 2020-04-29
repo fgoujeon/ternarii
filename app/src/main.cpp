@@ -97,6 +97,7 @@ class app: public Magnum::Platform::Sdl2Application
         void handle_game_event(const libgame::events::next_input_insertion& event)
         {
             view_.insert_next_input(event.x_offset, event.rotation);
+            database_.set_game_state(pgame_->get_state());
         }
 
         void handle_game_event(const libgame::events::input_layout_change& event)
@@ -128,6 +129,7 @@ class app: public Magnum::Platform::Sdl2Application
         void handle_game_event(const libgame::events::end_of_game&)
         {
             view_.set_game_over_screen_visible(true);
+            database_.set_game_state(pgame_->get_state());
         }
 
         void handle_game_events(const libgame::event_list& events)
@@ -146,8 +148,6 @@ class app: public Magnum::Platform::Sdl2Application
                     event
                 );
             }
-
-            database_.set_game_state(pgame_->get_state());
         }
 
         /*
