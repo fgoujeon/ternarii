@@ -36,6 +36,10 @@ struct tile
 
 using opt_tile = std::optional<tile>;
 
+std::ostream& operator<<(std::ostream& l, const tile& r);
+
+
+
 /*
 Convention for accessing the tiles:
 tiles[column_index][row_index]

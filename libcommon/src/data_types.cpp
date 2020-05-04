@@ -18,9 +18,21 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 #include <libcommon/data_types.hpp>
+#include <libutil/streamable.hpp>
 
 namespace libcommon::data_types
 {
+
+std::ostream& operator<<(std::ostream& l, const tile& r)
+{
+    l << "tile";
+    l << "{";
+    l << "value: " << r.value;
+    l << "}";
+    return l;
+}
+
+
 
 std::ostream& operator<<(std::ostream& l, const input_layout& r)
 {
@@ -63,17 +75,7 @@ std::ostream& operator<<(std::ostream& l, const tile_merge& r)
 {
     l << "tile_merge";
     l << "{";
-    l << "src_tile_coordinates: {";
-    {
-        auto first = true;
-        for(const auto& coord: r.src_tile_coordinates)
-        {
-            if(!first) l << ", ";
-            l << coord;
-            first = false;
-        }
-    }
-    l << "}, ";
+    l << "src_tile_coordinates: " << libutil::streamable{r.src_tile_coordinates} << ", ";
     l << "dst_tile_coordinate: " << r.dst_tile_coordinate << ", ";
     l << "dst_tile_value: " << r.dst_tile_value;
     l << "}";
