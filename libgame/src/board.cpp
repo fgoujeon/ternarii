@@ -151,15 +151,21 @@ events::input_insertion board::insert_input(const board_input& in)
     const auto& tiles = in.get_tiles();
     const auto& layout = in.get_layout();
 
-    const int x0 = layout.x_offset + (layout.rotation == 2 ? 1 : 0);
-    const int y0 = total_row_count - 2 + (layout.rotation == 1 ? 1 : 0);
-    tile_array_[x0][y0] = tiles[0];
-    event.dst_coordinates.push_back(data_types::tile_coordinate{x0, y0});
+    if(tiles[0])
+    {
+        const int x = layout.x_offset + (layout.rotation == 2 ? 1 : 0);
+        const int y = total_row_count - 2 + (layout.rotation == 1 ? 1 : 0);
+        tile_array_[x][y] = tiles[0];
+        event.dst_coordinates.push_back(data_types::tile_coordinate{x, y});
+    }
 
-    const int x1 = layout.x_offset + (layout.rotation == 0 ? 1 : 0);
-    const int y1 = total_row_count - 2 + (layout.rotation == 3 ? 1 : 0);
-    tile_array_[x1][y1] = tiles[1];
-    event.dst_coordinates.push_back(data_types::tile_coordinate{x1, y1});
+    if(tiles[1])
+    {
+        const int x = layout.x_offset + (layout.rotation == 0 ? 1 : 0);
+        const int y = total_row_count - 2 + (layout.rotation == 3 ? 1 : 0);
+        tile_array_[x][y] = tiles[1];
+        event.dst_coordinates.push_back(data_types::tile_coordinate{x, y});
+    }
 
     return event;
 }
