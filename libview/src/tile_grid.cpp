@@ -38,50 +38,33 @@ namespace
 
     std::array<Magnum::Vector2, 2> get_input_tile_positions(const data_types::input_layout& layout)
     {
-        auto tile0_x = 0.0f;
-        auto tile0_y = 0.0f;
-        auto tile1_x = 0.0f;
-        auto tile1_y = 0.0f;
+        //Get coordinates as indices
+        const auto coord0 = get_tile_coordinate(layout, 0);
+        const auto coord1 = get_tile_coordinate(layout, 1);
 
-        switch(layout.rotation)
+        //Convert to model coordinate
+        auto tile0_x = coord0.column_index - 0.5f;
+        auto tile0_y = coord0.row_index - 0.5f;
+        auto tile1_x = coord1.column_index - 0.5f;
+        auto tile1_y = coord1.row_index - 0.5f;
+
+        //Center the tiles vertically if they are on the same line
+        if(tile0_y == tile1_y)
         {
-            case 0:
-                tile0_x = -0.5f;
-                tile0_y = 0.0f;
-                tile1_x = 0.5f;
-                tile1_y = 0.0f;
-                break;
-            case 1:
-                tile0_x = -0.5f;
-                tile0_y = 0.5f;
-                tile1_x = -0.5f;
-                tile1_y = -0.5f;
-                break;
-            case 2:
-                tile0_x = 0.5f;
-                tile0_y = 0.0f;
-                tile1_x = -0.5f;
-                tile1_y = 0.0f;
-                break;
-            case 3:
-                tile0_x = -0.5f;
-                tile0_y = -0.5f;
-                tile1_x = -0.5f;
-                tile1_y = 0.5f;
-                break;
+            tile0_y = tile1_y = 0.0f;
         }
 
         return
         {
             Magnum::Vector2
             {
-                -2.0f + tile0_x + layout.x_offset,
-                3.0f + tile0_y
+                tile0_x - 2.0f,
+                tile0_y + 3.0f
             },
             Magnum::Vector2
             {
-                -2.0f + tile1_x + layout.x_offset,
-                3.0f + tile1_y
+                tile1_x - 2.0f,
+                tile1_y + 3.0f
             }
         };
     }

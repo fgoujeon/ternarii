@@ -58,6 +58,18 @@ using board_tile_array = libutil::array2d<opt_tile, 6, 10>;
 
 
 
+struct tile_coordinate
+{
+    int column_index = 0;
+    int row_index = 0;
+};
+
+using tile_coordinate_list = std::vector<tile_coordinate>;
+
+std::ostream& operator<<(std::ostream& l, const tile_coordinate& r);
+
+
+
 struct input_layout
 {
     int x_offset = 2;
@@ -85,17 +97,23 @@ struct input_layout
 
 std::ostream& operator<<(std::ostream& l, const input_layout& r);
 
+/*
+Get the coordinate of the given tile, with given layout applied, in a
+hypothetical 6*2 array.
 
+E.g. with x_offset = 3 and rotation = 1, input is laid out like so:
+---0--
+---1--
 
-struct tile_coordinate
-{
-    int column_index = 0;
-    int row_index = 0;
-};
-
-using tile_coordinate_list = std::vector<tile_coordinate>;
-
-std::ostream& operator<<(std::ostream& l, const tile_coordinate& r);
+With such a layout:
+- get_tile_coordinate(layout, 0) returns {3, 1}
+- get_tile_coordinate(layout, 1) returns {3, 0}
+*/
+tile_coordinate get_tile_coordinate
+(
+    const input_layout& layout,
+    int tile_index //index of tile in input
+);
 
 
 

@@ -144,27 +144,28 @@ void board::drop_input(const board_input& in, event_list& events)
 
 events::input_insertion board::insert_input(const board_input& in)
 {
-    //put the input on the upper rows
+    //Put the input on the upper rows.
 
     auto event = events::input_insertion{};
 
     const auto& tiles = in.get_tiles();
     const auto& layout = in.get_layout();
 
-    if(tiles[0])
+    auto i = 0;
+    for(const auto& opt_tile: tiles)
     {
-        const int x = layout.x_offset + (layout.rotation == 2 ? 1 : 0);
-        const int y = total_row_count - 2 + (layout.rotation == 1 ? 1 : 0);
-        tile_array_[x][y] = tiles[0];
-        event.dst_coordinates.push_back(data_types::tile_coordinate{x, y});
-    }
+        if(opt_tile)
+        {
+            auto coord = get_tile_coordinate(layout, i);
 
-    if(tiles[1])
-    {
-        const int x = layout.x_offset + (layout.rotation == 0 ? 1 : 0);
-        const int y = total_row_count - 2 + (layout.rotation == 3 ? 1 : 0);
-        tile_array_[x][y] = tiles[1];
-        event.dst_coordinates.push_back(data_types::tile_coordinate{x, y});
+            //We want to move the tiles into the upper rows of the board.
+            coord.row_index += total_row_count - 2;
+
+            tile_array_[coord.column_index][coord.row_index] = opt_tile;
+            event.dst_coordinates.push_back(coord);
+        }
+
+        ++i;
     }
 
     return event;

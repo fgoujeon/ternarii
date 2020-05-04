@@ -44,6 +44,26 @@ std::ostream& operator<<(std::ostream& l, const input_layout& r)
     return l;
 }
 
+tile_coordinate get_tile_coordinate
+(
+    const input_layout& layout,
+    const int tile_index //index of tile in input
+)
+{
+    if(tile_index == 0)
+    {
+        const int x = layout.x_offset + (layout.rotation == 2 ? 1 : 0);
+        const int y = (layout.rotation == 1 ? 1 : 0);
+        return {x, y};
+    }
+    else
+    {
+        const int x = layout.x_offset + (layout.rotation == 0 ? 1 : 0);
+        const int y = (layout.rotation == 3 ? 1 : 0);
+        return {x, y};
+    }
+}
+
 
 
 std::ostream& operator<<(std::ostream& l, const tile_coordinate& r)
