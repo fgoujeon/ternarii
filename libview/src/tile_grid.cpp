@@ -166,7 +166,7 @@ void tile_grid::create_next_input(const data_types::input_tile_array& tiles)
     const auto dst_positions = get_input_tile_positions(input_layout_);
     for(auto i = 0; i < 2; ++i)
     {
-        if(input_tiles_[i] != nullptr)
+        if(tiles[i].has_value() && input_tiles_[i] != nullptr)
         {
             animation.add_fixed_duration_translation
             (
@@ -190,24 +190,32 @@ void tile_grid::insert_next_input(const data_types::input_layout& layout)
 
 void tile_grid::set_input_layout(const data_types::input_layout& layout)
 {
-    if(input_layout_ != layout)
+    if(input_layout_ == layout)
     {
-        input_layout_ = layout;
+        return;
+    }
 
-        const auto dst_positions = get_input_tile_positions(layout);
+    input_layout_ = layout;
 
-        auto& animation = animations_.emplace_back();
+    const auto dst_positions = get_input_tile_positions(layout);
 
-        for(auto i = 0; i < 2; ++i)
+    auto& animation = animations_.emplace_back();
+
+    auto i = 0;
+    for(auto& ptile: input_tiles_)
+    {
+        if(ptile)
         {
             animation.add_fixed_speed_translation
             (
-                input_tiles_[i]->transformation().translation(),
+                ptile->transformation().translation(),
                 dst_positions[i],
                 20,
-                *input_tiles_[i]
+                *ptile
             );
         }
+
+        ++i;
     }
 }
 
