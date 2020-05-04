@@ -44,7 +44,7 @@ class board_input
             return state_;
         }
 
-        event set_tiles(const data_types::tile_pair& rhs);
+        event set_tiles(const data_types::input_tile_array& tiles);
 
         void shift_left(event_list& events);
 
@@ -58,7 +58,7 @@ class board_input
     private:
         state_t& state_;
 
-        data_types::tile_pair& tiles_ = state_.tiles;
+        data_types::input_tile_array& tiles_ = state_.tiles;
         int& x_offset_ = state_.layout.x_offset;
         int& rotation_ = state_.layout.rotation;
 };

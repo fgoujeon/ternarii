@@ -145,16 +145,22 @@ void tile_grid::clear()
     }
 }
 
-void tile_grid::create_next_input(const int value0, const int value1)
+void tile_grid::create_next_input(const data_types::input_tile_array& tiles)
 {
     auto& animation = animations_.emplace_back();
     const auto animation_duration_s = 0.15f;
 
-    next_input_tiles_[0] = &add_tile(value0, {-0.5f, 5.0f});
-    animation.add_alpha_transition(0, 0.4, animation_duration_s, *next_input_tiles_[0]);
+    if(tiles[0].has_value())
+    {
+        next_input_tiles_[0] = &add_tile(tiles[0].value().value, {-0.5f, 5.0f});
+        animation.add_alpha_transition(0, 0.4, animation_duration_s, *next_input_tiles_[0]);
+    }
 
-    next_input_tiles_[1] = &add_tile(value1, {0.5f, 5.0f});
-    animation.add_alpha_transition(0, 0.4, animation_duration_s, *next_input_tiles_[1]);
+    if(tiles[1].has_value())
+    {
+        next_input_tiles_[1] = &add_tile(tiles[1].value().value, {0.5f, 5.0f});
+        animation.add_alpha_transition(0, 0.4, animation_duration_s, *next_input_tiles_[1]);
+    }
 
     //simultaneously animate insertion of next input
     const auto dst_positions = get_input_tile_positions(input_layout_);

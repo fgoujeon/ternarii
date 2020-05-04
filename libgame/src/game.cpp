@@ -121,7 +121,7 @@ struct game::impl
         }();
 
         //Generate a pair of tiles.
-        state.next_input_tiles = data_types::tile_pair
+        state.next_input_tiles = data_types::input_tile_array
         {
             data_types::tile{rand.generate(max_value, sd)},
             data_types::tile{rand.generate(max_value, sd)}
@@ -157,7 +157,7 @@ int game::get_score() const
     return pimpl_->board_.get_score();
 }
 
-const data_types::tile_pair& game::get_next_input_tiles() const
+const data_types::input_tile_array& game::get_next_input_tiles() const
 {
     return pimpl_->state.next_input_tiles;
 }

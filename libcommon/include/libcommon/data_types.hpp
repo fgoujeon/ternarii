@@ -53,8 +53,6 @@ Convention of rows and columns:
 [R0]
     [C0][C1][C2][C3][..]
 */
-using tile_pair = std::array<tile, 2>;
-using next_input_tile_array = std::array<opt_tile, 2>;
 using input_tile_array = std::array<opt_tile, 2>;
 using board_tile_array = libutil::array2d<opt_tile, 6, 10>;
 

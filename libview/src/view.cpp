@@ -244,9 +244,9 @@ void view::set_hi_score(const int value)
     pimpl_->hi_score_display_.set_score(value);
 }
 
-void view::create_next_input(const int value0, const int value1)
+void view::create_next_input(const data_types::input_tile_array& tiles)
 {
-    pimpl_->tile_grid_.create_next_input(value0, value1);
+    pimpl_->tile_grid_.create_next_input(tiles);
 }
 
 void view::insert_next_input(const data_types::input_layout& layout)

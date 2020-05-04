@@ -40,7 +40,7 @@ namespace events
 
     struct next_input_creation
     {
-        data_types::tile_pair tiles;
+        data_types::input_tile_array tiles;
     };
 
     std::ostream& operator<<(std::ostream& l, const next_input_creation& r);

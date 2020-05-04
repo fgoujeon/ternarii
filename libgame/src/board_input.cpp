@@ -33,7 +33,7 @@ board_input::board_input(state_t& state):
 {
 }
 
-event board_input::set_tiles(const data_types::tile_pair& tiles)
+event board_input::set_tiles(const data_types::input_tile_array& tiles)
 {
     tiles_ = tiles;
     x_offset_ = default_x_offset;
