@@ -38,8 +38,8 @@ std::ostream& operator<<(std::ostream& l, const tile_coordinate& r)
 {
     l << "tile_coordinate";
     l << "{";
-    l << "x: " << r.x << ", ";
-    l << "y: " << r.y;
+    l << "column_index: " << r.column_index << ", ";
+    l << "row_index: " << r.row_index;
     l << "}";
     return l;
 }

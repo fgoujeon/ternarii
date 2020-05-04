@@ -31,8 +31,8 @@ namespace
     {
         return
         {
-            -2.5f + c.x,
-            -5.0f + c.y
+            -2.5f + c.column_index,
+            -5.0f + c.row_index
         };
     }
 
@@ -286,7 +286,7 @@ void tile_grid::merge_tiles(const data_types::tile_merge_list& merges)
         for(const auto& src_tile_coordinate: merge.src_tile_coordinates) //for each source tile
         {
             const auto src_position = tile_coordinate_to_position(src_tile_coordinate);
-            auto& src_tile = *board_tiles_[src_tile_coordinate.x][src_tile_coordinate.y];
+            auto& src_tile = *board_tiles_[src_tile_coordinate.column_index][src_tile_coordinate.row_index];
 
             //first, translate source tile toward position of destination tile
             if(dst_position != src_position)
@@ -304,12 +304,12 @@ void tile_grid::merge_tiles(const data_types::tile_merge_list& merges)
             animation1.add_alpha_transition(1, 0, 0.2, src_tile);
 
             tiles_to_delete.push_back(&src_tile);
-            board_tiles_[src_tile_coordinate.x][src_tile_coordinate.y] = nullptr;
+            board_tiles_[src_tile_coordinate.column_index][src_tile_coordinate.row_index] = nullptr;
         }
 
         //create destination tile
         auto& dst_tile = add_tile(merge.dst_tile_value, dst_position);
-        board_tiles_[merge.dst_tile_coordinate.x][merge.dst_tile_coordinate.y] = &dst_tile;
+        board_tiles_[merge.dst_tile_coordinate.column_index][merge.dst_tile_coordinate.row_index] = &dst_tile;
 
         //make destination tile appear with a fade in
         animation1.add_alpha_transition(0, 1, 0.2, dst_tile);

@@ -87,8 +87,8 @@ std::ostream& operator<<(std::ostream& l, const input_layout& r);
 
 struct tile_coordinate
 {
-    int x = 0;
-    int y = 0;
+    int column_index = 0;
+    int row_index = 0;
 };
 
 using tile_coordinate_list = std::vector<tile_coordinate>;
