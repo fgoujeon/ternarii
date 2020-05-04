@@ -43,19 +43,12 @@ using tile_merge_list      = libcommon::data_types::tile_merge_list;
 
 
 
-struct input_state
-{
-    input_tile_array tiles;
-    input_layout layout;
-};
-
-
-
 struct game_state
 {
     int hi_score = 0;
     input_tile_array next_input_tiles;
-    input_state input;
+    input_tile_array input_tiles;
+    input_layout input_layout;
     board_tile_array board_tiles;
 };
 

@@ -69,7 +69,7 @@ struct game::impl
     impl(const data_types::game_state& s):
         state(s),
         board_(state.board_tiles, state.hi_score),
-        input_(state.input)
+        input_(state.input_tiles, state.input_layout)
     {
     }
 
@@ -162,9 +162,14 @@ const data_types::input_tile_array& game::get_next_input_tiles() const
     return pimpl_->state.next_input_tiles;
 }
 
-const data_types::input_state& game::get_input_state() const
+const data_types::input_tile_array& game::get_input_tiles() const
 {
-    return pimpl_->input_.get_state();
+    return pimpl_->state.input_tiles;
+}
+
+const data_types::input_layout& game::get_input_layout() const
+{
+    return pimpl_->state.input_layout;
 }
 
 const data_types::board_tile_array& game::get_board_tiles() const

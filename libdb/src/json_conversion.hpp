@@ -77,9 +77,9 @@ void to_json(nlohmann::json& to, const game_state& from)
 {
     to["hiScore"]        = from.hi_score;
     to["nextInputTiles"] = from.next_input_tiles;
-    to["inputTiles"]     = from.input.tiles;
-    to["inputXOffset"]   = from.input.layout.x_offset;
-    to["inputRotation"]  = from.input.layout.rotation;
+    to["inputTiles"]     = from.input_tiles;
+    to["inputXOffset"]   = from.input_layout.x_offset;
+    to["inputRotation"]  = from.input_layout.rotation;
     to["boardTiles"]     = from.board_tiles;
 }
 
@@ -87,9 +87,9 @@ void from_json(const nlohmann::json& from, game_state& to)
 {
     to.hi_score              = from["hiScore"].get<int>();
     to.next_input_tiles      = from["nextInputTiles"];
-    to.input.tiles           = from["inputTiles"];
-    to.input.layout.x_offset = from["inputXOffset"].get<int>();
-    to.input.layout.rotation = from["inputRotation"].get<int>();
+    to.input_tiles           = from["inputTiles"];
+    to.input_layout.x_offset = from["inputXOffset"].get<int>();
+    to.input_layout.rotation = from["inputRotation"].get<int>();
     to.board_tiles           = from["boardTiles"];
 }
 

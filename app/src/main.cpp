@@ -209,8 +209,8 @@ class app: public Magnum::Platform::Sdl2Application
             //initialize view
             view_.set_score(pgame_->get_score());
             view_.set_hi_score(game_state.hi_score);
-            view_.create_next_input(game_state.input.tiles);
-            view_.insert_next_input(game_state.input.layout);
+            view_.create_next_input(game_state.input_tiles);
+            view_.insert_next_input(game_state.input_layout);
             view_.create_next_input(game_state.next_input_tiles);
             view_.set_board_tiles(game_state.board_tiles);
             view_.set_game_over_screen_visible(pgame_->is_game_over());

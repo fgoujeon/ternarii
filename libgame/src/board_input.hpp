@@ -32,16 +32,23 @@ namespace libgame
 class board_input
 {
     public:
-        using state_t = data_types::input_state;
-
         static const int column_count = 6;
 
     public:
-        board_input(state_t& state);
+        board_input
+        (
+            data_types::input_tile_array& tiles,
+            data_types::input_layout& layout
+        );
 
-        const state_t& get_state() const
+        const data_types::input_tile_array& get_tiles() const
         {
-            return state_;
+            return tiles_;
+        }
+
+        const data_types::input_layout& get_layout() const
+        {
+            return layout_;
         }
 
         event set_tiles(const data_types::input_tile_array& tiles);
@@ -56,11 +63,8 @@ class board_input
         events::input_layout_change apply();
 
     private:
-        state_t& state_;
-
-        data_types::input_tile_array& tiles_ = state_.tiles;
-        int& x_offset_ = state_.layout.x_offset;
-        int& rotation_ = state_.layout.rotation;
+        data_types::input_tile_array& tiles_;
+        data_types::input_layout& layout_;
 };
 
 } //namespace
