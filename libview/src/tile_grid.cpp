@@ -36,14 +36,14 @@ namespace
         };
     }
 
-    std::array<Magnum::Vector2, 2> get_input_tile_positions(const int x_offset, const int rotation)
+    std::array<Magnum::Vector2, 2> get_input_tile_positions(const data_types::input_layout& layout)
     {
         auto tile0_x = 0.0f;
         auto tile0_y = 0.0f;
         auto tile1_x = 0.0f;
         auto tile1_y = 0.0f;
 
-        switch(rotation)
+        switch(layout.rotation)
         {
             case 0:
                 tile0_x = -0.5f;
@@ -75,12 +75,12 @@ namespace
         {
             Magnum::Vector2
             {
-                -2.0f + tile0_x + x_offset,
+                -2.0f + tile0_x + layout.x_offset,
                 3.0f + tile0_y
             },
             Magnum::Vector2
             {
-                -2.0f + tile1_x + x_offset,
+                -2.0f + tile1_x + layout.x_offset,
                 3.0f + tile1_y
             }
         };
@@ -157,7 +157,7 @@ void tile_grid::create_next_input(const int value0, const int value1)
     animation.add_alpha_transition(0, 0.4, animation_duration_s, *next_input_tiles_[1]);
 
     //simultaneously animate insertion of next input
-    const auto dst_positions = get_input_tile_positions(input_x_offset_, input_rotation_);
+    const auto dst_positions = get_input_tile_positions(input_layout_);
     for(auto i = 0; i < 2; ++i)
     {
         if(input_tiles_[i] != nullptr)
@@ -174,23 +174,21 @@ void tile_grid::create_next_input(const int value0, const int value1)
     }
 }
 
-void tile_grid::insert_next_input(const int x_offset, const int rotation)
+void tile_grid::insert_next_input(const data_types::input_layout& layout)
 {
-    input_x_offset_ = x_offset;
-    input_rotation_ = rotation;
+    input_layout_ = layout;
     std::swap(input_tiles_[0], next_input_tiles_[0]);
     std::swap(input_tiles_[1], next_input_tiles_[1]);
     //Note: Animation is done in create_next_input().
 }
 
-void tile_grid::set_input_layout(const int x_offset, const int rotation)
+void tile_grid::set_input_layout(const data_types::input_layout& layout)
 {
-    if(input_x_offset_ != x_offset || input_rotation_ != rotation)
+    if(input_layout_ != layout)
     {
-        input_x_offset_ = x_offset;
-        input_rotation_ = rotation;
+        input_layout_ = layout;
 
-        const auto dst_positions = get_input_tile_positions(input_x_offset_, input_rotation_);
+        const auto dst_positions = get_input_tile_positions(layout);
 
         auto& animation = animations_.emplace_back();
 

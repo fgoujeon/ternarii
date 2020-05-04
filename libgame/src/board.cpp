@@ -148,11 +148,11 @@ events::input_insertion board::insert_input(const board_input& in)
 
     const auto& state = in.get_state();
 
-    const int x0 = state.x_offset + (state.rotation == 2 ? 1 : 0);
-    const int y0 = total_row_count - 2 + (state.rotation == 1 ? 1 : 0);
+    const int x0 = state.layout.x_offset + (state.layout.rotation == 2 ? 1 : 0);
+    const int y0 = total_row_count - 2 + (state.layout.rotation == 1 ? 1 : 0);
 
-    const int x1 = state.x_offset + (state.rotation == 0 ? 1 : 0);
-    const int y1 = total_row_count - 2 + (state.rotation == 3 ? 1 : 0);
+    const int x1 = state.layout.x_offset + (state.layout.rotation == 0 ? 1 : 0);
+    const int y1 = total_row_count - 2 + (state.layout.rotation == 3 ? 1 : 0);
 
     tile_array_[x0][y0] = state.tiles[0];
     tile_array_[x1][y1] = state.tiles[1];

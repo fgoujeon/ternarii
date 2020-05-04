@@ -31,6 +31,7 @@ namespace libgame::data_types
 {
 
 using board_tile_array = libcommon::data_types::board_tile_array;
+using input_layout     = libcommon::data_types::input_layout;
 using tile             = libcommon::data_types::tile;
 using tile_coordinate  = libcommon::data_types::tile_coordinate;
 using tile_drop        = libcommon::data_types::tile_drop;
@@ -44,22 +45,7 @@ using tile_pair        = libcommon::data_types::tile_pair;
 struct input_state
 {
     tile_pair tiles;
-
-    int x_offset = 2;
-
-    //rotation = 0:
-    //  --
-    //  01
-    //rotation = 1:
-    //  0-
-    //  1-
-    //rotation = 2:
-    //  --
-    //  10
-    //rotation = 3:
-    //  1-
-    //  0-
-    int rotation = 0;
+    input_layout layout;
 };
 
 

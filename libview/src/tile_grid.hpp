@@ -53,9 +53,9 @@ class tile_grid: public Object2D
 
         void create_next_input(const int value0, const int value1);
 
-        void insert_next_input(const int x_offset, const int rotation);
+        void insert_next_input(const data_types::input_layout& layout);
 
-        void set_input_layout(const int x_offset, const int rotation);
+        void set_input_layout(const data_types::input_layout& layout);
 
         void insert_input
         (
@@ -87,8 +87,7 @@ class tile_grid: public Object2D
 
         next_input_tile_array next_input_tiles_ = {};
         input_tile_array input_tiles_ = {};
-        int input_x_offset_ = 0;
-        int input_rotation_ = 0;
+        data_types::input_layout input_layout_;
         board_tile_array board_tiles_ = {};
 };
 

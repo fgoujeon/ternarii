@@ -58,9 +58,9 @@ class view
 
         void create_next_input(const int value0, const int value1);
 
-        void insert_next_input(const int x_offset, const int rotation);
+        void insert_next_input(const data_types::input_layout& layout);
 
-        void set_input_layout(const int x_offset, const int rotation);
+        void set_input_layout(const data_types::input_layout& layout);
 
         void insert_input
         (

@@ -249,14 +249,14 @@ void view::create_next_input(const int value0, const int value1)
     pimpl_->tile_grid_.create_next_input(value0, value1);
 }
 
-void view::insert_next_input(const int x_offset, const int rotation)
+void view::insert_next_input(const data_types::input_layout& layout)
 {
-    pimpl_->tile_grid_.insert_next_input(x_offset, rotation);
+    pimpl_->tile_grid_.insert_next_input(layout);
 }
 
-void view::set_input_layout(const int x_offset, const int rotation)
+void view::set_input_layout(const data_types::input_layout& layout)
 {
-    pimpl_->tile_grid_.set_input_layout(x_offset, rotation);
+    pimpl_->tile_grid_.set_input_layout(layout);
 }
 
 void view::insert_input

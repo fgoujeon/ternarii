@@ -59,8 +59,8 @@ class board_input
         state_t& state_;
 
         data_types::tile_pair& tiles_ = state_.tiles;
-        int& x_offset_ = state_.x_offset;
-        int& rotation_ = state_.rotation;
+        int& x_offset_ = state_.layout.x_offset;
+        int& rotation_ = state_.layout.rotation;
 };
 
 } //namespace

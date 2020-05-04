@@ -95,13 +95,13 @@ class app: public Magnum::Platform::Sdl2Application
 
         void handle_game_event(const libgame::events::next_input_insertion& event)
         {
-            view_.insert_next_input(event.x_offset, event.rotation);
+            view_.insert_next_input(event.layout);
             database_.set_game_state(pgame_->get_state());
         }
 
         void handle_game_event(const libgame::events::input_layout_change& event)
         {
-            view_.set_input_layout(event.x_offset, event.rotation);
+            view_.set_input_layout(event.layout);
         }
 
         void handle_game_event(const libgame::events::input_insertion& event)
@@ -216,7 +216,7 @@ class app: public Magnum::Platform::Sdl2Application
             view_.set_score(pgame_->get_score());
             view_.set_hi_score(game_state.hi_score);
             view_.create_next_input(game_state.input.tiles[0].value, game_state.input.tiles[1].value);
-            view_.insert_next_input(game_state.input.x_offset, game_state.input.rotation);
+            view_.insert_next_input(game_state.input.layout);
             view_.create_next_input(game_state.next_input_tiles[0].value, game_state.next_input_tiles[1].value);
             view_.set_board_tiles(game_state.board_tiles);
             view_.set_game_over_screen_visible(pgame_->is_game_over());

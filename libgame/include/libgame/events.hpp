@@ -61,8 +61,7 @@ namespace events
 
     struct next_input_insertion
     {
-        int x_offset = 0;
-        int rotation = 0;
+        data_types::input_layout layout;
     };
 
     inline
@@ -70,8 +69,7 @@ namespace events
     {
         l << "next_input_insertion";
         l << "{";
-        l << "x_offset: " << r.x_offset << ", ";
-        l << "rotation: " << r.rotation;
+        l << "layout: " << r.layout;
         l << "}";
         return l;
     }
@@ -80,8 +78,7 @@ namespace events
 
     struct input_layout_change
     {
-        int x_offset = 0;
-        int rotation = 0;
+        data_types::input_layout layout;
     };
 
     inline
@@ -89,8 +86,7 @@ namespace events
     {
         l << "input_layout_change";
         l << "{";
-        l << "x_offset: " << r.x_offset << ", ";
-        l << "rotation: " << r.rotation;
+        l << "layout: " << r.layout;
         l << "}";
         return l;
     }

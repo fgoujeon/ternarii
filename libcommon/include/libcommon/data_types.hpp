@@ -56,6 +56,35 @@ using board_tile_array = libutil::array2d<opt_tile, 6, 10>;
 
 
 
+struct input_layout
+{
+    int x_offset = 2;
+
+    /*
+    Rotation is expressed as number of 90 degree clockwise rotations.
+
+    rotation = 0:
+      --
+      01
+    rotation = 1:
+      0-
+      1-
+    rotation = 2:
+      --
+      10
+    rotation = 3:
+      1-
+      0-
+    */
+    int rotation = 0;
+
+    bool operator==(const input_layout& r) const = default;
+};
+
+std::ostream& operator<<(std::ostream& l, const input_layout& r);
+
+
+
 struct tile_coordinate
 {
     int x = 0;

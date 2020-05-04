@@ -22,6 +22,18 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libcommon::data_types
 {
 
+std::ostream& operator<<(std::ostream& l, const input_layout& r)
+{
+    l << "input_layout";
+    l << "{";
+    l << "x_offset: " << r.x_offset << ", ";
+    l << "rotation: " << r.rotation;
+    l << "}";
+    return l;
+}
+
+
+
 std::ostream& operator<<(std::ostream& l, const tile_coordinate& r)
 {
     l << "tile_coordinate";

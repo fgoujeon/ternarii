@@ -31,6 +31,7 @@ namespace libview::data_types
 {
 
 using board_tile_array      = libcommon::data_types::board_tile_array;
+using input_layout          = libcommon::data_types::input_layout;
 using input_tile_array      = libcommon::data_types::input_tile_array;
 using next_input_tile_array = libcommon::data_types::next_input_tile_array;
 using opt_tile              = libcommon::data_types::opt_tile;
