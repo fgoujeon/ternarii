@@ -106,21 +106,7 @@ class app: public Magnum::Platform::Sdl2Application
 
         void handle_game_event(const libgame::events::input_insertion& event)
         {
-            view_.insert_input
-            (
-                {
-                    libgame::data_types::tile_coordinate
-                    {
-                        event.tile0_dst_column_index,
-                        event.tile0_dst_row_index,
-                    },
-                    libgame::data_types::tile_coordinate
-                    {
-                        event.tile1_dst_column_index,
-                        event.tile1_dst_row_index,
-                    }
-                }
-            );
+            view_.insert_input(event.dst_coordinates);
         }
 
         void handle_game_event(const libgame::events::tile_drop& event)

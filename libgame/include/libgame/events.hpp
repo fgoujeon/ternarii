@@ -95,10 +95,7 @@ namespace events
 
     struct input_insertion
     {
-        int tile0_dst_column_index = 0;
-        int tile0_dst_row_index = 0;
-        int tile1_dst_column_index = 0;
-        int tile1_dst_row_index = 0;
+        data_types::tile_coordinate_list dst_coordinates;
     };
 
     inline
@@ -106,10 +103,17 @@ namespace events
     {
         l << "input_insertion";
         l << "{";
-        l << "tile0_dst_column_index: " << r.tile0_dst_column_index << ", ";
-        l << "tile0_dst_row_index: " << r.tile0_dst_row_index << ", ";
-        l << "tile1_dst_column_index: " << r.tile1_dst_column_index << ", ";
-        l << "tile1_dst_row_index: " << r.tile1_dst_row_index;
+        l << "dst_coordinates: {";
+        {
+            auto first = true;
+            for(const auto& c: r.dst_coordinates)
+            {
+                if(!first) l << ", ";
+                l << c;
+                first = false;
+            }
+        }
+        l << "}";
         l << "}";
         return l;
     }

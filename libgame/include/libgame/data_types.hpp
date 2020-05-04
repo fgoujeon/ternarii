@@ -30,15 +30,16 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libgame::data_types
 {
 
-using board_tile_array = libcommon::data_types::board_tile_array;
-using input_layout     = libcommon::data_types::input_layout;
-using tile             = libcommon::data_types::tile;
-using tile_coordinate  = libcommon::data_types::tile_coordinate;
-using tile_drop        = libcommon::data_types::tile_drop;
-using tile_drop_list   = libcommon::data_types::tile_drop_list;
-using tile_merge       = libcommon::data_types::tile_merge;
-using tile_merge_list  = libcommon::data_types::tile_merge_list;
-using tile_pair        = libcommon::data_types::tile_pair;
+using board_tile_array     = libcommon::data_types::board_tile_array;
+using input_layout         = libcommon::data_types::input_layout;
+using tile                 = libcommon::data_types::tile;
+using tile_coordinate      = libcommon::data_types::tile_coordinate;
+using tile_coordinate_list = libcommon::data_types::tile_coordinate_list;
+using tile_drop            = libcommon::data_types::tile_drop;
+using tile_drop_list       = libcommon::data_types::tile_drop_list;
+using tile_merge           = libcommon::data_types::tile_merge;
+using tile_merge_list      = libcommon::data_types::tile_merge_list;
+using tile_pair            = libcommon::data_types::tile_pair;
 
 
 
