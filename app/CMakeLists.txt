@@ -25,7 +25,7 @@ add_executable(app ${SRC_FILES})
 
 set_property(
     TARGET app
-    PROPERTY CXX_STANDARD 17
+    PROPERTY CXX_STANDARD 20
 )
 
 target_link_libraries(

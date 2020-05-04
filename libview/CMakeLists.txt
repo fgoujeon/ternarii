@@ -26,7 +26,7 @@ add_library(libview ${INCLUDE_FILES} ${SRC_FILES})
 
 set_property(
     TARGET libview
-    PROPERTY CXX_STANDARD 17
+    PROPERTY CXX_STANDARD 20
 )
 
 target_include_directories(libview PUBLIC include)

@@ -28,7 +28,7 @@ add_library(
 
 set_property(
     TARGET libgame
-    PROPERTY CXX_STANDARD 17
+    PROPERTY CXX_STANDARD 20
 )
 
 target_include_directories(
