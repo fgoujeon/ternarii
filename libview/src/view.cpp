@@ -259,21 +259,9 @@ void view::set_input_layout(const data_types::input_layout& layout)
     pimpl_->tile_grid_.set_input_layout(layout);
 }
 
-void view::insert_input
-(
-    const int tile0_dst_column_index,
-    const int tile0_dst_row_index,
-    const int tile1_dst_column_index,
-    const int tile1_dst_row_index
-)
+void view::insert_input(const data_types::tile_coordinate_list& dst_coordinates)
 {
-    pimpl_->tile_grid_.insert_input
-    (
-        tile0_dst_column_index,
-        tile0_dst_row_index,
-        tile1_dst_column_index,
-        tile1_dst_row_index
-    );
+    pimpl_->tile_grid_.insert_input(dst_coordinates);
 }
 
 void view::drop_tiles(const data_types::tile_drop_list& drops)

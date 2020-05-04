@@ -205,30 +205,23 @@ void tile_grid::set_input_layout(const data_types::input_layout& layout)
     }
 }
 
-void tile_grid::insert_input
-(
-    const int tile0_dst_column_index,
-    const int tile0_dst_row_index,
-    const int tile1_dst_column_index,
-    const int tile1_dst_row_index
-)
+void tile_grid::insert_input(const data_types::tile_coordinate_list& dst_coordinates)
 {
-    if(input_tiles_[0])
+    auto i = 0;
+    for(auto& ptile: input_tiles_)
     {
-        std::swap
-        (
-            board_tiles_[tile0_dst_column_index][tile0_dst_row_index],
-            input_tiles_[0]
-        );
-    }
+        if(ptile)
+        {
+            const auto column_index = dst_coordinates[i].column_index;
+            const auto row_index = dst_coordinates[i].row_index;
+            std::swap
+            (
+                board_tiles_[column_index][row_index],
+                ptile
+            );
+        }
 
-    if(input_tiles_[1])
-    {
-        std::swap
-        (
-            board_tiles_[tile1_dst_column_index][tile1_dst_row_index],
-            input_tiles_[1]
-        );
+        ++i;
     }
 }
 

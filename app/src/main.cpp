@@ -108,10 +108,18 @@ class app: public Magnum::Platform::Sdl2Application
         {
             view_.insert_input
             (
-                event.tile0_dst_column_index,
-                event.tile0_dst_row_index,
-                event.tile1_dst_column_index,
-                event.tile1_dst_row_index
+                {
+                    libgame::data_types::tile_coordinate
+                    {
+                        event.tile0_dst_column_index,
+                        event.tile0_dst_row_index,
+                    },
+                    libgame::data_types::tile_coordinate
+                    {
+                        event.tile1_dst_column_index,
+                        event.tile1_dst_row_index,
+                    }
+                }
             );
         }
 
