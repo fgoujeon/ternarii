@@ -25,6 +25,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include "time.hpp"
 #include "magnum_common.hpp"
 #include <libview/data_types.hpp>
+#include <libutil/array2d.hpp>
 #include <Magnum/Animation/Player.h>
 #include <Magnum/GL/Mesh.h>
 #include <Magnum/Shaders/VertexColor.h>
@@ -37,12 +38,8 @@ namespace libview
 class tile_grid: public Object2D
 {
     private:
-        template<size_t Size0, size_t Size1>
-        using tile_array = std::array<std::array<tile*, Size1>, Size0>;
-
-        using next_input_tile_array = std::array<tile*, 2>;
-        using input_tile_array = std::array<tile*, 2>;
-        using board_tile_array = tile_array<6, 10>;
+        using input_tile_array = libutil::array2d<tile*, 2, 2>;
+        using board_tile_array = libutil::array2d<tile*, 6, 10>;
 
     public:
         explicit tile_grid(SceneGraph::DrawableGroup2D& drawables, Object2D* parent);
@@ -57,7 +54,7 @@ class tile_grid: public Object2D
 
         void set_input_layout(const data_types::input_layout& layout);
 
-        void insert_input(const data_types::tile_coordinate_list& dst_coordinates);
+        void insert_input(const data_types::input_tile_coordinate_array& dst_coordinates);
 
         void drop_tiles(const data_types::tile_drop_list& drops);
 
@@ -79,7 +76,7 @@ class tile_grid: public Object2D
 
         animation_list animations_;
 
-        next_input_tile_array next_input_tiles_ = {};
+        input_tile_array next_input_tiles_ = {};
         input_tile_array input_tiles_ = {};
         data_types::input_layout input_layout_;
         board_tile_array board_tiles_ = {};

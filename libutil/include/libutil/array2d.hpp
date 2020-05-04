@@ -25,8 +25,68 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libutil
 {
 
-template<typename T, size_t Size0, size_t Size1>
-using array2d = std::array<std::array<T, Size1>, Size0>;
+template<typename T, size_t N0, size_t N1>
+using array2d = std::array<std::array<T, N1>, N0>;
+
+//For each item of the given array
+template<typename T, size_t N0, size_t N1, typename F>
+void for_each(const array2d<T, N0, N1>& arr, F&& f)
+{
+    for(const auto& subarr: arr)
+    {
+        for(const auto& item: subarr)
+        {
+            f(item);
+        }
+    }
+}
+
+//For each item of the given array
+template<typename T, size_t N0, size_t N1, typename F>
+void for_each(array2d<T, N0, N1>& arr, F&& f)
+{
+    for(auto& subarr: arr)
+    {
+        for(auto& item: subarr)
+        {
+            f(item);
+        }
+    }
+}
+
+//For each item of the given array
+template<typename T, size_t N0, size_t N1, typename F>
+void for_each_i(const array2d<T, N0, N1>& arr, F&& f)
+{
+    auto i0 = 0;
+    for(const auto& subarr: arr)
+    {
+        auto i1 = 0;
+        for(const auto& item: subarr)
+        {
+            f(item, i0, i1);
+            ++i1;
+        }
+        ++i0;
+    }
+}
+
+//For each item of the given array
+template<typename T, size_t N0, size_t N1, typename F>
+void for_each_i(array2d<T, N0, N1>& arr, F&& f)
+{
+    auto i0 = 0;
+    for(auto& subarr: arr)
+    {
+        auto i1 = 0;
+        for(auto& item: subarr)
+        {
+            f(item, i0, i1);
+            ++i1;
+        }
+        ++i0;
+    }
+}
 
 } //namespace
 

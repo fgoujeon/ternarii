@@ -123,14 +123,21 @@ struct game::impl
         //Generate a pair of tiles.
         state.next_input_tiles = data_types::input_tile_array
         {
-            data_types::tile{rand.generate(max_value, sd)},
-            data_types::tile{rand.generate(max_value, sd)}
+            std::array<std::optional<data_types::tile>, 2>
+            {
+                data_types::tile{rand.generate(max_value, sd)},
+                std::nullopt
+            },
+            std::array<std::optional<data_types::tile>, 2>
+            {
+                data_types::tile{rand.generate(max_value, sd)},
+                std::nullopt
+            }
         };
 
         return events::next_input_creation
         {
-            state.next_input_tiles[0],
-            state.next_input_tiles[1]
+            state.next_input_tiles
         };
     }
 

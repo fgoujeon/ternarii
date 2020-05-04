@@ -53,7 +53,7 @@ Convention of rows and columns:
 [R0]
     [C0][C1][C2][C3][..]
 */
-using input_tile_array = std::array<opt_tile, 2>;
+using input_tile_array = libutil::array2d<opt_tile, 2, 2>;
 using board_tile_array = libutil::array2d<opt_tile, 6, 10>;
 
 
@@ -64,6 +64,7 @@ struct tile_coordinate
     int row_index = 0;
 };
 
+using input_tile_coordinate_array = libutil::array2d<tile_coordinate, 2, 2>;
 using tile_coordinate_list = std::vector<tile_coordinate>;
 
 std::ostream& operator<<(std::ostream& l, const tile_coordinate& r);
@@ -78,17 +79,17 @@ struct input_layout
     Rotation is expressed as number of 90 degree clockwise rotations.
 
     rotation = 0:
-      --
-      01
+      [0,1][1,1]
+      [0,0][1,0]
     rotation = 1:
-      0-
-      1-
+      [0,0][0,1]
+      [1,0][1,1]
     rotation = 2:
-      --
-      10
+      [1,0][0,0]
+      [1,1][0,1]
     rotation = 3:
-      1-
-      0-
+      [1,0][1,0]
+      [0,1][0,0]
     */
     int rotation = 0;
 
@@ -102,17 +103,17 @@ Get the coordinate of the given tile, with given layout applied, in a
 hypothetical 6*2 array.
 
 E.g. with x_offset = 3 and rotation = 1, input is laid out like so:
----0--
----1--
+[---][---][---][0,0][0,1][---][---]
+[---][---][---][1,0][1,1][---][---]
 
 With such a layout:
-- get_tile_coordinate(layout, 0) returns {3, 1}
-- get_tile_coordinate(layout, 1) returns {3, 0}
+- get_tile_coordinate(layout, {0, 0}) returns {3, 1}
+- get_tile_coordinate(layout, {1, 0}) returns {3, 0}
 */
 tile_coordinate get_tile_coordinate
 (
     const input_layout& layout,
-    int tile_index //index of tile in input
+    const tile_coordinate& tile_coord //coordinate of tile in input
 );
 
 

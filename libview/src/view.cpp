@@ -259,7 +259,7 @@ void view::set_input_layout(const data_types::input_layout& layout)
     pimpl_->tile_grid_.set_input_layout(layout);
 }
 
-void view::insert_input(const data_types::tile_coordinate_list& dst_coordinates)
+void view::insert_input(const data_types::input_tile_coordinate_array& dst_coordinates)
 {
     pimpl_->tile_grid_.insert_input(dst_coordinates);
 }

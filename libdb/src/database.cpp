@@ -115,8 +115,9 @@ struct database::impl
                 auto json = nlohmann::json{};
                 ifs >> json;
 
-                //load at least this one, in case an exception occurs later
-                game_state_.hi_score = json["hiScore"].get<int>();
+#ifndef NDEBUG
+                std::cout << to_string(json) << std::endl;
+#endif
 
                 //convert json to state
                 game_state_ = json;

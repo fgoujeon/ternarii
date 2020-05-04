@@ -53,32 +53,34 @@ bool board::is_game_over() const
 int board::get_highest_tile_value() const
 {
     auto value = 0;
-    for(const auto& cell_column: tile_array_)
-    {
-        for(const auto& opt_tile: cell_column)
+    libutil::for_each
+    (
+        tile_array_,
+        [&](const auto& opt_tile)
         {
             if(opt_tile)
             {
                 value = std::max(value, opt_tile->value);
             }
         }
-    }
+    );
     return value;
 }
 
 int board::get_score() const
 {
     auto score = 0;
-    for(const auto& cell_column: tile_array_)
-    {
-        for(const auto& opt_tile: cell_column)
+    libutil::for_each
+    (
+        tile_array_,
+        [&](const auto& opt_tile)
         {
             if(opt_tile)
             {
                 score += std::pow(3, opt_tile->value);
             }
         }
-    }
+    );
     return score;
 }
 
@@ -102,13 +104,14 @@ int board::get_free_cell_count() const
 
 void board::clear()
 {
-    for(auto& cell_column: tile_array_)
-    {
-        for(auto& opt_tile: cell_column)
+    libutil::for_each
+    (
+        tile_array_,
+        [&](auto& opt_tile)
         {
             opt_tile = std::nullopt;
         }
-    }
+    );
 }
 
 void board::drop_input(const board_input& in, event_list& events)
@@ -151,22 +154,23 @@ events::input_insertion board::insert_input(const board_input& in)
     const auto& tiles = in.get_tiles();
     const auto& layout = in.get_layout();
 
-    auto i = 0;
-    for(const auto& opt_tile: tiles)
-    {
-        if(opt_tile)
+    libutil::for_each_i
+    (
+        tiles,
+        [&](const auto& opt_tile, const int column_index, const int row_index)
         {
-            auto coord = get_tile_coordinate(layout, i);
+            if(opt_tile)
+            {
+                auto coord = get_tile_coordinate(layout, {column_index, row_index});
 
-            //We want to move the tiles into the upper rows of the board.
-            coord.row_index += total_row_count - 2;
+                //We want to move the tiles into the upper rows of the board.
+                coord.row_index += total_row_count - 2;
 
-            tile_array_[coord.column_index][coord.row_index] = opt_tile;
-            event.dst_coordinates.push_back(coord);
+                tile_array_[coord.column_index][coord.row_index] = opt_tile;
+                event.dst_coordinates[column_index][row_index] = coord;
+            }
         }
-
-        ++i;
-    }
+    );
 
     return event;
 }

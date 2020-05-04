@@ -47,21 +47,46 @@ std::ostream& operator<<(std::ostream& l, const input_layout& r)
 tile_coordinate get_tile_coordinate
 (
     const input_layout& layout,
-    const int tile_index //index of tile in input
+    const tile_coordinate& tile_coord //coordinate of tile in input
 )
 {
-    if(tile_index == 0)
+    const auto hash = [](const int xin, const int yin, const int rot)
     {
-        const int x = layout.x_offset + (layout.rotation == 2 ? 1 : 0);
-        const int y = (layout.rotation == 1 ? 1 : 0);
-        return {x, y};
-    }
-    else
+        return
+            ((xin & 1) << 3) |
+            ((yin & 1) << 2) |
+            (rot & 3)
+        ;
+    };
+
+#define CASE(XIN, YIN, ROT, XOUT, YOUT) \
+    case hash(XIN, YIN, ROT): \
+        return tile_coordinate{XOUT + layout.x_offset, YOUT};
+
+    switch(hash(tile_coord.column_index, tile_coord.row_index, layout.rotation))
     {
-        const int x = layout.x_offset + (layout.rotation == 0 ? 1 : 0);
-        const int y = (layout.rotation == 3 ? 1 : 0);
-        return {x, y};
+        //--(xin, yin, rot, xout, yout)
+        CASE(0,   0,   0,   0,    0);
+        CASE(0,   0,   1,   0,    1);
+        CASE(0,   0,   2,   1,    1);
+        CASE(0,   0,   3,   1,    0);
+        CASE(1,   0,   0,   1,    0);
+        CASE(1,   0,   1,   0,    0);
+        CASE(1,   0,   2,   0,    1);
+        CASE(1,   0,   3,   1,    1);
+        CASE(0,   1,   0,   0,    1);
+        CASE(0,   1,   1,   1,    1);
+        CASE(0,   1,   2,   1,    0);
+        CASE(0,   1,   3,   0,    0);
+        CASE(1,   1,   0,   1,    1);
+        CASE(1,   1,   1,   1,    0);
+        CASE(1,   1,   2,   0,    0);
+        CASE(1,   1,   3,   0,    1);
     }
+
+#undef CASE
+
+    return tile_coordinate{0, 0};
 }
 
 

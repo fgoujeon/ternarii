@@ -62,7 +62,7 @@ class view
 
         void set_input_layout(const data_types::input_layout& layout);
 
-        void insert_input(const data_types::tile_coordinate_list& dst_coordinates);
+        void insert_input(const data_types::input_tile_coordinate_array& dst_coordinates);
 
         void drop_tiles(const data_types::tile_drop_list& drops);
 

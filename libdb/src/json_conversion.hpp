@@ -23,6 +23,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include <libdb/data_types.hpp>
 #include <nlohmann/json.hpp>
 
+//Add support of std::optional
 namespace nlohmann
 {
     template<typename T>
@@ -73,8 +74,84 @@ void from_json(const nlohmann::json& from, tile& to)
 namespace libgame::data_types
 {
 
+namespace
+{
+    void from_json_0(const nlohmann::json& from, game_state& to)
+    {
+        /*
+        Example:
+
+        {
+            "boardTiles":
+            [
+                [1,    0,    null, null, null, null, null, null, null, null],
+                [null, null, null, null, null, null, null, null, null, null],
+                [null, null, null, null, null, null, null, null, null, null],
+                [null, null, null, null, null, null, null, null, null, null],
+                [null, null, null, null, null, null, null, null, null, null],
+                [null, null, null, null, null, null, null, null, null, null]
+            ],
+            "hiScore":3,
+            "inputRotation":0,
+            "inputTiles":[0,1],
+            "inputXOffset":2,
+            "nextInputTiles":[2,0]
+        }
+        */
+
+        const auto from_tile_array1d = [](const nlohmann::json& from, auto& to)
+        {
+            auto i = 0;
+            for(const auto& json_tile: from)
+            {
+                json_tile.get_to(to[i][0]);
+                ++i;
+            }
+        };
+
+        to.hi_score              = from.at("hiScore").get<int>();
+        from_tile_array1d(from.at("nextInputTiles"), to.next_input_tiles);
+        from_tile_array1d(from.at("inputTiles"), to.input_tiles);
+        to.input_layout.x_offset = from.at("inputXOffset").get<int>();
+        to.input_layout.rotation = from.at("inputRotation").get<int>();
+        to.board_tiles           = from.at("boardTiles");
+    }
+
+    void from_json_1(const nlohmann::json& from, game_state& to)
+    {
+        /*
+        Example:
+
+        {
+            "boardTiles":
+            [
+                [1,    0,    null, null, null, null, null, null, null, null],
+                [null, null, null, null, null, null, null, null, null, null],
+                [null, null, null, null, null, null, null, null, null, null],
+                [null, null, null, null, null, null, null, null, null, null],
+                [null, null, null, null, null, null, null, null, null, null],
+                [null, null, null, null, null, null, null, null, null, null]
+            ],
+            "hiScore":3,
+            "inputRotation":0,
+            "inputTiles":[[0,1],[null,null]],
+            "inputXOffset":2,
+            "nextInputTiles":[[2,0],[null,null]]
+        }
+        */
+
+        to.hi_score              = from.at("hiScore").get<int>();
+        to.next_input_tiles      = from.at("nextInputTiles");
+        to.input_tiles           = from.at("inputTiles");
+        to.input_layout.x_offset = from.at("inputXOffset").get<int>();
+        to.input_layout.rotation = from.at("inputRotation").get<int>();
+        to.board_tiles           = from.at("boardTiles");
+    }
+}
+
 void to_json(nlohmann::json& to, const game_state& from)
 {
+    to["version"]        = 1;
     to["hiScore"]        = from.hi_score;
     to["nextInputTiles"] = from.next_input_tiles;
     to["inputTiles"]     = from.input_tiles;
@@ -85,12 +162,23 @@ void to_json(nlohmann::json& to, const game_state& from)
 
 void from_json(const nlohmann::json& from, game_state& to)
 {
-    to.hi_score              = from["hiScore"].get<int>();
-    to.next_input_tiles      = from["nextInputTiles"];
-    to.input_tiles           = from["inputTiles"];
-    to.input_layout.x_offset = from["inputXOffset"].get<int>();
-    to.input_layout.rotation = from["inputRotation"].get<int>();
-    to.board_tiles           = from["boardTiles"];
+    const auto version = [&]
+    {
+        try
+        {
+            return from.at("version").get<int>();
+        }
+        catch(...)
+        {
+            return 0;
+        }
+    }();
+
+    switch(version)
+    {
+        case 0: from_json_0(from, to); break;
+        case 1: from_json_1(from, to); break;
+    }
 }
 
 } //namespace

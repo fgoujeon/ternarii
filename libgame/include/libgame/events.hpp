@@ -67,7 +67,7 @@ namespace events
 
     struct input_insertion
     {
-        data_types::tile_coordinate_list dst_coordinates;
+        data_types::input_tile_coordinate_array dst_coordinates;
     };
 
     std::ostream& operator<<(std::ostream& l, const input_insertion& r);
