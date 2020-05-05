@@ -43,7 +43,11 @@ namespace
 
         const auto xmax = [&]
         {
-            if(tile_count <= 2 && layout.rotation == 1)
+            if(tile_count == 1)
+            {
+                return column_count - 1;
+            }
+            if(tile_count == 2 && layout.rotation == 1)
             {
                 return column_count - 1;
             }

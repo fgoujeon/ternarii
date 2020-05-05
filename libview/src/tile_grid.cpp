@@ -37,9 +37,10 @@ namespace
         };
     }
 
+    template<class TileMatrix>
     libutil::matrix<Magnum::Vector2, 2, 2> get_input_tile_positions
     (
-        const libutil::matrix<tile*, 2, 2>& tiles,
+        const TileMatrix& tiles,
         const data_types::input_layout& layout,
         const float y_offset
     )
@@ -70,7 +71,7 @@ namespace
             auto opt_y = std::optional<float>{};
             libutil::for_each
             (
-                [&](const auto& pos, const auto ptile)
+                [&](const auto& pos, const auto& ptile)
                 {
                     if(!ptile)
                     {
@@ -163,29 +164,10 @@ void tile_grid::create_next_input(const data_types::input_tile_array& tiles)
 
     auto& animation = animations_.emplace_back();
 
-    //Create new next input and animate its creation.
-    {
-        const auto positions = get_input_tile_positions(next_input_tiles_, input_layout_, 5.0f);
-
-        libutil::for_each
-        (
-            [&](const auto& opt_tile, const auto& position, auto& pnext_input_tile)
-            {
-                if(opt_tile.has_value())
-                {
-                    pnext_input_tile = &add_tile(opt_tile.value().value, position);
-                    animation.add_alpha_transition(0, 0.4, animation_duration_s, *pnext_input_tile);
-                }
-            },
-            tiles,
-            positions,
-            next_input_tiles_
-        );
-    }
-
-    //Animate insertion of old next input.
+    //Animate insertion of current next input into input.
     {
         const auto dst_positions = get_input_tile_positions(input_tiles_, input_layout_, 3.0f);
+
         libutil::for_each
         (
             [&](const auto ptile, const auto& dst_position)
@@ -204,6 +186,26 @@ void tile_grid::create_next_input(const data_types::input_tile_array& tiles)
             },
             input_tiles_,
             dst_positions
+        );
+    }
+
+    //Create new next input and animate its creation.
+    {
+        const auto positions = get_input_tile_positions(tiles, input_layout_, 5.0f);
+
+        libutil::for_each
+        (
+            [&](const auto& opt_tile, const auto& position, auto& pnext_input_tile)
+            {
+                if(opt_tile.has_value())
+                {
+                    pnext_input_tile = &add_tile(opt_tile.value().value, position);
+                    animation.add_alpha_transition(0, 0.4, animation_duration_s, *pnext_input_tile);
+                }
+            },
+            tiles,
+            positions,
+            next_input_tiles_
         );
     }
 }
