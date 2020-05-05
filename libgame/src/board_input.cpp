@@ -22,6 +22,36 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libgame
 {
 
+namespace
+{
+    constexpr int column_count = 6;
+
+    void fix(data_types::input_layout& layout)
+    {
+        layout.rotation = layout.rotation % 4;
+
+        const auto xmin = [&]
+        {
+            if(layout.rotation == 3)
+            {
+                return -1;
+            }
+            return 0;
+        }();
+
+        const auto xmax = [&]
+        {
+            if(layout.rotation == 1)
+            {
+                return column_count - 1;
+            }
+            return column_count - 2;
+        }();
+
+        layout.x_offset = std::clamp(layout.x_offset, xmin, xmax);
+    }
+}
+
 board_input::board_input
 (
     data_types::input_tile_array& tiles,
@@ -30,13 +60,14 @@ board_input::board_input
     tiles_(tiles),
     layout_(layout)
 {
+    fix(layout_);
 }
 
 event board_input::set_tiles(const data_types::input_tile_array& tiles)
 {
     tiles_ = tiles;
     layout_ = data_types::input_layout{};
-    apply();
+    fix(layout_);
 
     return
     {
@@ -46,37 +77,34 @@ event board_input::set_tiles(const data_types::input_tile_array& tiles)
 
 void board_input::shift_left(event_list& events)
 {
-    if(layout_.x_offset > 0)
-    {
-        --layout_.x_offset;
-        events.push_back(apply());
-    }
+    --layout_.x_offset;
+    fix(layout_);
+    events.push_back(events::input_layout_change{layout_});
 }
 
 void board_input::shift_right(event_list& events)
 {
-    if(layout_.x_offset < column_count - 1)
-    {
-        ++layout_.x_offset;
-        events.push_back(apply());
-    }
+    ++layout_.x_offset;
+    fix(layout_);
+    events.push_back(events::input_layout_change{layout_});
 }
 
 void board_input::rotate(event_list& events)
 {
-    layout_.rotation = (layout_.rotation + 1) % 4;
-    events.push_back(apply());
-}
+    ++layout_.rotation;
 
-events::input_layout_change board_input::apply()
-{
-    //adjust the offset so that the tiles stay inside the board
-    if(layout_.x_offset >= column_count - 1 && (layout_.rotation == 0 || layout_.rotation == 2))
+    //For tile pairs, temporarily shift left on rotation 3.
+    if(layout_.rotation == 3)
     {
-        layout_.x_offset = column_count - 2;
+        --layout_.x_offset;
+    }
+    if(layout_.rotation == 4)
+    {
+        ++layout_.x_offset;
     }
 
-    return events::input_layout_change{layout_.x_offset, layout_.rotation};
+    fix(layout_);
+    events.push_back(events::input_layout_change{layout_});
 }
 
 } //namespace

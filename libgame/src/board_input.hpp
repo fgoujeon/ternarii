@@ -32,9 +32,6 @@ namespace libgame
 class board_input
 {
     public:
-        static const int column_count = 6;
-
-    public:
         board_input
         (
             data_types::input_tile_array& tiles,
@@ -58,9 +55,6 @@ class board_input
         void shift_right(event_list& events);
 
         void rotate(event_list& events);
-
-    private:
-        events::input_layout_change apply();
 
     private:
         data_types::input_tile_array& tiles_;

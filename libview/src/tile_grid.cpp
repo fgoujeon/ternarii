@@ -203,16 +203,25 @@ void tile_grid::set_input_layout(const data_types::input_layout& layout)
     (
         [&](const auto ptile, const auto& dst_position)
         {
-            if(ptile)
+            if(!ptile)
             {
-                animation.add_fixed_speed_translation
-                (
-                    ptile->transformation().translation(),
-                    dst_position,
-                    20,
-                    *ptile
-                );
+                return;
             }
+
+            const auto src_position = ptile->transformation().translation();
+
+            if(src_position == dst_position)
+            {
+                return;
+            }
+
+            animation.add_fixed_speed_translation
+            (
+                src_position,
+                dst_position,
+                20,
+                *ptile
+            );
         },
         input_tiles_,
         dst_positions
