@@ -64,12 +64,12 @@ class board
 
         void clear();
 
-        void drop_input(const board_input& in, event_list& events);
+        void drop_input_tiles(const board_input& in, event_list& events);
 
     private:
-        events::input_insertion insert_input(const board_input& in);
+        data_types::input_tile_drop_list drop_input_tiles_only(const board_input& in);
 
-        data_types::tile_drop_list make_tiles_fall();
+        data_types::board_tile_drop_list make_tiles_fall();
 
         data_types::tile_merge_list merge_tiles();
 

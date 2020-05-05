@@ -104,14 +104,14 @@ class app: public Magnum::Platform::Sdl2Application
             view_.set_input_layout(event.layout);
         }
 
-        void handle_game_event(const libgame::events::input_insertion& event)
+        void handle_game_event(const libgame::events::input_tile_drop& event)
         {
-            view_.insert_input(event.dst_coordinates);
+            view_.drop_input_tiles(event.drops);
         }
 
-        void handle_game_event(const libgame::events::tile_drop& event)
+        void handle_game_event(const libgame::events::board_tile_drop& event)
         {
-            view_.drop_tiles(event.drops);
+            view_.drop_board_tiles(event.drops);
         }
 
         void handle_game_event(const libgame::events::tile_merge& event)
@@ -190,7 +190,7 @@ class app: public Magnum::Platform::Sdl2Application
                     modify_game(&libgame::game::rotate_input);
                     break;
                 case move::drop:
-                    modify_game(&libgame::game::drop_input);
+                    modify_game(&libgame::game::drop_input_tiles);
                     break;
             }
         }

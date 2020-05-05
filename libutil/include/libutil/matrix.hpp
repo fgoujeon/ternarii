@@ -56,7 +56,7 @@ decltype(auto) at(Matrix&& mat, const int ij)
 template<class Matrix>
 decltype(auto) at(Matrix&& mat, const int i, const int j)
 {
-    assert(i * j < mat.m * mat.n);
+    assert(i < mat.m && j < mat.n);
     return mat.data[i * mat.n + j];
 }
 

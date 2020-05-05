@@ -97,9 +97,15 @@ void board::clear()
     }
 }
 
-void board::drop_input(const board_input& in, event_list& events)
+void board::drop_input_tiles(const board_input& in, event_list& events)
 {
-    events.push_back(insert_input(in));
+    events.push_back
+    (
+        events::input_tile_drop
+        {
+            drop_input_tiles_only(in)
+        }
+    );
 
     bool events_happened;
     do
@@ -107,7 +113,7 @@ void board::drop_input(const board_input& in, event_list& events)
         const auto drops = make_tiles_fall();
         if(!drops.empty())
         {
-            events.push_back(events::tile_drop{drops});
+            events.push_back(events::board_tile_drop{drops});
         }
 
         const auto merges = merge_tiles();
@@ -128,40 +134,64 @@ void board::drop_input(const board_input& in, event_list& events)
     }
 }
 
-events::input_insertion board::insert_input(const board_input& in)
+data_types::input_tile_drop_list board::drop_input_tiles_only(const board_input& in)
 {
-    //Put the input on the upper rows.
-
-    auto event = events::input_insertion{};
+    auto drops = data_types::input_tile_drop_list{};
 
     const auto& tiles = in.get_tiles();
     const auto& layout = in.get_layout();
 
-    libutil::for_each_ij
-    (
-        [&](const auto& opt_tile, auto& dst_coord, const int col, const int row)
-        {
-            if(opt_tile)
+    //Make tiles fall from lowest to highest row of laid out input.
+    for(auto input_row_index = 0; input_row_index < 2; ++input_row_index)
+    {
+        libutil::for_each_ij
+        (
+            [&](auto& opt_tile, const int col, const int row)
             {
-                auto coord = get_tile_coordinate(layout, {col, row});
+                if(!opt_tile)
+                {
+                    return;
+                }
 
-                //We want to move the tiles into the upper rows of the board.
-                coord.row_index += total_row_count - 2;
+                const auto coord = get_tile_coordinate(layout, {col, row});
 
-                libutil::at(tile_array_, coord.column_index, coord.row_index) = opt_tile;
-                dst_coord = coord;
-            }
-        },
-        tiles,
-        event.dst_coordinates
-    );
+                if(coord.row_index != input_row_index)
+                {
+                    return;
+                }
 
-    return event;
+                const auto opt_dst_row_index = libcommon::data_types::get_lowest_empty_cell
+                (
+                    tile_array_,
+                    coord.column_index
+                );
+
+                if(!opt_dst_row_index)
+                {
+                    return;
+                }
+
+                libutil::at(tile_array_, coord.column_index, *opt_dst_row_index) = opt_tile;
+
+                drops.push_back
+                (
+                    data_types::input_tile_drop
+                    {
+                        {col, row},
+                        {coord.column_index, *opt_dst_row_index}
+                    }
+                );
+            },
+            tiles
+        );
+    }
+
+    return drops;
 }
 
-data_types::tile_drop_list board::make_tiles_fall()
+data_types::board_tile_drop_list board::make_tiles_fall()
 {
-    data_types::tile_drop_list drops;
+    data_types::board_tile_drop_list drops;
 
     for(int column_index = 0; column_index < tile_array_.m; ++column_index)
     {
@@ -177,7 +207,7 @@ data_types::tile_drop_list board::make_tiles_fall()
 
                     drops.push_back
                     (
-                        data_types::tile_drop
+                        data_types::board_tile_drop
                         {
                             column_index,
                             row_index,

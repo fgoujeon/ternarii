@@ -219,12 +219,12 @@ void game::rotate_input(event_list& events)
     }
 }
 
-void game::drop_input(event_list& events)
+void game::drop_input_tiles(event_list& events)
 {
     if(!is_game_over())
     {
         //drop the input
-        pimpl_->board_.drop_input(pimpl_->input_, events);
+        pimpl_->board_.drop_input_tiles(pimpl_->input_, events);
 
         if(!is_game_over())
         {

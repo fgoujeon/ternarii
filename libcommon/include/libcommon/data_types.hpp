@@ -53,8 +53,30 @@ Convention of rows and columns:
 [R0]
     [C0][C1][C2][C3][..]
 */
-using input_tile_array = libutil::matrix<opt_tile, 2, 2>;
-using board_tile_array = libutil::matrix<opt_tile, 6, 10>;
+template<size_t ColumnCount, size_t RowCount>
+using basic_opt_tile_matrix = libutil::matrix<opt_tile, ColumnCount, RowCount>;
+
+using input_tile_array = basic_opt_tile_matrix<2, 2>;
+using board_tile_array = basic_opt_tile_matrix<6, 10>;
+
+//Get the row index of the lowest empty cell on the given column.
+template<size_t ColumnCount, size_t RowCount>
+std::optional<int> get_lowest_empty_cell
+(
+    const basic_opt_tile_matrix<ColumnCount, RowCount>& mat,
+    const int column_index
+)
+{
+    for(auto i = 0; i < RowCount; ++i)
+    {
+        if(!at(mat, column_index, i))
+        {
+            return i;
+        }
+    }
+
+    return std::nullopt;
+}
 
 
 
@@ -64,7 +86,6 @@ struct tile_coordinate
     int row_index = 0;
 };
 
-using input_tile_coordinate_array = libutil::matrix<tile_coordinate, 2, 2>;
 using tile_coordinate_list = std::vector<tile_coordinate>;
 
 std::ostream& operator<<(std::ostream& l, const tile_coordinate& r);
@@ -118,16 +139,28 @@ tile_coordinate get_tile_coordinate
 
 
 
-struct tile_drop
+struct input_tile_drop
+{
+    tile_coordinate input_coordinate;
+    tile_coordinate board_coordinate;
+};
+
+using input_tile_drop_list = std::vector<input_tile_drop>;
+
+std::ostream& operator<<(std::ostream& l, const input_tile_drop& r);
+
+
+
+struct board_tile_drop
 {
     int column_index = 0;
     int src_row_index = 0;
     int dst_row_index = 0;
 };
 
-using tile_drop_list = std::vector<tile_drop>;
+using board_tile_drop_list = std::vector<board_tile_drop>;
 
-std::ostream& operator<<(std::ostream& l, const tile_drop& r);
+std::ostream& operator<<(std::ostream& l, const board_tile_drop& r);
 
 
 

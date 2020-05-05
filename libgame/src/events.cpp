@@ -55,18 +55,18 @@ std::ostream& operator<<(std::ostream& l, const input_layout_change& r)
     return l;
 }
 
-std::ostream& operator<<(std::ostream& l, const input_insertion& r)
+std::ostream& operator<<(std::ostream& l, const input_tile_drop& r)
 {
-    l << "input_insertion";
+    l << "input_tile_drop";
     l << "{";
-    l << "dst_coordinates: " << libutil::streamable{r.dst_coordinates};
+    l << "drops: " << libutil::streamable{r.drops};
     l << "}";
     return l;
 }
 
-std::ostream& operator<<(std::ostream& l, const tile_drop& r)
+std::ostream& operator<<(std::ostream& l, const board_tile_drop& r)
 {
-    l << "tile_drop";
+    l << "board_tile_drop";
     l << "{";
     l << "drops: " << libutil::streamable{r.drops};
     l << "}";

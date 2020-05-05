@@ -56,7 +56,7 @@ struct game
 
         void rotate_input(event_list& events);
 
-        void drop_input(event_list& events);
+        void drop_input_tiles(event_list& events);
 
     private:
         struct impl;

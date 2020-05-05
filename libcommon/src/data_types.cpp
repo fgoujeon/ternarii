@@ -103,9 +103,21 @@ std::ostream& operator<<(std::ostream& l, const tile_coordinate& r)
 
 
 
-std::ostream& operator<<(std::ostream& l, const tile_drop& r)
+std::ostream& operator<<(std::ostream& l, const input_tile_drop& r)
 {
-    l << "tile_drop";
+    l << "input_tile_drop";
+    l << "{";
+    l << "input_coordinate: " << r.input_coordinate << ", ";
+    l << "board_coordinate: " << r.board_coordinate;
+    l << "}";
+    return l;
+}
+
+
+
+std::ostream& operator<<(std::ostream& l, const board_tile_drop& r)
+{
+    l << "board_tile_drop";
     l << "{";
     l << "column_index: " << r.column_index << ", ";
     l << "src_row_index: " << r.src_row_index << ", ";

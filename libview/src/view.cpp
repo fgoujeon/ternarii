@@ -259,14 +259,14 @@ void view::set_input_layout(const data_types::input_layout& layout)
     pimpl_->tile_grid_.set_input_layout(layout);
 }
 
-void view::insert_input(const data_types::input_tile_coordinate_array& dst_coordinates)
+void view::drop_input_tiles(const data_types::input_tile_drop_list& drops)
 {
-    pimpl_->tile_grid_.insert_input(dst_coordinates);
+    pimpl_->tile_grid_.drop_input_tiles(drops);
 }
 
-void view::drop_tiles(const data_types::tile_drop_list& drops)
+void view::drop_board_tiles(const data_types::board_tile_drop_list& drops)
 {
-    pimpl_->tile_grid_.drop_tiles(drops);
+    pimpl_->tile_grid_.drop_board_tiles(drops);
 }
 
 void view::merge_tiles(const data_types::tile_merge_list& merges)

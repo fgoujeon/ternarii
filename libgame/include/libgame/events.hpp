@@ -65,21 +65,21 @@ namespace events
 
 
 
-    struct input_insertion
+    struct input_tile_drop
     {
-        data_types::input_tile_coordinate_array dst_coordinates;
+        data_types::input_tile_drop_list drops;
     };
 
-    std::ostream& operator<<(std::ostream& l, const input_insertion& r);
+    std::ostream& operator<<(std::ostream& l, const input_tile_drop& r);
 
 
 
-    struct tile_drop
+    struct board_tile_drop
     {
-        data_types::tile_drop_list drops;
+        data_types::board_tile_drop_list drops;
     };
 
-    std::ostream& operator<<(std::ostream& l, const tile_drop& r);
+    std::ostream& operator<<(std::ostream& l, const board_tile_drop& r);
 
 
 
@@ -121,8 +121,8 @@ using event = std::variant
     events::next_input_creation,
     events::next_input_insertion,
     events::input_layout_change,
-    events::input_insertion,
-    events::tile_drop,
+    events::input_tile_drop,
+    events::board_tile_drop,
     events::tile_merge,
     events::score_change,
     events::hi_score_change,
