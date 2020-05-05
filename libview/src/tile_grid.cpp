@@ -39,6 +39,7 @@ namespace
 
     libutil::matrix<Magnum::Vector2, 2, 2> get_input_tile_positions
     (
+        const libutil::matrix<tile*, 2, 2>& tiles,
         const data_types::input_layout& layout,
         const float y_offset
     )
@@ -63,10 +64,44 @@ namespace
         );
 
         //Center the tiles vertically if they are on the same line
-        //if(tile0_y == tile1_y)
-        //{
-        //    tile0_y = tile1_y = 0.0f;
-        //}
+        const auto on_same_line = [&]
+        {
+            auto on_same_line = true;
+            auto opt_y = std::optional<float>{};
+            libutil::for_each
+            (
+                [&](const auto& pos, const auto ptile)
+                {
+                    if(!ptile)
+                    {
+                        return;
+                    }
+
+                    if(!opt_y)
+                    {
+                        opt_y = pos.y();
+                        return;
+                    }
+
+                    if(pos.y() != opt_y)
+                    {
+                        on_same_line = false;
+                    }
+                },
+                positions,
+                tiles
+            );
+
+            return on_same_line;
+        }();
+
+        if(on_same_line)
+        {
+            for(auto& pos: positions)
+            {
+                pos.y() = y_offset;
+            }
+        }
 
         return positions;
     }
@@ -130,7 +165,7 @@ void tile_grid::create_next_input(const data_types::input_tile_array& tiles)
 
     //Create new next input and animate its creation.
     {
-        const auto positions = get_input_tile_positions(input_layout_, 5.0f);
+        const auto positions = get_input_tile_positions(next_input_tiles_, input_layout_, 5.0f);
 
         libutil::for_each
         (
@@ -150,7 +185,7 @@ void tile_grid::create_next_input(const data_types::input_tile_array& tiles)
 
     //Animate insertion of old next input.
     {
-        const auto dst_positions = get_input_tile_positions(input_layout_, 3.0f);
+        const auto dst_positions = get_input_tile_positions(input_tiles_, input_layout_, 3.0f);
         libutil::for_each
         (
             [&](const auto ptile, const auto& dst_position)
@@ -195,7 +230,7 @@ void tile_grid::set_input_layout(const data_types::input_layout& layout)
 
     input_layout_ = layout;
 
-    const auto dst_positions = get_input_tile_positions(layout, 3.0f);
+    const auto dst_positions = get_input_tile_positions(input_tiles_, layout, 3.0f);
 
     auto& animation = animations_.emplace_back();
 
