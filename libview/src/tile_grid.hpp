@@ -25,7 +25,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include "time.hpp"
 #include "magnum_common.hpp"
 #include <libview/data_types.hpp>
-#include <libutil/array2d.hpp>
+#include <libutil/matrix.hpp>
 #include <Magnum/Animation/Player.h>
 #include <Magnum/GL/Mesh.h>
 #include <Magnum/Shaders/VertexColor.h>
@@ -38,8 +38,8 @@ namespace libview
 class tile_grid: public Object2D
 {
     private:
-        using input_tile_array = libutil::array2d<tile*, 2, 2>;
-        using board_tile_array = libutil::array2d<tile*, 6, 10>;
+        using input_tile_array = libutil::matrix<tile*, 2, 2>;
+        using board_tile_array = libutil::matrix<tile*, 6, 10>;
 
     public:
         explicit tile_grid(SceneGraph::DrawableGroup2D& drawables, Object2D* parent);

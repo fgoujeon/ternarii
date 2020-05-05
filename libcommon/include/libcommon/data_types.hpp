@@ -20,7 +20,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #ifndef LIBCOMMON_DATA_TYPES_HPP
 #define LIBCOMMON_DATA_TYPES_HPP
 
-#include <libutil/array2d.hpp>
+#include <libutil/matrix.hpp>
 #include <optional>
 #include <vector>
 #include <array>
@@ -53,8 +53,8 @@ Convention of rows and columns:
 [R0]
     [C0][C1][C2][C3][..]
 */
-using input_tile_array = libutil::array2d<opt_tile, 2, 2>;
-using board_tile_array = libutil::array2d<opt_tile, 6, 10>;
+using input_tile_array = libutil::matrix<opt_tile, 2, 2>;
+using board_tile_array = libutil::matrix<opt_tile, 6, 10>;
 
 
 
@@ -64,7 +64,7 @@ struct tile_coordinate
     int row_index = 0;
 };
 
-using input_tile_coordinate_array = libutil::array2d<tile_coordinate, 2, 2>;
+using input_tile_coordinate_array = libutil::matrix<tile_coordinate, 2, 2>;
 using tile_coordinate_list = std::vector<tile_coordinate>;
 
 std::ostream& operator<<(std::ostream& l, const tile_coordinate& r);

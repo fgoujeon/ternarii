@@ -20,6 +20,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #ifndef LIBUTIL_STREAMABLE_HPP
 #define LIBUTIL_STREAMABLE_HPP
 
+#include "matrix.hpp"
 #include <vector>
 #include <optional>
 #include <iostream>
@@ -119,6 +120,18 @@ template<class T>
 std::ostream& operator<<(std::ostream& l, const streamable<std::vector<T>>& r)
 {
     return streamable_detail::stream_sequence_container(l, r.value);
+}
+
+
+
+/*
+libutil types
+*/
+
+template<class T, size_t M, size_t N>
+std::ostream& operator<<(std::ostream& l, const streamable<libutil::matrix<T, M, N>>& r)
+{
+    return l << streamable{r.value.data};
 }
 
 } //namespace

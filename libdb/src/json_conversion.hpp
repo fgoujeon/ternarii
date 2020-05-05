@@ -104,7 +104,7 @@ namespace
             auto i = 0;
             for(const auto& json_tile: from)
             {
-                json_tile.get_to(to[i][0]);
+                json_tile.get_to(libutil::at(to, i, 0));
                 ++i;
             }
         };
@@ -114,7 +114,7 @@ namespace
         from_tile_array1d(from.at("inputTiles"), to.input_tiles);
         to.input_layout.x_offset = from.at("inputXOffset").get<int>();
         to.input_layout.rotation = from.at("inputRotation").get<int>();
-        to.board_tiles           = from.at("boardTiles");
+        to.board_tiles.data      = from.at("boardTiles");
     }
 
     void from_json_1(const nlohmann::json& from, game_state& to)
@@ -141,11 +141,11 @@ namespace
         */
 
         to.hi_score              = from.at("hiScore").get<int>();
-        to.next_input_tiles      = from.at("nextInputTiles");
-        to.input_tiles           = from.at("inputTiles");
+        to.next_input_tiles.data = from.at("nextInputTiles");
+        to.input_tiles.data      = from.at("inputTiles");
         to.input_layout.x_offset = from.at("inputXOffset").get<int>();
         to.input_layout.rotation = from.at("inputRotation").get<int>();
-        to.board_tiles           = from.at("boardTiles");
+        to.board_tiles.data      = from.at("boardTiles");
     }
 }
 
@@ -153,11 +153,11 @@ void to_json(nlohmann::json& to, const game_state& from)
 {
     to["version"]        = 1;
     to["hiScore"]        = from.hi_score;
-    to["nextInputTiles"] = from.next_input_tiles;
-    to["inputTiles"]     = from.input_tiles;
+    to["nextInputTiles"] = from.next_input_tiles.data;
+    to["inputTiles"]     = from.input_tiles.data;
     to["inputXOffset"]   = from.input_layout.x_offset;
     to["inputRotation"]  = from.input_layout.rotation;
-    to["boardTiles"]     = from.board_tiles;
+    to["boardTiles"]     = from.board_tiles.data;
 }
 
 void from_json(const nlohmann::json& from, game_state& to)

@@ -39,9 +39,9 @@ board::board
 
 bool board::is_game_over() const
 {
-    for(int i = 0; i < total_column_count; ++i)
+    for(int col = 0; col < tile_array_.m; ++col)
     {
-        if(tile_array_[i][authorized_row_count])
+        if(libutil::at(tile_array_, col, authorized_row_count))
         {
             return true;
         }
@@ -53,65 +53,48 @@ bool board::is_game_over() const
 int board::get_highest_tile_value() const
 {
     auto value = 0;
-    libutil::for_each
-    (
-        tile_array_,
-        [&](const auto& opt_tile)
+    for(const auto& opt_tile: tile_array_)
+    {
+        if(opt_tile)
         {
-            if(opt_tile)
-            {
-                value = std::max(value, opt_tile->value);
-            }
+            value = std::max(value, opt_tile->value);
         }
-    );
+    }
     return value;
 }
 
 int board::get_score() const
 {
     auto score = 0;
-    libutil::for_each
-    (
-        tile_array_,
-        [&](const auto& opt_tile)
+    for(const auto& opt_tile: tile_array_)
+    {
+        if(opt_tile)
         {
-            if(opt_tile)
-            {
-                score += std::pow(3, opt_tile->value);
-            }
+            score += std::pow(3, opt_tile->value);
         }
-    );
+    }
     return score;
 }
 
 int board::get_free_cell_count() const
 {
     auto count = authorized_cell_count;
-
-    for(int row_index = 0; row_index < authorized_row_count; ++row_index)
+    for(const auto& opt_tile: tile_array_)
     {
-        for(int column_index = 0; column_index < authorized_column_count; ++column_index)
+        if(opt_tile)
         {
-            if(tile_array_[column_index][row_index])
-            {
-                --count;
-            }
+            --count;
         }
     }
-
     return count;
 }
 
 void board::clear()
 {
-    libutil::for_each
-    (
-        tile_array_,
-        [&](auto& opt_tile)
-        {
-            opt_tile = std::nullopt;
-        }
-    );
+    for(auto& opt_tile: tile_array_)
+    {
+        opt_tile = std::nullopt;
+    }
 }
 
 void board::drop_input(const board_input& in, event_list& events)
@@ -154,22 +137,23 @@ events::input_insertion board::insert_input(const board_input& in)
     const auto& tiles = in.get_tiles();
     const auto& layout = in.get_layout();
 
-    libutil::for_each_i
+    libutil::for_each_ij
     (
-        tiles,
-        [&](const auto& opt_tile, const int column_index, const int row_index)
+        [&](const auto& opt_tile, auto& dst_coord, const int col, const int row)
         {
             if(opt_tile)
             {
-                auto coord = get_tile_coordinate(layout, {column_index, row_index});
+                auto coord = get_tile_coordinate(layout, {col, row});
 
                 //We want to move the tiles into the upper rows of the board.
                 coord.row_index += total_row_count - 2;
 
-                tile_array_[coord.column_index][coord.row_index] = opt_tile;
-                event.dst_coordinates[column_index][row_index] = coord;
+                libutil::at(tile_array_, coord.column_index, coord.row_index) = opt_tile;
+                dst_coord = coord;
             }
-        }
+        },
+        tiles,
+        event.dst_coordinates
     );
 
     return event;
@@ -179,17 +163,17 @@ data_types::tile_drop_list board::make_tiles_fall()
 {
     data_types::tile_drop_list drops;
 
-    for(int column_index = 0; column_index < total_column_count; ++column_index)
+    for(int column_index = 0; column_index < tile_array_.m; ++column_index)
     {
         std::optional<int> opt_empty_cell_row_index;
-        for(int row_index = 0; row_index < total_row_count; ++row_index) //from bottom to top
+        for(int row_index = 0; row_index < tile_array_.n; ++row_index) //from bottom to top
         {
-            if(const auto opt_tile = tile_array_[column_index][row_index])
+            if(const auto opt_tile = libutil::at(tile_array_, column_index, row_index))
             {
                 if(opt_empty_cell_row_index) //if the tile is floating
                 {
-                    tile_array_[column_index][row_index] = std::nullopt;
-                    tile_array_[column_index][*opt_empty_cell_row_index] = opt_tile;
+                    libutil::at(tile_array_, column_index, row_index) = std::nullopt;
+                    libutil::at(tile_array_, column_index, *opt_empty_cell_row_index) = opt_tile;
 
                     drops.push_back
                     (
@@ -229,7 +213,7 @@ data_types::tile_merge_list board::merge_tiles()
     {
         for(int column_index = 0; column_index < total_column_count; ++column_index)
         {
-            const auto& opt_tile = tile_array_[column_index][row_index];
+            const auto& opt_tile = libutil::at(tile_array_, column_index, row_index);
 
             if(opt_tile)
             {
@@ -249,9 +233,9 @@ data_types::tile_merge_list board::merge_tiles()
                     {
                         for(int column_index2 = 0; column_index2 < total_column_count; ++column_index2)
                         {
-                            if(selection[column_index2][row_index2] == selection_state::selected)
+                            if(libutil::at(selection, column_index2, row_index2) == selection_state::selected)
                             {
-                                assert(tile_array_[column_index2][row_index2]);
+                                assert(libutil::at(tile_array_, column_index2, row_index2));
                                 removed_tile_coordinates.push_back
                                 (
                                     data_types::tile_coordinate
@@ -260,14 +244,14 @@ data_types::tile_merge_list board::merge_tiles()
                                         row_index2
                                     }
                                 );
-                                tile_array_[column_index2][row_index2] = std::nullopt;
+                                libutil::at(tile_array_, column_index2, row_index2) = std::nullopt;
                             }
                         }
                     }
 
                     //put the new merged tile on the layer
                     auto merged_tile = data_types::tile{current_tile.value + 1};
-                    tile_layer[column_index][row_index] = merged_tile;
+                    libutil::at(tile_layer, column_index, row_index) = merged_tile;
 
                     merges.push_back
                     (
@@ -286,17 +270,19 @@ data_types::tile_merge_list board::merge_tiles()
     if(!merges.empty())
     {
         //overlay the tile layer to the tile array of the board
-        for(auto x = 0; x < total_column_count; ++x)
-        {
-            for(auto y = 0; y < total_row_count; ++y)
+        libutil::for_each
+        (
+            [&](auto& opt_tile, const auto& opt_layer_tile)
             {
-                if(tile_layer[x][y])
+                if(opt_layer_tile)
                 {
-                    assert(!tile_array_[x][y]);
-                    tile_array_[x][y] = tile_layer[x][y];
+                    assert(!opt_tile);
+                    opt_tile = opt_layer_tile;
                 }
-            }
-        }
+            },
+            tile_array_,
+            tile_layer
+        );
     }
 
     return merges;
@@ -311,21 +297,21 @@ void board::select_tiles
     int& selection_size
 )
 {
-    selection[column_index][row_index] = selection_state::visited;
+    libutil::at(selection, column_index, row_index) = selection_state::visited;
 
-    if(auto opt_tile = tile_array_[column_index][row_index])
+    if(const auto& opt_tile = libutil::at(tile_array_, column_index, row_index))
     {
-        auto tile = *opt_tile;
+        const auto& tile = *opt_tile;
         if(tile.value == tile_value)
         {
-            selection[column_index][row_index] = selection_state::selected;
+            libutil::at(selection, column_index, row_index) = selection_state::selected;
             ++selection_size;
 
             //above tile
             if
             (
                 row_index + 1 < total_row_count &&
-                selection[column_index][row_index + 1] == selection_state::unselected
+                libutil::at(selection, column_index, row_index + 1) == selection_state::unselected
             )
             {
                 select_tiles(tile_value, column_index, row_index + 1, selection, selection_size);
@@ -335,7 +321,7 @@ void board::select_tiles
             if
             (
                 row_index >= 1 &&
-                selection[column_index][row_index - 1] == selection_state::unselected
+                libutil::at(selection, column_index, row_index - 1) == selection_state::unselected
             )
             {
                 select_tiles(tile_value, column_index, row_index - 1, selection, selection_size);
@@ -345,7 +331,7 @@ void board::select_tiles
             if
             (
                 column_index + 1 < total_column_count &&
-                selection[column_index + 1][row_index] == selection_state::unselected
+                libutil::at(selection, column_index + 1, row_index) == selection_state::unselected
             )
             {
                 select_tiles(tile_value, column_index + 1, row_index, selection, selection_size);
@@ -355,7 +341,7 @@ void board::select_tiles
             if
             (
                 column_index >= 1 &&
-                selection[column_index - 1][row_index] == selection_state::unselected
+                libutil::at(selection, column_index - 1, row_index) == selection_state::unselected
             )
             {
                 select_tiles(tile_value, column_index - 1, row_index, selection, selection_size);
