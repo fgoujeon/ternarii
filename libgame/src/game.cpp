@@ -30,14 +30,20 @@ namespace libgame
 
 namespace
 {
+    struct random_number_generator
+    {
+        std::random_device rd;
+        std::mt19937 gen{rd()};
+    };
+
     class random_tile_generator
     {
         private:
             using distribution = std::normal_distribution<double>;
 
         public:
-            random_tile_generator():
-                gen_(rd_())
+            random_tile_generator(random_number_generator& rng):
+                rng_(rng)
             {
             }
 
@@ -45,7 +51,7 @@ namespace
             int generate(const int max, const double standard_deviation)
             {
                 //generate random number with normal distribution
-                const auto real_val = dis_(gen_, distribution::param_type{0, standard_deviation});
+                const auto real_val = dis_(rng_.gen, distribution::param_type{0, standard_deviation});
 
                 //remove negative values
                 const auto positive_real_val = std::abs(real_val);
@@ -58,9 +64,54 @@ namespace
             }
 
         private:
-            std::random_device rd_;
-            std::mt19937 gen_;
-            std::normal_distribution<double> dis_;
+            random_number_generator& rng_;
+            distribution dis_;
+    };
+
+    class random_tile_matrix_generator
+    {
+        private:
+            using distribution = std::uniform_int_distribution<int>;
+
+        public:
+            data_types::input_tile_array generate(const int max, const double standard_deviation)
+            {
+                const auto count = dis_(rng_.gen);
+
+                switch(count)
+                {
+                    case 1:
+                        return data_types::input_tile_array
+                        {
+                            data_types::tile{gen_.generate(max, standard_deviation)},
+                            std::nullopt,
+                            std::nullopt,
+                            std::nullopt
+                        };
+                    case 2:
+                        return data_types::input_tile_array
+                        {
+                            data_types::tile{gen_.generate(max, standard_deviation)},
+                            std::nullopt,
+                            data_types::tile{gen_.generate(max, standard_deviation)},
+                            std::nullopt
+                        };
+                    default:
+                    case 3:
+                        return data_types::input_tile_array
+                        {
+                            data_types::tile{gen_.generate(max, standard_deviation)},
+                            data_types::tile{gen_.generate(max, standard_deviation)},
+                            data_types::tile{gen_.generate(max, standard_deviation)},
+                            std::nullopt
+                        };
+                }
+            }
+
+        private:
+            random_number_generator rng_;
+            distribution dis_{1, 3};
+            random_tile_generator gen_{rng_};
     };
 }
 
@@ -121,13 +172,7 @@ struct game::impl
         }();
 
         //Generate a pair of tiles.
-        state.next_input_tiles = data_types::input_tile_array
-        {
-            data_types::tile{rand.generate(max_value, sd)},
-            std::nullopt,
-            data_types::tile{rand.generate(max_value, sd)},
-            std::nullopt
-        };
+        state.next_input_tiles = rand.generate(max_value, sd);
 
         return events::next_input_creation
         {
@@ -135,7 +180,7 @@ struct game::impl
         };
     }
 
-    random_tile_generator rand;
+    random_tile_matrix_generator rand;
     data_types::game_state state;
     board board_;
     board_input input_;
