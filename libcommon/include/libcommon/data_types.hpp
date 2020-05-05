@@ -78,6 +78,23 @@ std::optional<int> get_lowest_empty_cell
     return std::nullopt;
 }
 
+template<size_t ColumnCount, size_t RowCount>
+int get_tile_count
+(
+    const basic_opt_tile_matrix<ColumnCount, RowCount>& mat
+)
+{
+    auto count = 0;
+    for(const auto& opt_tile: mat)
+    {
+        if(opt_tile)
+        {
+            ++count;
+        }
+    }
+    return count;
+}
+
 
 
 struct tile_coordinate

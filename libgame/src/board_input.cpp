@@ -26,13 +26,15 @@ namespace
 {
     constexpr int column_count = 6;
 
-    void fix(data_types::input_layout& layout)
+    void fix(data_types::input_layout& layout, const data_types::input_tile_array& tiles)
     {
+        const auto tile_count = libcommon::data_types::get_tile_count(tiles);
+
         layout.rotation = layout.rotation % 4;
 
         const auto xmin = [&]
         {
-            if(layout.rotation == 3)
+            if(tile_count == 2 && layout.rotation == 3)
             {
                 return -1;
             }
@@ -41,7 +43,7 @@ namespace
 
         const auto xmax = [&]
         {
-            if(layout.rotation == 1)
+            if(tile_count <= 2 && layout.rotation == 1)
             {
                 return column_count - 1;
             }
@@ -60,14 +62,14 @@ board_input::board_input
     tiles_(tiles),
     layout_(layout)
 {
-    fix(layout_);
+    fix(layout_, tiles_);
 }
 
 event board_input::set_tiles(const data_types::input_tile_array& tiles)
 {
     tiles_ = tiles;
     layout_ = data_types::input_layout{};
-    fix(layout_);
+    fix(layout_, tiles_);
 
     return
     {
@@ -78,32 +80,42 @@ event board_input::set_tiles(const data_types::input_tile_array& tiles)
 void board_input::shift_left(event_list& events)
 {
     --layout_.x_offset;
-    fix(layout_);
+    fix(layout_, tiles_);
     events.push_back(events::input_layout_change{layout_});
 }
 
 void board_input::shift_right(event_list& events)
 {
     ++layout_.x_offset;
-    fix(layout_);
+    fix(layout_, tiles_);
     events.push_back(events::input_layout_change{layout_});
 }
 
 void board_input::rotate(event_list& events)
 {
+    const auto tile_count = libcommon::data_types::get_tile_count(tiles_);
+
+    if(tile_count <= 1)
+    {
+        return;
+    }
+
     ++layout_.rotation;
 
     //For tile pairs, temporarily shift left on rotation 3.
-    if(layout_.rotation == 3)
+    if(tile_count == 2)
     {
-        --layout_.x_offset;
-    }
-    if(layout_.rotation == 4)
-    {
-        ++layout_.x_offset;
+        if(layout_.rotation == 3)
+        {
+            --layout_.x_offset;
+        }
+        if(layout_.rotation == 4)
+        {
+            ++layout_.x_offset;
+        }
     }
 
-    fix(layout_);
+    fix(layout_, tiles_);
     events.push_back(events::input_layout_change{layout_});
 }
 
