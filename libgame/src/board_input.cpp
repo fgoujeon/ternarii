@@ -24,17 +24,25 @@ namespace libgame
 
 namespace
 {
-    constexpr int column_count = 6;
+    constexpr auto column_count = 6;
 
-    void fix(data_types::input_layout& layout, const data_types::input_tile_array& tiles)
+    constexpr auto default_layout = data_types::input_layout
     {
+        .x_offset = 2,
+        .rotation = 0
+    };
+
+    data_types::input_layout fix(const data_types::input_layout& in, const data_types::input_tile_array& tiles)
+    {
+        auto out = data_types::input_layout{};
+
         const auto tile_count = libcommon::data_types::get_tile_count(tiles);
 
-        layout.rotation = layout.rotation % 4;
+        out.rotation = in.rotation % 4;
 
         const auto xmin = [&]
         {
-            if(tile_count == 2 && layout.rotation == 3)
+            if(tile_count == 2 && out.rotation == 3)
             {
                 return -1;
             }
@@ -47,33 +55,29 @@ namespace
             {
                 return column_count - 1;
             }
-            if(tile_count == 2 && layout.rotation == 1)
+            if(tile_count == 2 && out.rotation == 1)
             {
                 return column_count - 1;
             }
             return column_count - 2;
         }();
 
-        layout.x_offset = std::clamp(layout.x_offset, xmin, xmax);
+        out.x_offset = std::clamp(in.x_offset, xmin, xmax);
+
+        return out;
     }
 }
 
-board_input::board_input
-(
-    data_types::input_tile_array& tiles,
-    data_types::input_layout& layout
-):
+board_input::board_input(data_types::input_tile_array& tiles):
     tiles_(tiles),
-    layout_(layout)
+    layout_(default_layout)
 {
-    fix(layout_, tiles_);
 }
 
 event board_input::set_tiles(const data_types::input_tile_array& tiles)
 {
     tiles_ = tiles;
-    layout_ = data_types::input_layout{};
-    fix(layout_, tiles_);
+    layout_ = default_layout;
 
     return
     {
@@ -84,14 +88,14 @@ event board_input::set_tiles(const data_types::input_tile_array& tiles)
 void board_input::shift_left(event_list& events)
 {
     --layout_.x_offset;
-    fix(layout_, tiles_);
+    layout_ = fix(layout_, tiles_);
     events.push_back(events::input_layout_change{layout_});
 }
 
 void board_input::shift_right(event_list& events)
 {
     ++layout_.x_offset;
-    fix(layout_, tiles_);
+    layout_ = fix(layout_, tiles_);
     events.push_back(events::input_layout_change{layout_});
 }
 
@@ -119,7 +123,7 @@ void board_input::rotate(event_list& events)
         }
     }
 
-    fix(layout_, tiles_);
+    layout_ = fix(layout_, tiles_);
     events.push_back(events::input_layout_change{layout_});
 }
 

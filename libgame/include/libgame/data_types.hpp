@@ -50,7 +50,6 @@ struct game_state
     int hi_score = 0;
     input_tile_array next_input_tiles;
     input_tile_array input_tiles;
-    input_layout input_layout;
     board_tile_array board_tiles;
 };
 

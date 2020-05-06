@@ -92,9 +92,7 @@ namespace
                 [null, null, null, null, null, null, null, null, null, null]
             ],
             "hiScore":3,
-            "inputRotation":0,
             "inputTiles":[0,1],
-            "inputXOffset":2,
             "nextInputTiles":[2,0]
         }
         */
@@ -112,8 +110,6 @@ namespace
         to.hi_score              = from.at("hiScore").get<int>();
         from_tile_array1d(from.at("nextInputTiles"), to.next_input_tiles);
         from_tile_array1d(from.at("inputTiles"), to.input_tiles);
-        to.input_layout.x_offset = from.at("inputXOffset").get<int>();
-        to.input_layout.rotation = from.at("inputRotation").get<int>();
         to.board_tiles.data      = from.at("boardTiles");
     }
 
@@ -125,26 +121,22 @@ namespace
         {
             "boardTiles":
             [
-                [1,    0,    null, null, null, null, null, null, null, null],
-                [null, null, null, null, null, null, null, null, null, null],
-                [null, null, null, null, null, null, null, null, null, null],
-                [null, null, null, null, null, null, null, null, null, null],
-                [null, null, null, null, null, null, null, null, null, null],
-                [null, null, null, null, null, null, null, null, null, null]
+                1,    0,    null, null, null, null, null, null, null, null,
+                null, null, null, null, null, null, null, null, null, null,
+                null, null, null, null, null, null, null, null, null, null,
+                null, null, null, null, null, null, null, null, null, null,
+                null, null, null, null, null, null, null, null, null, null,
+                null, null, null, null, null, null, null, null, null, null
             ],
             "hiScore":3,
-            "inputRotation":0,
-            "inputTiles":[[0,1],[null,null]],
-            "inputXOffset":2,
-            "nextInputTiles":[[2,0],[null,null]]
+            "inputTiles":[0,null,1,null],
+            "nextInputTiles":[2,null,0,null]
         }
         */
 
         to.hi_score              = from.at("hiScore").get<int>();
         to.next_input_tiles.data = from.at("nextInputTiles");
         to.input_tiles.data      = from.at("inputTiles");
-        to.input_layout.x_offset = from.at("inputXOffset").get<int>();
-        to.input_layout.rotation = from.at("inputRotation").get<int>();
         to.board_tiles.data      = from.at("boardTiles");
     }
 }
@@ -155,8 +147,6 @@ void to_json(nlohmann::json& to, const game_state& from)
     to["hiScore"]        = from.hi_score;
     to["nextInputTiles"] = from.next_input_tiles.data;
     to["inputTiles"]     = from.input_tiles.data;
-    to["inputXOffset"]   = from.input_layout.x_offset;
-    to["inputRotation"]  = from.input_layout.rotation;
     to["boardTiles"]     = from.board_tiles.data;
 }
 

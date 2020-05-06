@@ -32,11 +32,7 @@ namespace libgame
 class board_input
 {
     public:
-        board_input
-        (
-            data_types::input_tile_array& tiles,
-            data_types::input_layout& layout
-        );
+        board_input(data_types::input_tile_array& tiles);
 
         const data_types::input_tile_array& get_tiles() const
         {
@@ -58,7 +54,7 @@ class board_input
 
     private:
         data_types::input_tile_array& tiles_;
-        data_types::input_layout& layout_;
+        data_types::input_layout layout_;
 };
 
 } //namespace
