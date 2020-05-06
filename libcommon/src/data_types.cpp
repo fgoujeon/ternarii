@@ -23,13 +23,20 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libcommon::data_types
 {
 
-std::ostream& operator<<(std::ostream& l, const tile& r)
+std::ostream& operator<<(std::ostream& l, const number_tile& r)
 {
-    l << "tile";
+    l << "number_tile";
     l << "{";
     l << "value: " << r.value;
     l << "}";
     return l;
+}
+
+
+
+std::ostream& operator<<(std::ostream& l, const vertical_dynamite_tile& r)
+{
+    return l << "vertical_dynamite_tile{}";
 }
 
 

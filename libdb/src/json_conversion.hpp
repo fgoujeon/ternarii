@@ -23,9 +23,83 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include <libdb/data_types.hpp>
 #include <nlohmann/json.hpp>
 
+namespace
+{
+    template<class... Ts>
+    struct for_each_type_in_pack;
+
+    template<>
+    struct for_each_type_in_pack<>
+    {
+        template<class F>
+        static void call(F&&)
+        {
+        }
+    };
+
+    template<class T, class... Ts>
+    struct for_each_type_in_pack<T, Ts...>
+    {
+        template<class F>
+        static void call(F&& f)
+        {
+            using tag_t = T*;
+            const auto tag = tag_t{nullptr};
+            f(tag);
+
+            for_each_type_in_pack<Ts...>::call(f);
+        }
+    };
+}
+
 //Add support of std::optional
 namespace nlohmann
 {
+    template<typename... Ts>
+    struct adl_serializer<std::variant<Ts...>>
+    {
+        static void to_json(json& to, const std::variant<Ts...>& from)
+        {
+            to["type"] = from.index();
+            std::visit
+            (
+                [&](const auto& v)
+                {
+                    to["value"] = v;
+                },
+                from
+            );
+        }
+
+        static void from_json(const json& from, std::variant<Ts...>& to)
+        {
+            const auto type_index = from.at("type").get<int>();
+
+            auto i = 0;
+            auto found = false;
+            for_each_type_in_pack<Ts...>::call
+            (
+                [&](const auto* tag)
+                {
+                    using value_t = std::decay_t<decltype(*tag)>;
+
+                    if(i == type_index)
+                    {
+                        found = true;
+                        to = from.at("value").get<value_t>();
+                    }
+
+                    ++i;
+                }
+            );
+
+            if(!found)
+            {
+                throw std::runtime_error{"Invalid type index: " + std::to_string(type_index)};
+            }
+        }
+    };
+
     template<typename T>
     struct adl_serializer<std::optional<T>>
     {
@@ -58,14 +132,22 @@ namespace nlohmann
 namespace libcommon::data_types
 {
 
-void to_json(nlohmann::json& to, const tile& from)
+void to_json(nlohmann::json& to, const number_tile& from)
 {
     to = from.value;
 }
 
-void from_json(const nlohmann::json& from, tile& to)
+void from_json(const nlohmann::json& from, number_tile& to)
 {
     to.value = from.get<int>();
+}
+
+void to_json(nlohmann::json&, const vertical_dynamite_tile&)
+{
+}
+
+void from_json(const nlohmann::json&, vertical_dynamite_tile&)
+{
 }
 
 } //namespace

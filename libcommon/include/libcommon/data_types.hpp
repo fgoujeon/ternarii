@@ -21,6 +21,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #define LIBCOMMON_DATA_TYPES_HPP
 
 #include <libutil/matrix.hpp>
+#include <variant>
 #include <optional>
 #include <vector>
 #include <array>
@@ -29,14 +30,30 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libcommon::data_types
 {
 
-struct tile
+struct number_tile
 {
     int value = 0;
 };
 
-using opt_tile = std::optional<tile>;
+std::ostream& operator<<(std::ostream& l, const number_tile& r);
 
-std::ostream& operator<<(std::ostream& l, const tile& r);
+
+
+struct vertical_dynamite_tile
+{
+};
+
+std::ostream& operator<<(std::ostream& l, const vertical_dynamite_tile& r);
+
+
+
+using tile = std::variant
+<
+    number_tile,
+    vertical_dynamite_tile
+>;
+
+using opt_tile = std::optional<tile>;
 
 
 

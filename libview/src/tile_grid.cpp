@@ -22,6 +22,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include "sdf_image.hpp"
 #include "colors.hpp"
 #include <libutil/matrix.hpp>
+#include <libutil/overload.hpp>
 
 namespace libview
 {
@@ -198,7 +199,20 @@ void tile_grid::create_next_input(const data_types::input_tile_array& tiles)
             {
                 if(opt_tile.has_value())
                 {
-                    pnext_input_tile = make_tile(opt_tile.value().value, position);
+                    std::visit
+                    (
+                        libutil::overload
+                        {
+                            [&](const data_types::number_tile& tile)
+                            {
+                                pnext_input_tile = make_tile(tile.value, position);
+                            },
+                            [&](const data_types::vertical_dynamite_tile&)
+                            {
+                            }
+                        },
+                        opt_tile.value()
+                    );
                     animation.add_alpha_transition(0, 0.4, animation_duration_s, pnext_input_tile);
                 }
             },
@@ -357,23 +371,38 @@ void tile_grid::set_board_tiles(const data_types::board_tile_array& tiles)
     (
         [&](const auto& opt_tile, const int col, const int row)
         {
-            if(opt_tile.has_value())
+            if(!opt_tile.has_value())
             {
-                auto ptile = make_tile
-                (
-                    opt_tile.value().value,
-                    tile_coordinate_to_position
-                    (
-                        data_types::tile_coordinate
-                        {
-                            col,
-                            row
-                        }
-                    )
-                );
-                ptile->set_alpha(1);
-                libutil::at(board_tiles_, col, row) = ptile;
+                return;
             }
+
+            std::visit
+            (
+                libutil::overload
+                {
+                    [&](const data_types::number_tile& tile)
+                    {
+                        auto ptile = make_tile
+                        (
+                            tile.value,
+                            tile_coordinate_to_position
+                            (
+                                data_types::tile_coordinate
+                                {
+                                    col,
+                                    row
+                                }
+                            )
+                        );
+                        ptile->set_alpha(1);
+                        libutil::at(board_tiles_, col, row) = ptile;
+                    },
+                    [&](const data_types::vertical_dynamite_tile&)
+                    {
+                    }
+                },
+                opt_tile.value()
+            );
         },
         tiles
     );

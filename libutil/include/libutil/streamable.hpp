@@ -116,6 +116,20 @@ std::ostream& operator<<(std::ostream& l, const streamable<std::optional<T>>& r)
     }
 }
 
+template<class... Ts>
+std::ostream& operator<<(std::ostream& l, const streamable<std::variant<Ts...>>& r)
+{
+    std::visit
+    (
+        [&](const auto& v)
+        {
+            l << streamable{v};
+        },
+        r.value
+    );
+    return l;
+}
+
 template<class T>
 std::ostream& operator<<(std::ostream& l, const streamable<std::vector<T>>& r)
 {
