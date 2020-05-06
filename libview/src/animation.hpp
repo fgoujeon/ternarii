@@ -31,21 +31,13 @@ namespace libview
 class animation
 {
     public:
-        ~animation()
-        {
-            if(cleanup_callback_)
-            {
-                cleanup_callback_();
-            }
-        }
-
         template<class Object>
         void add_fixed_duration_translation
         (
             const Magnum::Vector2& start_position,
             const Magnum::Vector2& finish_position,
             const float duration_s,
-            Object& object
+            const std::shared_ptr<Object>& pobj
         )
         {
             auto track = Magnum::Animation::Track<Magnum::Float, Magnum::Vector2>
@@ -59,6 +51,7 @@ class animation
             };
 
             translations_.push_back(std::move(track));
+            objects_.push_back(pobj);
 
             player.addWithCallback
             (
@@ -69,7 +62,7 @@ class animation
                     const auto translation_delta = translation - current_translation;
                     obj.translate(translation_delta);
                 },
-                object
+                *pobj
             );
         }
 
@@ -79,7 +72,7 @@ class animation
             const Magnum::Vector2& start_position,
             const Magnum::Vector2& finish_position,
             const float speed, //in distance unit per second
-            Object& object
+            const std::shared_ptr<Object>& pobj
         )
         {
             const auto x1 = start_position.x();
@@ -100,6 +93,7 @@ class animation
             };
 
             translations_.push_back(std::move(track));
+            objects_.push_back(pobj);
 
             player.addWithCallback
             (
@@ -110,7 +104,7 @@ class animation
                     const auto translation_delta = translation - current_translation;
                     obj.translate(translation_delta);
                 },
-                object
+                *pobj
             );
         }
 
@@ -119,21 +113,22 @@ class animation
         (
             const float start_alpha,
             const float finish_alpha,
-            const float duration, //in seconds
-            Object& object
+            const float duration_s, //in seconds
+            const std::shared_ptr<Object>& pobj
         )
         {
             auto track = Magnum::Animation::Track<Magnum::Float, float>
             {
                 {
                     {0.0f, start_alpha},
-                    {duration, finish_alpha}
+                    {duration_s, finish_alpha}
                 },
                 Magnum::Math::lerp,
                 Magnum::Animation::Extrapolation::Constant
             };
 
             alpha_transitions_.push_back(std::move(track));
+            objects_.push_back(pobj);
 
             player.addWithCallback
             (
@@ -142,7 +137,7 @@ class animation
                 {
                     obj.set_alpha(alpha);
                 },
-                object
+                *pobj
             );
         }
 
@@ -162,21 +157,15 @@ class animation
             return started_ && player.state() == Magnum::Animation::State::Stopped;
         }
 
-        template<class Callback>
-        void set_cleanup_callback(Callback&& callback)
-        {
-            cleanup_callback_ = std::forward<Callback>(callback);
-        }
-
         Magnum::Animation::Player<std::chrono::nanoseconds, Magnum::Float> player;
 
     private:
         //for storage only
         std::list<Magnum::Animation::Track<Magnum::Float, Magnum::Vector2>> translations_;
         std::list<Magnum::Animation::Track<Magnum::Float, float>> alpha_transitions_;
+        std::vector<std::shared_ptr<Object2D>> objects_;
 
         bool started_ = false;
-        std::function<void()> cleanup_callback_;
 };
 
 using animation_list = std::list<animation>;

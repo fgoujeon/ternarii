@@ -29,8 +29,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include <Magnum/Animation/Player.h>
 #include <Magnum/GL/Mesh.h>
 #include <Magnum/Shaders/VertexColor.h>
-#include <chrono>
-#include <list>
+#include <memory>
 
 namespace libview
 {
@@ -38,8 +37,8 @@ namespace libview
 class tile_grid: public Object2D
 {
     private:
-        using input_tile_array = libutil::matrix<tile*, 2, 2>;
-        using board_tile_array = libutil::matrix<tile*, 6, 10>;
+        using input_tile_array = libutil::matrix<std::shared_ptr<tile>, 2, 2>;
+        using board_tile_array = libutil::matrix<std::shared_ptr<tile>, 6, 10>;
 
     public:
         explicit tile_grid(SceneGraph::DrawableGroup2D& drawables, Object2D* parent);
@@ -65,7 +64,7 @@ class tile_grid: public Object2D
         void advance(const time_point& now);
 
     private:
-        tile& add_tile
+        std::shared_ptr<tile> make_tile
         (
             const int value,
             const Magnum::Vector2& position

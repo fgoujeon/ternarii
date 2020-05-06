@@ -148,8 +148,7 @@ void tile_grid::clear()
     {
         for(auto& ptile: matrix)
         {
-            delete ptile;
-            ptile = nullptr;
+            ptile.reset();
         }
     };
 
@@ -170,7 +169,7 @@ void tile_grid::create_next_input(const data_types::input_tile_array& tiles)
 
         libutil::for_each
         (
-            [&](const auto ptile, const auto& dst_position)
+            [&](const auto& ptile, const auto& dst_position)
             {
                 if(ptile)
                 {
@@ -179,9 +178,9 @@ void tile_grid::create_next_input(const data_types::input_tile_array& tiles)
                         ptile->transformation().translation(),
                         dst_position,
                         animation_duration_s,
-                        *ptile
+                        ptile
                     );
-                    animation.add_alpha_transition(0.4, 1, animation_duration_s, *ptile);
+                    animation.add_alpha_transition(0.4, 1, animation_duration_s, ptile);
                 }
             },
             input_tiles_,
@@ -199,8 +198,8 @@ void tile_grid::create_next_input(const data_types::input_tile_array& tiles)
             {
                 if(opt_tile.has_value())
                 {
-                    pnext_input_tile = &add_tile(opt_tile.value().value, position);
-                    animation.add_alpha_transition(0, 0.4, animation_duration_s, *pnext_input_tile);
+                    pnext_input_tile = make_tile(opt_tile.value().value, position);
+                    animation.add_alpha_transition(0, 0.4, animation_duration_s, pnext_input_tile);
                 }
             },
             tiles,
@@ -257,7 +256,7 @@ void tile_grid::set_input_layout(const data_types::input_layout& layout)
                 src_position,
                 dst_position,
                 20,
-                *ptile
+                ptile
             );
         },
         input_tiles_,
@@ -281,7 +280,7 @@ void tile_grid::drop_input_tiles(const data_types::input_tile_drop_list& drops)
             src_position,
             dst_position,
             24,
-            *ptile
+            ptile
         );
 
         libutil::at(board_tiles_, drop.board_coordinate.column_index, drop.board_coordinate.row_index) = ptile;
@@ -305,7 +304,7 @@ void tile_grid::drop_board_tiles(const data_types::board_tile_drop_list& drops)
             src_position,
             dst_position,
             24,
-            *ptile
+            ptile
         );
 
         libutil::at(board_tiles_, drop.column_index, drop.dst_row_index) = ptile;
@@ -317,7 +316,6 @@ void tile_grid::merge_tiles(const data_types::tile_merge_list& merges)
 {
     auto& animation0 = animations_.emplace_back();
     auto& animation1 = animations_.emplace_back();
-    std::vector<tile*> tiles_to_delete;
 
     for(const auto& merge: merges)
     {
@@ -326,7 +324,7 @@ void tile_grid::merge_tiles(const data_types::tile_merge_list& merges)
         for(const auto& src_tile_coordinate: merge.src_tile_coordinates) //for each source tile
         {
             const auto src_position = tile_coordinate_to_position(src_tile_coordinate);
-            auto& psrc_tile = libutil::at(board_tiles_, src_tile_coordinate.column_index, src_tile_coordinate.row_index);
+            const auto& psrc_tile = libutil::at(board_tiles_, src_tile_coordinate.column_index, src_tile_coordinate.row_index);
 
             //first, translate source tile toward position of destination tile
             if(dst_position != src_position)
@@ -336,36 +334,21 @@ void tile_grid::merge_tiles(const data_types::tile_merge_list& merges)
                     src_position,
                     dst_position,
                     6,
-                    *psrc_tile
+                    psrc_tile
                 );
             }
 
             //then, make it disappear with a fade out
-            animation1.add_alpha_transition(1, 0, 0.2, *psrc_tile);
-
-            tiles_to_delete.push_back(psrc_tile);
-            psrc_tile = nullptr;
+            animation1.add_alpha_transition(1, 0, 0.2, psrc_tile);
         }
 
         //create destination tile
-        auto& dst_tile = add_tile(merge.dst_tile_value, dst_position);
-        libutil::at(board_tiles_, merge.dst_tile_coordinate.column_index, merge.dst_tile_coordinate.row_index) = &dst_tile;
+        auto pdst_tile = make_tile(merge.dst_tile_value, dst_position);
+        libutil::at(board_tiles_, merge.dst_tile_coordinate.column_index, merge.dst_tile_coordinate.row_index) = pdst_tile;
 
         //make destination tile appear with a fade in
-        animation1.add_alpha_transition(0, 1, 0.2, dst_tile);
+        animation1.add_alpha_transition(0, 1, 0.2, pdst_tile);
     }
-
-    animation1.set_cleanup_callback
-    (
-        [this, tiles_to_delete]()
-        {
-            for(const auto ptile: tiles_to_delete)
-            {
-                drawables_.remove(*ptile);
-                delete ptile;
-            }
-        }
-    );
 }
 
 void tile_grid::set_board_tiles(const data_types::board_tile_array& tiles)
@@ -376,7 +359,7 @@ void tile_grid::set_board_tiles(const data_types::board_tile_array& tiles)
         {
             if(opt_tile.has_value())
             {
-                auto ptile = &add_tile
+                auto ptile = make_tile
                 (
                     opt_tile.value().value,
                     tile_coordinate_to_position
@@ -412,15 +395,15 @@ void tile_grid::advance(const time_point& now)
     }
 }
 
-tile& tile_grid::add_tile
+std::shared_ptr<tile> tile_grid::make_tile
 (
     const int value,
     const Magnum::Vector2& position
 )
 {
-    auto& t = addChild<tile>(value, drawables_);
-    t.scale({0.46f, 0.46f});
-    t.translate(position);
+    auto t = std::make_shared<tile>(value, drawables_, this);
+    t->scale({0.46f, 0.46f});
+    t->translate(position);
     return t;
 }
 
