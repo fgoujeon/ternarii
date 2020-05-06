@@ -63,14 +63,14 @@ struct database::impl
             }
         }
 
-        const data_types::game_state& get_game_state() const
+        const std::optional<data_types::game_state>& get_game_state() const
         {
-            return game_state_;
+            return opt_game_state_;
         }
 
         void set_game_state(const data_types::game_state& state)
         {
-            game_state_ = state;
+            opt_game_state_ = state;
 
             if(current_state_ == state::ready)
             {
@@ -106,21 +106,31 @@ struct database::impl
             }
         }
 
+        void try_load_data()
+        {
+            if(!exists(path_))
+            {
+                return;
+            }
+
+            //read json from file
+            auto ifs = std::ifstream{path_};
+            auto json = nlohmann::json{};
+            ifs >> json;
+
+#ifndef NDEBUG
+            std::cout << to_string(json) << std::endl;
+#endif
+
+            //convert json to state
+            opt_game_state_ = json;
+        }
+
         void load_data()
         {
             try
             {
-                //read json from file
-                auto ifs = std::ifstream{path_};
-                auto json = nlohmann::json{};
-                ifs >> json;
-
-#ifndef NDEBUG
-                std::cout << to_string(json) << std::endl;
-#endif
-
-                //convert json to state
-                game_state_ = json;
+                try_load_data();
             }
             catch(const std::exception& e)
             {
@@ -141,7 +151,7 @@ struct database::impl
             {
                 std::filesystem::create_directories(path_.parent_path());
                 std::ofstream ofs{path_};
-                const auto json = nlohmann::json(game_state_);
+                const auto json = nlohmann::json(*opt_game_state_);
                 ofs << json;
             }
             catch(const std::exception& e)
@@ -171,7 +181,7 @@ struct database::impl
         const std::filesystem::path path_ = std::filesystem::path{std::getenv("HOME")} / ".config" / "ternarii" / "database.json";
         event_handler event_handler_;
         state current_state_ = state::starting;
-        data_types::game_state game_state_;
+        std::optional<data_types::game_state> opt_game_state_;
 };
 
 database::database(const event_handler& evt_handler):
@@ -186,7 +196,7 @@ void database::iterate()
     pimpl_->iterate();
 }
 
-const data_types::game_state& database::get_game_state() const
+const std::optional<data_types::game_state>& database::get_game_state() const
 {
     return pimpl_->get_game_state();
 }

@@ -113,10 +113,35 @@ namespace
             distribution dis_{1, 3};
             random_tile_generator gen_{rng_};
     };
+
+    data_types::game_state make_default_game_state()
+    {
+        auto state = data_types::game_state{};
+        state.next_input_tiles =
+        {
+            data_types::tile{0},
+            std::nullopt,
+            data_types::tile{1},
+            std::nullopt
+        };
+        state.input_tiles =
+        {
+            data_types::tile{0},
+            std::nullopt,
+            data_types::tile{0},
+            std::nullopt
+        };
+        return state;
+    }
 }
 
 struct game::impl
 {
+    impl():
+        impl(make_default_game_state())
+    {
+    }
+
     impl(const data_types::game_state& s):
         state(s),
         board_(state.board_tiles, state.hi_score),
@@ -186,6 +211,11 @@ struct game::impl
     board_input input_;
 };
 
+game::game():
+    pimpl_(std::make_unique<impl>())
+{
+}
+
 game::game(const data_types::game_state& state):
     pimpl_(std::make_unique<impl>(state))
 {
@@ -201,6 +231,11 @@ const data_types::game_state& game::get_state() const
 int game::get_score() const
 {
     return pimpl_->board_.get_score();
+}
+
+int game::get_hi_score() const
+{
+    return pimpl_->state.hi_score;
 }
 
 const data_types::input_tile_array& game::get_next_input_tiles() const

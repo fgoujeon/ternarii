@@ -30,6 +30,8 @@ namespace libgame
 struct game
 {
     public:
+        game();
+
         game(const data_types::game_state& state);
 
         ~game();
@@ -37,6 +39,8 @@ struct game
         const data_types::game_state& get_state() const;
 
         int get_score() const;
+
+        int get_hi_score() const;
 
         const data_types::input_tile_array& get_next_input_tiles() const;
 
