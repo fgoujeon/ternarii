@@ -83,7 +83,7 @@ namespace
                     case 1:
                         return data_types::input_tile_array
                         {
-                            data_types::number_tile{gen_.generate(max, standard_deviation)},
+                            data_types::vertical_dynamite_tile{},
                             std::nullopt,
                             std::nullopt,
                             std::nullopt

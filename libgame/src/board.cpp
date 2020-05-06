@@ -113,13 +113,16 @@ void board::drop_input_tiles(const board_input& in, event_list& events)
         }
     );
 
-    bool events_happened;
+    auto old_event_count = 0;
     do
     {
-        const auto drops = make_tiles_fall();
-        if(!drops.empty())
+        old_event_count = events.size();
+
+        const auto explosions = make_vertical_dynamite_tiles_explode();
+        if(!explosions.empty())
         {
-            events.push_back(events::board_tile_drop{drops});
+            events.push_back(events::vertical_dynamite_tile_explosion{explosions});
+            continue;
         }
 
         const auto merges = merge_tiles();
@@ -128,8 +131,12 @@ void board::drop_input_tiles(const board_input& in, event_list& events)
             events.push_back(events::tile_merge{merges});
         }
 
-        events_happened = !drops.empty() || !merges.empty();
-    } while(events_happened);
+        const auto drops = make_tiles_fall();
+        if(!drops.empty())
+        {
+            events.push_back(events::board_tile_drop{drops});
+        }
+    } while(old_event_count != events.size());
 
     events.push_back(events::score_change{get_score()});
 
@@ -204,12 +211,12 @@ data_types::board_tile_drop_list board::make_tiles_fall()
         std::optional<int> opt_empty_cell_row_index;
         for(int row_index = 0; row_index < tile_array_.n; ++row_index) //from bottom to top
         {
-            if(const auto opt_tile = libutil::at(tile_array_, column_index, row_index))
+            if(const auto& opt_tile = libutil::at(tile_array_, column_index, row_index))
             {
                 if(opt_empty_cell_row_index) //if the tile is floating
                 {
-                    libutil::at(tile_array_, column_index, row_index) = std::nullopt;
                     libutil::at(tile_array_, column_index, *opt_empty_cell_row_index) = opt_tile;
+                    libutil::at(tile_array_, column_index, row_index) = std::nullopt;
 
                     drops.push_back
                     (
@@ -237,6 +244,46 @@ data_types::board_tile_drop_list board::make_tiles_fall()
     return drops;
 }
 
+data_types::vertical_dynamite_tile_explosion_list board::make_vertical_dynamite_tiles_explode()
+{
+    auto explosions = data_types::vertical_dynamite_tile_explosion_list{};
+
+    libutil::for_each_ij
+    (
+        [&](const auto& opt_tile, const int col, const int row)
+        {
+            if(!opt_tile)
+            {
+                return;
+            }
+
+            const auto pdyn_tile = std::get_if<data_types::vertical_dynamite_tile>(&*opt_tile);
+
+            if(!pdyn_tile)
+            {
+                return;
+            }
+
+            //Remove all tiles from current column
+            for(int row_index = 0; row_index < tile_array_.n; ++row_index)
+            {
+                libutil::at(tile_array_, col, row_index) = std::nullopt;
+            }
+
+            explosions.push_back
+            (
+                data_types::vertical_dynamite_tile_explosion
+                {
+                    {col, row}
+                }
+            );
+        },
+        tile_array_
+    );
+
+    return explosions;
+}
+
 data_types::tile_merge_list board::merge_tiles()
 {
     data_types::tile_merge_list merges;
@@ -254,7 +301,7 @@ data_types::tile_merge_list board::merge_tiles()
             const auto pnum_tile = std::get_if<data_types::number_tile>(&*opt_tile);
             if(!pnum_tile)
             {
-                break;
+                continue;
             }
 
             const auto& current_tile = *pnum_tile;

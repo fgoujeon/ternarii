@@ -209,6 +209,7 @@ void tile_grid::create_next_input(const data_types::input_tile_array& tiles)
                             },
                             [&](const data_types::vertical_dynamite_tile&)
                             {
+                                pnext_input_tile = make_tile(99, position);
                             }
                         },
                         opt_tile.value()
@@ -326,6 +327,19 @@ void tile_grid::drop_board_tiles(const data_types::board_tile_drop_list& drops)
     }
 }
 
+void tile_grid::make_vertical_dynamite_tiles_explode(const data_types::vertical_dynamite_tile_explosion_list& explosions)
+{
+    for(const auto& explosion: explosions)
+    {
+        const auto explosion_col = explosion.coordinate.column_index;
+
+        for(auto row = 0; row < board_tiles_.n; ++row)
+        {
+            libutil::at(board_tiles_, explosion_col, row) = nullptr;
+        }
+    }
+}
+
 void tile_grid::merge_tiles(const data_types::tile_merge_list& merges)
 {
     auto& animation0 = animations_.emplace_back();
@@ -376,29 +390,23 @@ void tile_grid::set_board_tiles(const data_types::board_tile_array& tiles)
                 return;
             }
 
+            const auto position = tile_coordinate_to_position({col, row});
+
             std::visit
             (
                 libutil::overload
                 {
                     [&](const data_types::number_tile& tile)
                     {
-                        auto ptile = make_tile
-                        (
-                            tile.value,
-                            tile_coordinate_to_position
-                            (
-                                data_types::tile_coordinate
-                                {
-                                    col,
-                                    row
-                                }
-                            )
-                        );
+                        auto ptile = make_tile(tile.value, position);
                         ptile->set_alpha(1);
                         libutil::at(board_tiles_, col, row) = ptile;
                     },
                     [&](const data_types::vertical_dynamite_tile&)
                     {
+                        auto ptile = make_tile(99, position);
+                        ptile->set_alpha(1);
+                        libutil::at(board_tiles_, col, row) = ptile;
                     }
                 },
                 opt_tile.value()

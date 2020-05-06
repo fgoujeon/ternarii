@@ -83,6 +83,15 @@ namespace events
 
 
 
+    struct vertical_dynamite_tile_explosion
+    {
+        data_types::vertical_dynamite_tile_explosion_list explosions;
+    };
+
+    std::ostream& operator<<(std::ostream& l, const vertical_dynamite_tile_explosion& r);
+
+
+
     struct tile_merge
     {
         data_types::tile_merge_list merges;
@@ -123,6 +132,7 @@ using event = std::variant
     events::input_layout_change,
     events::input_tile_drop,
     events::board_tile_drop,
+    events::vertical_dynamite_tile_explosion,
     events::tile_merge,
     events::score_change,
     events::hi_score_change,
