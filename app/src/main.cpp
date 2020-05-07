@@ -116,7 +116,7 @@ class app: public Magnum::Platform::Sdl2Application
 
         void handle_game_event(const libgame::events::tile_explosion& event)
         {
-            view_.make_tiles_explode(event.explosions);
+            view_.make_tiles_explode(event.exploded_tile_coordinates);
         }
 
         void handle_game_event(const libgame::events::tile_merge& event)

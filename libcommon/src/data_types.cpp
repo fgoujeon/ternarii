@@ -152,15 +152,4 @@ std::ostream& operator<<(std::ostream& l, const tile_merge& r)
     return l;
 }
 
-
-
-std::ostream& operator<<(std::ostream& l, const tile_explosion& r)
-{
-    l << "tile_explosion";
-    l << "{";
-    l << "coordinate: " << r.coordinate;
-    l << "}";
-    return l;
-}
-
 } //namespace

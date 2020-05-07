@@ -253,9 +253,9 @@ data_types::board_tile_drop_list board::make_tiles_fall()
     return drops;
 }
 
-data_types::tile_explosion_list board::make_vertical_bomb_tiles_explode()
+data_types::tile_coordinate_list board::make_vertical_bomb_tiles_explode()
 {
-    auto explosions = data_types::tile_explosion_list{};
+    auto coords = data_types::tile_coordinate_list{};
 
     libutil::for_each_ij
     (
@@ -274,19 +274,16 @@ data_types::tile_explosion_list board::make_vertical_bomb_tiles_explode()
             }
 
             //Remove all tiles from current column
-            for(int row_index = 0; row_index < tile_array_.n; ++row_index)
+            for(int exploded_row = 0; exploded_row < tile_array_.n; ++exploded_row)
             {
-                auto& opt_tile = libutil::at(tile_array_, col, row_index);
+                auto& opt_tile = libutil::at(tile_array_, col, exploded_row);
 
                 if(!opt_tile)
                 {
                     continue;
                 }
 
-                explosions.push_back
-                (
-                    data_types::tile_explosion{{col, row_index}}
-                );
+                coords.push_back({col, exploded_row});
 
                 opt_tile = std::nullopt;
             }
@@ -294,12 +291,12 @@ data_types::tile_explosion_list board::make_vertical_bomb_tiles_explode()
         tile_array_
     );
 
-    return explosions;
+    return coords;
 }
 
-data_types::tile_explosion_list board::make_horizontal_bomb_tiles_explode()
+data_types::tile_coordinate_list board::make_horizontal_bomb_tiles_explode()
 {
-    auto explosions = data_types::tile_explosion_list{};
+    auto coords = data_types::tile_coordinate_list{};
 
     libutil::for_each_ij
     (
@@ -318,19 +315,16 @@ data_types::tile_explosion_list board::make_horizontal_bomb_tiles_explode()
             }
 
             //Remove all tiles from current row
-            for(int column_index = 0; column_index < tile_array_.m; ++column_index)
+            for(int exploded_col = 0; exploded_col < tile_array_.m; ++exploded_col)
             {
-                auto& opt_tile = libutil::at(tile_array_, column_index, row);
+                auto& opt_tile = libutil::at(tile_array_, exploded_col, row);
 
                 if(!opt_tile)
                 {
                     continue;
                 }
 
-                explosions.push_back
-                (
-                    data_types::tile_explosion{{column_index, row}}
-                );
+                coords.push_back({exploded_col, row});
 
                 opt_tile = std::nullopt;
             }
@@ -338,7 +332,7 @@ data_types::tile_explosion_list board::make_horizontal_bomb_tiles_explode()
         tile_array_
     );
 
-    return explosions;
+    return coords;
 }
 
 data_types::tile_merge_list board::merge_tiles()

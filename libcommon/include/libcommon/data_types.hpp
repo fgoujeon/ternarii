@@ -209,17 +209,6 @@ using tile_merge_list = std::vector<tile_merge>;
 
 std::ostream& operator<<(std::ostream& l, const tile_merge& r);
 
-
-
-struct tile_explosion
-{
-    tile_coordinate coordinate;
-};
-
-using tile_explosion_list = std::vector<tile_explosion>;
-
-std::ostream& operator<<(std::ostream& l, const tile_explosion& r);
-
 } //namespace
 
 #endif

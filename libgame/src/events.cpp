@@ -77,7 +77,7 @@ std::ostream& operator<<(std::ostream& l, const tile_explosion& r)
 {
     l << "tile_explosion";
     l << "{";
-    l << "explosions: " << libutil::streamable{r.explosions};
+    l << "exploded_tile_coordinates: " << libutil::streamable{r.exploded_tile_coordinates};
     l << "}";
     return l;
 }

@@ -269,9 +269,9 @@ void view::drop_board_tiles(const data_types::board_tile_drop_list& drops)
     pimpl_->tile_grid_.drop_board_tiles(drops);
 }
 
-void view::make_tiles_explode(const data_types::tile_explosion_list& explosions)
+void view::make_tiles_explode(const data_types::tile_coordinate_list& exploded_tile_coordinates)
 {
-    pimpl_->tile_grid_.make_tiles_explode(explosions);
+    pimpl_->tile_grid_.make_tiles_explode(exploded_tile_coordinates);
 }
 
 void view::merge_tiles(const data_types::tile_merge_list& merges)

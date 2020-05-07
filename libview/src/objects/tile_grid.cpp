@@ -315,13 +315,13 @@ void tile_grid::drop_board_tiles(const data_types::board_tile_drop_list& drops)
     }
 }
 
-void tile_grid::make_tiles_explode(const data_types::tile_explosion_list& explosions)
+void tile_grid::make_tiles_explode(const data_types::tile_coordinate_list& exploded_tile_coordinates)
 {
     auto& animation = animations_.emplace_back();
 
-    for(const auto& explosion: explosions)
+    for(const auto& coord: exploded_tile_coordinates)
     {
-        auto& ptile = libutil::at(board_tiles_, explosion.coordinate.column_index, explosion.coordinate.row_index);
+        auto& ptile = libutil::at(board_tiles_, coord.column_index, coord.row_index);
 
         if(!ptile)
         {

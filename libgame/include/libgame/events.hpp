@@ -85,7 +85,7 @@ namespace events
 
     struct tile_explosion
     {
-        data_types::tile_explosion_list explosions;
+        data_types::tile_coordinate_list exploded_tile_coordinates;
     };
 
     std::ostream& operator<<(std::ostream& l, const tile_explosion& r);
