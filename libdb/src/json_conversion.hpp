@@ -142,11 +142,11 @@ void from_json(const nlohmann::json& from, number_tile& to)
     to.value = from.get<int>();
 }
 
-void to_json(nlohmann::json&, const vertical_dynamite_tile&)
+void to_json(nlohmann::json&, const vertical_bomb_tile&)
 {
 }
 
-void from_json(const nlohmann::json&, vertical_dynamite_tile&)
+void from_json(const nlohmann::json&, vertical_bomb_tile&)
 {
 }
 

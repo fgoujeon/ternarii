@@ -39,18 +39,18 @@ std::ostream& operator<<(std::ostream& l, const number_tile& r);
 
 
 
-struct vertical_dynamite_tile
+struct vertical_bomb_tile
 {
 };
 
-std::ostream& operator<<(std::ostream& l, const vertical_dynamite_tile& r);
+std::ostream& operator<<(std::ostream& l, const vertical_bomb_tile& r);
 
 
 
 using tile = std::variant
 <
     number_tile,
-    vertical_dynamite_tile
+    vertical_bomb_tile
 >;
 
 using opt_tile = std::optional<tile>;
@@ -211,14 +211,14 @@ std::ostream& operator<<(std::ostream& l, const tile_merge& r);
 
 
 
-struct vertical_dynamite_tile_explosion
+struct vertical_bomb_tile_explosion
 {
     tile_coordinate coordinate;
 };
 
-using vertical_dynamite_tile_explosion_list = std::vector<vertical_dynamite_tile_explosion>;
+using vertical_bomb_tile_explosion_list = std::vector<vertical_bomb_tile_explosion>;
 
-std::ostream& operator<<(std::ostream& l, const vertical_dynamite_tile_explosion& r);
+std::ostream& operator<<(std::ostream& l, const vertical_bomb_tile_explosion& r);
 
 } //namespace
 

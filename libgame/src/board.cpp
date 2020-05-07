@@ -118,10 +118,10 @@ void board::drop_input_tiles(const board_input& in, event_list& events)
     {
         old_event_count = events.size();
 
-        const auto explosions = make_vertical_dynamite_tiles_explode();
+        const auto explosions = make_vertical_bomb_tiles_explode();
         if(!explosions.empty())
         {
-            events.push_back(events::vertical_dynamite_tile_explosion{explosions});
+            events.push_back(events::vertical_bomb_tile_explosion{explosions});
             continue;
         }
 
@@ -244,9 +244,9 @@ data_types::board_tile_drop_list board::make_tiles_fall()
     return drops;
 }
 
-data_types::vertical_dynamite_tile_explosion_list board::make_vertical_dynamite_tiles_explode()
+data_types::vertical_bomb_tile_explosion_list board::make_vertical_bomb_tiles_explode()
 {
-    auto explosions = data_types::vertical_dynamite_tile_explosion_list{};
+    auto explosions = data_types::vertical_bomb_tile_explosion_list{};
 
     libutil::for_each_ij
     (
@@ -257,7 +257,7 @@ data_types::vertical_dynamite_tile_explosion_list board::make_vertical_dynamite_
                 return;
             }
 
-            const auto pdyn_tile = std::get_if<data_types::vertical_dynamite_tile>(&*opt_tile);
+            const auto pdyn_tile = std::get_if<data_types::vertical_bomb_tile>(&*opt_tile);
 
             if(!pdyn_tile)
             {
@@ -272,7 +272,7 @@ data_types::vertical_dynamite_tile_explosion_list board::make_vertical_dynamite_
 
             explosions.push_back
             (
-                data_types::vertical_dynamite_tile_explosion
+                data_types::vertical_bomb_tile_explosion
                 {
                     {col, row}
                 }

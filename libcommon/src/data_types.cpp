@@ -34,9 +34,9 @@ std::ostream& operator<<(std::ostream& l, const number_tile& r)
 
 
 
-std::ostream& operator<<(std::ostream& l, const vertical_dynamite_tile& r)
+std::ostream& operator<<(std::ostream& l, const vertical_bomb_tile& r)
 {
-    return l << "vertical_dynamite_tile{}";
+    return l << "vertical_bomb_tile{}";
 }
 
 
@@ -148,9 +148,9 @@ std::ostream& operator<<(std::ostream& l, const tile_merge& r)
 
 
 
-std::ostream& operator<<(std::ostream& l, const vertical_dynamite_tile_explosion& r)
+std::ostream& operator<<(std::ostream& l, const vertical_bomb_tile_explosion& r)
 {
-    l << "vertical_dynamite_tile_explosion";
+    l << "vertical_bomb_tile_explosion";
     l << "{";
     l << "coordinate: " << r.coordinate;
     l << "}";

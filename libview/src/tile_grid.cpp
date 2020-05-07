@@ -207,7 +207,7 @@ void tile_grid::create_next_input(const data_types::input_tile_array& tiles)
                             {
                                 pnext_input_tile = make_number_tile(tile.value, position);
                             },
-                            [&](const data_types::vertical_dynamite_tile&)
+                            [&](const data_types::vertical_bomb_tile&)
                             {
                                 pnext_input_tile = make_number_tile(99, position);
                             }
@@ -327,7 +327,7 @@ void tile_grid::drop_board_tiles(const data_types::board_tile_drop_list& drops)
     }
 }
 
-void tile_grid::make_vertical_dynamite_tiles_explode(const data_types::vertical_dynamite_tile_explosion_list& explosions)
+void tile_grid::make_vertical_bomb_tiles_explode(const data_types::vertical_bomb_tile_explosion_list& explosions)
 {
     for(const auto& explosion: explosions)
     {
@@ -402,7 +402,7 @@ void tile_grid::set_board_tiles(const data_types::board_tile_array& tiles)
                         ptile->set_alpha(1);
                         libutil::at(board_tiles_, col, row) = ptile;
                     },
-                    [&](const data_types::vertical_dynamite_tile&)
+                    [&](const data_types::vertical_bomb_tile&)
                     {
                         auto ptile = make_number_tile(99, position);
                         ptile->set_alpha(1);
