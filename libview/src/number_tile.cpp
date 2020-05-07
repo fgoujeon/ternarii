@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#include "tile.hpp"
+#include "number_tile.hpp"
 #include "text.hpp"
 #include "colors.hpp"
 #include <Magnum/GL/Mesh.h>
@@ -53,7 +53,7 @@ namespace
     }
 }
 
-tile::tile(const int value, SceneGraph::DrawableGroup2D& drawables, Object2D* parent):
+number_tile::number_tile(const int value, SceneGraph::DrawableGroup2D& drawables, Object2D* parent):
     Object2D{parent},
     SceneGraph::Drawable2D{*this, &drawables},
     square_color_(value_to_color(value)),
@@ -74,14 +74,14 @@ tile::tile(const int value, SceneGraph::DrawableGroup2D& drawables, Object2D* pa
     label_.set_outline_range(0.45, 0.40);
 }
 
-void tile::set_alpha(const float alpha)
+void number_tile::set_alpha(const float alpha)
 {
     square_.set_color({square_color_, alpha});
     label_.set_color({colors::white, alpha});
     label_.set_outline_color({colors::dark_gray, alpha});
 }
 
-void tile::draw(const Magnum::Matrix3& /*transformation_matrix*/, SceneGraph::Camera2D& camera)
+void number_tile::draw(const Magnum::Matrix3& /*transformation_matrix*/, SceneGraph::Camera2D& camera)
 {
     camera.draw(drawable_children_);
 }

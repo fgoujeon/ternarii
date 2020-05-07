@@ -17,8 +17,8 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef LIBVIEW_TILE_HPP
-#define LIBVIEW_TILE_HPP
+#ifndef LIBVIEW_NUMBER_TILE_HPP
+#define LIBVIEW_NUMBER_TILE_HPP
 
 #include "rounded_square.hpp"
 #include "static_label.hpp"
@@ -29,10 +29,10 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libview
 {
 
-class tile: public Object2D, public SceneGraph::Drawable2D
+class number_tile: public Object2D, public SceneGraph::Drawable2D
 {
     public:
-        explicit tile(const int value, SceneGraph::DrawableGroup2D& drawables, Object2D* parent);
+        explicit number_tile(const int value, SceneGraph::DrawableGroup2D& drawables, Object2D* parent);
 
         void set_alpha(const float alpha);
 

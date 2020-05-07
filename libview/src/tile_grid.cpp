@@ -18,7 +18,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 #include "tile_grid.hpp"
-#include "tile.hpp"
+#include "number_tile.hpp"
 #include "sdf_image.hpp"
 #include "colors.hpp"
 #include <libutil/matrix.hpp>
@@ -205,11 +205,11 @@ void tile_grid::create_next_input(const data_types::input_tile_array& tiles)
                         {
                             [&](const data_types::number_tile& tile)
                             {
-                                pnext_input_tile = make_tile(tile.value, position);
+                                pnext_input_tile = make_number_tile(tile.value, position);
                             },
                             [&](const data_types::vertical_dynamite_tile&)
                             {
-                                pnext_input_tile = make_tile(99, position);
+                                pnext_input_tile = make_number_tile(99, position);
                             }
                         },
                         opt_tile.value()
@@ -371,7 +371,7 @@ void tile_grid::merge_tiles(const data_types::tile_merge_list& merges)
         }
 
         //create destination tile
-        auto pdst_tile = make_tile(merge.dst_tile_value, dst_position);
+        auto pdst_tile = make_number_tile(merge.dst_tile_value, dst_position);
         libutil::at(board_tiles_, merge.dst_tile_coordinate.column_index, merge.dst_tile_coordinate.row_index) = pdst_tile;
 
         //make destination tile appear with a fade in
@@ -398,13 +398,13 @@ void tile_grid::set_board_tiles(const data_types::board_tile_array& tiles)
                 {
                     [&](const data_types::number_tile& tile)
                     {
-                        auto ptile = make_tile(tile.value, position);
+                        auto ptile = make_number_tile(tile.value, position);
                         ptile->set_alpha(1);
                         libutil::at(board_tiles_, col, row) = ptile;
                     },
                     [&](const data_types::vertical_dynamite_tile&)
                     {
-                        auto ptile = make_tile(99, position);
+                        auto ptile = make_number_tile(99, position);
                         ptile->set_alpha(1);
                         libutil::at(board_tiles_, col, row) = ptile;
                     }
@@ -432,13 +432,13 @@ void tile_grid::advance(const time_point& now)
     }
 }
 
-std::shared_ptr<tile> tile_grid::make_tile
+std::shared_ptr<number_tile> tile_grid::make_number_tile
 (
     const int value,
     const Magnum::Vector2& position
 )
 {
-    auto t = std::make_shared<tile>(value, drawables_, this);
+    auto t = std::make_shared<number_tile>(value, drawables_, this);
     t->scale({0.46f, 0.46f});
     t->translate(position);
     return t;

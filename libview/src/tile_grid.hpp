@@ -20,7 +20,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #ifndef LIBVIEW_TILE_GRID_HPP
 #define LIBVIEW_TILE_GRID_HPP
 
-#include "tile.hpp"
+#include "number_tile.hpp"
 #include "animation.hpp"
 #include "time.hpp"
 #include "magnum_common.hpp"
@@ -37,8 +37,8 @@ namespace libview
 class tile_grid: public Object2D
 {
     private:
-        using input_tile_array = libutil::matrix<std::shared_ptr<tile>, 2, 2>;
-        using board_tile_array = libutil::matrix<std::shared_ptr<tile>, 6, 10>;
+        using input_tile_array = libutil::matrix<std::shared_ptr<number_tile>, 2, 2>;
+        using board_tile_array = libutil::matrix<std::shared_ptr<number_tile>, 6, 10>;
 
     public:
         explicit tile_grid(SceneGraph::DrawableGroup2D& drawables, Object2D* parent);
@@ -66,7 +66,7 @@ class tile_grid: public Object2D
         void advance(const time_point& now);
 
     private:
-        std::shared_ptr<tile> make_tile
+        std::shared_ptr<number_tile> make_number_tile
         (
             const int value,
             const Magnum::Vector2& position
