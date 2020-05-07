@@ -71,7 +71,7 @@ namespace
     class random_tile_matrix_generator
     {
         private:
-            using distribution = std::uniform_int_distribution<int>;
+            using distribution = std::discrete_distribution<int>;
 
         public:
             data_types::input_tile_array generate(const int max, const double standard_deviation)
@@ -89,27 +89,15 @@ namespace
                             data_types::tiles::number{gen_.generate(max, standard_deviation)},
                             std::nullopt
                         };
-                    case 1:
-                        return
-                        {
-                            data_types::tiles::column_nullifier{},
-                        };
-                    case 2:
-                        return
-                        {
-                            data_types::tiles::row_nullifier{}
-                        };
-                    case 3:
-                        return
-                        {
-                            data_types::tiles::number_nullifier{}
-                        };
+                    case 1: return {data_types::tiles::column_nullifier{}};
+                    case 2: return {data_types::tiles::row_nullifier{}};
+                    case 3: return {data_types::tiles::number_nullifier{}};
                 }
             }
 
         private:
             random_number_generator rng_;
-            distribution dis_{0, 3};
+            distribution dis_{97, 1, 1, 1};
             random_tile_generator gen_{rng_};
     };
 
@@ -195,7 +183,7 @@ struct game::impl
             return sd_min + sd_variable_part * (1.0 - fill_rate_pow);
         }();
 
-        //Generate a pair of tiles.
+        //Generate a new input
         state.next_input_tiles = rand.generate(max_value, sd);
 
         return events::next_input_creation
