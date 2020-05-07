@@ -39,14 +39,18 @@ namespace tiles
 
     struct vertical_bomb{};
 
+    struct horizontal_bomb{};
+
     std::ostream& operator<<(std::ostream& l, const number& r);
     std::ostream& operator<<(std::ostream& l, const vertical_bomb& r);
+    std::ostream& operator<<(std::ostream& l, const horizontal_bomb& r);
 }
 
 using tile = std::variant
 <
     tiles::number,
-    tiles::vertical_bomb
+    tiles::vertical_bomb,
+    tiles::horizontal_bomb
 >;
 
 using opt_tile = std::optional<tile>;

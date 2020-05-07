@@ -38,6 +38,11 @@ namespace tiles
     {
         return l << "vertical_bomb{}";
     }
+
+    std::ostream& operator<<(std::ostream& l, const horizontal_bomb& r)
+    {
+        return l << "horizontal_bomb{}";
+    }
 }
 
 

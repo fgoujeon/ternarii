@@ -150,6 +150,14 @@ void from_json(const nlohmann::json&, vertical_bomb&)
 {
 }
 
+void to_json(nlohmann::json&, const horizontal_bomb&)
+{
+}
+
+void from_json(const nlohmann::json&, horizontal_bomb&)
+{
+}
+
 } //namespace
 
 

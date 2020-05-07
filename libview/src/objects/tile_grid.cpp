@@ -201,21 +201,7 @@ void tile_grid::create_next_input(const data_types::input_tile_array& tiles)
             {
                 if(opt_tile.has_value())
                 {
-                    std::visit
-                    (
-                        libutil::overload
-                        {
-                            [&](const data_types::tiles::number& tile)
-                            {
-                                pnext_input_tile = make_number_tile(tile.value, position);
-                            },
-                            [&](const data_types::tiles::vertical_bomb&)
-                            {
-                                pnext_input_tile = make_vertical_bomb_tile(position);
-                            }
-                        },
-                        opt_tile.value()
-                    );
+                    pnext_input_tile = make_tile(opt_tile.value(), position);
                     animation.add_alpha_transition(0, 0.4, animation_duration_s, pnext_input_tile);
                 }
             },
@@ -384,7 +370,7 @@ void tile_grid::merge_tiles(const data_types::tile_merge_list& merges)
         }
 
         //create destination tile
-        auto pdst_tile = make_number_tile(merge.dst_tile_value, dst_position);
+        auto pdst_tile = make_tile(data_types::tiles::number{merge.dst_tile_value}, dst_position);
         libutil::at(board_tiles_, merge.dst_tile_coordinate.column_index, merge.dst_tile_coordinate.row_index) = pdst_tile;
 
         //make destination tile appear with a fade in
@@ -405,25 +391,9 @@ void tile_grid::set_board_tiles(const data_types::board_tile_array& tiles)
 
             const auto position = tile_coordinate_to_position({col, row});
 
-            std::visit
-            (
-                libutil::overload
-                {
-                    [&](const data_types::tiles::number& tile)
-                    {
-                        auto ptile = make_number_tile(tile.value, position);
-                        ptile->set_alpha(1);
-                        libutil::at(board_tiles_, col, row) = ptile;
-                    },
-                    [&](const data_types::tiles::vertical_bomb&)
-                    {
-                        auto ptile = make_vertical_bomb_tile(position);
-                        ptile->set_alpha(1);
-                        libutil::at(board_tiles_, col, row) = ptile;
-                    }
-                },
-                opt_tile.value()
-            );
+            auto ptile = make_tile(opt_tile.value(), position);
+            ptile->set_alpha(1);
+            libutil::at(board_tiles_, col, row) = ptile;
         },
         tiles
     );
@@ -445,27 +415,38 @@ void tile_grid::advance(const time_point& now)
     }
 }
 
-std::shared_ptr<number_tile> tile_grid::make_number_tile
+std::shared_ptr<objects::tile> tile_grid::make_tile
 (
-    const int value,
+    const data_types::tile& tile,
     const Magnum::Vector2& position
 )
 {
-    auto t = std::make_shared<number_tile>(value, drawables_, *this);
-    t->scale({0.46f, 0.46f});
-    t->translate(position);
-    return t;
-}
+    using tile_ptr = std::shared_ptr<objects::tile>;
 
-std::shared_ptr<sdf_image_tile> tile_grid::make_vertical_bomb_tile
-(
-    const Magnum::Vector2& position
-)
-{
-    auto t = std::make_shared<sdf_image_tile>("/res/images/vertical_bomb.tga", drawables_, *this);
-    t->scale({0.46f, 0.46f});
-    t->translate(position);
-    return t;
+    auto ptile = std::visit
+    (
+        libutil::overload
+        {
+            [&](const data_types::tiles::number& tile) -> tile_ptr
+            {
+                return std::make_shared<number_tile>(tile.value, drawables_, *this);
+            },
+            [&](const data_types::tiles::vertical_bomb&) -> tile_ptr
+            {
+                return std::make_shared<sdf_image_tile>("/res/images/vertical_bomb.tga", drawables_, *this);
+            },
+            [&](const data_types::tiles::horizontal_bomb&) -> tile_ptr
+            {
+                return std::make_shared<sdf_image_tile>("/res/images/horizontal_bomb.tga", drawables_, *this);
+            }
+        },
+        tile
+    );
+
+    ptile->scale({0.46f, 0.46f});
+    ptile->translate(position);
+
+    return ptile;
 }
 
 } //namespace

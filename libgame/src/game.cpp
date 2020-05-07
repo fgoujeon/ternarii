@@ -100,10 +100,7 @@ namespace
                     case 3:
                         return data_types::input_tile_array
                         {
-                            data_types::tiles::number{gen_.generate(max, standard_deviation)},
-                            data_types::tiles::number{gen_.generate(max, standard_deviation)},
-                            data_types::tiles::number{gen_.generate(max, standard_deviation)},
-                            std::nullopt
+                            data_types::tiles::horizontal_bomb{}
                         };
                 }
             }

@@ -68,14 +68,9 @@ class tile_grid: public Object2D
         void advance(const time_point& now);
 
     private:
-        std::shared_ptr<number_tile> make_number_tile
+        std::shared_ptr<objects::tile> make_tile
         (
-            const int value,
-            const Magnum::Vector2& position
-        );
-
-        std::shared_ptr<sdf_image_tile> make_vertical_bomb_tile
-        (
+            const data_types::tile& tile,
             const Magnum::Vector2& position
         );
 
