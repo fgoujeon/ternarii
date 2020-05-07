@@ -54,8 +54,7 @@ namespace
 }
 
 number_tile::number_tile(const int value, SceneGraph::DrawableGroup2D& drawables, Object2D& parent):
-    Object2D{&parent},
-    SceneGraph::Drawable2D{*this, &drawables},
+    tile{drawables, parent},
     square_color_(value_to_color(value)),
     square_(Magnum::Color4{square_color_, 0.0f}, drawable_children_, *this),
     label_

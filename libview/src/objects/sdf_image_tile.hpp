@@ -17,11 +17,11 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef LIBVIEW_OBJECTS_NUMBER_TILE_HPP
-#define LIBVIEW_OBJECTS_NUMBER_TILE_HPP
+#ifndef LIBVIEW_OBJECTS_SDF_IMAGE_TILE_HPP
+#define LIBVIEW_OBJECTS_SDF_IMAGE_TILE_HPP
 
 #include "rounded_square.hpp"
-#include "static_label.hpp"
+#include "sdf_image.hpp"
 #include "tile.hpp"
 #include "../magnum_common.hpp"
 #include <Magnum/Math/Color.h>
@@ -30,10 +30,10 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libview::objects
 {
 
-class number_tile: public tile
+class sdf_image_tile: public tile
 {
     public:
-        explicit number_tile(const int value, SceneGraph::DrawableGroup2D& drawables, Object2D& parent);
+        sdf_image_tile(const std::filesystem::path& image_path, SceneGraph::DrawableGroup2D& drawables, Object2D& parent);
 
         void set_alpha(const float alpha) override;
 
@@ -44,7 +44,7 @@ class number_tile: public tile
         SceneGraph::DrawableGroup2D drawable_children_;
         Magnum::Color3 square_color_;
         rounded_square square_;
-        static_label label_;
+        sdf_image image_;
 };
 
 } //namespace

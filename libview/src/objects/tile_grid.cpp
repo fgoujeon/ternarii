@@ -211,7 +211,7 @@ void tile_grid::create_next_input(const data_types::input_tile_array& tiles)
                             },
                             [&](const data_types::vertical_bomb_tile&)
                             {
-                                pnext_input_tile = make_number_tile(99, position);
+                                pnext_input_tile = make_vertical_bomb_tile(position);
                             }
                         },
                         opt_tile.value()
@@ -406,7 +406,7 @@ void tile_grid::set_board_tiles(const data_types::board_tile_array& tiles)
                     },
                     [&](const data_types::vertical_bomb_tile&)
                     {
-                        auto ptile = make_number_tile(99, position);
+                        auto ptile = make_vertical_bomb_tile(position);
                         ptile->set_alpha(1);
                         libutil::at(board_tiles_, col, row) = ptile;
                     }
@@ -441,6 +441,17 @@ std::shared_ptr<number_tile> tile_grid::make_number_tile
 )
 {
     auto t = std::make_shared<number_tile>(value, drawables_, *this);
+    t->scale({0.46f, 0.46f});
+    t->translate(position);
+    return t;
+}
+
+std::shared_ptr<sdf_image_tile> tile_grid::make_vertical_bomb_tile
+(
+    const Magnum::Vector2& position
+)
+{
+    auto t = std::make_shared<sdf_image_tile>("/res/images/vertical_bomb.tga", drawables_, *this);
     t->scale({0.46f, 0.46f});
     t->translate(position);
     return t;

@@ -17,14 +17,29 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#include "magnum_common.hpp"
+#ifndef LIBVIEW_OBJECTS_TILE_HPP
+#define LIBVIEW_OBJECTS_TILE_HPP
 
-namespace libview::colors
+#include "../magnum_common.hpp"
+#include <Magnum/Magnum.h>
+
+namespace libview::objects
 {
 
-static inline const auto black      = 0x000000_rgbf;
-static inline const auto dark_gray  = 0x404044_rgbf;
-static inline const auto light_gray = 0xdddddd_rgbf;
-static inline const auto white      = 0xffffff_rgbf;
+class tile: public Object2D, public SceneGraph::Drawable2D
+{
+    public:
+        tile(SceneGraph::DrawableGroup2D& drawables, Object2D& parent):
+            Object2D{&parent},
+            SceneGraph::Drawable2D{*this, &drawables}
+        {
+        }
+
+        virtual ~tile() = default;
+
+        virtual void set_alpha(const float alpha) = 0;
+};
 
 } //namespace
+
+#endif

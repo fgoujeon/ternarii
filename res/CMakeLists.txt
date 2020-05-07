@@ -44,7 +44,7 @@ function(add_svg_to_sdf_command FILENAME)
     add_custom_command(
         DEPENDS ${SVG_FILE}
         OUTPUT ${INTERMEDIATE_PNG_FILE}
-        COMMAND ${INKSCAPE_PROGRAM} ARGS -z -e ${INTERMEDIATE_PNG_FILE} -a -4:-4:104:104 -w 1024 -h 1024 ${SVG_FILE}
+        COMMAND ${INKSCAPE_PROGRAM} ARGS -o ${INTERMEDIATE_PNG_FILE} --export-area=-4:-4:104:104 -w 1024 -h 1024 ${SVG_FILE}
     )
 
     add_custom_command(
@@ -59,6 +59,7 @@ add_ttf_to_sdf_command(DejaVuSans)
 add_svg_to_sdf_command(move_button)
 add_svg_to_sdf_command(rotate_button)
 add_svg_to_sdf_command(board_corner)
+add_svg_to_sdf_command(vertical_bomb)
 
 add_custom_target(
     res ALL
@@ -68,4 +69,5 @@ add_custom_target(
         "${CMAKE_CURRENT_BINARY_DIR}/out/images/move_button.tga"
         "${CMAKE_CURRENT_BINARY_DIR}/out/images/rotate_button.tga"
         "${CMAKE_CURRENT_BINARY_DIR}/out/images/board_corner.tga"
+        "${CMAKE_CURRENT_BINARY_DIR}/out/images/vertical_bomb.tga"
 )
