@@ -29,7 +29,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include <Magnum/ImageView.h>
 #include <Corrade/Containers/Optional.h>
 
-namespace libview
+namespace libview::objects
 {
 
 namespace

@@ -17,12 +17,12 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#include "background.hpp"
-#include "game_over_screen.hpp"
-#include "button.hpp"
-#include "sdf_image.hpp"
-#include "tile_grid.hpp"
-#include "score_display.hpp"
+#include "objects/background.hpp"
+#include "objects/game_over_screen.hpp"
+#include "objects/button.hpp"
+#include "objects/sdf_image.hpp"
+#include "objects/tile_grid.hpp"
+#include "objects/score_display.hpp"
 #include "colors.hpp"
 #include "clickable.hpp"
 #include "time.hpp"
@@ -45,15 +45,15 @@ class view::impl final
             callbacks_(callbacks),
             cameraObject_(&scene_),
             camera_(cameraObject_),
-            background_(scene_.addChild<background>(drawables_)),
-            tile_grid_(scene_.addChild<tile_grid>(drawables_)),
-            score_display_(scene_.addChild<score_display>(drawables_)),
-            hi_score_display_(scene_.addChild<score_display>(drawables_)),
-            left_button_   (scene_.addChild<button>("/res/images/move_button.tga",   [this]{send_move_request(data_types::move::left_shift);},         drawables_, clickables_)),
-            right_button_  (scene_.addChild<button>("/res/images/move_button.tga",   [this]{send_move_request(data_types::move::right_shift);},        drawables_, clickables_)),
-            drop_button_   (scene_.addChild<button>("/res/images/move_button.tga",   [this]{send_move_request(data_types::move::drop);},               drawables_, clickables_)),
-            rotate_button_ (scene_.addChild<button>("/res/images/rotate_button.tga", [this]{send_move_request(data_types::move::clockwise_rotation);}, drawables_, clickables_)),
-            game_over_screen_(scene_.addChild<game_over_screen>([this]{callbacks_.handle_clear_request();}, drawables_, clickables_))
+            background_(scene_.addChild<objects::background>(drawables_)),
+            tile_grid_(scene_.addChild<objects::tile_grid>(drawables_)),
+            score_display_(scene_.addChild<objects::score_display>(drawables_)),
+            hi_score_display_(scene_.addChild<objects::score_display>(drawables_)),
+            left_button_   (scene_.addChild<objects::button>("/res/images/move_button.tga",   [this]{send_move_request(data_types::move::left_shift);},         drawables_, clickables_)),
+            right_button_  (scene_.addChild<objects::button>("/res/images/move_button.tga",   [this]{send_move_request(data_types::move::right_shift);},        drawables_, clickables_)),
+            drop_button_   (scene_.addChild<objects::button>("/res/images/move_button.tga",   [this]{send_move_request(data_types::move::drop);},               drawables_, clickables_)),
+            rotate_button_ (scene_.addChild<objects::button>("/res/images/rotate_button.tga", [this]{send_move_request(data_types::move::clockwise_rotation);}, drawables_, clickables_)),
+            game_over_screen_(scene_.addChild<objects::game_over_screen>([this]{callbacks_.handle_clear_request();}, drawables_, clickables_))
         {
             camera_.setAspectRatioPolicy(SceneGraph::AspectRatioPolicy::Extend);
             camera_.setProjectionMatrix(Magnum::Matrix3::projection({9.0f, 16.0f}));
@@ -190,15 +190,15 @@ class view::impl final
     public:
         bool visible_ = false;
 
-        background& background_;
-        tile_grid& tile_grid_;
-        score_display& score_display_;
-        score_display& hi_score_display_;
-        button& left_button_;
-        button& right_button_;
-        button& drop_button_;
-        button& rotate_button_;
-        game_over_screen& game_over_screen_;
+        objects::background& background_;
+        objects::tile_grid& tile_grid_;
+        objects::score_display& score_display_;
+        objects::score_display& hi_score_display_;
+        objects::button& left_button_;
+        objects::button& right_button_;
+        objects::button& drop_button_;
+        objects::button& rotate_button_;
+        objects::game_over_screen& game_over_screen_;
 };
 
 view::view(const callback_set& callbacks):

@@ -18,12 +18,12 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 #include "number_tile.hpp"
-#include "text.hpp"
-#include "colors.hpp"
+#include "../text.hpp"
+#include "../colors.hpp"
 #include <Magnum/GL/Mesh.h>
 #include <Magnum/Shaders/Flat.h>
 
-namespace libview
+namespace libview::objects
 {
 
 namespace

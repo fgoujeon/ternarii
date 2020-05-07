@@ -20,11 +20,11 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include "tile_grid.hpp"
 #include "number_tile.hpp"
 #include "sdf_image.hpp"
-#include "colors.hpp"
+#include "../colors.hpp"
 #include <libutil/matrix.hpp>
 #include <libutil/overload.hpp>
 
-namespace libview
+namespace libview::objects
 {
 
 namespace

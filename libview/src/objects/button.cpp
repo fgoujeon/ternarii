@@ -18,15 +18,15 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 #include "button.hpp"
-#include "text.hpp"
-#include "colors.hpp"
+#include "../text.hpp"
+#include "../colors.hpp"
 #include <Magnum/GL/Mesh.h>
 #include <Magnum/Shaders/Flat.h>
 #include <Magnum/Shaders/Vector.h>
 #include <Magnum/Text/AbstractFont.h>
 #include <Magnum/Text/GlyphCache.h>
 
-namespace libview
+namespace libview::objects
 {
 
 button::button

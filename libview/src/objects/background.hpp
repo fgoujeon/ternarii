@@ -17,22 +17,25 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef LIBVIEW_CIRCLE_HPP
-#define LIBVIEW_CIRCLE_HPP
+#ifndef LIBVIEW_OBJECTS_BACKGROUND_HPP
+#define LIBVIEW_OBJECTS_BACKGROUND_HPP
 
-#include "magnum_common.hpp"
+#include "../time.hpp"
+#include "../magnum_common.hpp"
 #include <Magnum/Math/Color.h>
 #include <Magnum/Magnum.h>
 
-namespace libview
+namespace libview::objects
 {
 
-class circle: public Object2D, public SceneGraph::Drawable2D
+class background: public Object2D, public SceneGraph::Drawable2D
 {
     public:
-        explicit circle(const Magnum::Color4& color, SceneGraph::DrawableGroup2D& drawables, Object2D* parent);
+        explicit background(SceneGraph::DrawableGroup2D& drawables, Object2D* parent);
 
         void set_color(const Magnum::Color4& color);
+
+        void advance(const time_point& now);
 
     private:
         void draw(const Magnum::Matrix3& transformation_matrix, SceneGraph::Camera2D& camera) override;

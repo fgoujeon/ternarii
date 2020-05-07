@@ -17,40 +17,40 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef LIBVIEW_BUTTON_HPP
-#define LIBVIEW_BUTTON_HPP
+#ifndef LIBVIEW_OBJECTS_SDF_IMAGE_HPP
+#define LIBVIEW_OBJECTS_SDF_IMAGE_HPP
 
-#include "sdf_image.hpp"
-#include "clickable.hpp"
-#include "magnum_common.hpp"
+#include "../magnum_common.hpp"
+#include <Magnum/GL/Texture.h>
+#include <Magnum/Math/Color.h>
+#include <Magnum/Magnum.h>
+#include <filesystem>
 
-namespace libview
+namespace libview::objects
 {
 
-class button: public Object2D, public clickable
+//Signed distance field image object
+class sdf_image: public Object2D, public SceneGraph::Drawable2D
 {
     public:
-        using mouse_press_callback = std::function<void()>;
-
-    public:
-        explicit button
+        explicit sdf_image
         (
             const std::filesystem::path& image_path,
-            const mouse_press_callback& cb,
             SceneGraph::DrawableGroup2D& drawables,
-            clickable_group& clickables,
             Object2D* parent
         );
 
-    //clickable virtual functions
-    private:
-        bool is_inside(const Magnum::Vector2& model_space_position) const override;
+        void set_color(const Magnum::Color4& color);
 
-        void mouse_press_event() override;
+        void set_outline_color(const Magnum::Color4& color);
 
     private:
-        const mouse_press_callback mouse_press_callback_;
-        sdf_image& image_;
+        void draw(const Magnum::Matrix3& transformation_matrix, SceneGraph::Camera2D& camera) override;
+
+    private:
+        Magnum::GL::Texture2D texture_;
+        Magnum::Color4 color_;
+        Magnum::Color4 outline_color_;
 };
 
 } //namespace

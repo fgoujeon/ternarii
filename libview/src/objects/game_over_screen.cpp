@@ -18,10 +18,10 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 #include "game_over_screen.hpp"
-#include "text.hpp"
-#include "colors.hpp"
+#include "../text.hpp"
+#include "../colors.hpp"
 
-namespace libview
+namespace libview::objects
 {
 
 class game_over_screen::new_game_button: public Object2D, public clickable

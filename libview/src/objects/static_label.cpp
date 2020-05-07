@@ -18,9 +18,9 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 #include "static_label.hpp"
-#include "text.hpp"
+#include "../text.hpp"
 
-namespace libview
+namespace libview::objects
 {
 
 static_label::static_label

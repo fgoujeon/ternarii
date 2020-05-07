@@ -17,13 +17,13 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef LIBVIEW_TILE_GRID_HPP
-#define LIBVIEW_TILE_GRID_HPP
+#ifndef LIBVIEW_OBJECTS_TILE_GRID_HPP
+#define LIBVIEW_OBJECTS_TILE_GRID_HPP
 
 #include "number_tile.hpp"
-#include "animation.hpp"
-#include "time.hpp"
-#include "magnum_common.hpp"
+#include "../animation.hpp"
+#include "../time.hpp"
+#include "../magnum_common.hpp"
 #include <libview/data_types.hpp>
 #include <libutil/matrix.hpp>
 #include <Magnum/Animation/Player.h>
@@ -31,7 +31,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include <Magnum/Shaders/VertexColor.h>
 #include <memory>
 
-namespace libview
+namespace libview::objects
 {
 
 class tile_grid: public Object2D
