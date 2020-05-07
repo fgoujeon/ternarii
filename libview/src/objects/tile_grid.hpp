@@ -59,7 +59,7 @@ class tile_grid: public Object2D
 
         void drop_board_tiles(const data_types::board_tile_drop_list& drops);
 
-        void make_vertical_bomb_tiles_explode(const data_types::vertical_bomb_tile_explosion_list& explosions);
+        void make_tiles_explode(const data_types::tile_explosion_list& explosions);
 
         void merge_tiles(const data_types::tile_merge_list& merges);
 

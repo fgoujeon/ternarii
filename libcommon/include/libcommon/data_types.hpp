@@ -211,14 +211,14 @@ std::ostream& operator<<(std::ostream& l, const tile_merge& r);
 
 
 
-struct vertical_bomb_tile_explosion
+struct tile_explosion
 {
     tile_coordinate coordinate;
 };
 
-using vertical_bomb_tile_explosion_list = std::vector<vertical_bomb_tile_explosion>;
+using tile_explosion_list = std::vector<tile_explosion>;
 
-std::ostream& operator<<(std::ostream& l, const vertical_bomb_tile_explosion& r);
+std::ostream& operator<<(std::ostream& l, const tile_explosion& r);
 
 } //namespace
 

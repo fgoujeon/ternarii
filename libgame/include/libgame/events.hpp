@@ -83,12 +83,12 @@ namespace events
 
 
 
-    struct vertical_bomb_tile_explosion
+    struct tile_explosion
     {
-        data_types::vertical_bomb_tile_explosion_list explosions;
+        data_types::tile_explosion_list explosions;
     };
 
-    std::ostream& operator<<(std::ostream& l, const vertical_bomb_tile_explosion& r);
+    std::ostream& operator<<(std::ostream& l, const tile_explosion& r);
 
 
 
@@ -132,7 +132,7 @@ using event = std::variant
     events::input_layout_change,
     events::input_tile_drop,
     events::board_tile_drop,
-    events::vertical_bomb_tile_explosion,
+    events::tile_explosion,
     events::tile_merge,
     events::score_change,
     events::hi_score_change,

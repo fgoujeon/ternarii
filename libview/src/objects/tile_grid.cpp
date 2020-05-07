@@ -315,27 +315,22 @@ void tile_grid::drop_board_tiles(const data_types::board_tile_drop_list& drops)
     }
 }
 
-void tile_grid::make_vertical_bomb_tiles_explode(const data_types::vertical_bomb_tile_explosion_list& explosions)
+void tile_grid::make_tiles_explode(const data_types::tile_explosion_list& explosions)
 {
     auto& animation = animations_.emplace_back();
 
     for(const auto& explosion: explosions)
     {
-        const auto explosion_col = explosion.coordinate.column_index;
+        auto& ptile = libutil::at(board_tiles_, explosion.coordinate.column_index, explosion.coordinate.row_index);
 
-        for(auto row = 0; row < board_tiles_.n; ++row)
+        if(!ptile)
         {
-            auto& ptile = libutil::at(board_tiles_, explosion_col, row);
-
-            if(!ptile)
-            {
-                continue;
-            }
-
-            animation.add_alpha_transition(1, 0, 0.2, ptile);
-
-            ptile = nullptr;
+            continue;
         }
+
+        animation.add_alpha_transition(1, 0, 0.2, ptile);
+
+        ptile = nullptr;
     }
 }
 

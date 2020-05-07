@@ -71,7 +71,9 @@ class board
 
         data_types::board_tile_drop_list make_tiles_fall();
 
-        data_types::vertical_bomb_tile_explosion_list make_vertical_bomb_tiles_explode();
+        data_types::tile_explosion_list make_vertical_bomb_tiles_explode();
+
+        data_types::tile_explosion_list make_horizontal_bomb_tiles_explode();
 
         data_types::tile_merge_list merge_tiles();
 

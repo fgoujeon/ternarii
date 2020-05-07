@@ -73,9 +73,9 @@ std::ostream& operator<<(std::ostream& l, const board_tile_drop& r)
     return l;
 }
 
-std::ostream& operator<<(std::ostream& l, const vertical_bomb_tile_explosion& r)
+std::ostream& operator<<(std::ostream& l, const tile_explosion& r)
 {
-    l << "vertical_bomb_tile_explosion";
+    l << "tile_explosion";
     l << "{";
     l << "explosions: " << libutil::streamable{r.explosions};
     l << "}";
