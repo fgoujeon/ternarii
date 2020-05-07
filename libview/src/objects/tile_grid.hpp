@@ -21,6 +21,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #define LIBVIEW_OBJECTS_TILE_GRID_HPP
 
 #include "number_tile.hpp"
+#include "sdf_image.hpp"
 #include "../animation.hpp"
 #include "../time.hpp"
 #include "../magnum_common.hpp"
@@ -41,7 +42,7 @@ class tile_grid: public Object2D
         using board_tile_array = libutil::matrix<std::shared_ptr<number_tile>, 6, 10>;
 
     public:
-        explicit tile_grid(SceneGraph::DrawableGroup2D& drawables, Object2D* parent);
+        explicit tile_grid(SceneGraph::DrawableGroup2D& drawables, Object2D& parent);
 
         bool is_animating() const;
 
@@ -76,6 +77,8 @@ class tile_grid: public Object2D
         SceneGraph::DrawableGroup2D& drawables_;
 
         animation_list animations_;
+
+        std::vector<std::unique_ptr<sdf_image>> board_corners_;
 
         input_tile_array next_input_tiles_ = {};
         input_tile_array input_tiles_ = {};

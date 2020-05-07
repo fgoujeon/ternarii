@@ -33,11 +33,11 @@ namespace libview::objects
 class sdf_image: public Object2D, public SceneGraph::Drawable2D
 {
     public:
-        explicit sdf_image
+        sdf_image
         (
             const std::filesystem::path& image_path,
             SceneGraph::DrawableGroup2D& drawables,
-            Object2D* parent
+            Object2D& parent
         );
 
         void set_color(const Magnum::Color4& color);

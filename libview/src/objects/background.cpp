@@ -42,8 +42,8 @@ namespace
     }
 }
 
-background::background(SceneGraph::DrawableGroup2D& drawables, Object2D* parent):
-    Object2D{parent},
+background::background(SceneGraph::DrawableGroup2D& drawables, Object2D& parent):
+    Object2D{&parent},
     SceneGraph::Drawable2D{*this, &drawables}
 {
 }

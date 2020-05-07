@@ -29,7 +29,7 @@ namespace libview::objects
 class score_display: public Object2D, public SceneGraph::Drawable2D
 {
     public:
-        explicit score_display(SceneGraph::DrawableGroup2D& drawables, Object2D* parent);
+        explicit score_display(SceneGraph::DrawableGroup2D& drawables, Object2D& parent);
 
         void set_score(const int value);
 

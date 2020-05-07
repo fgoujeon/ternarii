@@ -42,8 +42,8 @@ namespace
     }
 }
 
-square::square(const Magnum::Color4& color, SceneGraph::DrawableGroup2D& drawables, Object2D* parent):
-    Object2D{parent},
+square::square(const Magnum::Color4& color, SceneGraph::DrawableGroup2D& drawables, Object2D& parent):
+    Object2D{&parent},
     SceneGraph::Drawable2D{*this, &drawables},
     color_(color)
 {

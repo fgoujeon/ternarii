@@ -30,7 +30,7 @@ namespace libview::objects
 class rounded_square: public Object2D, public SceneGraph::Drawable2D
 {
     public:
-        explicit rounded_square(const Magnum::Color4& color, SceneGraph::DrawableGroup2D& drawables, Object2D* parent);
+        rounded_square(const Magnum::Color4& color, SceneGraph::DrawableGroup2D& drawables, Object2D& parent);
 
         void set_color(const Magnum::Color4& color);
 

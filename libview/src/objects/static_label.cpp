@@ -29,9 +29,9 @@ static_label::static_label
     const float font_size,
     const Magnum::Text::Alignment alignment,
     SceneGraph::DrawableGroup2D& drawables,
-    Object2D* parent
+    Object2D& parent
 ):
-    Object2D{parent},
+    Object2D{&parent},
     SceneGraph::Drawable2D{*this, &drawables},
     renderer_(text::get_font(), text::get_glyph_cache(), font_size, alignment)
 {

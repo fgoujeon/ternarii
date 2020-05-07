@@ -39,7 +39,7 @@ class button: public Object2D, public clickable
             const mouse_press_callback& cb,
             SceneGraph::DrawableGroup2D& drawables,
             clickable_group& clickables,
-            Object2D* parent
+            Object2D& parent
         );
 
     //clickable virtual functions
@@ -50,7 +50,7 @@ class button: public Object2D, public clickable
 
     private:
         const mouse_press_callback mouse_press_callback_;
-        sdf_image& image_;
+        sdf_image image_;
 };
 
 } //namespace

@@ -53,20 +53,18 @@ namespace
     }
 }
 
-number_tile::number_tile(const int value, SceneGraph::DrawableGroup2D& drawables, Object2D* parent):
-    Object2D{parent},
+number_tile::number_tile(const int value, SceneGraph::DrawableGroup2D& drawables, Object2D& parent):
+    Object2D{&parent},
     SceneGraph::Drawable2D{*this, &drawables},
     square_color_(value_to_color(value)),
-    square_(addChild<rounded_square>(Magnum::Color4{square_color_, 0.0f}, drawable_children_)),
+    square_(Magnum::Color4{square_color_, 0.0f}, drawable_children_, *this),
     label_
     (
-        addChild<static_label>
-        (
-            std::to_string(value).c_str(),
-            1.2f,
-            Magnum::Text::Alignment::MiddleCenter,
-            drawable_children_
-        )
+        std::to_string(value).c_str(),
+        1.2f,
+        Magnum::Text::Alignment::MiddleCenter,
+        drawable_children_,
+        *this
     )
 {
     label_.set_color(Magnum::Color4{colors::white, 0});

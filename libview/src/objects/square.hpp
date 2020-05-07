@@ -30,7 +30,7 @@ namespace libview::objects
 class square: public Object2D, public SceneGraph::Drawable2D
 {
     public:
-        explicit square(const Magnum::Color4& color, SceneGraph::DrawableGroup2D& drawables, Object2D* parent);
+        square(const Magnum::Color4& color, SceneGraph::DrawableGroup2D& drawables, Object2D& parent);
 
         void set_color(const Magnum::Color4& color);
 

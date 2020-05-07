@@ -32,7 +32,7 @@ namespace libview::objects
 class number_tile: public Object2D, public SceneGraph::Drawable2D
 {
     public:
-        explicit number_tile(const int value, SceneGraph::DrawableGroup2D& drawables, Object2D* parent);
+        explicit number_tile(const int value, SceneGraph::DrawableGroup2D& drawables, Object2D& parent);
 
         void set_alpha(const float alpha);
 
@@ -42,8 +42,8 @@ class number_tile: public Object2D, public SceneGraph::Drawable2D
     private:
         SceneGraph::DrawableGroup2D drawable_children_;
         Magnum::Color3 square_color_;
-        rounded_square& square_;
-        static_label& label_;
+        rounded_square square_;
+        static_label label_;
 };
 
 } //namespace

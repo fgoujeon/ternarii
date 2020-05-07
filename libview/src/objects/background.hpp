@@ -31,7 +31,7 @@ namespace libview::objects
 class background: public Object2D, public SceneGraph::Drawable2D
 {
     public:
-        explicit background(SceneGraph::DrawableGroup2D& drawables, Object2D* parent);
+        background(SceneGraph::DrawableGroup2D& drawables, Object2D& parent);
 
         void set_color(const Magnum::Color4& color);
 

@@ -109,20 +109,22 @@ namespace
     }
 }
 
-tile_grid::tile_grid(SceneGraph::DrawableGroup2D& drawables, Object2D* parent):
-    Object2D{parent},
+tile_grid::tile_grid(SceneGraph::DrawableGroup2D& drawables, Object2D& parent):
+    Object2D{&parent},
     drawables_(drawables)
 {
     //board corners
     {
         auto add_corner = [&](const float x, const float y, const auto rotation)
         {
-            auto& obj = addChild<sdf_image>("/res/images/board_corner.tga", drawables_);
-            obj.rotate(rotation);
-            obj.scale({0.50f, 0.50f});
-            obj.translate({x, y});
-            obj.set_color(colors::light_gray);
-            obj.set_outline_color(colors::dark_gray);
+            auto pobj = std::make_unique<sdf_image>("/res/images/board_corner.tga", drawables_, *this);
+            pobj->rotate(rotation);
+            pobj->scale({0.50f, 0.50f});
+            pobj->translate({x, y});
+            pobj->set_color(colors::light_gray);
+            pobj->set_outline_color(colors::dark_gray);
+
+            board_corners_.push_back(std::move(pobj));
         };
 
         const auto shift  = 0.3f;
@@ -438,7 +440,7 @@ std::shared_ptr<number_tile> tile_grid::make_number_tile
     const Magnum::Vector2& position
 )
 {
-    auto t = std::make_shared<number_tile>(value, drawables_, this);
+    auto t = std::make_shared<number_tile>(value, drawables_, *this);
     t->scale({0.46f, 0.46f});
     t->translate(position);
     return t;
