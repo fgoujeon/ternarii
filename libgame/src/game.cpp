@@ -83,7 +83,7 @@ namespace
                     case 1:
                         return data_types::input_tile_array
                         {
-                            data_types::tiles::vertical_bomb{},
+                            data_types::tiles::column_nullifier{},
                             std::nullopt,
                             std::nullopt,
                             std::nullopt
@@ -100,7 +100,7 @@ namespace
                     case 3:
                         return data_types::input_tile_array
                         {
-                            data_types::tiles::horizontal_bomb{}
+                            data_types::tiles::row_nullifier{}
                         };
                 }
             }

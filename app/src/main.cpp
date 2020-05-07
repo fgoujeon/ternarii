@@ -114,9 +114,9 @@ class app: public Magnum::Platform::Sdl2Application
             view_.drop_board_tiles(event.drops);
         }
 
-        void handle_game_event(const libgame::events::tile_explosion& event)
+        void handle_game_event(const libgame::events::tile_nullification& event)
         {
-            view_.make_tiles_explode(event.exploded_tile_coordinates);
+            view_.nullify_tiles(event.nullified_tile_coordinates);
         }
 
         void handle_game_event(const libgame::events::tile_merge& event)

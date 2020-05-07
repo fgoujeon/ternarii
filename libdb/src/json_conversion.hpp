@@ -142,19 +142,19 @@ void from_json(const nlohmann::json& from, number& to)
     to.value = from.get<int>();
 }
 
-void to_json(nlohmann::json&, const vertical_bomb&)
+void to_json(nlohmann::json&, const column_nullifier&)
 {
 }
 
-void from_json(const nlohmann::json&, vertical_bomb&)
+void from_json(const nlohmann::json&, column_nullifier&)
 {
 }
 
-void to_json(nlohmann::json&, const horizontal_bomb&)
+void to_json(nlohmann::json&, const row_nullifier&)
 {
 }
 
-void from_json(const nlohmann::json&, horizontal_bomb&)
+void from_json(const nlohmann::json&, row_nullifier&)
 {
 }
 

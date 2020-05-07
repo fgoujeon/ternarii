@@ -83,12 +83,12 @@ namespace events
 
 
 
-    struct tile_explosion
+    struct tile_nullification
     {
-        data_types::tile_coordinate_list exploded_tile_coordinates;
+        data_types::tile_coordinate_list nullified_tile_coordinates;
     };
 
-    std::ostream& operator<<(std::ostream& l, const tile_explosion& r);
+    std::ostream& operator<<(std::ostream& l, const tile_nullification& r);
 
 
 
@@ -132,7 +132,7 @@ using event = std::variant
     events::input_layout_change,
     events::input_tile_drop,
     events::board_tile_drop,
-    events::tile_explosion,
+    events::tile_nullification,
     events::tile_merge,
     events::score_change,
     events::hi_score_change,

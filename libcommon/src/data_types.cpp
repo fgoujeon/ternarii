@@ -34,14 +34,14 @@ namespace tiles
         return l;
     }
 
-    std::ostream& operator<<(std::ostream& l, const vertical_bomb& r)
+    std::ostream& operator<<(std::ostream& l, const column_nullifier& r)
     {
-        return l << "vertical_bomb{}";
+        return l << "column_nullifier{}";
     }
 
-    std::ostream& operator<<(std::ostream& l, const horizontal_bomb& r)
+    std::ostream& operator<<(std::ostream& l, const row_nullifier& r)
     {
-        return l << "horizontal_bomb{}";
+        return l << "row_nullifier{}";
     }
 }
 

@@ -37,20 +37,20 @@ namespace tiles
         int value = 0;
     };
 
-    struct vertical_bomb{};
+    struct column_nullifier{};
 
-    struct horizontal_bomb{};
+    struct row_nullifier{};
 
     std::ostream& operator<<(std::ostream& l, const number& r);
-    std::ostream& operator<<(std::ostream& l, const vertical_bomb& r);
-    std::ostream& operator<<(std::ostream& l, const horizontal_bomb& r);
+    std::ostream& operator<<(std::ostream& l, const column_nullifier& r);
+    std::ostream& operator<<(std::ostream& l, const row_nullifier& r);
 }
 
 using tile = std::variant
 <
     tiles::number,
-    tiles::vertical_bomb,
-    tiles::horizontal_bomb
+    tiles::column_nullifier,
+    tiles::row_nullifier
 >;
 
 using opt_tile = std::optional<tile>;

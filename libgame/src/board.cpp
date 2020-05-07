@@ -119,18 +119,18 @@ void board::drop_input_tiles(const board_input& in, event_list& events)
         old_event_count = events.size();
 
         {
-            const auto explosions = make_vertical_bomb_tiles_explode();
-            if(!explosions.empty())
+            const auto nullifications = apply_column_nullifiers();
+            if(!nullifications.empty())
             {
-                events.push_back(events::tile_explosion{explosions});
+                events.push_back(events::tile_nullification{nullifications});
             }
         }
 
         {
-            const auto explosions = make_horizontal_bomb_tiles_explode();
-            if(!explosions.empty())
+            const auto nullifications = apply_row_nullifiers();
+            if(!nullifications.empty())
             {
-                events.push_back(events::tile_explosion{explosions});
+                events.push_back(events::tile_nullification{nullifications});
             }
         }
 
@@ -253,7 +253,7 @@ data_types::board_tile_drop_list board::make_tiles_fall()
     return drops;
 }
 
-data_types::tile_coordinate_list board::make_vertical_bomb_tiles_explode()
+data_types::tile_coordinate_list board::apply_column_nullifiers()
 {
     auto coords = data_types::tile_coordinate_list{};
 
@@ -266,7 +266,7 @@ data_types::tile_coordinate_list board::make_vertical_bomb_tiles_explode()
                 return;
             }
 
-            const auto pdyn_tile = std::get_if<data_types::tiles::vertical_bomb>(&*opt_tile);
+            const auto pdyn_tile = std::get_if<data_types::tiles::column_nullifier>(&*opt_tile);
 
             if(!pdyn_tile)
             {
@@ -274,16 +274,16 @@ data_types::tile_coordinate_list board::make_vertical_bomb_tiles_explode()
             }
 
             //Remove all tiles from current column
-            for(int exploded_row = 0; exploded_row < tile_array_.n; ++exploded_row)
+            for(int nullified_row = 0; nullified_row < tile_array_.n; ++nullified_row)
             {
-                auto& opt_tile = libutil::at(tile_array_, col, exploded_row);
+                auto& opt_tile = libutil::at(tile_array_, col, nullified_row);
 
                 if(!opt_tile)
                 {
                     continue;
                 }
 
-                coords.push_back({col, exploded_row});
+                coords.push_back({col, nullified_row});
 
                 opt_tile = std::nullopt;
             }
@@ -294,7 +294,7 @@ data_types::tile_coordinate_list board::make_vertical_bomb_tiles_explode()
     return coords;
 }
 
-data_types::tile_coordinate_list board::make_horizontal_bomb_tiles_explode()
+data_types::tile_coordinate_list board::apply_row_nullifiers()
 {
     auto coords = data_types::tile_coordinate_list{};
 
@@ -307,7 +307,7 @@ data_types::tile_coordinate_list board::make_horizontal_bomb_tiles_explode()
                 return;
             }
 
-            const auto pdyn_tile = std::get_if<data_types::tiles::horizontal_bomb>(&*opt_tile);
+            const auto pdyn_tile = std::get_if<data_types::tiles::row_nullifier>(&*opt_tile);
 
             if(!pdyn_tile)
             {
@@ -315,16 +315,16 @@ data_types::tile_coordinate_list board::make_horizontal_bomb_tiles_explode()
             }
 
             //Remove all tiles from current row
-            for(int exploded_col = 0; exploded_col < tile_array_.m; ++exploded_col)
+            for(int nullified_col = 0; nullified_col < tile_array_.m; ++nullified_col)
             {
-                auto& opt_tile = libutil::at(tile_array_, exploded_col, row);
+                auto& opt_tile = libutil::at(tile_array_, nullified_col, row);
 
                 if(!opt_tile)
                 {
                     continue;
                 }
 
-                coords.push_back({exploded_col, row});
+                coords.push_back({nullified_col, row});
 
                 opt_tile = std::nullopt;
             }

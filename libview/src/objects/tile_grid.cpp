@@ -315,11 +315,11 @@ void tile_grid::drop_board_tiles(const data_types::board_tile_drop_list& drops)
     }
 }
 
-void tile_grid::make_tiles_explode(const data_types::tile_coordinate_list& exploded_tile_coordinates)
+void tile_grid::nullify_tiles(const data_types::tile_coordinate_list& nullified_tile_coordinates)
 {
     auto& animation = animations_.emplace_back();
 
-    for(const auto& coord: exploded_tile_coordinates)
+    for(const auto& coord: nullified_tile_coordinates)
     {
         auto& ptile = libutil::at(board_tiles_, coord.column_index, coord.row_index);
 
@@ -426,13 +426,13 @@ std::shared_ptr<objects::tile> tile_grid::make_tile
             {
                 return std::make_shared<number_tile>(tile.value, drawables_, *this);
             },
-            [&](const data_types::tiles::vertical_bomb&) -> tile_ptr
+            [&](const data_types::tiles::column_nullifier&) -> tile_ptr
             {
-                return std::make_shared<sdf_image_tile>("/res/images/vertical_bomb.tga", drawables_, *this);
+                return std::make_shared<sdf_image_tile>("/res/images/column_nullifier.tga", drawables_, *this);
             },
-            [&](const data_types::tiles::horizontal_bomb&) -> tile_ptr
+            [&](const data_types::tiles::row_nullifier&) -> tile_ptr
             {
-                return std::make_shared<sdf_image_tile>("/res/images/horizontal_bomb.tga", drawables_, *this);
+                return std::make_shared<sdf_image_tile>("/res/images/row_nullifier.tga", drawables_, *this);
             }
         },
         tile

@@ -59,8 +59,8 @@ add_ttf_to_sdf_command(DejaVuSans)
 add_svg_to_sdf_command(move_button)
 add_svg_to_sdf_command(rotate_button)
 add_svg_to_sdf_command(board_corner)
-add_svg_to_sdf_command(vertical_bomb)
-add_svg_to_sdf_command(horizontal_bomb)
+add_svg_to_sdf_command(column_nullifier)
+add_svg_to_sdf_command(row_nullifier)
 
 add_custom_target(
     res ALL
@@ -70,6 +70,6 @@ add_custom_target(
         "${CMAKE_CURRENT_BINARY_DIR}/out/images/move_button.tga"
         "${CMAKE_CURRENT_BINARY_DIR}/out/images/rotate_button.tga"
         "${CMAKE_CURRENT_BINARY_DIR}/out/images/board_corner.tga"
-        "${CMAKE_CURRENT_BINARY_DIR}/out/images/vertical_bomb.tga"
-        "${CMAKE_CURRENT_BINARY_DIR}/out/images/horizontal_bomb.tga"
+        "${CMAKE_CURRENT_BINARY_DIR}/out/images/column_nullifier.tga"
+        "${CMAKE_CURRENT_BINARY_DIR}/out/images/row_nullifier.tga"
 )

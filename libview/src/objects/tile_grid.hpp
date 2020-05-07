@@ -59,7 +59,7 @@ class tile_grid: public Object2D
 
         void drop_board_tiles(const data_types::board_tile_drop_list& drops);
 
-        void make_tiles_explode(const data_types::tile_coordinate_list& exploded_tile_coordinates);
+        void nullify_tiles(const data_types::tile_coordinate_list& nullified_tile_coordinates);
 
         void merge_tiles(const data_types::tile_merge_list& merges);
 
