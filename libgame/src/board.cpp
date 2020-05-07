@@ -57,7 +57,7 @@ int board::get_highest_tile_value() const
     {
         if(opt_tile)
         {
-            if(const auto pnum_tile = std::get_if<data_types::number_tile>(&*opt_tile))
+            if(const auto pnum_tile = std::get_if<data_types::tiles::number>(&*opt_tile))
             {
                 value = std::max(value, pnum_tile->value);
             }
@@ -73,7 +73,7 @@ int board::get_score() const
     {
         if(opt_tile)
         {
-            if(const auto pnum_tile = std::get_if<data_types::number_tile>(&*opt_tile))
+            if(const auto pnum_tile = std::get_if<data_types::tiles::number>(&*opt_tile))
             {
                 score += std::pow(3, pnum_tile->value);
             }
@@ -257,7 +257,7 @@ data_types::vertical_bomb_tile_explosion_list board::make_vertical_bomb_tiles_ex
                 return;
             }
 
-            const auto pdyn_tile = std::get_if<data_types::vertical_bomb_tile>(&*opt_tile);
+            const auto pdyn_tile = std::get_if<data_types::tiles::vertical_bomb>(&*opt_tile);
 
             if(!pdyn_tile)
             {
@@ -298,7 +298,7 @@ data_types::tile_merge_list board::merge_tiles()
         {
             const auto& opt_tile = libutil::at(tile_array_, column_index, row_index);
 
-            const auto pnum_tile = std::get_if<data_types::number_tile>(&*opt_tile);
+            const auto pnum_tile = std::get_if<data_types::tiles::number>(&*opt_tile);
             if(!pnum_tile)
             {
                 continue;
@@ -337,7 +337,7 @@ data_types::tile_merge_list board::merge_tiles()
                 }
 
                 //put the new merged tile on the layer
-                auto merged_tile = data_types::number_tile{current_tile.value + 1};
+                auto merged_tile = data_types::tiles::number{current_tile.value + 1};
                 libutil::at(tile_layer, column_index, row_index) = merged_tile;
 
                 merges.push_back
@@ -391,7 +391,7 @@ void board::select_tiles
         return;
     }
 
-    const auto pnum_tile = std::get_if<data_types::number_tile>(&*opt_tile);
+    const auto pnum_tile = std::get_if<data_types::tiles::number>(&*opt_tile);
     if(!pnum_tile)
     {
         return;

@@ -83,7 +83,7 @@ namespace
                     case 1:
                         return data_types::input_tile_array
                         {
-                            data_types::vertical_bomb_tile{},
+                            data_types::tiles::vertical_bomb{},
                             std::nullopt,
                             std::nullopt,
                             std::nullopt
@@ -91,18 +91,18 @@ namespace
                     case 2:
                         return data_types::input_tile_array
                         {
-                            data_types::number_tile{gen_.generate(max, standard_deviation)},
+                            data_types::tiles::number{gen_.generate(max, standard_deviation)},
                             std::nullopt,
-                            data_types::number_tile{gen_.generate(max, standard_deviation)},
+                            data_types::tiles::number{gen_.generate(max, standard_deviation)},
                             std::nullopt
                         };
                     default:
                     case 3:
                         return data_types::input_tile_array
                         {
-                            data_types::number_tile{gen_.generate(max, standard_deviation)},
-                            data_types::number_tile{gen_.generate(max, standard_deviation)},
-                            data_types::number_tile{gen_.generate(max, standard_deviation)},
+                            data_types::tiles::number{gen_.generate(max, standard_deviation)},
+                            data_types::tiles::number{gen_.generate(max, standard_deviation)},
+                            data_types::tiles::number{gen_.generate(max, standard_deviation)},
                             std::nullopt
                         };
                 }
@@ -119,16 +119,16 @@ namespace
         auto state = data_types::game_state{};
         state.next_input_tiles =
         {
-            data_types::number_tile{0},
+            data_types::tiles::number{0},
             std::nullopt,
-            data_types::number_tile{1},
+            data_types::tiles::number{1},
             std::nullopt
         };
         state.input_tiles =
         {
-            data_types::number_tile{0},
+            data_types::tiles::number{0},
             std::nullopt,
-            data_types::number_tile{0},
+            data_types::tiles::number{0},
             std::nullopt
         };
         return state;

@@ -30,27 +30,23 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libcommon::data_types
 {
 
-struct number_tile
+namespace tiles
 {
-    int value = 0;
-};
+    struct number
+    {
+        int value = 0;
+    };
 
-std::ostream& operator<<(std::ostream& l, const number_tile& r);
+    struct vertical_bomb{};
 
-
-
-struct vertical_bomb_tile
-{
-};
-
-std::ostream& operator<<(std::ostream& l, const vertical_bomb_tile& r);
-
-
+    std::ostream& operator<<(std::ostream& l, const number& r);
+    std::ostream& operator<<(std::ostream& l, const vertical_bomb& r);
+}
 
 using tile = std::variant
 <
-    number_tile,
-    vertical_bomb_tile
+    tiles::number,
+    tiles::vertical_bomb
 >;
 
 using opt_tile = std::optional<tile>;

@@ -205,11 +205,11 @@ void tile_grid::create_next_input(const data_types::input_tile_array& tiles)
                     (
                         libutil::overload
                         {
-                            [&](const data_types::number_tile& tile)
+                            [&](const data_types::tiles::number& tile)
                             {
                                 pnext_input_tile = make_number_tile(tile.value, position);
                             },
-                            [&](const data_types::vertical_bomb_tile&)
+                            [&](const data_types::tiles::vertical_bomb&)
                             {
                                 pnext_input_tile = make_vertical_bomb_tile(position);
                             }
@@ -409,13 +409,13 @@ void tile_grid::set_board_tiles(const data_types::board_tile_array& tiles)
             (
                 libutil::overload
                 {
-                    [&](const data_types::number_tile& tile)
+                    [&](const data_types::tiles::number& tile)
                     {
                         auto ptile = make_number_tile(tile.value, position);
                         ptile->set_alpha(1);
                         libutil::at(board_tiles_, col, row) = ptile;
                     },
-                    [&](const data_types::vertical_bomb_tile&)
+                    [&](const data_types::tiles::vertical_bomb&)
                     {
                         auto ptile = make_vertical_bomb_tile(position);
                         ptile->set_alpha(1);

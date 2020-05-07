@@ -129,24 +129,24 @@ namespace nlohmann
     };
 }
 
-namespace libcommon::data_types
+namespace libcommon::data_types::tiles
 {
 
-void to_json(nlohmann::json& to, const number_tile& from)
+void to_json(nlohmann::json& to, const number& from)
 {
     to = from.value;
 }
 
-void from_json(const nlohmann::json& from, number_tile& to)
+void from_json(const nlohmann::json& from, number& to)
 {
     to.value = from.get<int>();
 }
 
-void to_json(nlohmann::json&, const vertical_bomb_tile&)
+void to_json(nlohmann::json&, const vertical_bomb&)
 {
 }
 
-void from_json(const nlohmann::json&, vertical_bomb_tile&)
+void from_json(const nlohmann::json&, vertical_bomb&)
 {
 }
 
