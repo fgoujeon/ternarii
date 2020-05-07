@@ -158,6 +158,14 @@ void from_json(const nlohmann::json&, row_nullifier&)
 {
 }
 
+void to_json(nlohmann::json&, const number_nullifier&)
+{
+}
+
+void from_json(const nlohmann::json&, number_nullifier&)
+{
+}
+
 } //namespace
 
 

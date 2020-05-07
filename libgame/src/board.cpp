@@ -134,6 +134,14 @@ void board::drop_input_tiles(const board_input& in, event_list& events)
             }
         }
 
+        {
+            const auto nullifications = apply_number_nullifiers();
+            if(!nullifications.empty())
+            {
+                events.push_back(events::tile_nullification{nullifications});
+            }
+        }
+
         const auto merges = merge_tiles();
         if(!merges.empty())
         {
@@ -266,9 +274,7 @@ data_types::tile_coordinate_list board::apply_column_nullifiers()
                 return;
             }
 
-            const auto pdyn_tile = std::get_if<data_types::tiles::column_nullifier>(&*opt_tile);
-
-            if(!pdyn_tile)
+            if(!std::holds_alternative<data_types::tiles::column_nullifier>(*opt_tile))
             {
                 return;
             }
@@ -307,9 +313,7 @@ data_types::tile_coordinate_list board::apply_row_nullifiers()
                 return;
             }
 
-            const auto pdyn_tile = std::get_if<data_types::tiles::row_nullifier>(&*opt_tile);
-
-            if(!pdyn_tile)
+            if(!std::holds_alternative<data_types::tiles::row_nullifier>(*opt_tile))
             {
                 return;
             }
@@ -328,6 +332,92 @@ data_types::tile_coordinate_list board::apply_row_nullifiers()
 
                 opt_tile = std::nullopt;
             }
+        },
+        tile_array_
+    );
+
+    return coords;
+}
+
+data_types::tile_coordinate_list board::apply_number_nullifiers()
+{
+    auto coords = data_types::tile_coordinate_list{};
+
+    libutil::for_each_ij
+    (
+        [&](auto& opt_tile, const int col, const int row)
+        {
+            if(!opt_tile)
+            {
+                return;
+            }
+
+            if(!std::holds_alternative<data_types::tiles::number_nullifier>(*opt_tile))
+            {
+                return;
+            }
+
+            //Remove the nullifier tile itself
+            opt_tile = std::nullopt;
+            coords.push_back({col, row});
+
+            //Get value of number tile below, if any
+            const auto opt_value = [&]() -> std::optional<int>
+            {
+                if(row == 0)
+                {
+                    return std::nullopt;
+                }
+
+                const auto& opt_below_tile = libutil::at(tile_array_, col, row - 1);
+
+                if(!opt_below_tile)
+                {
+                    return std::nullopt;
+                }
+
+                const auto pbelow_tile = std::get_if<data_types::tiles::number>(&*opt_below_tile);
+
+                if(!pbelow_tile)
+                {
+                    return std::nullopt;
+                }
+
+                return pbelow_tile->value;
+            }();
+
+            if(!opt_value)
+            {
+                return;
+            }
+
+            //Remove all number tiles of that value
+            libutil::for_each_ij
+            (
+                [&](auto& opt_tile, const int col, const int row)
+                {
+                    if(!opt_tile)
+                    {
+                        return;
+                    }
+
+                    const auto ptile = std::get_if<data_types::tiles::number>(&*opt_tile);
+
+                    if(!ptile)
+                    {
+                        return;
+                    }
+
+                    if(ptile->value != *opt_value)
+                    {
+                        return;
+                    }
+
+                    opt_tile = std::nullopt;
+                    coords.push_back({col, row});
+                },
+                tile_array_
+            );
         },
         tile_array_
     );

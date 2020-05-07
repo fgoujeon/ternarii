@@ -43,6 +43,11 @@ namespace tiles
     {
         return l << "row_nullifier{}";
     }
+
+    std::ostream& operator<<(std::ostream& l, const number_nullifier& r)
+    {
+        return l << "number_nullifier{}";
+    }
 }
 
 

@@ -433,6 +433,10 @@ std::shared_ptr<objects::tile> tile_grid::make_tile
             [&](const data_types::tiles::row_nullifier&) -> tile_ptr
             {
                 return std::make_shared<sdf_image_tile>("/res/images/row_nullifier.tga", drawables_, *this);
+            },
+            [&](const data_types::tiles::number_nullifier&) -> tile_ptr
+            {
+                return std::make_shared<sdf_image_tile>("/res/images/number_nullifier.tga", drawables_, *this);
             }
         },
         tile

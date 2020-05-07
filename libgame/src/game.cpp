@@ -80,34 +80,36 @@ namespace
 
                 switch(count)
                 {
+                    default:
+                    case 0:
+                        return
+                        {
+                            data_types::tiles::number{gen_.generate(max, standard_deviation)},
+                            std::nullopt,
+                            data_types::tiles::number{gen_.generate(max, standard_deviation)},
+                            std::nullopt
+                        };
                     case 1:
-                        return data_types::input_tile_array
+                        return
                         {
                             data_types::tiles::column_nullifier{},
-                            std::nullopt,
-                            std::nullopt,
-                            std::nullopt
                         };
                     case 2:
-                        return data_types::input_tile_array
-                        {
-                            data_types::tiles::number{gen_.generate(max, standard_deviation)},
-                            std::nullopt,
-                            data_types::tiles::number{gen_.generate(max, standard_deviation)},
-                            std::nullopt
-                        };
-                    default:
-                    case 3:
-                        return data_types::input_tile_array
+                        return
                         {
                             data_types::tiles::row_nullifier{}
+                        };
+                    case 3:
+                        return
+                        {
+                            data_types::tiles::number_nullifier{}
                         };
                 }
             }
 
         private:
             random_number_generator rng_;
-            distribution dis_{1, 3};
+            distribution dis_{0, 3};
             random_tile_generator gen_{rng_};
     };
 

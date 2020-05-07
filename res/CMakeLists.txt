@@ -61,6 +61,7 @@ add_svg_to_sdf_command(rotate_button)
 add_svg_to_sdf_command(board_corner)
 add_svg_to_sdf_command(column_nullifier)
 add_svg_to_sdf_command(row_nullifier)
+add_svg_to_sdf_command(number_nullifier)
 
 add_custom_target(
     res ALL
@@ -72,4 +73,5 @@ add_custom_target(
         "${CMAKE_CURRENT_BINARY_DIR}/out/images/board_corner.tga"
         "${CMAKE_CURRENT_BINARY_DIR}/out/images/column_nullifier.tga"
         "${CMAKE_CURRENT_BINARY_DIR}/out/images/row_nullifier.tga"
+        "${CMAKE_CURRENT_BINARY_DIR}/out/images/number_nullifier.tga"
 )

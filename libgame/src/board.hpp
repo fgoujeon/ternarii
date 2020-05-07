@@ -75,6 +75,8 @@ class board
 
         data_types::tile_coordinate_list apply_row_nullifiers();
 
+        data_types::tile_coordinate_list apply_number_nullifiers();
+
         data_types::tile_merge_list merge_tiles();
 
         enum class selection_state
