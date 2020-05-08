@@ -455,25 +455,19 @@ data_types::tile_merge_list board::merge_tiles()
             {
                 //remove the selected tiles from the board
                 std::vector<data_types::tile_coordinate> removed_tile_coordinates;
-                for(int row2 = 0; row2 < total_row_count; ++row2)
-                {
-                    for(int col2 = 0; col2 < total_column_count; ++col2)
+                libutil::for_each_ij
+                (
+                    [&](auto& opt_tile2, const int row2, const int col2)
                     {
                         if(libutil::at(selection, row2, col2) == selection_state::selected)
                         {
-                            assert(libutil::at(tiles_, row2, col2));
-                            removed_tile_coordinates.push_back
-                            (
-                                data_types::tile_coordinate
-                                {
-                                    row2,
-                                    col2
-                                }
-                            );
-                            libutil::at(tiles_, row2, col2) = std::nullopt;
+                            assert(opt_tile2.has_value());
+                            removed_tile_coordinates.push_back({row2, col2});
+                            opt_tile2 = std::nullopt;
                         }
-                    }
-                }
+                    },
+                    tiles_
+                );
 
                 //put the new merged tile on the layer
                 auto merged_tile = data_types::tiles::number{current_tile.value + 1};
