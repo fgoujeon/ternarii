@@ -33,8 +33,8 @@ namespace
     {
         return
         {
-            -2.5f + c.column_index,
-            -5.0f + c.row_index
+            -2.5f + c.col,
+            -5.0f + c.row
         };
     }
 
@@ -58,8 +58,8 @@ namespace
                 //Convert to model coordinate
                 pos = Magnum::Vector2
                 {
-                    coord.column_index - 2.5f,
-                    coord.row_index - 0.5f + y_offset
+                    coord.col - 2.5f,
+                    coord.row - 0.5f + y_offset
                 };
             },
             positions
@@ -273,7 +273,7 @@ void tile_grid::drop_input_tiles(const data_types::input_tile_drop_list& drops)
 
     for(const auto& drop: drops)
     {
-        auto& ptile = libutil::at(input_tiles_, drop.input_coordinate.row_index, drop.input_coordinate.column_index);
+        auto& ptile = libutil::at(input_tiles_, drop.input_coordinate.row, drop.input_coordinate.col);
 
         const auto src_position = ptile->transformation().translation();
         const auto dst_position = tile_coordinate_to_position(drop.board_coordinate);
@@ -286,7 +286,7 @@ void tile_grid::drop_input_tiles(const data_types::input_tile_drop_list& drops)
             ptile
         );
 
-        libutil::at(board_tiles_, drop.board_coordinate.row_index, drop.board_coordinate.column_index) = ptile;
+        libutil::at(board_tiles_, drop.board_coordinate.row, drop.board_coordinate.col) = ptile;
         ptile = nullptr;
     }
 }
@@ -297,10 +297,10 @@ void tile_grid::drop_board_tiles(const data_types::board_tile_drop_list& drops)
 
     for(const auto& drop: drops)
     {
-        auto& ptile = libutil::at(board_tiles_, drop.src_row_index, drop.column_index);
+        auto& ptile = libutil::at(board_tiles_, drop.src_row, drop.col);
 
-        const auto src_position = tile_coordinate_to_position(data_types::tile_coordinate{drop.src_row_index, drop.column_index});
-        const auto dst_position = tile_coordinate_to_position(data_types::tile_coordinate{drop.dst_row_index, drop.column_index});
+        const auto src_position = tile_coordinate_to_position(data_types::tile_coordinate{drop.src_row, drop.col});
+        const auto dst_position = tile_coordinate_to_position(data_types::tile_coordinate{drop.dst_row, drop.col});
 
         animation.add_fixed_speed_translation
         (
@@ -310,7 +310,7 @@ void tile_grid::drop_board_tiles(const data_types::board_tile_drop_list& drops)
             ptile
         );
 
-        libutil::at(board_tiles_, drop.dst_row_index, drop.column_index) = ptile;
+        libutil::at(board_tiles_, drop.dst_row, drop.col) = ptile;
         ptile = nullptr;
     }
 }
@@ -321,7 +321,7 @@ void tile_grid::nullify_tiles(const data_types::tile_coordinate_list& nullified_
 
     for(const auto& coord: nullified_tile_coordinates)
     {
-        auto& ptile = libutil::at(board_tiles_, coord.row_index, coord.column_index);
+        auto& ptile = libutil::at(board_tiles_, coord.row, coord.col);
 
         if(!ptile)
         {
@@ -346,7 +346,7 @@ void tile_grid::merge_tiles(const data_types::tile_merge_list& merges)
         for(const auto& src_tile_coordinate: merge.src_tile_coordinates) //for each source tile
         {
             const auto src_position = tile_coordinate_to_position(src_tile_coordinate);
-            const auto& psrc_tile = libutil::at(board_tiles_, src_tile_coordinate.row_index, src_tile_coordinate.column_index);
+            const auto& psrc_tile = libutil::at(board_tiles_, src_tile_coordinate.row, src_tile_coordinate.col);
 
             //first, translate source tile toward position of destination tile
             if(dst_position != src_position)
@@ -366,7 +366,7 @@ void tile_grid::merge_tiles(const data_types::tile_merge_list& merges)
 
         //create destination tile
         auto pdst_tile = make_tile(data_types::tiles::number{merge.dst_tile_value}, dst_position);
-        libutil::at(board_tiles_, merge.dst_tile_coordinate.row_index, merge.dst_tile_coordinate.column_index) = pdst_tile;
+        libutil::at(board_tiles_, merge.dst_tile_coordinate.row, merge.dst_tile_coordinate.col) = pdst_tile;
 
         //make destination tile appear with a fade in
         animation1.add_alpha_transition(0, 1, 0.2, pdst_tile);

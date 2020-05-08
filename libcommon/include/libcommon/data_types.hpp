@@ -67,7 +67,7 @@ using opt_tile = std::optional<tile>;
 
 /*
 Convention for accessing the tiles:
-libutil::at(tiles, row_index, column_index)
+libutil::at(tiles, row, col)
 
 Convention of rows and columns:
 [..]
@@ -89,12 +89,12 @@ template<size_t RowCount, size_t ColumnCount>
 std::optional<int> get_lowest_empty_cell
 (
     const basic_opt_tile_matrix<RowCount, ColumnCount>& mat,
-    const int column_index
+    const int col
 )
 {
     for(auto row = 0; row < RowCount; ++row)
     {
-        if(!libutil::at(mat, row, column_index))
+        if(!libutil::at(mat, row, col))
         {
             return row;
         }
@@ -124,8 +124,8 @@ int get_tile_count
 
 struct tile_coordinate
 {
-    int row_index = 0;
-    int column_index = 0;
+    int row = 0;
+    int col = 0;
 };
 
 using tile_coordinate_list = std::vector<tile_coordinate>;
@@ -195,9 +195,9 @@ std::ostream& operator<<(std::ostream& l, const input_tile_drop& r);
 
 struct board_tile_drop
 {
-    int column_index = 0;
-    int src_row_index = 0;
-    int dst_row_index = 0;
+    int col = 0;
+    int src_row = 0;
+    int dst_row = 0;
 };
 
 using board_tile_drop_list = std::vector<board_tile_drop>;

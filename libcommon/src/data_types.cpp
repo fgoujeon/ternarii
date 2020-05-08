@@ -81,7 +81,7 @@ tile_coordinate get_tile_coordinate
     case hash(IN_ROW, IN_COL, ROT): \
         return tile_coordinate{OUT_ROW, OUT_COL + layout.col_offset};
 
-    switch(hash(tile_coord.row_index, tile_coord.column_index, layout.rotation))
+    switch(hash(tile_coord.row, tile_coord.col, layout.rotation))
     {
         //--(in_row, in_col, rot, out_row, out_col)
         CASE(0,      0,      0,   0,       0);
@@ -114,8 +114,8 @@ std::ostream& operator<<(std::ostream& l, const tile_coordinate& r)
 {
     l << "tile_coordinate";
     l << "{";
-    l << "row_index: " << r.row_index << ", ";
-    l << "column_index: " << r.column_index;
+    l << "row: " << r.row << ", ";
+    l << "col: " << r.col;
     l << "}";
     return l;
 }
@@ -138,9 +138,9 @@ std::ostream& operator<<(std::ostream& l, const board_tile_drop& r)
 {
     l << "board_tile_drop";
     l << "{";
-    l << "column_index: " << r.column_index << ", ";
-    l << "src_row_index: " << r.src_row_index << ", ";
-    l << "dst_row_index: " << r.dst_row_index;
+    l << "col: " << r.col << ", ";
+    l << "src_row: " << r.src_row << ", ";
+    l << "dst_row: " << r.dst_row;
     l << "}";
     return l;
 }

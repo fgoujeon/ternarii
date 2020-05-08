@@ -51,7 +51,7 @@ class board
 
         const data_types::board_tile_array& tile_array() const
         {
-            return tile_array_;
+            return tiles_;
         }
 
         bool is_game_over() const;
@@ -91,14 +91,14 @@ class board
         void select_tiles
         (
             const int tile_value,
-            const int row_index,
-            const int column_index,
+            const int row,
+            const int col,
             selection_t& selection,
             int& selection_size
         );
 
     private:
-        data_types::board_tile_array& tile_array_;
+        data_types::board_tile_array& tiles_;
         int& hi_score_;
 };
 
