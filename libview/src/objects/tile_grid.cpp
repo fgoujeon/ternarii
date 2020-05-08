@@ -328,7 +328,7 @@ void tile_grid::nullify_tiles(const data_types::tile_coordinate_list& nullified_
             continue;
         }
 
-        animation.add_alpha_transition(1, 0, 0.2, ptile);
+        animation.add_alpha_transition(1, 0, 0.4, ptile);
 
         ptile = nullptr;
     }
