@@ -34,7 +34,7 @@ class board
 {
     public:
         static constexpr int total_column_count = 6;
-        static constexpr int total_row_count = 10;
+        static constexpr int total_row_count = 9;
 
         //dimensions of the zone, starting from the bottom of the board, that can
         //take tiles without causing game over

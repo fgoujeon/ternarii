@@ -82,7 +82,7 @@ template<size_t RowCount, size_t ColumnCount>
 using basic_opt_tile_matrix = libutil::matrix<opt_tile, RowCount, ColumnCount>;
 
 using input_tile_array = basic_opt_tile_matrix<2, 2>;
-using board_tile_array = basic_opt_tile_matrix<10, 6>;
+using board_tile_array = basic_opt_tile_matrix<9, 6>;
 
 //Get the row index of the lowest empty cell on the given column.
 template<size_t RowCount, size_t ColumnCount>

@@ -219,16 +219,20 @@ namespace
         {
             "boardTiles":
             [
-                1,    0,    null, null, null, null, null, null, null, null,
-                null, null, null, null, null, null, null, null, null, null,
-                null, null, null, null, null, null, null, null, null, null,
-                null, null, null, null, null, null, null, null, null, null,
-                null, null, null, null, null, null, null, null, null, null,
-                null, null, null, null, null, null, null, null, null, null
+                {"type":0,"value":2},{"type":0,"value":0},null,null,null,null,
+                null,null,null,null,null,null,
+                null,null,null,null,null,null,
+                null,null,null,null,null,null,
+                null,null,null,null,null,null,
+                null,null,null,null,null,null,
+                null,null,null,null,null,null,
+                null,null,null,null,null,null,
+                null,null,null,null,null,null
             ],
-            "hiScore":3,
-            "inputTiles":[0,null,1,null],
-            "nextInputTiles":[2,null,0,null]
+            "hiScore":179575,
+            "inputTiles":[{"type":0,"value":0},{"type":0,"value":2},null,null],
+            "nextInputTiles":[{"type":0,"value":0},{"type":0,"value":2},null,null],
+            "version":1
         }
         */
 
