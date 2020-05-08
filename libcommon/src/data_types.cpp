@@ -56,7 +56,7 @@ std::ostream& operator<<(std::ostream& l, const input_layout& r)
 {
     l << "input_layout";
     l << "{";
-    l << "x_offset: " << r.x_offset << ", ";
+    l << "col_offset: " << r.col_offset << ", ";
     l << "rotation: " << r.rotation;
     l << "}";
     return l;
@@ -68,42 +68,43 @@ tile_coordinate get_tile_coordinate
     const tile_coordinate& tile_coord //coordinate of tile in input
 )
 {
-    const auto hash = [](const int xin, const int yin, const int rot)
+    const auto hash = [](const int in_row, const int in_col, const int rot)
     {
         return
-            ((xin & 1) << 3) |
-            ((yin & 1) << 2) |
+            ((in_row & 1) << 3) |
+            ((in_col & 1) << 2) |
             (rot & 3)
         ;
     };
 
-#define CASE(XIN, YIN, ROT, XOUT, YOUT) \
-    case hash(XIN, YIN, ROT): \
-        return tile_coordinate{XOUT + layout.x_offset, YOUT};
+#define CASE(IN_ROW, IN_COL, ROT, OUT_ROW, OUT_COL) \
+    case hash(IN_ROW, IN_COL, ROT): \
+        return tile_coordinate{OUT_ROW, OUT_COL + layout.col_offset};
 
-    switch(hash(tile_coord.column_index, tile_coord.row_index, layout.rotation))
+    switch(hash(tile_coord.row_index, tile_coord.column_index, layout.rotation))
     {
-        //--(xin, yin, rot, xout, yout)
-        CASE(0,   0,   0,   0,    0);
-        CASE(0,   0,   1,   0,    1);
-        CASE(0,   0,   2,   1,    1);
-        CASE(0,   0,   3,   1,    0);
-        CASE(1,   0,   0,   1,    0);
-        CASE(1,   0,   1,   0,    0);
-        CASE(1,   0,   2,   0,    1);
-        CASE(1,   0,   3,   1,    1);
-        CASE(0,   1,   0,   0,    1);
-        CASE(0,   1,   1,   1,    1);
-        CASE(0,   1,   2,   1,    0);
-        CASE(0,   1,   3,   0,    0);
-        CASE(1,   1,   0,   1,    1);
-        CASE(1,   1,   1,   1,    0);
-        CASE(1,   1,   2,   0,    0);
-        CASE(1,   1,   3,   0,    1);
+        //--(in_row, in_col, rot, out_row, out_col)
+        CASE(0,      0,      0,   0,       0);
+        CASE(0,      0,      1,   1,       0);
+        CASE(0,      0,      2,   1,       1);
+        CASE(0,      0,      3,   0,       1);
+        CASE(0,      1,      0,   0,       1);
+        CASE(0,      1,      1,   0,       0);
+        CASE(0,      1,      2,   1,       0);
+        CASE(0,      1,      3,   1,       1);
+        CASE(1,      0,      0,   1,       0);
+        CASE(1,      0,      1,   1,       1);
+        CASE(1,      0,      2,   0,       1);
+        CASE(1,      0,      3,   0,       0);
+        CASE(1,      1,      0,   1,       1);
+        CASE(1,      1,      1,   0,       1);
+        CASE(1,      1,      2,   0,       0);
+        CASE(1,      1,      3,   1,       0);
     }
 
 #undef CASE
 
+    assert(false);
     return tile_coordinate{0, 0};
 }
 
@@ -113,8 +114,8 @@ std::ostream& operator<<(std::ostream& l, const tile_coordinate& r)
 {
     l << "tile_coordinate";
     l << "{";
-    l << "column_index: " << r.column_index << ", ";
-    l << "row_index: " << r.row_index;
+    l << "row_index: " << r.row_index << ", ";
+    l << "column_index: " << r.column_index;
     l << "}";
     return l;
 }

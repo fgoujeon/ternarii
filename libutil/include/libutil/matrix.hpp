@@ -35,50 +35,54 @@ struct matrix
 };
 
 template<class Matrix>
-auto begin(Matrix&& mat)
+auto begin(Matrix& mat)
 {
     return mat.data.begin();
 }
 
 template<class Matrix>
-auto end(Matrix&& mat)
+auto end(Matrix& mat)
 {
     return mat.data.end();
 }
 
 template<class Matrix>
-decltype(auto) at(Matrix&& mat, const int ij)
+decltype(auto) at(Matrix& mat, const int ij)
 {
     assert(ij < mat.m * mat.n);
     return mat.data[ij];
 }
 
 template<class Matrix>
-decltype(auto) at(Matrix&& mat, const int i, const int j)
+decltype(auto) at(Matrix& mat, const int i, const int j)
 {
     assert(i < mat.m && j < mat.n);
     return mat.data[i * mat.n + j];
 }
 
+template<class Matrix, class Matrix2>
+constexpr bool have_same_size()
+{
+    return Matrix::m == Matrix2::m && Matrix::n == Matrix2::n;
+}
+
 //For each element matN_ij of each given matrix,
 //call f(mat0_ij, mat1_ij, ..., matN_ij).
 template<typename F, class Matrix, class... Matrices>
-void for_each(F&& f, Matrix&& mat, Matrices&&... mats)
+void for_each(F&& f, Matrix& mat, Matrices&... mats)
 {
+    static_assert((have_same_size<Matrix, Matrices>() && ...));
+
     for(auto ij = 0; ij < mat.m * mat.n; ++ij)
     {
-        f
-        (
-            at(std::forward<Matrix>(mat), ij),
-            at(std::forward<Matrices>(mats), ij)...
-        );
+        f(at(mat, ij), at(mats, ij)...);
     }
 }
 
 //For each element matN_ij of each given matrix,
 //call f(mat0_ij, mat1_ij, ..., matN_ij, i, j).
 template<typename F, class Matrix, class... Matrices>
-void for_each_ij(F&& f, Matrix&& mat, Matrices&&... mats)
+void for_each_ij(F&& f, Matrix& mat, Matrices&... mats)
 {
     for(auto i = 0; i < mat.m; ++i)
     {
@@ -86,8 +90,8 @@ void for_each_ij(F&& f, Matrix&& mat, Matrices&&... mats)
         {
             f
             (
-                at(std::forward<Matrix>(mat), i, j),
-                at(std::forward<Matrices>(mats), i, j)...,
+                at(mat, i, j),
+                at(mats, i, j)...,
                 i,
                 j
             );

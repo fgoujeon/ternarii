@@ -67,7 +67,7 @@ using opt_tile = std::optional<tile>;
 
 /*
 Convention for accessing the tiles:
-tiles[column_index][row_index]
+libutil::at(tiles, row_index, column_index)
 
 Convention of rows and columns:
 [..]
@@ -78,35 +78,35 @@ Convention of rows and columns:
 [R0]
     [C0][C1][C2][C3][..]
 */
-template<size_t ColumnCount, size_t RowCount>
-using basic_opt_tile_matrix = libutil::matrix<opt_tile, ColumnCount, RowCount>;
+template<size_t RowCount, size_t ColumnCount>
+using basic_opt_tile_matrix = libutil::matrix<opt_tile, RowCount, ColumnCount>;
 
 using input_tile_array = basic_opt_tile_matrix<2, 2>;
-using board_tile_array = basic_opt_tile_matrix<6, 10>;
+using board_tile_array = basic_opt_tile_matrix<10, 6>;
 
 //Get the row index of the lowest empty cell on the given column.
-template<size_t ColumnCount, size_t RowCount>
+template<size_t RowCount, size_t ColumnCount>
 std::optional<int> get_lowest_empty_cell
 (
-    const basic_opt_tile_matrix<ColumnCount, RowCount>& mat,
+    const basic_opt_tile_matrix<RowCount, ColumnCount>& mat,
     const int column_index
 )
 {
-    for(auto i = 0; i < RowCount; ++i)
+    for(auto row = 0; row < RowCount; ++row)
     {
-        if(!at(mat, column_index, i))
+        if(!libutil::at(mat, row, column_index))
         {
-            return i;
+            return row;
         }
     }
 
     return std::nullopt;
 }
 
-template<size_t ColumnCount, size_t RowCount>
+template<size_t RowCount, size_t ColumnCount>
 int get_tile_count
 (
-    const basic_opt_tile_matrix<ColumnCount, RowCount>& mat
+    const basic_opt_tile_matrix<RowCount, ColumnCount>& mat
 )
 {
     auto count = 0;
@@ -124,8 +124,8 @@ int get_tile_count
 
 struct tile_coordinate
 {
-    int column_index = 0;
     int row_index = 0;
+    int column_index = 0;
 };
 
 using tile_coordinate_list = std::vector<tile_coordinate>;
@@ -136,7 +136,7 @@ std::ostream& operator<<(std::ostream& l, const tile_coordinate& r);
 
 struct input_layout
 {
-    int x_offset = 2;
+    int col_offset = 2;
 
     /*
     Rotation is expressed as number of 90 degree clockwise rotations.
@@ -165,7 +165,7 @@ std::ostream& operator<<(std::ostream& l, const input_layout& r);
 Get the coordinate of the given tile, with given layout applied, in a
 hypothetical 6*2 array.
 
-E.g. with x_offset = 3 and rotation = 1, input is laid out like so:
+E.g. with col_offset = 3 and rotation = 1, input is laid out like so:
 [---][---][---][0,0][0,1][---][---]
 [---][---][---][1,0][1,1][---][---]
 

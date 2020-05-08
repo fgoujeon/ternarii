@@ -85,9 +85,7 @@ namespace
                         return
                         {
                             data_types::tiles::number{gen_.generate(max, standard_deviation)},
-                            std::nullopt,
-                            data_types::tiles::number{gen_.generate(max, standard_deviation)},
-                            std::nullopt
+                            data_types::tiles::number{gen_.generate(max, standard_deviation)}
                         };
                     case 1: return {data_types::tiles::column_nullifier{}};
                     case 2: return {data_types::tiles::row_nullifier{}};

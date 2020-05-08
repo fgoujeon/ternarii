@@ -40,7 +40,7 @@ class tile_grid: public Object2D
 {
     private:
         using input_tile_array = libutil::matrix<std::shared_ptr<tile>, 2, 2>;
-        using board_tile_array = libutil::matrix<std::shared_ptr<tile>, 6, 10>;
+        using board_tile_array = libutil::matrix<std::shared_ptr<tile>, 10, 6>;
 
     public:
         explicit tile_grid(SceneGraph::DrawableGroup2D& drawables, Object2D& parent);

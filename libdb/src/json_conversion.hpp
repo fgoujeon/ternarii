@@ -200,7 +200,7 @@ namespace
             auto i = 0;
             for(const auto& json_tile: from)
             {
-                json_tile.get_to(libutil::at(to, i, 0));
+                json_tile.get_to(libutil::at(to, 0, i));
                 ++i;
             }
         };

@@ -28,7 +28,7 @@ namespace
 
     constexpr auto default_layout = data_types::input_layout
     {
-        .x_offset = 2,
+        .col_offset = 2,
         .rotation = 0
     };
 
@@ -62,7 +62,7 @@ namespace
             return column_count - 2;
         }();
 
-        out.x_offset = std::clamp(in.x_offset, xmin, xmax);
+        out.col_offset = std::clamp(in.col_offset, xmin, xmax);
 
         return out;
     }
@@ -87,14 +87,14 @@ event board_input::set_tiles(const data_types::input_tile_array& tiles)
 
 void board_input::shift_left(event_list& events)
 {
-    --layout_.x_offset;
+    --layout_.col_offset;
     layout_ = fix(layout_, tiles_);
     events.push_back(events::input_layout_change{layout_});
 }
 
 void board_input::shift_right(event_list& events)
 {
-    ++layout_.x_offset;
+    ++layout_.col_offset;
     layout_ = fix(layout_, tiles_);
     events.push_back(events::input_layout_change{layout_});
 }
@@ -115,11 +115,11 @@ void board_input::rotate(event_list& events)
     {
         if(layout_.rotation == 3)
         {
-            --layout_.x_offset;
+            --layout_.col_offset;
         }
         if(layout_.rotation == 4)
         {
-            ++layout_.x_offset;
+            ++layout_.col_offset;
         }
     }
 
