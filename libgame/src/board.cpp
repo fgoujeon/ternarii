@@ -27,13 +27,8 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libgame
 {
 
-board::board
-(
-    data_types::board_tile_array& tiles,
-    int& hi_score
-):
-    tiles_(tiles),
-    hi_score_(hi_score)
+board::board(data_types::board_tile_array& tiles):
+    tiles_(tiles)
 {
 }
 
@@ -156,12 +151,6 @@ void board::drop_input_tiles(const board_input& in, event_list& events)
     } while(old_event_count != events.size());
 
     events.push_back(events::score_change{get_score()});
-
-    if(hi_score_ < get_score())
-    {
-        hi_score_ = get_score();
-        events.push_back(events::hi_score_change{hi_score_});
-    }
 }
 
 data_types::input_tile_drop_list board::drop_input_tiles_only(const board_input& in)

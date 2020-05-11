@@ -43,11 +43,7 @@ class board
         static constexpr int authorized_cell_count = authorized_column_count * authorized_row_count;
 
     public:
-        board
-        (
-            data_types::board_tile_array& tiles,
-            int& hi_score
-        );
+        board(data_types::board_tile_array& tiles);
 
         const data_types::board_tile_array& tile_array() const
         {
@@ -99,7 +95,6 @@ class board
 
     private:
         data_types::board_tile_array& tiles_;
-        int& hi_score_;
 };
 
 } //namespace

@@ -167,7 +167,7 @@ struct game::impl
 
     random_tile_matrix_generator rand;
     data_types::game_state state;
-    board board_{state.board_tiles, state.hi_score};
+    board board_{state.board_tiles};
     board_input input_{state.input_tiles};
 };
 
@@ -261,24 +261,33 @@ void game::rotate_input(event_list& events)
 
 void game::drop_input_tiles(event_list& events)
 {
-    if(!is_game_over())
+    if(is_game_over())
     {
-        //drop the input
-        pimpl_->board_.drop_input_tiles(pimpl_->input_, events);
-
-        if(!is_game_over())
-        {
-            //move the next input into the input
-            events.push_back(pimpl_->input_.set_tiles(pimpl_->state.next_input_tiles));
-
-            //create a new next input
-            events.push_back(pimpl_->generate_next_input());
-        }
+        return;
     }
+
+    //drop the input
+    pimpl_->board_.drop_input_tiles(pimpl_->input_, events);
 
     if(is_game_over())
     {
         events.push_back(events::end_of_game{});
+
+        //Save hi-score
+        auto& hi_score = pimpl_->state.hi_score;
+        if(hi_score < get_score())
+        {
+            hi_score = get_score();
+            events.push_back(events::hi_score_change{hi_score});
+        }
+    }
+    else
+    {
+        //move the next input into the input
+        events.push_back(pimpl_->input_.set_tiles(pimpl_->state.next_input_tiles));
+
+        //create a new next input
+        events.push_back(pimpl_->generate_next_input());
     }
 }
 
