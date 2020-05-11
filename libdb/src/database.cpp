@@ -28,6 +28,25 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libdb
 {
 
+namespace
+{
+    std::filesystem::path get_config_dir()
+    {
+        static const auto dir = std::filesystem::path{std::getenv("HOME")} / ".config" / "ternarii";
+        return dir;
+    }
+
+    std::filesystem::path get_database_path(const int version = 1)
+    {
+        switch(version)
+        {
+            case 0: return get_config_dir() / "database.json";
+            case 1: return get_config_dir() / "database_v1.json";
+            default: throw std::runtime_error{"Unsupported database version."};
+        }
+    }
+}
+
 struct database::impl
 {
     private:
@@ -106,15 +125,16 @@ struct database::impl
             }
         }
 
-        void try_load_data()
+        bool try_load_data(const int version)
         {
-            if(!exists(path_))
+            const auto path = get_database_path(version);
+            if(!exists(path))
             {
-                return;
+                return false;
             }
 
             //read json from file
-            auto ifs = std::ifstream{path_};
+            auto ifs = std::ifstream{path};
             auto json = nlohmann::json{};
             ifs >> json;
 
@@ -123,14 +143,18 @@ struct database::impl
 #endif
 
             //convert json to state
-            opt_game_state_ = json;
+            auto game_state = data_types::game_state{};
+            from_json(json, game_state, version);
+            opt_game_state_ = game_state;
+
+            return true;
         }
 
         void load_data()
         {
             try
             {
-                try_load_data();
+                try_load_data(1) || try_load_data(0);
             }
             catch(const std::exception& e)
             {
@@ -149,8 +173,9 @@ struct database::impl
         {
             try
             {
-                std::filesystem::create_directories(path_.parent_path());
-                std::ofstream ofs{path_};
+                const auto path = get_database_path();
+                std::filesystem::create_directories(path.parent_path());
+                auto ofs = std::ofstream{path};
                 const auto json = nlohmann::json(*opt_game_state_);
                 ofs << json;
             }
@@ -178,7 +203,6 @@ struct database::impl
         }
 
     private:
-        const std::filesystem::path path_ = std::filesystem::path{std::getenv("HOME")} / ".config" / "ternarii" / "database.json";
         event_handler event_handler_;
         state current_state_ = state::starting;
         std::optional<data_types::game_state> opt_game_state_;

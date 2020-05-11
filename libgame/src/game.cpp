@@ -98,39 +98,14 @@ namespace
             distribution dis_{97, 1, 1, 1};
             random_tile_generator gen_{rng_};
     };
-
-    data_types::game_state make_default_game_state()
-    {
-        auto state = data_types::game_state{};
-        state.next_input_tiles =
-        {
-            data_types::tiles::number{0},
-            std::nullopt,
-            data_types::tiles::number{1},
-            std::nullopt
-        };
-        state.input_tiles =
-        {
-            data_types::tiles::number{0},
-            std::nullopt,
-            data_types::tiles::number{0},
-            std::nullopt
-        };
-        return state;
-    }
 }
 
 struct game::impl
 {
-    impl():
-        impl(make_default_game_state())
-    {
-    }
+    impl() = default;
 
     impl(const data_types::game_state& s):
-        state(s),
-        board_(state.board_tiles, state.hi_score),
-        input_(state.input_tiles)
+        state(s)
     {
     }
 
@@ -192,8 +167,8 @@ struct game::impl
 
     random_tile_matrix_generator rand;
     data_types::game_state state;
-    board board_;
-    board_input input_;
+    board board_{state.board_tiles, state.hi_score};
+    board_input input_{state.input_tiles};
 };
 
 game::game():

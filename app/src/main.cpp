@@ -212,21 +212,24 @@ class app: public Magnum::Platform::Sdl2Application
             if(opt_game_state)
             {
                 pgame_ = std::make_unique<libgame::game>(*opt_game_state);
+
+                //initialize view
+                view_.set_score(pgame_->get_score());
+                view_.set_hi_score(pgame_->get_hi_score());
+                view_.create_next_input(pgame_->get_input_tiles());
+                view_.insert_next_input(pgame_->get_input_layout());
+                view_.create_next_input(pgame_->get_next_input_tiles());
+                view_.set_board_tiles(pgame_->get_board_tiles());
+                view_.set_game_over_screen_visible(pgame_->is_game_over());
+                view_.set_visible(true);
             }
             else
             {
                 pgame_ = std::make_unique<libgame::game>();
-            }
 
-            //initialize view
-            view_.set_score(pgame_->get_score());
-            view_.set_hi_score(pgame_->get_hi_score());
-            view_.create_next_input(pgame_->get_input_tiles());
-            view_.insert_next_input(pgame_->get_input_layout());
-            view_.create_next_input(pgame_->get_next_input_tiles());
-            view_.set_board_tiles(pgame_->get_board_tiles());
-            view_.set_game_over_screen_visible(pgame_->is_game_over());
-            view_.set_visible(true);
+                view_.set_visible(true);
+                modify_game(&libgame::game::start);
+            }
         }
 
         void handle_database_event(const libdb::event& event)

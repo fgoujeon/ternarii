@@ -52,25 +52,12 @@ namespace
     };
 }
 
-//Add support of std::optional
+//Add support of std::variant and std::optional
 namespace nlohmann
 {
     template<typename... Ts>
     struct adl_serializer<std::variant<Ts...>>
     {
-        static void to_json(json& to, const std::variant<Ts...>& from)
-        {
-            to["type"] = from.index();
-            std::visit
-            (
-                [&](const auto& v)
-                {
-                    to["value"] = v;
-                },
-                from
-            );
-        }
-
         static void from_json(const json& from, std::variant<Ts...>& to)
         {
             const auto type_index = from.at("type").get<int>();
@@ -98,23 +85,24 @@ namespace nlohmann
                 throw std::runtime_error{"Invalid type index: " + std::to_string(type_index)};
             }
         }
+
+        static void to_json(json& to, const std::variant<Ts...>& from)
+        {
+            to["type"] = from.index();
+            std::visit
+            (
+                [&](const auto& v)
+                {
+                    to["value"] = v;
+                },
+                from
+            );
+        }
     };
 
     template<typename T>
     struct adl_serializer<std::optional<T>>
     {
-        static void to_json(json& to, const std::optional<T>& from)
-        {
-            if(from == std::nullopt)
-            {
-                to = nullptr;
-            }
-            else
-            {
-                to = *from;
-            }
-        }
-
         static void from_json(const json& from, std::optional<T>& to)
         {
             if(from.is_null())
@@ -126,95 +114,137 @@ namespace nlohmann
                 to = from.get<T>();
             }
         }
+
+        static void to_json(json& to, const std::optional<T>& from)
+        {
+            if(from == std::nullopt)
+            {
+                to = nullptr;
+            }
+            else
+            {
+                to = *from;
+            }
+        }
     };
 }
 
 namespace libcommon::data_types::tiles
 {
+    void from_json(const nlohmann::json& from, number& to)
+    {
+        to.value = from.get<int>();
+    }
 
-void to_json(nlohmann::json& to, const number& from)
-{
-    to = from.value;
+    void to_json(nlohmann::json& to, const number& from)
+    {
+        to = from.value;
+    }
+
+    void from_json(const nlohmann::json&, column_nullifier&)
+    {
+    }
+
+    void to_json(nlohmann::json&, const column_nullifier&)
+    {
+    }
+
+    void from_json(const nlohmann::json&, row_nullifier&)
+    {
+    }
+
+    void to_json(nlohmann::json&, const row_nullifier&)
+    {
+    }
+
+    void from_json(const nlohmann::json&, number_nullifier&)
+    {
+    }
+
+    void to_json(nlohmann::json&, const number_nullifier&)
+    {
+    }
 }
-
-void from_json(const nlohmann::json& from, number& to)
-{
-    to.value = from.get<int>();
-}
-
-void to_json(nlohmann::json&, const column_nullifier&)
-{
-}
-
-void from_json(const nlohmann::json&, column_nullifier&)
-{
-}
-
-void to_json(nlohmann::json&, const row_nullifier&)
-{
-}
-
-void from_json(const nlohmann::json&, row_nullifier&)
-{
-}
-
-void to_json(nlohmann::json&, const number_nullifier&)
-{
-}
-
-void from_json(const nlohmann::json&, number_nullifier&)
-{
-}
-
-} //namespace
-
 
 namespace libgame::data_types
 {
+    void to_json(nlohmann::json& to, const game_state& from)
+    {
+        to["hiScore"]        = from.hi_score;
+        to["nextInputTiles"] = from.next_input_tiles.data;
+        to["inputTiles"]     = from.input_tiles.data;
+        to["boardTiles"]     = from.board_tiles.data;
+    }
+}
 
-namespace
+namespace libdb
 {
-    void from_json_0(const nlohmann::json& from, game_state& to)
+    void from_json_v0(const nlohmann::json& from, libgame::data_types::game_state& to)
     {
         /*
-        Example:
+        Example of v0 format:
 
         {
             "boardTiles":
             [
-                [1,    0,    null, null, null, null, null, null, null, null],
-                [null, null, null, null, null, null, null, null, null, null],
+                [2,    null, null, null, null, null, null, null, null, null],
+                [0,    null, null, null, null, null, null, null, null, null],
                 [null, null, null, null, null, null, null, null, null, null],
                 [null, null, null, null, null, null, null, null, null, null],
                 [null, null, null, null, null, null, null, null, null, null],
                 [null, null, null, null, null, null, null, null, null, null]
             ],
-            "hiScore":3,
+            "hiScore":179575,
             "inputTiles":[0,1],
-            "nextInputTiles":[2,0]
+            "nextInputTiles":[2,1]
         }
         */
 
-        const auto from_tile_array1d = [](const nlohmann::json& from, auto& to)
-        {
-            auto i = 0;
-            for(const auto& json_tile: from)
-            {
-                json_tile.get_to(libutil::at(to, 0, i));
-                ++i;
-            }
-        };
-
         to.hi_score              = from.at("hiScore").get<int>();
-        from_tile_array1d(from.at("nextInputTiles"), to.next_input_tiles);
-        from_tile_array1d(from.at("inputTiles"), to.input_tiles);
-        to.board_tiles.data      = from.at("boardTiles");
+
+        //next_input_tiles and input_tiles
+        {
+            const auto from_tile_array1d = [](const nlohmann::json& from, auto& to)
+            {
+                auto tile_values = std::array<int, 2>{};
+                from.get_to(tile_values);
+
+                for(auto i = 0; i < 2; ++i)
+                {
+                    to.data[i] = libgame::data_types::tiles::number{tile_values[i]};
+                }
+            };
+
+            from_tile_array1d(from.at("nextInputTiles"), to.next_input_tiles);
+            from_tile_array1d(from.at("inputTiles"), to.input_tiles);
+        }
+
+        //board_tiles
+        {
+            //Convention is arr[col][row]
+            using tile_value_array = std::array<std::array<std::optional<int>, 10>, 6>;
+
+            auto tile_values = tile_value_array{};
+            from.at("boardTiles").get_to(tile_values);
+
+            libutil::for_each_ij
+            (
+                [&](auto& tile, const int row, const int col)
+                {
+                    if(tile_values[col][row].has_value())
+                    {
+                        tile = libgame::data_types::tiles::number{tile_values[col][row].value()};
+                    }
+                },
+                to.board_tiles
+            );
+        }
     }
 
-    void from_json_1(const nlohmann::json& from, game_state& to)
+    void from_json_v1(const nlohmann::json& from, libgame::data_types::game_state& to)
     {
         /*
-        Example:
+        Example of v1 format:
 
         {
             "boardTiles":
@@ -230,9 +260,8 @@ namespace
                 null,null,null,null,null,null
             ],
             "hiScore":179575,
-            "inputTiles":[{"type":0,"value":0},{"type":0,"value":2},null,null],
-            "nextInputTiles":[{"type":0,"value":0},{"type":0,"value":2},null,null],
-            "version":1
+            "inputTiles":[{"type":0,"value":0},{"type":0,"value":1},null,null],
+            "nextInputTiles":[{"type":0,"value":2},{"type":0,"value":1},null,null]
         }
         */
 
@@ -241,38 +270,16 @@ namespace
         to.input_tiles.data      = from.at("inputTiles");
         to.board_tiles.data      = from.at("boardTiles");
     }
-}
 
-void to_json(nlohmann::json& to, const game_state& from)
-{
-    to["version"]        = 1;
-    to["hiScore"]        = from.hi_score;
-    to["nextInputTiles"] = from.next_input_tiles.data;
-    to["inputTiles"]     = from.input_tiles.data;
-    to["boardTiles"]     = from.board_tiles.data;
-}
-
-void from_json(const nlohmann::json& from, game_state& to)
-{
-    const auto version = [&]
+    void from_json(const nlohmann::json& from, libgame::data_types::game_state& to, const int version)
     {
-        try
+        switch(version)
         {
-            return from.at("version").get<int>();
+            case 0: from_json_v0(from, to); break;
+            case 1: from_json_v1(from, to); break;
+            default: throw std::runtime_error{"Unsupported database version"};
         }
-        catch(...)
-        {
-            return 0;
-        }
-    }();
-
-    switch(version)
-    {
-        case 0: from_json_0(from, to); break;
-        case 1: from_json_1(from, to); break;
     }
 }
-
-} //namespace
 
 #endif
