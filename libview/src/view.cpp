@@ -279,6 +279,11 @@ void view::merge_tiles(const data_types::tile_merge_list& merges)
     pimpl_->tile_grid_.merge_tiles(merges);
 }
 
+void view::mark_tiles_for_nullification(const data_types::tile_coordinate_list& tile_coordinates)
+{
+    pimpl_->tile_grid_.mark_tiles_for_nullification(tile_coordinates);
+}
+
 void view::set_board_tiles(const data_types::board_tile_array& tiles)
 {
     pimpl_->tile_grid_.set_board_tiles(tiles);

@@ -50,6 +50,8 @@ struct game
 
         const data_types::board_tile_array& get_board_tiles() const;
 
+        data_types::tile_coordinate_list get_targeted_tiles() const;
+
         bool is_game_over() const;
 
         void start(event_list& events);

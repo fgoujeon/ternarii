@@ -96,12 +96,14 @@ class app: public Magnum::Platform::Sdl2Application
         void handle_game_event(const libgame::events::next_input_insertion& event)
         {
             view_.insert_next_input(event.layout);
+            view_.mark_tiles_for_nullification(pgame_->get_targeted_tiles());
             database_.set_game_state(pgame_->get_state());
         }
 
         void handle_game_event(const libgame::events::input_layout_change& event)
         {
             view_.set_input_layout(event.layout);
+            view_.mark_tiles_for_nullification(pgame_->get_targeted_tiles());
         }
 
         void handle_game_event(const libgame::events::input_tile_drop& event)
@@ -220,6 +222,7 @@ class app: public Magnum::Platform::Sdl2Application
                 view_.insert_next_input(pgame_->get_input_layout());
                 view_.create_next_input(pgame_->get_next_input_tiles());
                 view_.set_board_tiles(pgame_->get_board_tiles());
+                view_.mark_tiles_for_nullification(pgame_->get_targeted_tiles());
                 view_.set_game_over_screen_visible(pgame_->is_game_over());
                 view_.set_visible(true);
             }

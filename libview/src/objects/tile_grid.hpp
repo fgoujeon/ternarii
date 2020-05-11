@@ -63,6 +63,8 @@ class tile_grid: public Object2D
 
         void merge_tiles(const data_types::tile_merge_list& merges);
 
+        void mark_tiles_for_nullification(const data_types::tile_coordinate_list& tile_coordinates);
+
         void set_board_tiles(const data_types::board_tile_array& tiles);
 
         void advance(const time_point& now);

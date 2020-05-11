@@ -141,6 +141,37 @@ class animation
             );
         }
 
+        //Immediate
+        template<class Object>
+        void add_alpha_transition
+        (
+            const float finish_alpha,
+            const std::shared_ptr<Object>& pobj
+        )
+        {
+            auto track = Magnum::Animation::Track<Magnum::Float, float>
+            {
+                {
+                    {0.0f, finish_alpha}
+                },
+                Magnum::Math::lerp,
+                Magnum::Animation::Extrapolation::Constant
+            };
+
+            alpha_transitions_.push_back(std::move(track));
+            objects_.push_back(pobj);
+
+            player.addWithCallback
+            (
+                alpha_transitions_.back(),
+                [](Magnum::Float, const float& alpha, Object& obj)
+                {
+                    obj.set_alpha(alpha);
+                },
+                *pobj
+            );
+        }
+
         void advance(const time_point& now)
         {
             if(!started_)

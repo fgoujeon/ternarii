@@ -346,7 +346,7 @@ void tile_grid::merge_tiles(const data_types::tile_merge_list& merges)
         for(const auto& src_tile_coordinate: merge.src_tile_coordinates) //for each source tile
         {
             const auto src_position = tile_coordinate_to_position(src_tile_coordinate);
-            const auto& psrc_tile = libutil::at(board_tiles_, src_tile_coordinate.row, src_tile_coordinate.col);
+            auto& psrc_tile = libutil::at(board_tiles_, src_tile_coordinate.row, src_tile_coordinate.col);
 
             //first, translate source tile toward position of destination tile
             if(dst_position != src_position)
@@ -362,6 +362,10 @@ void tile_grid::merge_tiles(const data_types::tile_merge_list& merges)
 
             //then, make it disappear with a fade out
             animation1.add_alpha_transition(1, 0, 0.2, psrc_tile);
+
+            //remove the tile object from the matrix so that it is deleted once
+            //the animation ends
+            psrc_tile = nullptr;
         }
 
         //create destination tile
@@ -370,6 +374,30 @@ void tile_grid::merge_tiles(const data_types::tile_merge_list& merges)
 
         //make destination tile appear with a fade in
         animation1.add_alpha_transition(0, 1, 0.2, pdst_tile);
+    }
+}
+
+void tile_grid::mark_tiles_for_nullification(const data_types::tile_coordinate_list& tile_coordinates)
+{
+    auto& animation = animations_.emplace_back();
+
+    //Unmark all board tiles
+    for(auto& ptile: board_tiles_)
+    {
+        if(ptile)
+        {
+            animation.add_alpha_transition(1, ptile);
+        }
+    }
+
+    //Mark given board tiles
+    for(const auto& coords: tile_coordinates)
+    {
+        auto& ptile = libutil::at(board_tiles_, coords.row, coords.col);
+        if(ptile)
+        {
+            animation.add_alpha_transition(0.5, ptile);
+        }
     }
 }
 

@@ -58,20 +58,14 @@ class board
 
         int get_free_cell_count() const;
 
+        data_types::tile_coordinate_list get_targeted_tiles(const board_input& in) const;
+
         void clear();
 
         void drop_input_tiles(const board_input& in, event_list& events);
 
     private:
-        data_types::input_tile_drop_list drop_input_tiles_only(const board_input& in);
-
         data_types::board_tile_drop_list make_tiles_fall();
-
-        data_types::tile_coordinate_list apply_column_nullifiers();
-
-        data_types::tile_coordinate_list apply_row_nullifiers();
-
-        data_types::tile_coordinate_list apply_number_nullifiers();
 
         data_types::tile_merge_list merge_tiles();
 
