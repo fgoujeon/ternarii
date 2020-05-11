@@ -95,7 +95,7 @@ namespace
 
         private:
             random_number_generator rng_;
-            distribution dis_{97, 1, 1, 1};
+            distribution dis_{300, 1, 1, 1};
             random_tile_generator gen_{rng_};
     };
 }
