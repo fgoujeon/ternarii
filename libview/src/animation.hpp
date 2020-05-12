@@ -31,6 +31,28 @@ namespace libview
 class animation
 {
     public:
+        void add_pause(const float duration_s)
+        {
+            auto track = Magnum::Animation::Track<Magnum::Float, int>
+            {
+                {
+                    {0.0f, 0},
+                    {duration_s, 0}
+                },
+                Magnum::Math::lerp,
+                Magnum::Animation::Extrapolation::Constant
+            };
+
+            pauses_.push_back(std::move(track));
+
+            player_.addWithCallback
+            (
+                pauses_.back(),
+                [](Magnum::Float, const int&, void*){},
+                nullptr
+            );
+        }
+
         template<class Object>
         void add_fixed_duration_translation
         (
@@ -192,6 +214,7 @@ class animation
         Magnum::Animation::Player<std::chrono::nanoseconds, Magnum::Float> player_;
 
         //for storage only
+        std::list<Magnum::Animation::Track<Magnum::Float, int>> pauses_;
         std::list<Magnum::Animation::Track<Magnum::Float, Magnum::Vector2>> translations_;
         std::list<Magnum::Animation::Track<Magnum::Float, float>> alpha_transitions_;
         std::vector<std::shared_ptr<Object2D>> objects_;

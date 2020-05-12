@@ -289,6 +289,8 @@ void tile_grid::drop_input_tiles(const data_types::input_tile_drop_list& drops)
         libutil::at(board_tiles_, drop.board_coordinate.row, drop.board_coordinate.col) = ptile;
         ptile = nullptr;
     }
+
+    animations_.emplace_back().add_pause(0.05);
 }
 
 void tile_grid::drop_board_tiles(const data_types::board_tile_drop_list& drops)
@@ -313,6 +315,8 @@ void tile_grid::drop_board_tiles(const data_types::board_tile_drop_list& drops)
         libutil::at(board_tiles_, drop.dst_row, drop.col) = ptile;
         ptile = nullptr;
     }
+
+    animations_.emplace_back().add_pause(0.05);
 }
 
 void tile_grid::nullify_tiles(const data_types::tile_coordinate_list& nullified_tile_coordinates)
@@ -332,6 +336,8 @@ void tile_grid::nullify_tiles(const data_types::tile_coordinate_list& nullified_
 
         ptile = nullptr;
     }
+
+    animations_.emplace_back().add_pause(0.05);
 }
 
 void tile_grid::merge_tiles(const data_types::tile_merge_list& merges)
@@ -375,6 +381,8 @@ void tile_grid::merge_tiles(const data_types::tile_merge_list& merges)
         //make destination tile appear with a fade in
         animation1.add_alpha_transition(0, 1, 0.2, pdst_tile);
     }
+
+    animations_.emplace_back().add_pause(0.05);
 }
 
 void tile_grid::mark_tiles_for_nullification(const data_types::tile_coordinate_list& tile_coordinates)
