@@ -424,16 +424,25 @@ void tile_grid::set_board_tiles(const data_types::board_tile_array& tiles)
 
 void tile_grid::advance(const time_point& now)
 {
-    if(!animations_.empty())
+    auto keep_advancing = true;
+
+    while(!animations_.empty() && keep_advancing)
     {
         auto& animation = animations_.front();
+
         if(!animation.is_done())
         {
             animation.advance(now);
         }
-        else
+
+        if(animation.is_done())
         {
             animations_.pop_front();
+            keep_advancing = true;
+        }
+        else
+        {
+            keep_advancing = false;
         }
     }
 }

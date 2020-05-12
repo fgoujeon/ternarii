@@ -53,7 +53,7 @@ class animation
             translations_.push_back(std::move(track));
             objects_.push_back(pobj);
 
-            player.addWithCallback
+            player_.addWithCallback
             (
                 translations_.back(),
                 [](Magnum::Float, const Magnum::Vector2& translation, Object& obj)
@@ -95,7 +95,7 @@ class animation
             translations_.push_back(std::move(track));
             objects_.push_back(pobj);
 
-            player.addWithCallback
+            player_.addWithCallback
             (
                 translations_.back(),
                 [](Magnum::Float, const Magnum::Vector2& translation, Object& obj)
@@ -130,7 +130,7 @@ class animation
             alpha_transitions_.push_back(std::move(track));
             objects_.push_back(pobj);
 
-            player.addWithCallback
+            player_.addWithCallback
             (
                 alpha_transitions_.back(),
                 [](Magnum::Float, const float& alpha, Object& obj)
@@ -161,7 +161,7 @@ class animation
             alpha_transitions_.push_back(std::move(track));
             objects_.push_back(pobj);
 
-            player.addWithCallback
+            player_.addWithCallback
             (
                 alpha_transitions_.back(),
                 [](Magnum::Float, const float& alpha, Object& obj)
@@ -176,21 +176,21 @@ class animation
         {
             if(!started_)
             {
-                player.play(now.time_since_epoch());
+                player_.play(now.time_since_epoch());
                 started_ = true;
             }
 
-            player.advance(now.time_since_epoch());
+            player_.advance(now.time_since_epoch());
         }
 
         bool is_done() const
         {
-            return started_ && player.state() == Magnum::Animation::State::Stopped;
+            return started_ && player_.state() == Magnum::Animation::State::Stopped;
         }
 
-        Magnum::Animation::Player<std::chrono::nanoseconds, Magnum::Float> player;
-
     private:
+        Magnum::Animation::Player<std::chrono::nanoseconds, Magnum::Float> player_;
+
         //for storage only
         std::list<Magnum::Animation::Track<Magnum::Float, Magnum::Vector2>> translations_;
         std::list<Magnum::Animation::Track<Magnum::Float, float>> alpha_transitions_;
