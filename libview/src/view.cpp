@@ -59,6 +59,8 @@ class view::impl final
             camera_.setProjectionMatrix(Magnum::Matrix3::projection({9.0f, 16.0f}));
             camera_.setViewport(Magnum::GL::defaultFramebuffer.viewport().size());
 
+            score_display_.set_visible(true);
+
             background_.scale({16.0f, 16.0f});
             background_.translate({0.0f, -1.0f});
             background_.set_color(Magnum::Color4{1.0, 1.0, 1.0, 0.02});
@@ -241,7 +243,11 @@ void view::set_score(const int value)
 
 void view::set_hi_score(const int value)
 {
-    pimpl_->hi_score_display_.set_score(value);
+    if(value != 0)
+    {
+        pimpl_->hi_score_display_.set_score(value);
+        pimpl_->hi_score_display_.set_visible(true);
+    }
 }
 
 void view::create_next_input(const data_types::input_tile_array& tiles)
