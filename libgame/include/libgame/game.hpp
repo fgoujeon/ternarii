@@ -30,6 +30,8 @@ namespace libgame
 struct game
 {
     public:
+        game();
+
         game(const data_types::game_state& state);
 
         ~game();
@@ -38,11 +40,17 @@ struct game
 
         int get_score() const;
 
-        const data_types::tile_pair& get_next_input_tiles() const;
+        int get_hi_score() const;
 
-        const data_types::input_state& get_input_state() const;
+        const data_types::input_tile_array& get_next_input_tiles() const;
 
-        const data_types::board_tile_grid& get_board_tiles() const;
+        const data_types::input_tile_array& get_input_tiles() const;
+
+        const data_types::input_layout& get_input_layout() const;
+
+        const data_types::board_tile_array& get_board_tiles() const;
+
+        data_types::tile_coordinate_list get_targeted_tiles() const;
 
         bool is_game_over() const;
 
@@ -54,7 +62,7 @@ struct game
 
         void rotate_input(event_list& events);
 
-        void drop_input(event_list& events);
+        void drop_input_tiles(event_list& events);
 
     private:
         struct impl;

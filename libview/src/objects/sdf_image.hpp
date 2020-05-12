@@ -17,33 +17,40 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef LIBVIEW_TILE_HPP
-#define LIBVIEW_TILE_HPP
+#ifndef LIBVIEW_OBJECTS_SDF_IMAGE_HPP
+#define LIBVIEW_OBJECTS_SDF_IMAGE_HPP
 
-#include "rounded_square.hpp"
-#include "static_label.hpp"
-#include "magnum_common.hpp"
+#include "../magnum_common.hpp"
+#include <Magnum/GL/Texture.h>
 #include <Magnum/Math/Color.h>
 #include <Magnum/Magnum.h>
+#include <filesystem>
 
-namespace libview
+namespace libview::objects
 {
 
-class tile: public Object2D, public SceneGraph::Drawable2D
+//Signed distance field image object
+class sdf_image: public Object2D, public SceneGraph::Drawable2D
 {
     public:
-        explicit tile(const int value, SceneGraph::DrawableGroup2D& drawables, Object2D* parent);
+        sdf_image
+        (
+            const std::filesystem::path& image_path,
+            SceneGraph::DrawableGroup2D& drawables,
+            Object2D& parent
+        );
 
-        void set_alpha(const float alpha);
+        void set_color(const Magnum::Color4& color);
+
+        void set_outline_color(const Magnum::Color4& color);
 
     private:
         void draw(const Magnum::Matrix3& transformation_matrix, SceneGraph::Camera2D& camera) override;
 
     private:
-        SceneGraph::DrawableGroup2D drawable_children_;
-        Magnum::Color3 square_color_;
-        rounded_square& square_;
-        static_label& label_;
+        Magnum::GL::Texture2D texture_;
+        Magnum::Color4 color_;
+        Magnum::Color4 outline_color_;
 };
 
 } //namespace

@@ -17,7 +17,6 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#include "conversion.hpp"
 #include <libdb/database.hpp>
 #include <libgame/game.hpp>
 #include <libview/view.hpp>
@@ -91,39 +90,40 @@ class app: public Magnum::Platform::Sdl2Application
 
         void handle_game_event(const libgame::events::next_input_creation& event)
         {
-            view_.create_next_input(event.tiles[0].value, event.tiles[1].value);
+            view_.create_next_input(event.tiles);
         }
 
         void handle_game_event(const libgame::events::next_input_insertion& event)
         {
-            view_.insert_next_input(event.x_offset, event.rotation);
+            view_.insert_next_input(event.layout);
+            view_.mark_tiles_for_nullification(pgame_->get_targeted_tiles());
             database_.set_game_state(pgame_->get_state());
         }
 
         void handle_game_event(const libgame::events::input_layout_change& event)
         {
-            view_.set_input_layout(event.x_offset, event.rotation);
+            view_.set_input_layout(event.layout);
+            view_.mark_tiles_for_nullification(pgame_->get_targeted_tiles());
         }
 
-        void handle_game_event(const libgame::events::input_insertion& event)
+        void handle_game_event(const libgame::events::input_tile_drop& event)
         {
-            view_.insert_input
-            (
-                event.tile0_dst_column_index,
-                event.tile0_dst_row_index,
-                event.tile1_dst_column_index,
-                event.tile1_dst_row_index
-            );
+            view_.drop_input_tiles(event.drops);
         }
 
-        void handle_game_event(const libgame::events::tile_drop& event)
+        void handle_game_event(const libgame::events::board_tile_drop& event)
         {
-            view_.drop_tiles(conversion::to_view(event.drops));
+            view_.drop_board_tiles(event.drops);
+        }
+
+        void handle_game_event(const libgame::events::tile_nullification& event)
+        {
+            view_.nullify_tiles(event.nullified_tile_coordinates);
         }
 
         void handle_game_event(const libgame::events::tile_merge& event)
         {
-            view_.merge_tiles(conversion::to_view(event.merges));
+            view_.merge_tiles(event.merges);
         }
 
         void handle_game_event(const libgame::events::end_of_game&)
@@ -197,7 +197,7 @@ class app: public Magnum::Platform::Sdl2Application
                     modify_game(&libgame::game::rotate_input);
                     break;
                 case move::drop:
-                    modify_game(&libgame::game::drop_input);
+                    modify_game(&libgame::game::drop_input_tiles);
                     break;
             }
         }
@@ -208,20 +208,31 @@ class app: public Magnum::Platform::Sdl2Application
             if(pgame_) return;
 
             //load game state from database
-            const auto& game_state = database_.get_game_state();
+            const auto& opt_game_state = database_.get_game_state();
 
             //create game
-            pgame_ = std::make_unique<libgame::game>(game_state);
+            if(opt_game_state)
+            {
+                pgame_ = std::make_unique<libgame::game>(*opt_game_state);
 
-            //initialize view
-            view_.set_score(pgame_->get_score());
-            view_.set_hi_score(game_state.hi_score);
-            view_.create_next_input(game_state.input.tiles[0].value, game_state.input.tiles[1].value);
-            view_.insert_next_input(game_state.input.x_offset, game_state.input.rotation);
-            view_.create_next_input(game_state.next_input_tiles[0].value, game_state.next_input_tiles[1].value);
-            view_.set_board_tiles(conversion::to_view(game_state.board_tiles));
-            view_.set_game_over_screen_visible(pgame_->is_game_over());
-            view_.set_visible(true);
+                //initialize view
+                view_.set_score(pgame_->get_score());
+                view_.set_hi_score(pgame_->get_hi_score());
+                view_.create_next_input(pgame_->get_input_tiles());
+                view_.insert_next_input(pgame_->get_input_layout());
+                view_.create_next_input(pgame_->get_next_input_tiles());
+                view_.set_board_tiles(pgame_->get_board_tiles());
+                view_.mark_tiles_for_nullification(pgame_->get_targeted_tiles());
+                view_.set_game_over_screen_visible(pgame_->is_game_over());
+                view_.set_visible(true);
+            }
+            else
+            {
+                pgame_ = std::make_unique<libgame::game>();
+
+                view_.set_visible(true);
+                modify_game(&libgame::game::start);
+            }
         }
 
         void handle_database_event(const libdb::event& event)

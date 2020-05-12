@@ -34,7 +34,7 @@ class board
 {
     public:
         static constexpr int total_column_count = 6;
-        static constexpr int total_row_count = 10;
+        static constexpr int total_row_count = 9;
 
         //dimensions of the zone, starting from the bottom of the board, that can
         //take tiles without causing game over
@@ -42,18 +42,12 @@ class board
         static constexpr int authorized_row_count = 7;
         static constexpr int authorized_cell_count = authorized_column_count * authorized_row_count;
 
-        using grid_t = data_types::tile_grid<total_column_count, total_row_count>;
-
     public:
-        board
-        (
-            grid_t& tiles,
-            int& hi_score
-        );
+        board(data_types::board_tile_array& tiles);
 
-        const grid_t& tile_grid() const
+        const data_types::board_tile_array& tile_array() const
         {
-            return tile_grid_;
+            return tiles_;
         }
 
         bool is_game_over() const;
@@ -64,14 +58,14 @@ class board
 
         int get_free_cell_count() const;
 
+        data_types::tile_coordinate_list get_targeted_tiles(const board_input& in) const;
+
         void clear();
 
-        void drop_input(const board_input& in, event_list& events);
+        void drop_input_tiles(const board_input& in, event_list& events);
 
     private:
-        events::input_insertion insert_input(const board_input& in);
-
-        data_types::tile_drop_list make_tiles_fall();
+        data_types::board_tile_drop_list make_tiles_fall();
 
         data_types::tile_merge_list merge_tiles();
 
@@ -82,20 +76,19 @@ class board
             selected
         };
 
-        using selection_t = data_types::array2d<selection_state, total_column_count, total_row_count>;
+        using selection_t = libutil::matrix<selection_state, total_row_count, total_column_count>;
 
         void select_tiles
         (
             const int tile_value,
-            const int column_index,
-            const int row_index,
+            const int row,
+            const int col,
             selection_t& selection,
             int& selection_size
         );
 
     private:
-        grid_t& tile_grid_;
-        int& hi_score_;
+        data_types::board_tile_array& tiles_;
 };
 
 } //namespace

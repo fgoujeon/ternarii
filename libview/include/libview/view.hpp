@@ -56,23 +56,21 @@ class view
 
         void set_hi_score(const int value);
 
-        void create_next_input(const int value0, const int value1);
+        void create_next_input(const data_types::input_tile_array& tiles);
 
-        void insert_next_input(const int x_offset, const int rotation);
+        void insert_next_input(const data_types::input_layout& layout);
 
-        void set_input_layout(const int x_offset, const int rotation);
+        void set_input_layout(const data_types::input_layout& layout);
 
-        void insert_input
-        (
-            const int tile0_dst_column_index,
-            const int tile0_dst_row_index,
-            const int tile1_dst_column_index,
-            const int tile1_dst_row_index
-        );
+        void drop_input_tiles(const data_types::input_tile_drop_list& drops);
 
-        void drop_tiles(const data_types::tile_drop_list& drops);
+        void drop_board_tiles(const data_types::board_tile_drop_list& drops);
+
+        void nullify_tiles(const data_types::tile_coordinate_list& nullified_tile_coordinates);
 
         void merge_tiles(const data_types::tile_merge_list& merges);
+
+        void mark_tiles_for_nullification(const data_types::tile_coordinate_list& tile_coordinates);
 
         void set_board_tiles(const data_types::board_tile_array& tiles);
 

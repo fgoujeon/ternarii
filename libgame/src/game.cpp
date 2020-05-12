@@ -30,14 +30,20 @@ namespace libgame
 
 namespace
 {
+    struct random_number_generator
+    {
+        std::random_device rd;
+        std::mt19937 gen{rd()};
+    };
+
     class random_tile_generator
     {
         private:
             using distribution = std::normal_distribution<double>;
 
         public:
-            random_tile_generator():
-                gen_(rd_())
+            random_tile_generator(random_number_generator& rng):
+                rng_(rng)
             {
             }
 
@@ -45,7 +51,7 @@ namespace
             int generate(const int max, const double standard_deviation)
             {
                 //generate random number with normal distribution
-                const auto real_val = dis_(gen_, distribution::param_type{0, standard_deviation});
+                const auto real_val = dis_(rng_.gen, distribution::param_type{0, standard_deviation});
 
                 //remove negative values
                 const auto positive_real_val = std::abs(real_val);
@@ -58,18 +64,48 @@ namespace
             }
 
         private:
-            std::random_device rd_;
-            std::mt19937 gen_;
-            std::normal_distribution<double> dis_;
+            random_number_generator& rng_;
+            distribution dis_;
+    };
+
+    class random_tile_matrix_generator
+    {
+        private:
+            using distribution = std::discrete_distribution<int>;
+
+        public:
+            data_types::input_tile_array generate(const int max, const double standard_deviation)
+            {
+                const auto count = dis_(rng_.gen);
+
+                switch(count)
+                {
+                    default:
+                    case 0:
+                        return
+                        {
+                            data_types::tiles::number{gen_.generate(max, standard_deviation)},
+                            data_types::tiles::number{gen_.generate(max, standard_deviation)}
+                        };
+                    case 1: return {data_types::tiles::column_nullifier{}};
+                    case 2: return {data_types::tiles::row_nullifier{}};
+                    case 3: return {data_types::tiles::number_nullifier{}};
+                }
+            }
+
+        private:
+            random_number_generator rng_;
+            distribution dis_{300, 1, 1, 1};
+            random_tile_generator gen_{rng_};
     };
 }
 
 struct game::impl
 {
+    impl() = default;
+
     impl(const data_types::game_state& s):
-        state(s),
-        board_(state.board_tiles, state.hi_score),
-        input_(state.input)
+        state(s)
     {
     }
 
@@ -120,25 +156,25 @@ struct game::impl
             return sd_min + sd_variable_part * (1.0 - fill_rate_pow);
         }();
 
-        //Generate a pair of tiles.
-        state.next_input_tiles = data_types::tile_pair
-        {
-            data_types::tile{rand.generate(max_value, sd)},
-            data_types::tile{rand.generate(max_value, sd)}
-        };
+        //Generate a new input
+        state.next_input_tiles = rand.generate(max_value, sd);
 
         return events::next_input_creation
         {
-            state.next_input_tiles[0],
-            state.next_input_tiles[1]
+            state.next_input_tiles
         };
     }
 
-    random_tile_generator rand;
+    random_tile_matrix_generator rand;
     data_types::game_state state;
-    board board_;
-    board_input input_;
+    board board_{state.board_tiles};
+    board_input input_{state.input_tiles};
 };
+
+game::game():
+    pimpl_(std::make_unique<impl>())
+{
+}
 
 game::game(const data_types::game_state& state):
     pimpl_(std::make_unique<impl>(state))
@@ -157,19 +193,34 @@ int game::get_score() const
     return pimpl_->board_.get_score();
 }
 
-const data_types::tile_pair& game::get_next_input_tiles() const
+int game::get_hi_score() const
+{
+    return pimpl_->state.hi_score;
+}
+
+const data_types::input_tile_array& game::get_next_input_tiles() const
 {
     return pimpl_->state.next_input_tiles;
 }
 
-const data_types::input_state& game::get_input_state() const
+const data_types::input_tile_array& game::get_input_tiles() const
 {
-    return pimpl_->input_.get_state();
+    return pimpl_->state.input_tiles;
 }
 
-const data_types::board_tile_grid& game::get_board_tiles() const
+const data_types::input_layout& game::get_input_layout() const
 {
-    return pimpl_->board_.tile_grid();
+    return pimpl_->input_.get_layout();
+}
+
+const data_types::board_tile_array& game::get_board_tiles() const
+{
+    return pimpl_->board_.tile_array();
+}
+
+data_types::tile_coordinate_list game::get_targeted_tiles() const
+{
+    return pimpl_->board_.get_targeted_tiles(pimpl_->input_);
 }
 
 bool game::is_game_over() const
@@ -213,26 +264,35 @@ void game::rotate_input(event_list& events)
     }
 }
 
-void game::drop_input(event_list& events)
+void game::drop_input_tiles(event_list& events)
 {
-    if(!is_game_over())
+    if(is_game_over())
     {
-        //drop the input
-        pimpl_->board_.drop_input(pimpl_->input_, events);
-
-        if(!is_game_over())
-        {
-            //move the next input into the input
-            events.push_back(pimpl_->input_.set_tiles(pimpl_->state.next_input_tiles));
-
-            //create a new next input
-            events.push_back(pimpl_->generate_next_input());
-        }
+        return;
     }
+
+    //drop the input
+    pimpl_->board_.drop_input_tiles(pimpl_->input_, events);
 
     if(is_game_over())
     {
         events.push_back(events::end_of_game{});
+
+        //Save hi-score
+        auto& hi_score = pimpl_->state.hi_score;
+        if(hi_score < get_score())
+        {
+            hi_score = get_score();
+            events.push_back(events::hi_score_change{hi_score});
+        }
+    }
+    else
+    {
+        //move the next input into the input
+        events.push_back(pimpl_->input_.set_tiles(pimpl_->state.next_input_tiles));
+
+        //create a new next input
+        events.push_back(pimpl_->generate_next_input());
     }
 }
 

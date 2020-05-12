@@ -17,14 +17,30 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#include "magnum_common.hpp"
+#ifndef LIBVIEW_OBJECTS_CIRCLE_HPP
+#define LIBVIEW_OBJECTS_CIRCLE_HPP
 
-namespace libview::colors
+#include "../magnum_common.hpp"
+#include <Magnum/Math/Color.h>
+#include <Magnum/Magnum.h>
+
+namespace libview::objects
 {
 
-static inline const auto black      = 0x000000_rgbf;
-static inline const auto dark_gray  = 0x404044_rgbf;
-static inline const auto light_gray = 0xdddddd_rgbf;
-static inline const auto white      = 0xffffff_rgbf;
+class circle: public Object2D, public SceneGraph::Drawable2D
+{
+    public:
+        explicit circle(const Magnum::Color4& color, SceneGraph::DrawableGroup2D& drawables, Object2D* parent);
+
+        void set_color(const Magnum::Color4& color);
+
+    private:
+        void draw(const Magnum::Matrix3& transformation_matrix, SceneGraph::Camera2D& camera) override;
+
+    private:
+        Magnum::Color4 color_;
+};
 
 } //namespace
+
+#endif

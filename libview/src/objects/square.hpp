@@ -17,43 +17,28 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef LIBVIEW_GAME_OVER_SCREEN_HPP
-#define LIBVIEW_GAME_OVER_SCREEN_HPP
+#ifndef LIBVIEW_OBJECTS_SQUARE_HPP
+#define LIBVIEW_OBJECTS_SQUARE_HPP
 
-#include "square.hpp"
-#include "static_label.hpp"
-#include "clickable.hpp"
-#include "magnum_common.hpp"
+#include "../magnum_common.hpp"
+#include <Magnum/Math/Color.h>
+#include <Magnum/Magnum.h>
 
-namespace libview
+namespace libview::objects
 {
 
-class game_over_screen: public Object2D, public SceneGraph::Drawable2D
+class square: public Object2D, public SceneGraph::Drawable2D
 {
-    private:
-        class new_game_button;
-
     public:
-        explicit game_over_screen
-        (
-            const std::function<void()>& new_game_button_press_callback,
-            SceneGraph::DrawableGroup2D& drawables,
-            clickable_group& clickables,
-            Object2D* parent
-        );
+        square(const Magnum::Color4& color, SceneGraph::DrawableGroup2D& drawables, Object2D& parent);
 
-        void set_visible(const bool visible);
+        void set_color(const Magnum::Color4& color);
 
     private:
         void draw(const Magnum::Matrix3& transformation_matrix, SceneGraph::Camera2D& camera) override;
 
     private:
-        SceneGraph::DrawableGroup2D& drawables_;
-        SceneGraph::DrawableGroup2D drawable_children_;
-        square& background_rectangle_;
-        static_label& label_;
-        new_game_button& new_game_button_;
-        bool visible_ = false;
+        Magnum::Color4 color_;
 };
 
 } //namespace

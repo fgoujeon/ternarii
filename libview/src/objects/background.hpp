@@ -17,40 +17,31 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef LIBVIEW_SDF_IMAGE_HPP
-#define LIBVIEW_SDF_IMAGE_HPP
+#ifndef LIBVIEW_OBJECTS_BACKGROUND_HPP
+#define LIBVIEW_OBJECTS_BACKGROUND_HPP
 
-#include "magnum_common.hpp"
-#include <Magnum/GL/Texture.h>
+#include "../time.hpp"
+#include "../magnum_common.hpp"
 #include <Magnum/Math/Color.h>
 #include <Magnum/Magnum.h>
-#include <filesystem>
 
-namespace libview
+namespace libview::objects
 {
 
-//Signed distance field image object
-class sdf_image: public Object2D, public SceneGraph::Drawable2D
+class background: public Object2D, public SceneGraph::Drawable2D
 {
     public:
-        explicit sdf_image
-        (
-            const std::filesystem::path& image_path,
-            SceneGraph::DrawableGroup2D& drawables,
-            Object2D* parent
-        );
+        background(SceneGraph::DrawableGroup2D& drawables, Object2D& parent);
 
         void set_color(const Magnum::Color4& color);
 
-        void set_outline_color(const Magnum::Color4& color);
+        void advance(const time_point& now);
 
     private:
         void draw(const Magnum::Matrix3& transformation_matrix, SceneGraph::Camera2D& camera) override;
 
     private:
-        Magnum::GL::Texture2D texture_;
         Magnum::Color4 color_;
-        Magnum::Color4 outline_color_;
 };
 
 } //namespace

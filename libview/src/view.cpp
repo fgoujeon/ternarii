@@ -17,12 +17,12 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#include "background.hpp"
-#include "game_over_screen.hpp"
-#include "button.hpp"
-#include "sdf_image.hpp"
-#include "tile_grid.hpp"
-#include "score_display.hpp"
+#include "objects/background.hpp"
+#include "objects/game_over_screen.hpp"
+#include "objects/button.hpp"
+#include "objects/sdf_image.hpp"
+#include "objects/tile_grid.hpp"
+#include "objects/score_display.hpp"
 #include "colors.hpp"
 #include "clickable.hpp"
 #include "time.hpp"
@@ -45,19 +45,21 @@ class view::impl final
             callbacks_(callbacks),
             cameraObject_(&scene_),
             camera_(cameraObject_),
-            background_(scene_.addChild<background>(drawables_)),
-            tile_grid_(scene_.addChild<tile_grid>(drawables_)),
-            score_display_(scene_.addChild<score_display>(drawables_)),
-            hi_score_display_(scene_.addChild<score_display>(drawables_)),
-            left_button_   (scene_.addChild<button>("/res/images/move_button.tga",   [this]{send_move_request(data_types::move::left_shift);},         drawables_, clickables_)),
-            right_button_  (scene_.addChild<button>("/res/images/move_button.tga",   [this]{send_move_request(data_types::move::right_shift);},        drawables_, clickables_)),
-            drop_button_   (scene_.addChild<button>("/res/images/move_button.tga",   [this]{send_move_request(data_types::move::drop);},               drawables_, clickables_)),
-            rotate_button_ (scene_.addChild<button>("/res/images/rotate_button.tga", [this]{send_move_request(data_types::move::clockwise_rotation);}, drawables_, clickables_)),
-            game_over_screen_(scene_.addChild<game_over_screen>([this]{callbacks_.handle_clear_request();}, drawables_, clickables_))
+            background_(drawables_, scene_),
+            tile_grid_(drawables_, scene_),
+            score_display_(drawables_, scene_),
+            hi_score_display_(drawables_, scene_),
+            left_button_   ("/res/images/move_button.tga",   [this]{send_move_request(data_types::move::left_shift);},         drawables_, clickables_, scene_),
+            right_button_  ("/res/images/move_button.tga",   [this]{send_move_request(data_types::move::right_shift);},        drawables_, clickables_, scene_),
+            drop_button_   ("/res/images/move_button.tga",   [this]{send_move_request(data_types::move::drop);},               drawables_, clickables_, scene_),
+            rotate_button_ ("/res/images/rotate_button.tga", [this]{send_move_request(data_types::move::clockwise_rotation);}, drawables_, clickables_, scene_),
+            game_over_screen_([this]{callbacks_.handle_clear_request();}, drawables_, clickables_, scene_)
         {
             camera_.setAspectRatioPolicy(SceneGraph::AspectRatioPolicy::Extend);
             camera_.setProjectionMatrix(Magnum::Matrix3::projection({9.0f, 16.0f}));
             camera_.setViewport(Magnum::GL::defaultFramebuffer.viewport().size());
+
+            score_display_.set_visible(true);
 
             background_.scale({16.0f, 16.0f});
             background_.translate({0.0f, -1.0f});
@@ -190,15 +192,15 @@ class view::impl final
     public:
         bool visible_ = false;
 
-        background& background_;
-        tile_grid& tile_grid_;
-        score_display& score_display_;
-        score_display& hi_score_display_;
-        button& left_button_;
-        button& right_button_;
-        button& drop_button_;
-        button& rotate_button_;
-        game_over_screen& game_over_screen_;
+        objects::background background_;
+        objects::tile_grid tile_grid_;
+        objects::score_display score_display_;
+        objects::score_display hi_score_display_;
+        objects::button left_button_;
+        objects::button right_button_;
+        objects::button drop_button_;
+        objects::button rotate_button_;
+        objects::game_over_screen game_over_screen_;
 };
 
 view::view(const callback_set& callbacks):
@@ -241,49 +243,51 @@ void view::set_score(const int value)
 
 void view::set_hi_score(const int value)
 {
-    pimpl_->hi_score_display_.set_score(value);
+    if(value != 0)
+    {
+        pimpl_->hi_score_display_.set_score(value);
+        pimpl_->hi_score_display_.set_visible(true);
+    }
 }
 
-void view::create_next_input(const int value0, const int value1)
+void view::create_next_input(const data_types::input_tile_array& tiles)
 {
-    pimpl_->tile_grid_.create_next_input(value0, value1);
+    pimpl_->tile_grid_.create_next_input(tiles);
 }
 
-void view::insert_next_input(const int x_offset, const int rotation)
+void view::insert_next_input(const data_types::input_layout& layout)
 {
-    pimpl_->tile_grid_.insert_next_input(x_offset, rotation);
+    pimpl_->tile_grid_.insert_next_input(layout);
 }
 
-void view::set_input_layout(const int x_offset, const int rotation)
+void view::set_input_layout(const data_types::input_layout& layout)
 {
-    pimpl_->tile_grid_.set_input_layout(x_offset, rotation);
+    pimpl_->tile_grid_.set_input_layout(layout);
 }
 
-void view::insert_input
-(
-    const int tile0_dst_column_index,
-    const int tile0_dst_row_index,
-    const int tile1_dst_column_index,
-    const int tile1_dst_row_index
-)
+void view::drop_input_tiles(const data_types::input_tile_drop_list& drops)
 {
-    pimpl_->tile_grid_.insert_input
-    (
-        tile0_dst_column_index,
-        tile0_dst_row_index,
-        tile1_dst_column_index,
-        tile1_dst_row_index
-    );
+    pimpl_->tile_grid_.drop_input_tiles(drops);
 }
 
-void view::drop_tiles(const data_types::tile_drop_list& drops)
+void view::drop_board_tiles(const data_types::board_tile_drop_list& drops)
 {
-    pimpl_->tile_grid_.drop_tiles(drops);
+    pimpl_->tile_grid_.drop_board_tiles(drops);
+}
+
+void view::nullify_tiles(const data_types::tile_coordinate_list& nullified_tile_coordinates)
+{
+    pimpl_->tile_grid_.nullify_tiles(nullified_tile_coordinates);
 }
 
 void view::merge_tiles(const data_types::tile_merge_list& merges)
 {
     pimpl_->tile_grid_.merge_tiles(merges);
+}
+
+void view::mark_tiles_for_nullification(const data_types::tile_coordinate_list& tile_coordinates)
+{
+    pimpl_->tile_grid_.mark_tiles_for_nullification(tile_coordinates);
 }
 
 void view::set_board_tiles(const data_types::board_tile_array& tiles)

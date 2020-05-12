@@ -25,7 +25,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libdb::data_types
 {
 
-using tile = libgame::data_types::tile;
+using tile = libcommon::data_types::tile;
 using game_state = libgame::data_types::game_state;
 
 } //namespace

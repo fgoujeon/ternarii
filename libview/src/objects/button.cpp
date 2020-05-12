@@ -18,15 +18,15 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 #include "button.hpp"
-#include "text.hpp"
-#include "colors.hpp"
+#include "../text.hpp"
+#include "../colors.hpp"
 #include <Magnum/GL/Mesh.h>
 #include <Magnum/Shaders/Flat.h>
 #include <Magnum/Shaders/Vector.h>
 #include <Magnum/Text/AbstractFont.h>
 #include <Magnum/Text/GlyphCache.h>
 
-namespace libview
+namespace libview::objects
 {
 
 button::button
@@ -35,12 +35,12 @@ button::button
     const mouse_press_callback& cb,
     SceneGraph::DrawableGroup2D& drawables,
     clickable_group& clickables,
-    Object2D* parent
+    Object2D& parent
 ):
-    Object2D{parent},
+    Object2D{&parent},
     clickable{*this, &clickables},
     mouse_press_callback_(cb),
-    image_(addChild<sdf_image>(image_path, drawables))
+    image_(image_path, drawables, *this)
 {
     image_.set_color(colors::light_gray);
     image_.set_outline_color(colors::dark_gray);

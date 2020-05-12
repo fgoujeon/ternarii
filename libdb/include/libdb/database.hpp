@@ -36,7 +36,7 @@ class database
 
         void iterate();
 
-        const data_types::game_state& get_game_state() const;
+        const std::optional<data_types::game_state>& get_game_state() const;
 
         void set_game_state(const data_types::game_state& state);
 

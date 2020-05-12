@@ -17,20 +17,20 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef LIBVIEW_SQUARE_HPP
-#define LIBVIEW_SQUARE_HPP
+#ifndef LIBVIEW_OBJECTS_ROUNDED_SQUARE_HPP
+#define LIBVIEW_OBJECTS_ROUNDED_SQUARE_HPP
 
-#include "magnum_common.hpp"
+#include "../magnum_common.hpp"
 #include <Magnum/Math/Color.h>
 #include <Magnum/Magnum.h>
 
-namespace libview
+namespace libview::objects
 {
 
-class square: public Object2D, public SceneGraph::Drawable2D
+class rounded_square: public Object2D, public SceneGraph::Drawable2D
 {
     public:
-        explicit square(const Magnum::Color4& color, SceneGraph::DrawableGroup2D& drawables, Object2D* parent);
+        rounded_square(const Magnum::Color4& color, SceneGraph::DrawableGroup2D& drawables, Object2D& parent);
 
         void set_color(const Magnum::Color4& color);
 

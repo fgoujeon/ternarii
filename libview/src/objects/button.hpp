@@ -17,14 +17,14 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef LIBVIEW_BUTTON_HPP
-#define LIBVIEW_BUTTON_HPP
+#ifndef LIBVIEW_OBJECTS_BUTTON_HPP
+#define LIBVIEW_OBJECTS_BUTTON_HPP
 
 #include "sdf_image.hpp"
-#include "clickable.hpp"
-#include "magnum_common.hpp"
+#include "../clickable.hpp"
+#include "../magnum_common.hpp"
 
-namespace libview
+namespace libview::objects
 {
 
 class button: public Object2D, public clickable
@@ -39,7 +39,7 @@ class button: public Object2D, public clickable
             const mouse_press_callback& cb,
             SceneGraph::DrawableGroup2D& drawables,
             clickable_group& clickables,
-            Object2D* parent
+            Object2D& parent
         );
 
     //clickable virtual functions
@@ -50,7 +50,7 @@ class button: public Object2D, public clickable
 
     private:
         const mouse_press_callback mouse_press_callback_;
-        sdf_image& image_;
+        sdf_image image_;
 };
 
 } //namespace

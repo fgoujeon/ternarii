@@ -17,15 +17,14 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#include "circle.hpp"
-#include "shaders/flat_circle.hpp"
+#include "square.hpp"
 #include <Magnum/GL/Mesh.h>
 #include <Magnum/MeshTools/Compile.h>
 #include <Magnum/Primitives/Square.h>
 #include <Magnum/Shaders/Flat.h>
 #include <Magnum/Trade/MeshData2D.h>
 
-namespace libview
+namespace libview::objects
 {
 
 namespace
@@ -36,26 +35,26 @@ namespace
         return mesh;
     }
 
-    shaders::flat_circle& get_shader()
+    Magnum::Shaders::Flat2D& get_shader()
     {
-        static shaders::flat_circle shader;
+        static Magnum::Shaders::Flat2D shader;
         return shader;
     }
 }
 
-circle::circle(const Magnum::Color4& color, SceneGraph::DrawableGroup2D& drawables, Object2D* parent):
-    Object2D{parent},
+square::square(const Magnum::Color4& color, SceneGraph::DrawableGroup2D& drawables, Object2D& parent):
+    Object2D{&parent},
     SceneGraph::Drawable2D{*this, &drawables},
     color_(color)
 {
 }
 
-void circle::set_color(const Magnum::Color4& color)
+void square::set_color(const Magnum::Color4& color)
 {
     color_ = color;
 }
 
-void circle::draw(const Magnum::Matrix3& transformation_matrix, SceneGraph::Camera2D& camera)
+void square::draw(const Magnum::Matrix3& transformation_matrix, SceneGraph::Camera2D& camera)
 {
     get_shader().setColor(color_);
     get_shader().setTransformationProjectionMatrix

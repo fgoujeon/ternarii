@@ -17,32 +17,19 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef LIBVIEW_BACKGROUND_HPP
-#define LIBVIEW_BACKGROUND_HPP
+#ifndef LIBUTIL_OVERLOAD_HPP
+#define LIBUTIL_OVERLOAD_HPP
 
-#include "time.hpp"
-#include "magnum_common.hpp"
-#include <Magnum/Math/Color.h>
-#include <Magnum/Magnum.h>
-
-namespace libview
+namespace libutil
 {
 
-class background: public Object2D, public SceneGraph::Drawable2D
+template<class... Ts>
+struct overload: Ts...
 {
-    public:
-        explicit background(SceneGraph::DrawableGroup2D& drawables, Object2D* parent);
-
-        void set_color(const Magnum::Color4& color);
-
-        void advance(const time_point& now);
-
-    private:
-        void draw(const Magnum::Matrix3& transformation_matrix, SceneGraph::Camera2D& camera) override;
-
-    private:
-        Magnum::Color4 color_;
+    using Ts::operator()...;
 };
+
+template<class... Ts> overload(Ts...) -> overload<Ts...>;
 
 } //namespace
 

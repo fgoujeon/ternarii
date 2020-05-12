@@ -17,14 +17,14 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#include "square.hpp"
+#include "background.hpp"
+#include "../shaders/sunshine.hpp"
 #include <Magnum/GL/Mesh.h>
 #include <Magnum/MeshTools/Compile.h>
 #include <Magnum/Primitives/Square.h>
-#include <Magnum/Shaders/Flat.h>
 #include <Magnum/Trade/MeshData2D.h>
 
-namespace libview
+namespace libview::objects
 {
 
 namespace
@@ -35,26 +35,30 @@ namespace
         return mesh;
     }
 
-    Magnum::Shaders::Flat2D& get_shader()
+    shaders::sunshine& get_shader()
     {
-        static Magnum::Shaders::Flat2D shader;
+        static shaders::sunshine shader;
         return shader;
     }
 }
 
-square::square(const Magnum::Color4& color, SceneGraph::DrawableGroup2D& drawables, Object2D* parent):
-    Object2D{parent},
-    SceneGraph::Drawable2D{*this, &drawables},
-    color_(color)
+background::background(SceneGraph::DrawableGroup2D& drawables, Object2D& parent):
+    Object2D{&parent},
+    SceneGraph::Drawable2D{*this, &drawables}
 {
 }
 
-void square::set_color(const Magnum::Color4& color)
+void background::set_color(const Magnum::Color4& color)
 {
     color_ = color;
 }
 
-void square::draw(const Magnum::Matrix3& transformation_matrix, SceneGraph::Camera2D& camera)
+void background::advance(const time_point& now)
+{
+    get_shader().set_time(now);
+}
+
+void background::draw(const Magnum::Matrix3& transformation_matrix, SceneGraph::Camera2D& camera)
 {
     get_shader().setColor(color_);
     get_shader().setTransformationProjectionMatrix

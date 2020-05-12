@@ -18,13 +18,13 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 #include "rounded_square.hpp"
-#include "shaders/flat_rounded_square.hpp"
+#include "../shaders/flat_rounded_square.hpp"
 #include <Magnum/GL/Mesh.h>
 #include <Magnum/MeshTools/Compile.h>
 #include <Magnum/Primitives/Square.h>
 #include <Magnum/Trade/MeshData2D.h>
 
-namespace libview
+namespace libview::objects
 {
 
 namespace
@@ -42,8 +42,8 @@ namespace
     }
 }
 
-rounded_square::rounded_square(const Magnum::Color4& color, SceneGraph::DrawableGroup2D& drawables, Object2D* parent):
-    Object2D{parent},
+rounded_square::rounded_square(const Magnum::Color4& color, SceneGraph::DrawableGroup2D& drawables, Object2D& parent):
+    Object2D{&parent},
     SceneGraph::Drawable2D{*this, &drawables},
     color_(color)
 {

@@ -34,116 +34,61 @@ namespace events
 {
     struct start{};
 
-    inline
-    std::ostream& operator<<(std::ostream& l, const start&)
-    {
-        return l << "start{}";
-    }
+    std::ostream& operator<<(std::ostream& l, const start&);
 
 
 
     struct next_input_creation
     {
-        data_types::tile_pair tiles;
+        data_types::input_tile_array tiles;
     };
 
-    inline
-    std::ostream& operator<<(std::ostream& l, const next_input_creation& r)
-    {
-        l << "next_input_creation";
-        l << "{";
-        l << "tiles: " << r.tiles[0].value << ", " << r.tiles[1].value;
-        l << "}";
-        return l;
-    }
+    std::ostream& operator<<(std::ostream& l, const next_input_creation& r);
 
 
 
     struct next_input_insertion
     {
-        int x_offset = 0;
-        int rotation = 0;
+        data_types::input_layout layout;
     };
 
-    inline
-    std::ostream& operator<<(std::ostream& l, const next_input_insertion& r)
-    {
-        l << "next_input_insertion";
-        l << "{";
-        l << "x_offset: " << r.x_offset << ", ";
-        l << "rotation: " << r.rotation;
-        l << "}";
-        return l;
-    }
+    std::ostream& operator<<(std::ostream& l, const next_input_insertion& r);
 
 
 
     struct input_layout_change
     {
-        int x_offset = 0;
-        int rotation = 0;
+        data_types::input_layout layout;
     };
 
-    inline
-    std::ostream& operator<<(std::ostream& l, const input_layout_change& r)
+    std::ostream& operator<<(std::ostream& l, const input_layout_change& r);
+
+
+
+    struct input_tile_drop
     {
-        l << "input_layout_change";
-        l << "{";
-        l << "x_offset: " << r.x_offset << ", ";
-        l << "rotation: " << r.rotation;
-        l << "}";
-        return l;
-    }
-
-
-
-    struct input_insertion
-    {
-        int tile0_dst_column_index = 0;
-        int tile0_dst_row_index = 0;
-        int tile1_dst_column_index = 0;
-        int tile1_dst_row_index = 0;
+        data_types::input_tile_drop_list drops;
     };
 
-    inline
-    std::ostream& operator<<(std::ostream& l, const input_insertion& r)
+    std::ostream& operator<<(std::ostream& l, const input_tile_drop& r);
+
+
+
+    struct board_tile_drop
     {
-        l << "input_insertion";
-        l << "{";
-        l << "tile0_dst_column_index: " << r.tile0_dst_column_index << ", ";
-        l << "tile0_dst_row_index: " << r.tile0_dst_row_index << ", ";
-        l << "tile1_dst_column_index: " << r.tile1_dst_column_index << ", ";
-        l << "tile1_dst_row_index: " << r.tile1_dst_row_index;
-        l << "}";
-        return l;
-    }
-
-
-
-    struct tile_drop
-    {
-        data_types::tile_drop_list drops;
+        data_types::board_tile_drop_list drops;
     };
 
-    inline
-    std::ostream& operator<<(std::ostream& l, const tile_drop& r)
+    std::ostream& operator<<(std::ostream& l, const board_tile_drop& r);
+
+
+
+    struct tile_nullification
     {
-        l << "tile_drop";
-        l << "{";
-        l << "drops: {";
-        {
-            auto first = true;
-            for(const auto& drop: r.drops)
-            {
-                if(!first) l << ", ";
-                l << drop;
-                first = false;
-            }
-        }
-        l << "}";
-        l << "}";
-        return l;
-    }
+        data_types::tile_coordinate_list nullified_tile_coordinates;
+    };
+
+    std::ostream& operator<<(std::ostream& l, const tile_nullification& r);
 
 
 
@@ -152,25 +97,7 @@ namespace events
         data_types::tile_merge_list merges;
     };
 
-    inline
-    std::ostream& operator<<(std::ostream& l, const tile_merge& r)
-    {
-        l << "tile_merge";
-        l << "{";
-        l << "merges: {";
-        {
-            auto first = true;
-            for(const auto& merge: r.merges)
-            {
-                if(!first) l << ", ";
-                l << merge;
-                first = false;
-            }
-        }
-        l << "}";
-        l << "}";
-        return l;
-    }
+    std::ostream& operator<<(std::ostream& l, const tile_merge& r);
 
 
 
@@ -179,15 +106,7 @@ namespace events
         int score = 0;
     };
 
-    inline
-    std::ostream& operator<<(std::ostream& l, const score_change& r)
-    {
-        l << "score_change";
-        l << "{";
-        l << "score: " << r.score;
-        l << "}";
-        return l;
-    }
+    std::ostream& operator<<(std::ostream& l, const score_change& r);
 
 
 
@@ -196,25 +115,13 @@ namespace events
         int score = 0;
     };
 
-    inline
-    std::ostream& operator<<(std::ostream& l, const hi_score_change& r)
-    {
-        l << "hi_score_change";
-        l << "{";
-        l << "score: " << r.score;
-        l << "}";
-        return l;
-    }
+    std::ostream& operator<<(std::ostream& l, const hi_score_change& r);
 
 
 
     struct end_of_game{};
 
-    inline
-    std::ostream& operator<<(std::ostream& l, const end_of_game&)
-    {
-        return l << "end_of_game{}";
-    }
+    std::ostream& operator<<(std::ostream& l, const end_of_game&);
 }
 
 using event = std::variant
@@ -223,8 +130,9 @@ using event = std::variant
     events::next_input_creation,
     events::next_input_insertion,
     events::input_layout_change,
-    events::input_insertion,
-    events::tile_drop,
+    events::input_tile_drop,
+    events::board_tile_drop,
+    events::tile_nullification,
     events::tile_merge,
     events::score_change,
     events::hi_score_change,

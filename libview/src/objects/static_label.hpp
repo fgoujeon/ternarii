@@ -17,27 +17,27 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef LIBVIEW_STATIC_LABEL_HPP
-#define LIBVIEW_STATIC_LABEL_HPP
+#ifndef LIBVIEW_OBJECTS_STATIC_LABEL_HPP
+#define LIBVIEW_OBJECTS_STATIC_LABEL_HPP
 
-#include "magnum_common.hpp"
+#include "../magnum_common.hpp"
 #include <Magnum/Text/Renderer.h>
 #include <Magnum/Math/Color.h>
 #include <Magnum/Magnum.h>
 
-namespace libview
+namespace libview::objects
 {
 
 class static_label: public Object2D, public SceneGraph::Drawable2D
 {
     public:
-        explicit static_label
+        static_label
         (
             const char* const value,
             const float font_size,
             const Magnum::Text::Alignment alignment,
             SceneGraph::DrawableGroup2D& drawables,
-            Object2D* parent
+            Object2D& parent
         );
 
         void set_color(const Magnum::Color4& color)

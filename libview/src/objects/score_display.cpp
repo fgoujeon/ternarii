@@ -18,13 +18,13 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 #include "score_display.hpp"
-#include "text.hpp"
-#include "colors.hpp"
+#include "../text.hpp"
+#include "../colors.hpp"
 #include <Magnum/Shaders/Vector.h>
 #include <Magnum/Text/AbstractFont.h>
 #include <Magnum/Text/GlyphCache.h>
 
-namespace libview
+namespace libview::objects
 {
 
 namespace
@@ -55,8 +55,8 @@ namespace
     }
 }
 
-score_display::score_display(SceneGraph::DrawableGroup2D& drawables, Object2D* parent):
-    Object2D{parent},
+score_display::score_display(SceneGraph::DrawableGroup2D& drawables, Object2D& parent):
+    Object2D{&parent},
     SceneGraph::Drawable2D{*this, &drawables},
     renderer_(text::get_font(), text::get_glyph_cache(), 1.0f, Magnum::Text::Alignment::TopRight)
 {
@@ -69,18 +69,26 @@ void score_display::set_score(const int value)
     renderer_.render(score_to_string(value));
 }
 
+void score_display::set_visible(const bool value)
+{
+    visible_ = value;
+}
+
 void score_display::draw(const Magnum::Matrix3& transformation_matrix, SceneGraph::Camera2D& camera)
 {
     using namespace Magnum::Math::Literals;
 
-    text::get_shader().bindVectorTexture(text::get_glyph_cache().texture());
-    text::get_shader().setTransformationProjectionMatrix(camera.projectionMatrix() * transformation_matrix);
-    text::get_shader().setColor(colors::white);
-    text::get_shader().setSmoothness(0.035f / transformation_matrix.uniformScaling());
-    text::get_shader().setOutlineColor(colors::dark_gray);
-    text::get_shader().setOutlineRange(0.47, 0.40);
+    if(visible_)
+    {
+        text::get_shader().bindVectorTexture(text::get_glyph_cache().texture());
+        text::get_shader().setTransformationProjectionMatrix(camera.projectionMatrix() * transformation_matrix);
+        text::get_shader().setColor(colors::white);
+        text::get_shader().setSmoothness(0.035f / transformation_matrix.uniformScaling());
+        text::get_shader().setOutlineColor(colors::dark_gray);
+        text::get_shader().setOutlineRange(0.47, 0.40);
 
-    renderer_.mesh().draw(text::get_shader());
+        renderer_.mesh().draw(text::get_shader());
+    }
 }
 
 } //namespace

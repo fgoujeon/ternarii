@@ -24,65 +24,107 @@ namespace libgame
 
 namespace
 {
-    const auto default_x_offset = 2;
-    const auto default_rotation = 0;
+    constexpr auto column_count = 6;
+
+    constexpr auto default_layout = data_types::input_layout
+    {
+        .col_offset = 2,
+        .rotation = 0
+    };
+
+    data_types::input_layout fix(const data_types::input_layout& in, const data_types::input_tile_array& tiles)
+    {
+        auto out = data_types::input_layout{};
+
+        const auto tile_count = libcommon::data_types::get_tile_count(tiles);
+
+        out.rotation = in.rotation % 4;
+
+        const auto xmin = [&]
+        {
+            if(tile_count == 2 && out.rotation == 3)
+            {
+                return -1;
+            }
+            return 0;
+        }();
+
+        const auto xmax = [&]
+        {
+            if(tile_count == 1)
+            {
+                return column_count - 1;
+            }
+            if(tile_count == 2 && out.rotation == 1)
+            {
+                return column_count - 1;
+            }
+            return column_count - 2;
+        }();
+
+        out.col_offset = std::clamp(in.col_offset, xmin, xmax);
+
+        return out;
+    }
 }
 
-board_input::board_input(state_t& state):
-    state_(state)
+board_input::board_input(data_types::input_tile_array& tiles):
+    tiles_(tiles),
+    layout_(default_layout)
 {
 }
 
-event board_input::set_tiles(const data_types::tile_pair& tiles)
+event board_input::set_tiles(const data_types::input_tile_array& tiles)
 {
     tiles_ = tiles;
-    x_offset_ = default_x_offset;
-    rotation_ = default_rotation;
-    apply();
+    layout_ = default_layout;
 
     return
     {
-        events::next_input_insertion
-        {
-            x_offset_,
-            rotation_
-        }
+        events::next_input_insertion{layout_}
     };
 }
 
 void board_input::shift_left(event_list& events)
 {
-    if(x_offset_ > 0)
-    {
-        --x_offset_;
-        events.push_back(apply());
-    }
+    --layout_.col_offset;
+    layout_ = fix(layout_, tiles_);
+    events.push_back(events::input_layout_change{layout_});
 }
 
 void board_input::shift_right(event_list& events)
 {
-    if(x_offset_ < column_count - 1)
-    {
-        ++x_offset_;
-        events.push_back(apply());
-    }
+    ++layout_.col_offset;
+    layout_ = fix(layout_, tiles_);
+    events.push_back(events::input_layout_change{layout_});
 }
 
 void board_input::rotate(event_list& events)
 {
-    rotation_ = (rotation_ + 1) % 4;
-    events.push_back(apply());
-}
+    const auto tile_count = libcommon::data_types::get_tile_count(tiles_);
 
-events::input_layout_change board_input::apply()
-{
-    //adjust the offset so that the tiles stay inside the board
-    if(x_offset_ >= column_count - 1 && (rotation_ == 0 || rotation_ == 2))
+    if(tile_count <= 1)
     {
-        x_offset_ = column_count - 2;
+        return;
     }
 
-    return events::input_layout_change{x_offset_, rotation_};
+    ++layout_.rotation;
+
+    //For tile pairs, temporarily shift left on rotation 3.
+    if(tile_count == 2)
+    {
+        if(layout_.rotation == 3)
+        {
+            --layout_.col_offset;
+        }
+        if(layout_.rotation == 4)
+        {
+            ++layout_.col_offset;
+        }
+    }
+
+    layout_ = fix(layout_, tiles_);
+    events.push_back(events::input_layout_change{layout_});
 }
 
 } //namespace

@@ -29,7 +29,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include <Magnum/ImageView.h>
 #include <Corrade/Containers/Optional.h>
 
-namespace libview
+namespace libview::objects
 {
 
 namespace
@@ -71,8 +71,8 @@ namespace
     }
 }
 
-sdf_image::sdf_image(const std::filesystem::path& image_path, SceneGraph::DrawableGroup2D& drawables, Object2D* parent):
-    Object2D{parent},
+sdf_image::sdf_image(const std::filesystem::path& image_path, SceneGraph::DrawableGroup2D& drawables, Object2D& parent):
+    Object2D{&parent},
     SceneGraph::Drawable2D{*this, &drawables},
     texture_(make_texture(image_path))
 {
@@ -95,7 +95,7 @@ void sdf_image::draw(const Magnum::Matrix3& transformation_matrix, SceneGraph::C
     get_shader().setTransformationProjectionMatrix(camera.projectionMatrix() * transformation_matrix);
     get_shader().setSmoothness(0.135f / transformation_matrix.uniformScaling());
     get_shader().setOutlineColor(outline_color_);
-    get_shader().setOutlineRange(0.45, 0.30);
+    get_shader().setOutlineRange(0.50, 0.40);
     get_mesh().draw(get_shader());
 }
 

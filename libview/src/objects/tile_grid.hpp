@@ -17,66 +17,62 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef LIBVIEW_TILE_GRID_HPP
-#define LIBVIEW_TILE_GRID_HPP
+#ifndef LIBVIEW_OBJECTS_TILE_GRID_HPP
+#define LIBVIEW_OBJECTS_TILE_GRID_HPP
 
-#include "tile.hpp"
-#include "animation.hpp"
-#include "time.hpp"
-#include "magnum_common.hpp"
+#include "number_tile.hpp"
+#include "sdf_image_tile.hpp"
+#include "sdf_image.hpp"
+#include "../animation.hpp"
+#include "../time.hpp"
+#include "../magnum_common.hpp"
 #include <libview/data_types.hpp>
+#include <libutil/matrix.hpp>
 #include <Magnum/Animation/Player.h>
 #include <Magnum/GL/Mesh.h>
 #include <Magnum/Shaders/VertexColor.h>
-#include <chrono>
-#include <list>
+#include <memory>
 
-namespace libview
+namespace libview::objects
 {
 
 class tile_grid: public Object2D
 {
     private:
-        template<size_t Size0, size_t Size1>
-        using tile_array = std::array<std::array<tile*, Size1>, Size0>;
-
-        using next_input_tile_array = std::array<tile*, 2>;
-        using input_tile_array = std::array<tile*, 2>;
-        using board_tile_array = tile_array<6, 10>;
+        using input_tile_array = libutil::matrix<std::shared_ptr<tile>, 2, 2>;
+        using board_tile_array = libutil::matrix<std::shared_ptr<tile>, 9, 6>;
 
     public:
-        explicit tile_grid(SceneGraph::DrawableGroup2D& drawables, Object2D* parent);
+        explicit tile_grid(SceneGraph::DrawableGroup2D& drawables, Object2D& parent);
 
         bool is_animating() const;
 
         void clear();
 
-        void create_next_input(const int value0, const int value1);
+        void create_next_input(const data_types::input_tile_array& tiles);
 
-        void insert_next_input(const int x_offset, const int rotation);
+        void insert_next_input(const data_types::input_layout& layout);
 
-        void set_input_layout(const int x_offset, const int rotation);
+        void set_input_layout(const data_types::input_layout& layout);
 
-        void insert_input
-        (
-            const int tile0_dst_column_index,
-            const int tile0_dst_row_index,
-            const int tile1_dst_column_index,
-            const int tile1_dst_row_index
-        );
+        void drop_input_tiles(const data_types::input_tile_drop_list& drops);
 
-        void drop_tiles(const data_types::tile_drop_list& drops);
+        void drop_board_tiles(const data_types::board_tile_drop_list& drops);
+
+        void nullify_tiles(const data_types::tile_coordinate_list& nullified_tile_coordinates);
 
         void merge_tiles(const data_types::tile_merge_list& merges);
+
+        void mark_tiles_for_nullification(const data_types::tile_coordinate_list& tile_coordinates);
 
         void set_board_tiles(const data_types::board_tile_array& tiles);
 
         void advance(const time_point& now);
 
     private:
-        tile& add_tile
+        std::shared_ptr<objects::tile> make_tile
         (
-            const int value,
+            const data_types::tile& tile,
             const Magnum::Vector2& position
         );
 
@@ -85,10 +81,11 @@ class tile_grid: public Object2D
 
         animation_list animations_;
 
-        next_input_tile_array next_input_tiles_ = {};
+        std::vector<std::unique_ptr<sdf_image>> board_corners_;
+
+        input_tile_array next_input_tiles_ = {};
         input_tile_array input_tiles_ = {};
-        int input_x_offset_ = 0;
-        int input_rotation_ = 0;
+        data_types::input_layout input_layout_;
         board_tile_array board_tiles_ = {};
 };
 

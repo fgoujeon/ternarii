@@ -28,6 +28,25 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libdb
 {
 
+namespace
+{
+    std::filesystem::path get_config_dir()
+    {
+        static const auto dir = std::filesystem::path{std::getenv("HOME")} / ".config" / "ternarii";
+        return dir;
+    }
+
+    std::filesystem::path get_database_path(const int version = 1)
+    {
+        switch(version)
+        {
+            case 0: return get_config_dir() / "database.json";
+            case 1: return get_config_dir() / "database_v1.json";
+            default: throw std::runtime_error{"Unsupported database version."};
+        }
+    }
+}
+
 struct database::impl
 {
     private:
@@ -63,14 +82,14 @@ struct database::impl
             }
         }
 
-        const data_types::game_state& get_game_state() const
+        const std::optional<data_types::game_state>& get_game_state() const
         {
-            return game_state_;
+            return opt_game_state_;
         }
 
         void set_game_state(const data_types::game_state& state)
         {
-            game_state_ = state;
+            opt_game_state_ = state;
 
             if(current_state_ == state::ready)
             {
@@ -106,20 +125,36 @@ struct database::impl
             }
         }
 
+        bool try_load_data(const int version)
+        {
+            const auto path = get_database_path(version);
+            if(!exists(path))
+            {
+                return false;
+            }
+
+            //read json from file
+            auto ifs = std::ifstream{path};
+            auto json = nlohmann::json{};
+            ifs >> json;
+
+#ifndef NDEBUG
+            std::cout << to_string(json) << std::endl;
+#endif
+
+            //convert json to state
+            auto game_state = data_types::game_state{};
+            from_json(json, game_state, version);
+            opt_game_state_ = game_state;
+
+            return true;
+        }
+
         void load_data()
         {
             try
             {
-                //read json from file
-                auto ifs = std::ifstream{path_};
-                auto json = nlohmann::json{};
-                ifs >> json;
-
-                //load at least this one, in case an exception occurs later
-                game_state_.hi_score = json["hiScore"].get<int>();
-
-                //convert json to state
-                game_state_ = json;
+                try_load_data(1) || try_load_data(0);
             }
             catch(const std::exception& e)
             {
@@ -138,9 +173,10 @@ struct database::impl
         {
             try
             {
-                std::filesystem::create_directories(path_.parent_path());
-                std::ofstream ofs{path_};
-                const auto json = nlohmann::json(game_state_);
+                const auto path = get_database_path();
+                std::filesystem::create_directories(path.parent_path());
+                auto ofs = std::ofstream{path};
+                const auto json = nlohmann::json(*opt_game_state_);
                 ofs << json;
             }
             catch(const std::exception& e)
@@ -167,10 +203,9 @@ struct database::impl
         }
 
     private:
-        const std::filesystem::path path_ = std::filesystem::path{std::getenv("HOME")} / ".config" / "ternarii" / "database.json";
         event_handler event_handler_;
         state current_state_ = state::starting;
-        data_types::game_state game_state_;
+        std::optional<data_types::game_state> opt_game_state_;
 };
 
 database::database(const event_handler& evt_handler):
@@ -185,7 +220,7 @@ void database::iterate()
     pimpl_->iterate();
 }
 
-const data_types::game_state& database::get_game_state() const
+const std::optional<data_types::game_state>& database::get_game_state() const
 {
     return pimpl_->get_game_state();
 }

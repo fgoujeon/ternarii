@@ -20,6 +20,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #ifndef LIBVIEW_DATA_TYPES_HPP
 #define LIBVIEW_DATA_TYPES_HPP
 
+#include <libcommon/data_types.hpp>
 #include <functional>
 #include <optional>
 #include <vector>
@@ -29,6 +30,21 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libview::data_types
 {
 
+namespace tiles = libcommon::data_types::tiles;
+
+using board_tile_array     = libcommon::data_types::board_tile_array;
+using board_tile_drop      = libcommon::data_types::board_tile_drop;
+using board_tile_drop_list = libcommon::data_types::board_tile_drop_list;
+using input_layout         = libcommon::data_types::input_layout;
+using input_tile_array     = libcommon::data_types::input_tile_array;
+using input_tile_drop      = libcommon::data_types::input_tile_drop;
+using input_tile_drop_list = libcommon::data_types::input_tile_drop_list;
+using tile                 = libcommon::data_types::tile;
+using tile_coordinate      = libcommon::data_types::tile_coordinate;
+using tile_coordinate_list = libcommon::data_types::tile_coordinate_list;
+using tile_merge           = libcommon::data_types::tile_merge;
+using tile_merge_list      = libcommon::data_types::tile_merge_list;
+
 enum class move
 {
     clockwise_rotation,
@@ -36,48 +52,6 @@ enum class move
     left_shift,
     right_shift
 };
-
-struct tile
-{
-    int value = 0;
-};
-
-using opt_tile = std::optional<tile>;
-
-template<size_t Size0, size_t Size1>
-using tile_array = std::array<std::array<opt_tile, Size1>, Size0>;
-
-using next_input_tile_array = std::array<opt_tile, 2>;
-using input_tile_array = std::array<opt_tile, 2>;
-using board_tile_array = tile_array<6, 10>;
-
-
-
-struct tile_coordinate
-{
-    int x;
-    int y;
-};
-
-using tile_coordinate_list = std::vector<tile_coordinate>;
-
-struct tile_drop
-{
-    int column_index;
-    int src_row_index;
-    int dst_row_index;
-};
-
-using tile_drop_list = std::vector<tile_drop>;
-
-struct tile_merge
-{
-    tile_coordinate_list src_tile_coordinates;
-    tile_coordinate dst_tile_coordinate;
-    int dst_tile_value;
-};
-
-using tile_merge_list = std::vector<tile_merge>;
 
 } //namespace
 
