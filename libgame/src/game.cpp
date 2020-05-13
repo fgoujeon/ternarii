@@ -218,9 +218,9 @@ const data_types::board_tile_array& game::get_board_tiles() const
     return pimpl_->board_.tile_array();
 }
 
-data_types::tile_coordinate_list game::get_targeted_tiles() const
+void game::get_targeted_tiles(data_types::tile_coordinate_list& coords) const
 {
-    return pimpl_->board_.get_targeted_tiles(pimpl_->input_);
+    return pimpl_->board_.get_targeted_tiles(pimpl_->input_, coords);
 }
 
 bool game::is_game_over() const

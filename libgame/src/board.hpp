@@ -58,7 +58,7 @@ class board
 
         int get_free_cell_count() const;
 
-        data_types::tile_coordinate_list get_targeted_tiles(const board_input& in) const;
+        void get_targeted_tiles(const board_input& in, data_types::tile_coordinate_list& coords) const;
 
         void clear();
 

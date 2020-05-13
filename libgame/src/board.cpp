@@ -35,11 +35,12 @@ namespace
     - board tile matrix after input tiles are dropped
     - list of tile drops
     */
-    std::tuple<data_types::board_tile_array, data_types::input_tile_drop_list> apply_gravity
+    data_types::board_tile_array apply_gravity
     (
         const data_types::input_tile_array& input_tiles,
         const data_types::input_layout& input_layout,
-        data_types::board_tile_array board_tiles
+        data_types::board_tile_array board_tiles,
+        data_types::input_tile_drop_list* pdrops //output, optional
     )
     {
         auto drops = data_types::input_tile_drop_list{};
@@ -77,20 +78,23 @@ namespace
 
                     libutil::at(board_tiles, *opt_dst_row, coord.col) = opt_tile;
 
-                    drops.push_back
-                    (
-                        data_types::input_tile_drop
-                        {
-                            {row, col},
-                            {*opt_dst_row, coord.col}
-                        }
-                    );
+                    if(pdrops)
+                    {
+                        pdrops->push_back
+                        (
+                            data_types::input_tile_drop
+                            {
+                                {row, col},
+                                {*opt_dst_row, coord.col}
+                            }
+                        );
+                    }
                 },
                 input_tiles
             );
         }
 
-        return std::make_tuple(board_tiles, drops);
+        return board_tiles;
     }
 
     /*
@@ -98,13 +102,12 @@ namespace
     - board tile matrix after application of nullifiers
     - coordinates of nullified tiles
     */
-    std::tuple<data_types::board_tile_array, data_types::tile_coordinate_list> apply_nullifiers
+    data_types::board_tile_array apply_nullifiers
     (
-        data_types::board_tile_array tiles
+        data_types::board_tile_array tiles,
+        data_types::tile_coordinate_list& coords //output
     )
     {
-        auto coords = data_types::tile_coordinate_list{};
-
         libutil::for_each_ij
         (
             [&](auto& opt_tile, const int row, const int col)
@@ -229,7 +232,7 @@ namespace
             tiles
         );
 
-        return std::make_tuple(tiles, coords);
+        return tiles;
     }
 }
 
@@ -296,11 +299,10 @@ int board::get_free_cell_count() const
     return count;
 }
 
-data_types::tile_coordinate_list board::get_targeted_tiles(const board_input& in) const
+void board::get_targeted_tiles(const board_input& in, data_types::tile_coordinate_list& coords) const
 {
-    const auto [board_tiles, drops] = apply_gravity(in.get_tiles(), in.get_layout(), tiles_);
-    const auto [board_tiles2, coords] = apply_nullifiers(board_tiles);
-    return coords;
+    const auto board_tiles = apply_gravity(in.get_tiles(), in.get_layout(), tiles_, nullptr);
+    apply_nullifiers(board_tiles, coords);
 }
 
 void board::clear()
@@ -316,8 +318,8 @@ void board::drop_input_tiles(const board_input& in, event_list& events)
     //Apply gravity on input tiles
     {
         auto drops = data_types::input_tile_drop_list{};
-        std::tie(tiles_, drops) = apply_gravity(in.get_tiles(), in.get_layout(), tiles_);
-        events.push_back(events::input_tile_drop{drops});
+        tiles_ = apply_gravity(in.get_tiles(), in.get_layout(), tiles_, &drops);
+        events.push_back(events::input_tile_drop{std::move(drops)});
     }
 
     auto old_event_count = 0;
@@ -327,10 +329,10 @@ void board::drop_input_tiles(const board_input& in, event_list& events)
 
         {
             auto nullified_tiles = data_types::tile_coordinate_list{};
-            std::tie(tiles_, nullified_tiles) = apply_nullifiers(tiles_);
+            tiles_ = apply_nullifiers(tiles_, nullified_tiles);
             if(!nullified_tiles.empty())
             {
-                events.push_back(events::tile_nullification{nullified_tiles});
+                events.push_back(events::tile_nullification{std::move(nullified_tiles)});
             }
         }
 
