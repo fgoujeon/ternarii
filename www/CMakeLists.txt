@@ -20,12 +20,19 @@ cmake_minimum_required(VERSION 3.14)
 add_custom_target(
     www ALL
 
-    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+    COMMAND ${CMAKE_COMMAND}
+        -D INPUT_DIR=\"${CMAKE_CURRENT_SOURCE_DIR}\"
+        -D OUTPUT_DIR=\"${CMAKE_RUNTIME_OUTPUT_DIRECTORY}\"
+        -D MAGNUM_JS=\"${MAGNUM_EMSCRIPTENAPPLICATION_JS}\"
+        -D PROJECT_VERSION=${PROJECT_VERSION}
+        -P "${CMAKE_CURRENT_LIST_DIR}/build.cmake"
 
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        ${CMAKE_CURRENT_SOURCE_DIR}/res/icon.png
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/index.css
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/index.html
-        ${MAGNUM_EMSCRIPTENAPPLICATION_JS}
-        ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+    #    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+    #
+    #    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    #        ${CMAKE_CURRENT_SOURCE_DIR}/res/icon.png
+    #        ${CMAKE_CURRENT_SOURCE_DIR}/src/index.css
+    #        ${CMAKE_CURRENT_SOURCE_DIR}/src/index.html
+    #        ${MAGNUM_EMSCRIPTENAPPLICATION_JS}
+    #        ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
 )

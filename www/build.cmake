@@ -17,24 +17,16 @@
 
 cmake_minimum_required(VERSION 3.14)
 
-set_directory_properties(PROPERTIES CORRADE_USE_PEDANTIC_FLAGS ON)
+function(copy_file SRC_FILE DST_FILE)
+    get_filename_component(SRC_FILENAME "${SRC_FILE}" NAME)
+    get_filename_component(DST_DIR "${DST_FILE}" DIRECTORY)
+    file(COPY "${SRC_FILE}" DESTINATION "${DST_DIR}")
+    file(RENAME "${DST_DIR}/${SRC_FILENAME}" "${DST_FILE}")
+endfunction()
 
-file(GLOB_RECURSE SRC_FILES src/*)
+file(MAKE_DIRECTORY ${OUTPUT_DIR})
 
-add_executable(app ${SRC_FILES})
-
-set_target_properties(
-    app PROPERTIES
-    CXX_STANDARD 20
-    OUTPUT_NAME "app-${PROJECT_VERSION}"
-)
-
-target_link_libraries(
-    app
-    PRIVATE
-        libdb
-        libgame
-        libview
-)
-
-add_dependencies(app res)
+configure_file("${INPUT_DIR}/src/index.html.in" "${OUTPUT_DIR}/index.html")
+copy_file("${INPUT_DIR}/src/index.css" "${OUTPUT_DIR}/index-${PROJECT_VERSION}.css")
+copy_file("${INPUT_DIR}/res/icon.png"  "${OUTPUT_DIR}/icon-${PROJECT_VERSION}.png")
+copy_file("${MAGNUM_JS}"               "${OUTPUT_DIR}/EmscriptenApplication-${PROJECT_VERSION}.js")

@@ -22,8 +22,8 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
     <head>
         <meta charset="UTF-8"/>
         <title>Ternarii</title>
-        <link rel="stylesheet" href="index.css"/>
-        <link rel="icon" type="image/png" href="icon.png"/>
+        <link rel="stylesheet" href="index-${PROJECT_VERSION}.css"/>
+        <link rel="icon" type="image/png" href="icon-${PROJECT_VERSION}.png"/>
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     </head>
     <body>
@@ -42,7 +42,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
             <div id="status-description"></div>
         </div>
 
-        <script src="EmscriptenApplication.js"></script>
-        <script async="async" src="app.js"></script>
+        <script src="EmscriptenApplication-${PROJECT_VERSION}.js"></script>
+        <script async="async" src="app-${PROJECT_VERSION}.js"></script>
     </body>
 </html>
