@@ -22,8 +22,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "square.hpp"
 #include "static_label.hpp"
-#include "../clickable.hpp"
-#include "../magnum_common.hpp"
+#include "../common.hpp"
 
 namespace libview::objects
 {

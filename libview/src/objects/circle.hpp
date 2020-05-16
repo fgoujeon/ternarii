@@ -20,7 +20,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #ifndef LIBVIEW_OBJECTS_CIRCLE_HPP
 #define LIBVIEW_OBJECTS_CIRCLE_HPP
 
-#include "../magnum_common.hpp"
+#include "../common.hpp"
 #include <Magnum/Math/Color.h>
 #include <Magnum/Magnum.h>
 

@@ -20,7 +20,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #ifndef LIBVIEW_TEXT_HPP
 #define LIBVIEW_TEXT_HPP
 
-#include "magnum_common.hpp"
+#include "common.hpp"
 #include <MagnumPlugins/MagnumFont/MagnumFont.h>
 #include <Magnum/Shaders/DistanceFieldVector.h>
 #include <Magnum/Text/GlyphCache.h>

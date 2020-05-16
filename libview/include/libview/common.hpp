@@ -17,16 +17,22 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef LIBVIEW_TIME_HPP
-#define LIBVIEW_TIME_HPP
+#ifndef LIBVIEW_COMMON_HPP
+#define LIBVIEW_COMMON_HPP
 
-#include <chrono>
+#include <Magnum/SceneGraph/MatrixTransformation2D.h>
+#include <Magnum/SceneGraph/Object.h>
+#include <Magnum/SceneGraph/Drawable.h>
+#include <Magnum/SceneGraph/Scene.h>
 
 namespace libview
 {
 
-using clock = std::chrono::steady_clock;
-using time_point = std::chrono::time_point<clock>;
+namespace SceneGraph = Magnum::SceneGraph;
+
+using Object2D = SceneGraph::Object<Magnum::SceneGraph::MatrixTransformation2D>;
+using Scene2D = SceneGraph::Scene<Magnum::SceneGraph::MatrixTransformation2D>;
+using Drawable2D = SceneGraph::Drawable2D;
 
 } //namespace
 

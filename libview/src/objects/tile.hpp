@@ -20,7 +20,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #ifndef LIBVIEW_OBJECTS_TILE_HPP
 #define LIBVIEW_OBJECTS_TILE_HPP
 
-#include "../magnum_common.hpp"
+#include "../common.hpp"
 #include <Magnum/Magnum.h>
 
 namespace libview::objects

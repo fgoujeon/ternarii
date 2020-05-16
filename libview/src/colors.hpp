@@ -20,7 +20,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #ifndef LIBVIEW_COLORS_HPP
 #define LIBVIEW_COLORS_HPP
 
-#include "magnum_common.hpp"
+#include "common.hpp"
 
 namespace libview::colors
 {

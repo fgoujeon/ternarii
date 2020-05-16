@@ -21,8 +21,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #define LIBVIEW_OBJECTS_BUTTON_HPP
 
 #include "sdf_image.hpp"
-#include "../clickable.hpp"
-#include "../magnum_common.hpp"
+#include "../common.hpp"
 
 namespace libview::objects
 {

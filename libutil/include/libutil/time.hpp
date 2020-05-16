@@ -17,26 +17,16 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef LIBVIEW_CLICKABLE_HPP
-#define LIBVIEW_CLICKABLE_HPP
+#ifndef LIBUTIL_TIME_HPP
+#define LIBUTIL_TIME_HPP
 
-#include "magnum_common.hpp"
-#include <Magnum/SceneGraph/AbstractGroupedFeature.h>
+#include <chrono>
 
-namespace libview
+namespace libutil
 {
 
-class clickable: public Magnum::SceneGraph::AbstractGroupedFeature2D<clickable>
-{
-    public:
-        using Magnum::SceneGraph::AbstractGroupedFeature2D<clickable>::AbstractGroupedFeature2D;
-
-        virtual bool is_inside(const Magnum::Vector2& model_space_position) const = 0;
-
-        virtual void mouse_press_event(){}
-};
-
-using clickable_group = Magnum::SceneGraph::FeatureGroup2D<clickable>;
+using clock = std::chrono::steady_clock;
+using time_point = std::chrono::time_point<clock>;
 
 } //namespace
 

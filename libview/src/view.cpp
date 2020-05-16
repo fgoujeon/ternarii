@@ -17,12 +17,11 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#include "screens/game.hpp"
-#include "colors.hpp"
-#include "clickable.hpp"
-#include "time.hpp"
-#include "magnum_common.hpp"
 #include <libview/view.hpp>
+#include "colors.hpp"
+#include "common.hpp"
+#include <libview/screens/game.hpp>
+#include <libutil/time.hpp>
 #include <Magnum/GL/Context.h>
 #include <Magnum/GL/DefaultFramebuffer.h>
 #include <Magnum/GL/Renderer.h>
@@ -39,7 +38,7 @@ class view::impl final
         impl(const callback_set& callbacks):
             cameraObject_(&scene_),
             camera_(cameraObject_),
-            game_screen_(scene_, drawables_, clickables_, callbacks)
+            game_screen_(object_arg_set{scene_, drawables_, clickables_}, callbacks)
         {
             camera_.setAspectRatioPolicy(SceneGraph::AspectRatioPolicy::Extend);
             camera_.setProjectionMatrix(Magnum::Matrix3::projection({9.0f, 16.0f}));
@@ -54,7 +53,7 @@ class view::impl final
 
         void draw()
         {
-            const auto now = clock::now();
+            const auto now = libutil::clock::now();
 
             //advance animations
             game_screen_.advance(now);

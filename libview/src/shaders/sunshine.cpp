@@ -63,7 +63,7 @@ sunshine::sunshine()
     setColor(Magnum::Color4{1.0f});
 }
 
-void sunshine::set_time(const time_point& now)
+void sunshine::set_time(const libutil::time_point& now)
 {
     const auto now_ms = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count();
 

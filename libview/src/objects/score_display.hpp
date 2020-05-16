@@ -20,7 +20,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #ifndef LIBVIEW_OBJECTS_SCORE_DISPLAY_HPP
 #define LIBVIEW_OBJECTS_SCORE_DISPLAY_HPP
 
-#include "../magnum_common.hpp"
+#include "../common.hpp"
 #include <Magnum/Text/Renderer.h>
 
 namespace libview::objects

@@ -430,7 +430,7 @@ void tile_grid::set_board_tiles(const data_types::board_tile_array& tiles)
     );
 }
 
-void tile_grid::advance(const time_point& now)
+void tile_grid::advance(const libutil::time_point& now)
 {
     auto keep_advancing = true;
 

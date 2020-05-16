@@ -53,7 +53,7 @@ void background::set_color(const Magnum::Color4& color)
     color_ = color;
 }
 
-void background::advance(const time_point& now)
+void background::advance(const libutil::time_point& now)
 {
     get_shader().set_time(now);
 }

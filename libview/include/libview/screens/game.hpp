@@ -17,37 +17,50 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef LIBVIEW_OBJECTS_TILE_GRID_HPP
-#define LIBVIEW_OBJECTS_TILE_GRID_HPP
+#ifndef LIBVIEW_SCREENS_GAME_HPP
+#define LIBVIEW_SCREENS_GAME_HPP
 
-#include "number_tile.hpp"
-#include "sdf_image_tile.hpp"
-#include "sdf_image.hpp"
-#include "../animation.hpp"
+#include <libview/events.hpp>
 #include "../common.hpp"
-#include <libview/data_types.hpp>
-#include <libutil/matrix.hpp>
 #include <libutil/time.hpp>
-#include <Magnum/Animation/Player.h>
-#include <Magnum/GL/Mesh.h>
-#include <Magnum/Shaders/VertexColor.h>
-#include <memory>
+#include <Magnum/Math/Color.h>
+#include <Magnum/Platform/Sdl2Application.h>
 
-namespace libview::objects
+namespace libview
+{
+    struct object_arg_set;
+}
+
+namespace libview::screens
 {
 
-class tile_grid: public Object2D
+class game: public Object2D, public Drawable2D
 {
-    private:
-        using input_tile_array = libutil::matrix<std::shared_ptr<tile>, 2, 2>;
-        using board_tile_array = libutil::matrix<std::shared_ptr<tile>, 9, 6>;
+    public:
+        using key_event = Magnum::Platform::Sdl2Application::KeyEvent;
+        using mouse_event = Magnum::Platform::Sdl2Application::MouseEvent;
 
     public:
-        explicit tile_grid(SceneGraph::DrawableGroup2D& drawables, Object2D& parent);
+        game
+        (
+            const object_arg_set& object_args,
+            const callback_set& callbacks
+        );
 
-        bool is_animating() const;
+        ~game();
 
+        void advance(const libutil::time_point& now);
+
+        void handle_key_press(key_event& event);
+
+        void draw(const Magnum::Matrix3& /*transformation_matrix*/, SceneGraph::Camera2D& camera) override;
+
+    public:
         void clear();
+
+        void set_score(const int value);
+
+        void set_hi_score(const int value);
 
         void create_next_input(const data_types::input_tile_array& tiles);
 
@@ -67,26 +80,16 @@ class tile_grid: public Object2D
 
         void set_board_tiles(const data_types::board_tile_array& tiles);
 
-        void advance(const libutil::time_point& now);
+        void set_visible(const bool visible);
+
+        void set_game_over_screen_visible(const bool visible);
 
     private:
-        std::shared_ptr<objects::tile> make_tile
-        (
-            const data_types::tile& tile,
-            const Magnum::Vector2& position
-        );
+        void send_move_request(const data_types::move move);
 
     private:
-        SceneGraph::DrawableGroup2D& drawables_;
-
-        animation_list animations_;
-
-        std::vector<std::unique_ptr<sdf_image>> board_corners_;
-
-        input_tile_array next_input_tiles_ = {};
-        input_tile_array input_tiles_ = {};
-        data_types::input_layout input_layout_;
-        board_tile_array board_tiles_ = {};
+        class impl;
+        std::unique_ptr<impl> pimpl_;
 };
 
 } //namespace

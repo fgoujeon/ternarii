@@ -23,7 +23,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include "rounded_square.hpp"
 #include "sdf_image.hpp"
 #include "tile.hpp"
-#include "../magnum_common.hpp"
+#include "../common.hpp"
 #include <Magnum/Math/Color.h>
 #include <Magnum/Magnum.h>
 
