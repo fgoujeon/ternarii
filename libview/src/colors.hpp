@@ -17,6 +17,9 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+#ifndef LIBVIEW_COLORS_HPP
+#define LIBVIEW_COLORS_HPP
+
 #include "magnum_common.hpp"
 
 namespace libview::colors
@@ -28,3 +31,5 @@ static inline const auto light_gray = 0xdddddd_rgbf;
 static inline const auto white      = 0xffffff_rgbf;
 
 } //namespace
+
+#endif
