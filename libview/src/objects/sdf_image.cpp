@@ -71,9 +71,9 @@ namespace
     }
 }
 
-sdf_image::sdf_image(const std::filesystem::path& image_path, SceneGraph::DrawableGroup2D& drawables, Object2D& parent):
+sdf_image::sdf_image(Object2D& parent, features::drawable_group& drawables, const std::filesystem::path& image_path):
     Object2D{&parent},
-    SceneGraph::Drawable2D{*this, &drawables},
+    features::drawable{*this, &drawables},
     texture_(make_texture(image_path))
 {
 }

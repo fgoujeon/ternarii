@@ -43,7 +43,7 @@ class tile_grid: public Object2D
         using board_tile_array = libutil::matrix<std::shared_ptr<tile>, 9, 6>;
 
     public:
-        explicit tile_grid(SceneGraph::DrawableGroup2D& drawables, Object2D& parent);
+        tile_grid(Object2D& parent, features::drawable_group& drawables);
 
         bool is_animating() const;
 
@@ -77,12 +77,11 @@ class tile_grid: public Object2D
         );
 
     private:
-        SceneGraph::DrawableGroup2D& drawables_;
+        features::drawable_group& drawables_;
 
         animation_list animations_;
 
         std::vector<std::unique_ptr<sdf_image>> board_corners_;
-
         input_tile_array next_input_tiles_ = {};
         input_tile_array input_tiles_ = {};
         data_types::input_layout input_layout_;

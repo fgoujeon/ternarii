@@ -27,10 +27,10 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libview::objects
 {
 
-class square: public Object2D, public SceneGraph::Drawable2D
+class square: public Object2D, public features::drawable
 {
     public:
-        square(const Magnum::Color4& color, SceneGraph::DrawableGroup2D& drawables, Object2D& parent);
+        square(Object2D& parent, features::drawable_group& drawables, const Magnum::Color4& color);
 
         void set_color(const Magnum::Color4& color);
 

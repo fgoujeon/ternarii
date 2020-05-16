@@ -28,10 +28,10 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libview::objects
 {
 
-class background: public Object2D, public SceneGraph::Drawable2D
+class background: public Object2D, public features::drawable
 {
     public:
-        background(SceneGraph::DrawableGroup2D& drawables, Object2D& parent);
+        background(Object2D& parent, features::drawable_group& drawables);
 
         void set_color(const Magnum::Color4& color);
 

@@ -20,6 +20,9 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #ifndef LIBVIEW_COMMON_HPP
 #define LIBVIEW_COMMON_HPP
 
+#include "features/animable.hpp"
+#include "features/clickable.hpp"
+#include "features/key_event_handler.hpp"
 #include <Magnum/SceneGraph/MatrixTransformation2D.h>
 #include <Magnum/SceneGraph/Object.h>
 #include <Magnum/SceneGraph/Drawable.h>
@@ -30,9 +33,14 @@ namespace libview
 
 namespace SceneGraph = Magnum::SceneGraph;
 
-using Object2D = SceneGraph::Object<Magnum::SceneGraph::MatrixTransformation2D>;
 using Scene2D = SceneGraph::Scene<Magnum::SceneGraph::MatrixTransformation2D>;
-using Drawable2D = SceneGraph::Drawable2D;
+using Object2D = SceneGraph::Object<Magnum::SceneGraph::MatrixTransformation2D>;
+
+namespace features
+{
+    using drawable = SceneGraph::Drawable2D;
+    using drawable_group = SceneGraph::DrawableGroup2D;
+}
 
 } //namespace
 

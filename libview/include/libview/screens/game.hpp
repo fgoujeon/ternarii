@@ -21,39 +21,35 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #define LIBVIEW_SCREENS_GAME_HPP
 
 #include <libview/events.hpp>
+#include "../features/key_event_handler.hpp"
 #include "../common.hpp"
 #include <libutil/time.hpp>
 #include <Magnum/Math/Color.h>
 #include <Magnum/Platform/Sdl2Application.h>
 
-namespace libview
-{
-    struct object_arg_set;
-}
-
 namespace libview::screens
 {
 
-class game: public Object2D, public Drawable2D
+class game: public Object2D, public features::drawable, public features::animable, public features::key_event_handler
 {
-    public:
-        using key_event = Magnum::Platform::Sdl2Application::KeyEvent;
-        using mouse_event = Magnum::Platform::Sdl2Application::MouseEvent;
-
     public:
         game
         (
-            const object_arg_set& object_args,
+            Object2D& parent,
+            features::drawable_group& drawables,
+            features::animable_group& animables,
+            features::clickable_group& clickables,
+            features::key_event_handler_group& key_event_handlers,
             const callback_set& callbacks
         );
 
         ~game();
 
-        void advance(const libutil::time_point& now);
-
-        void handle_key_press(key_event& event);
-
         void draw(const Magnum::Matrix3& /*transformation_matrix*/, SceneGraph::Camera2D& camera) override;
+
+        void advance(const libutil::time_point& now) override;
+
+        void handle_key_press(key_event& event) override;
 
     public:
         void clear();

@@ -27,10 +27,10 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libview::objects
 {
 
-class game_over_screen: public Object2D, public SceneGraph::Drawable2D
+class game_over_screen: public Object2D, public features::drawable
 {
     private:
-        class new_game_button: public Object2D, public clickable
+        class new_game_button: public Object2D, public features::clickable
         {
             public:
                 using mouse_press_callback = std::function<void()>;
@@ -38,15 +38,13 @@ class game_over_screen: public Object2D, public SceneGraph::Drawable2D
             public:
                 new_game_button
                 (
-                    const mouse_press_callback& cb,
-                    SceneGraph::DrawableGroup2D& drawables,
-                    clickable_group& clickables,
-                    Object2D& parent
+                    Object2D& parent, features::drawable_group& drawables, features::clickable_group& clickables,
+                    const mouse_press_callback& cb
                 );
 
                 void set_enabled(const bool enabled);
 
-            //clickable virtual functions
+            //features::clickable virtual functions
             private:
                 bool is_inside(const Magnum::Vector2& model_space_position) const override;
 
@@ -60,12 +58,12 @@ class game_over_screen: public Object2D, public SceneGraph::Drawable2D
         };
 
     public:
-        explicit game_over_screen
+        game_over_screen
         (
-            const std::function<void()>& new_game_button_press_callback,
-            SceneGraph::DrawableGroup2D& drawables,
-            clickable_group& clickables,
-            Object2D& parent
+            Object2D& parent,
+            features::drawable_group& drawables,
+            features::clickable_group& clickables,
+            const std::function<void()>& new_game_button_press_callback
         );
 
         void set_visible(const bool visible);
@@ -74,8 +72,8 @@ class game_over_screen: public Object2D, public SceneGraph::Drawable2D
         void draw(const Magnum::Matrix3& transformation_matrix, SceneGraph::Camera2D& camera) override;
 
     private:
-        SceneGraph::DrawableGroup2D& drawables_;
-        SceneGraph::DrawableGroup2D drawable_children_;
+        features::drawable_group& drawables_;
+        features::drawable_group drawable_children_;
         square background_rectangle_;
         static_label label_;
         new_game_button new_game_button_;

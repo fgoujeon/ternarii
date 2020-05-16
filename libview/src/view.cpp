@@ -38,7 +38,7 @@ class view::impl final
         impl(const callback_set& callbacks):
             cameraObject_(&scene_),
             camera_(cameraObject_),
-            game_screen_(object_arg_set{scene_, drawables_, clickables_}, callbacks)
+            game_screen_(scene_, drawables_, animables_, clickables_, key_event_handlers_, callbacks)
         {
             camera_.setAspectRatioPolicy(SceneGraph::AspectRatioPolicy::Extend);
             camera_.setProjectionMatrix(Magnum::Matrix3::projection({9.0f, 16.0f}));
@@ -56,7 +56,10 @@ class view::impl final
             const auto now = libutil::clock::now();
 
             //advance animations
-            game_screen_.advance(now);
+            for(std::size_t i = 0; i < animables_.size(); ++i)
+            {
+                animables_[i].advance(now);
+            }
 
             camera_.draw(drawables_);
         }
@@ -68,7 +71,10 @@ class view::impl final
 
         void handle_key_press(key_event& event)
         {
-            game_screen_.handle_key_press(event);
+            for(std::size_t i = 0; i < key_event_handlers_.size(); ++i)
+            {
+                key_event_handlers_[i].handle_key_press(event);
+            }
         }
 
         void handle_mouse_press(mouse_event& event)
@@ -102,8 +108,10 @@ class view::impl final
         Scene2D scene_;
         Object2D cameraObject_;
         SceneGraph::Camera2D camera_;
-        SceneGraph::DrawableGroup2D drawables_;
-        clickable_group clickables_;
+        features::drawable_group drawables_;
+        features::animable_group animables_;
+        features::clickable_group clickables_;
+        features::key_event_handler_group key_event_handlers_;
 
     public:
         screens::game game_screen_;

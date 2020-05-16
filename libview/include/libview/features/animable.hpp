@@ -17,24 +17,24 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef LIBVIEW_SRC_COMMON_HPP
-#define LIBVIEW_SRC_COMMON_HPP
+#ifndef LIBVIEW_FEATURES_ANIMABLE_HPP
+#define LIBVIEW_FEATURES_ANIMABLE_HPP
 
-#include <libview/common.hpp>
 #include <Magnum/SceneGraph/AbstractGroupedFeature.h>
-#include <Magnum/SceneGraph/Camera.h>
-#include <Magnum/SceneGraph/Drawable.h>
-#include <Magnum/SceneGraph/MatrixTransformation2D.h>
-#include <Magnum/SceneGraph/Object.h>
-#include <Magnum/SceneGraph/Scene.h>
-#include <Magnum/Math/Color.h>
+#include <libutil/time.hpp>
 
-namespace libview
+namespace libview::features
 {
 
-using namespace Magnum::Math::Literals;
+class animable: public Magnum::SceneGraph::AbstractGroupedFeature2D<animable>
+{
+    public:
+        using Magnum::SceneGraph::AbstractGroupedFeature2D<animable>::AbstractGroupedFeature2D;
 
-using Vector2 = Magnum::Vector2;
+        virtual void advance(const libutil::time_point& now) = 0;
+};
+
+using animable_group = Magnum::SceneGraph::FeatureGroup2D<animable>;
 
 } //namespace
 

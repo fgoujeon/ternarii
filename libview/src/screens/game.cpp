@@ -39,19 +39,20 @@ class game::impl
     public:
         impl
         (
-            const object_arg_set& args,
+            game& self,
+            features::clickable_group& clickables,
             const callback_set& callbacks
         ):
             callbacks_(callbacks),
-            background_(drawables_, args.parent),
-            tile_grid_(drawables_, args.parent),
-            score_display_(drawables_, args.parent),
-            hi_score_display_(drawables_, args.parent),
-            left_button_   ("/res/images/move_button.tga",   [this]{send_move_request(data_types::move::left_shift);},         drawables_, args.clickables, args.parent),
-            right_button_  ("/res/images/move_button.tga",   [this]{send_move_request(data_types::move::right_shift);},        drawables_, args.clickables, args.parent),
-            drop_button_   ("/res/images/move_button.tga",   [this]{send_move_request(data_types::move::drop);},               drawables_, args.clickables, args.parent),
-            rotate_button_ ("/res/images/rotate_button.tga", [this]{send_move_request(data_types::move::clockwise_rotation);}, drawables_, args.clickables, args.parent),
-            game_over_screen_([this]{callbacks_.handle_clear_request();}, drawables_, args.clickables, args.parent)
+            background_(self, drawables_),
+            tile_grid_(self, drawables_),
+            score_display_(self, drawables_),
+            hi_score_display_(self, drawables_),
+            left_button_   (self, drawables_, clickables, "/res/images/move_button.tga",   [this]{send_move_request(data_types::move::left_shift);}         ),
+            right_button_  (self, drawables_, clickables, "/res/images/move_button.tga",   [this]{send_move_request(data_types::move::right_shift);}        ),
+            drop_button_   (self, drawables_, clickables, "/res/images/move_button.tga",   [this]{send_move_request(data_types::move::drop);}               ),
+            rotate_button_ (self, drawables_, clickables, "/res/images/rotate_button.tga", [this]{send_move_request(data_types::move::clockwise_rotation);} ),
+            game_over_screen_(self, drawables_, clickables, [this]{callbacks_.handle_clear_request();})
         {
             background_.scale({16.0f, 16.0f});
             background_.translate({0.0f, -1.0f});
@@ -100,7 +101,7 @@ class game::impl
     public:
         callback_set callbacks_;
 
-        SceneGraph::DrawableGroup2D drawables_;
+        features::drawable_group drawables_;
 
         bool visible_ = false;
 
@@ -117,16 +118,27 @@ class game::impl
 
 game::game
 (
-    const object_arg_set& args,
+    Object2D& parent,
+    features::drawable_group& drawables,
+    features::animable_group& animables,
+    features::clickable_group& clickables,
+    features::key_event_handler_group& key_event_handlers,
     const callback_set& callbacks
 ):
-    Object2D{&args.parent},
-    SceneGraph::Drawable2D{*this, &args.drawables},
-    pimpl_(std::make_unique<impl>(args, callbacks))
+    Object2D{&parent},
+    features::drawable{*this, &drawables},
+    features::animable{*this, &animables},
+    features::key_event_handler{*this, &key_event_handlers},
+    pimpl_(std::make_unique<impl>(*this, clickables, callbacks))
 {
 }
 
 game::~game() = default;
+
+void game::draw(const Magnum::Matrix3& /*transformation_matrix*/, SceneGraph::Camera2D& camera)
+{
+    camera.draw(pimpl_->drawables_);
+}
 
 void game::advance(const libutil::time_point& now)
 {
@@ -154,11 +166,6 @@ void game::handle_key_press(key_event& event)
         default:
             break;
     }
-}
-
-void game::draw(const Magnum::Matrix3& /*transformation_matrix*/, SceneGraph::Camera2D& camera)
-{
-    camera.draw(pimpl_->drawables_);
 }
 
 void game::clear()

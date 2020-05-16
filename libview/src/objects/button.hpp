@@ -26,22 +26,20 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libview::objects
 {
 
-class button: public Object2D, public clickable
+class button: public Object2D, public features::clickable
 {
     public:
         using mouse_press_callback = std::function<void()>;
 
     public:
-        explicit button
+        button
         (
+            Object2D& parent, features::drawable_group& drawables, features::clickable_group& clickables,
             const std::filesystem::path& image_path,
-            const mouse_press_callback& cb,
-            SceneGraph::DrawableGroup2D& drawables,
-            clickable_group& clickables,
-            Object2D& parent
+            const mouse_press_callback& cb
         );
 
-    //clickable virtual functions
+    //features::clickable virtual functions
     private:
         bool is_inside(const Magnum::Vector2& model_space_position) const override;
 

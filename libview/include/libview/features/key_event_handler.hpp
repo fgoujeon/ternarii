@@ -17,24 +17,26 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef LIBVIEW_SRC_COMMON_HPP
-#define LIBVIEW_SRC_COMMON_HPP
+#ifndef LIBVIEW_FEATURES_KEY_EVENT_HANDLER_HPP
+#define LIBVIEW_FEATURES_KEY_EVENT_HANDLER_HPP
 
-#include <libview/common.hpp>
 #include <Magnum/SceneGraph/AbstractGroupedFeature.h>
-#include <Magnum/SceneGraph/Camera.h>
-#include <Magnum/SceneGraph/Drawable.h>
-#include <Magnum/SceneGraph/MatrixTransformation2D.h>
-#include <Magnum/SceneGraph/Object.h>
-#include <Magnum/SceneGraph/Scene.h>
-#include <Magnum/Math/Color.h>
+#include <Magnum/Platform/Sdl2Application.h>
 
-namespace libview
+namespace libview::features
 {
 
-using namespace Magnum::Math::Literals;
+class key_event_handler: public Magnum::SceneGraph::AbstractGroupedFeature2D<key_event_handler>
+{
+    public:
+        using key_event = Magnum::Platform::Sdl2Application::KeyEvent;
 
-using Vector2 = Magnum::Vector2;
+        using Magnum::SceneGraph::AbstractGroupedFeature2D<key_event_handler>::AbstractGroupedFeature2D;
+
+        virtual void handle_key_press(key_event& event) = 0;
+};
+
+using key_event_handler_group = Magnum::SceneGraph::FeatureGroup2D<key_event_handler>;
 
 } //namespace
 

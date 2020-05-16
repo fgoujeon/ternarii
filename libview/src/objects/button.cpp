@@ -31,16 +31,14 @@ namespace libview::objects
 
 button::button
 (
+    Object2D& parent, features::drawable_group& drawables, features::clickable_group& clickables,
     const std::filesystem::path& image_path,
-    const mouse_press_callback& cb,
-    SceneGraph::DrawableGroup2D& drawables,
-    clickable_group& clickables,
-    Object2D& parent
+    const mouse_press_callback& cb
 ):
     Object2D{&parent},
-    clickable{*this, &clickables},
+    features::clickable{*this, &clickables},
     mouse_press_callback_(cb),
-    image_(image_path, drawables, *this)
+    image_(*this, drawables, image_path)
 {
     image_.set_color(colors::light_gray);
     image_.set_outline_color(colors::dark_gray);

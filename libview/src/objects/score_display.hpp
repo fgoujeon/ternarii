@@ -26,10 +26,10 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libview::objects
 {
 
-class score_display: public Object2D, public SceneGraph::Drawable2D
+class score_display: public Object2D, public features::drawable
 {
     public:
-        explicit score_display(SceneGraph::DrawableGroup2D& drawables, Object2D& parent);
+        explicit score_display(Object2D& parent, features::drawable_group& drawables);
 
         void set_score(const int value);
 

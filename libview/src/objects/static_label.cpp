@@ -25,14 +25,14 @@ namespace libview::objects
 
 static_label::static_label
 (
+    Object2D& parent,
+    features::drawable_group& drawables,
     const char* const value,
     const float font_size,
-    const Magnum::Text::Alignment alignment,
-    SceneGraph::DrawableGroup2D& drawables,
-    Object2D& parent
+    const Magnum::Text::Alignment alignment
 ):
     Object2D{&parent},
-    SceneGraph::Drawable2D{*this, &drawables},
+    features::drawable{*this, &drawables},
     renderer_(text::get_font(), text::get_glyph_cache(), font_size, alignment)
 {
     renderer_.reserve(std::strlen(value), Magnum::GL::BufferUsage::DynamicDraw, Magnum::GL::BufferUsage::StaticDraw);

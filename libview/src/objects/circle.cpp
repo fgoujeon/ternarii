@@ -43,9 +43,9 @@ namespace
     }
 }
 
-circle::circle(const Magnum::Color4& color, SceneGraph::DrawableGroup2D& drawables, Object2D* parent):
-    Object2D{parent},
-    SceneGraph::Drawable2D{*this, &drawables},
+circle::circle(Object2D& parent, features::drawable_group& drawables, const Magnum::Color4& color):
+    Object2D{&parent},
+    features::drawable{*this, &drawables},
     color_(color)
 {
 }

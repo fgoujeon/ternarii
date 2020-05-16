@@ -28,16 +28,16 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libview::objects
 {
 
-class static_label: public Object2D, public SceneGraph::Drawable2D
+class static_label: public Object2D, public features::drawable
 {
     public:
         static_label
         (
+            Object2D& parent,
+            features::drawable_group& drawables,
             const char* const value,
             const float font_size,
-            const Magnum::Text::Alignment alignment,
-            SceneGraph::DrawableGroup2D& drawables,
-            Object2D& parent
+            const Magnum::Text::Alignment alignment
         );
 
         void set_color(const Magnum::Color4& color)
