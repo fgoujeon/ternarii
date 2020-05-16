@@ -144,74 +144,9 @@ void view::handle_mouse_press(mouse_event& event)
     pimpl_->handle_mouse_press(event);
 }
 
-void view::clear()
+screens::game& view::get_game_screen()
 {
-    pimpl_->game_screen_.clear();
-}
-
-void view::set_score(const int value)
-{
-    pimpl_->game_screen_.set_score(value);
-}
-
-void view::set_hi_score(const int value)
-{
-    pimpl_->game_screen_.set_hi_score(value);
-}
-
-void view::create_next_input(const data_types::input_tile_array& tiles)
-{
-    pimpl_->game_screen_.create_next_input(tiles);
-}
-
-void view::insert_next_input(const data_types::input_layout& layout)
-{
-    pimpl_->game_screen_.insert_next_input(layout);
-}
-
-void view::set_input_layout(const data_types::input_layout& layout)
-{
-    pimpl_->game_screen_.set_input_layout(layout);
-}
-
-void view::drop_input_tiles(const data_types::input_tile_drop_list& drops)
-{
-    pimpl_->game_screen_.drop_input_tiles(drops);
-}
-
-void view::drop_board_tiles(const data_types::board_tile_drop_list& drops)
-{
-    pimpl_->game_screen_.drop_board_tiles(drops);
-}
-
-void view::nullify_tiles(const data_types::tile_coordinate_list& nullified_tile_coordinates)
-{
-    pimpl_->game_screen_.nullify_tiles(nullified_tile_coordinates);
-}
-
-void view::merge_tiles(const data_types::tile_merge_list& merges)
-{
-    pimpl_->game_screen_.merge_tiles(merges);
-}
-
-void view::mark_tiles_for_nullification(const data_types::tile_coordinate_list& tile_coordinates)
-{
-    pimpl_->game_screen_.mark_tiles_for_nullification(tile_coordinates);
-}
-
-void view::set_board_tiles(const data_types::board_tile_array& tiles)
-{
-    pimpl_->game_screen_.set_board_tiles(tiles);
-}
-
-void view::set_visible(const bool visible)
-{
-    pimpl_->game_screen_.set_visible(visible);
-}
-
-void view::set_game_over_screen_visible(const bool visible)
-{
-    pimpl_->game_screen_.set_game_over_screen_visible(visible);
+    return pimpl_->game_screen_;
 }
 
 } //namespace

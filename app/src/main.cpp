@@ -41,7 +41,8 @@ class app: public Magnum::Platform::Sdl2Application
                 Configuration{}.setWindowFlags(Configuration::WindowFlag::Resizable)
             },
             database_([this](const libdb::event& event){handle_database_event(event);}),
-            view_(make_view_callbacks())
+            view_(make_view_callbacks()),
+            game_screen_(view_.get_game_screen())
         {
         }
 
@@ -75,60 +76,60 @@ class app: public Magnum::Platform::Sdl2Application
     private:
         void handle_game_event(const libgame::events::start&)
         {
-            view_.clear();
+            game_screen_.clear();
         }
 
         void handle_game_event(const libgame::events::score_change& event)
         {
-            view_.set_score(event.score);
+            game_screen_.set_score(event.score);
         }
 
         void handle_game_event(const libgame::events::hi_score_change& event)
         {
-            view_.set_hi_score(event.score);
+            game_screen_.set_hi_score(event.score);
         }
 
         void handle_game_event(const libgame::events::next_input_creation& event)
         {
-            view_.create_next_input(event.tiles);
+            game_screen_.create_next_input(event.tiles);
         }
 
         void handle_game_event(const libgame::events::next_input_insertion& event)
         {
-            view_.insert_next_input(event.layout);
+            game_screen_.insert_next_input(event.layout);
             mark_tiles_for_nullification();
             database_.set_game_state(pgame_->get_state());
         }
 
         void handle_game_event(const libgame::events::input_layout_change& event)
         {
-            view_.set_input_layout(event.layout);
+            game_screen_.set_input_layout(event.layout);
             mark_tiles_for_nullification();
         }
 
         void handle_game_event(const libgame::events::input_tile_drop& event)
         {
-            view_.drop_input_tiles(event.drops);
+            game_screen_.drop_input_tiles(event.drops);
         }
 
         void handle_game_event(const libgame::events::board_tile_drop& event)
         {
-            view_.drop_board_tiles(event.drops);
+            game_screen_.drop_board_tiles(event.drops);
         }
 
         void handle_game_event(const libgame::events::tile_nullification& event)
         {
-            view_.nullify_tiles(event.nullified_tile_coordinates);
+            game_screen_.nullify_tiles(event.nullified_tile_coordinates);
         }
 
         void handle_game_event(const libgame::events::tile_merge& event)
         {
-            view_.merge_tiles(event.merges);
+            game_screen_.merge_tiles(event.merges);
         }
 
         void handle_game_event(const libgame::events::end_of_game&)
         {
-            view_.set_game_over_screen_visible(true);
+            game_screen_.set_game_over_screen_visible(true);
             database_.set_game_state(pgame_->get_state());
         }
 
@@ -216,21 +217,21 @@ class app: public Magnum::Platform::Sdl2Application
                 pgame_ = std::make_unique<libgame::game>(*opt_game_state);
 
                 //initialize view
-                view_.set_score(pgame_->get_score());
-                view_.set_hi_score(pgame_->get_hi_score());
-                view_.create_next_input(pgame_->get_input_tiles());
-                view_.insert_next_input(pgame_->get_input_layout());
-                view_.create_next_input(pgame_->get_next_input_tiles());
-                view_.set_board_tiles(pgame_->get_board_tiles());
+                game_screen_.set_score(pgame_->get_score());
+                game_screen_.set_hi_score(pgame_->get_hi_score());
+                game_screen_.create_next_input(pgame_->get_input_tiles());
+                game_screen_.insert_next_input(pgame_->get_input_layout());
+                game_screen_.create_next_input(pgame_->get_next_input_tiles());
+                game_screen_.set_board_tiles(pgame_->get_board_tiles());
                 mark_tiles_for_nullification();
-                view_.set_game_over_screen_visible(pgame_->is_game_over());
-                view_.set_visible(true);
+                game_screen_.set_game_over_screen_visible(pgame_->is_game_over());
+                game_screen_.set_visible(true);
             }
             else
             {
                 pgame_ = std::make_unique<libgame::game>();
 
-                view_.set_visible(true);
+                game_screen_.set_visible(true);
                 modify_game(&libgame::game::start);
             }
         }
@@ -251,12 +252,15 @@ class app: public Magnum::Platform::Sdl2Application
         {
             targeted_tiles_.clear();
             pgame_->get_targeted_tiles(targeted_tiles_);
-            view_.mark_tiles_for_nullification(targeted_tiles_);
+            game_screen_.mark_tiles_for_nullification(targeted_tiles_);
         }
 
     private:
         libdb::database database_;
+
         libview::view view_;
+        libview::screens::game& game_screen_;
+
         std::unique_ptr<libgame::game> pgame_;
 
         //used by modify_game()

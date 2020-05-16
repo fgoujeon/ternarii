@@ -20,6 +20,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #ifndef LIBVIEW_VIEW_HPP
 #define LIBVIEW_VIEW_HPP
 
+#include "screens/game.hpp"
 #include "events.hpp"
 #include "data_types.hpp"
 #include <Magnum/Platform/Sdl2Application.h>
@@ -50,33 +51,7 @@ class view
         void handle_mouse_press(mouse_event& event);
 
     public:
-        void clear();
-
-        void set_score(const int value);
-
-        void set_hi_score(const int value);
-
-        void create_next_input(const data_types::input_tile_array& tiles);
-
-        void insert_next_input(const data_types::input_layout& layout);
-
-        void set_input_layout(const data_types::input_layout& layout);
-
-        void drop_input_tiles(const data_types::input_tile_drop_list& drops);
-
-        void drop_board_tiles(const data_types::board_tile_drop_list& drops);
-
-        void nullify_tiles(const data_types::tile_coordinate_list& nullified_tile_coordinates);
-
-        void merge_tiles(const data_types::tile_merge_list& merges);
-
-        void mark_tiles_for_nullification(const data_types::tile_coordinate_list& tile_coordinates);
-
-        void set_board_tiles(const data_types::board_tile_array& tiles);
-
-        void set_visible(const bool visible);
-
-        void set_game_over_screen_visible(const bool visible);
+        screens::game& get_game_screen();
 
     private:
         class impl;
