@@ -29,8 +29,6 @@ struct state
 {
     virtual ~state() = default;
     virtual void handle_database_event(const libdb::events::end_of_loading&){}
-    virtual void handle_view_clear_request(){}
-    virtual void handle_view_move_request(const libview::data_types::move){}
 };
 
 //Finite state machine
@@ -46,7 +44,6 @@ struct fsm
 
     libdb::database& database;
     libview::view& view;
-    libview::screens::game& game_screen;
 };
 
 #endif

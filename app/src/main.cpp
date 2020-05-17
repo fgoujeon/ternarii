@@ -43,7 +43,6 @@ class app: public Magnum::Platform::Sdl2Application
                 Configuration{}.setWindowFlags(Configuration::WindowFlag::Resizable)
             },
             database_([this](const libdb::event& event){handle_database_event(event);}),
-            view_(make_view_callbacks()),
             fsm_(database_, view_)
         {
         }
@@ -73,25 +72,6 @@ class app: public Magnum::Platform::Sdl2Application
         void mousePressEvent(MouseEvent& event) override
         {
             view_.handle_mouse_press(event);
-        }
-
-    private:
-        libview::callback_set make_view_callbacks()
-        {
-            auto callbacks = libview::callback_set{};
-            callbacks.handle_clear_request. assign<&app::handle_view_clear_request> (*this);
-            callbacks.handle_move_request.  assign<&app::handle_view_move_request>  (*this);
-            return callbacks;
-        }
-
-        void handle_view_clear_request()
-        {
-            fsm_.pstate->handle_view_clear_request();
-        }
-
-        void handle_view_move_request(const libview::data_types::move m)
-        {
-            fsm_.pstate->handle_view_move_request(m);
         }
 
     private:

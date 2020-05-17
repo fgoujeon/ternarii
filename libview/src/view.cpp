@@ -20,7 +20,6 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include <libview/view.hpp>
 #include "colors.hpp"
 #include "common.hpp"
-#include <libview/screens/game.hpp>
 #include <libutil/time.hpp>
 #include <Magnum/GL/Context.h>
 #include <Magnum/GL/DefaultFramebuffer.h>
@@ -35,10 +34,9 @@ namespace libview
 class view::impl final
 {
     public:
-        impl(const callback_set& callbacks):
-            cameraObject_(&scene_),
-            camera_(cameraObject_),
-            game_screen_(scene_, drawables_, animables_, clickables_, key_event_handlers_, callbacks)
+        impl():
+            camera_object_(&scene_),
+            camera_(camera_object_)
         {
             camera_.setAspectRatioPolicy(SceneGraph::AspectRatioPolicy::Extend);
             camera_.setProjectionMatrix(Magnum::Matrix3::projection({9.0f, 16.0f}));
@@ -104,21 +102,19 @@ class view::impl final
             }
         }
 
-    private:
+    public:
         Scene2D scene_;
-        Object2D cameraObject_;
+        Object2D camera_object_;
         SceneGraph::Camera2D camera_;
+
         features::drawable_group drawables_;
         features::animable_group animables_;
         features::clickable_group clickables_;
         features::key_event_handler_group key_event_handlers_;
-
-    public:
-        screens::game game_screen_;
 };
 
-view::view(const callback_set& callbacks):
-    pimpl_(std::make_unique<impl>(callbacks))
+view::view():
+    pimpl_(std::make_unique<impl>())
 {
 }
 
@@ -144,9 +140,29 @@ void view::handle_mouse_press(mouse_event& event)
     pimpl_->handle_mouse_press(event);
 }
 
-screens::game& view::get_game_screen()
+Scene2D& view::get_scene()
 {
-    return pimpl_->game_screen_;
+    return pimpl_->scene_;
+}
+
+features::drawable_group& view::get_drawables()
+{
+    return pimpl_->drawables_;
+}
+
+features::animable_group& view::get_animables()
+{
+    return pimpl_->animables_;
+}
+
+features::clickable_group& view::get_clickables()
+{
+    return pimpl_->clickables_;
+}
+
+features::key_event_handler_group& view::get_key_event_handlers()
+{
+    return pimpl_->key_event_handlers_;
 }
 
 } //namespace

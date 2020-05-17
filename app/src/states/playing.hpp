@@ -33,8 +33,12 @@ namespace states
 class playing final: public state
 {
     public:
-        playing(fsm& ctx):
-            fsm_(ctx)
+        using screen = libview::screens::game;
+
+    public:
+        playing(fsm& f):
+            fsm_(f),
+            pscreen_(fsm_.view.make_screen<screen>(make_view_callbacks()))
         {
             //load game state from database
             const auto& opt_game_state = fsm_.database.get_game_state();
@@ -45,21 +49,21 @@ class playing final: public state
                 pgame_ = std::make_unique<libgame::game>(*opt_game_state);
 
                 //initialize view
-                fsm_.game_screen.set_score(pgame_->get_score());
-                fsm_.game_screen.set_hi_score(pgame_->get_hi_score());
-                fsm_.game_screen.create_next_input(pgame_->get_input_tiles());
-                fsm_.game_screen.insert_next_input(pgame_->get_input_layout());
-                fsm_.game_screen.create_next_input(pgame_->get_next_input_tiles());
-                fsm_.game_screen.set_board_tiles(pgame_->get_board_tiles());
+                pscreen_->set_score(pgame_->get_score());
+                pscreen_->set_hi_score(pgame_->get_hi_score());
+                pscreen_->create_next_input(pgame_->get_input_tiles());
+                pscreen_->insert_next_input(pgame_->get_input_layout());
+                pscreen_->create_next_input(pgame_->get_next_input_tiles());
+                pscreen_->set_board_tiles(pgame_->get_board_tiles());
                 mark_tiles_for_nullification();
-                fsm_.game_screen.set_game_over_screen_visible(pgame_->is_game_over());
-                fsm_.game_screen.set_visible(true);
+                pscreen_->set_game_over_screen_visible(pgame_->is_game_over());
+                pscreen_->set_visible(true);
             }
             else
             {
                 pgame_ = std::make_unique<libgame::game>();
 
-                fsm_.game_screen.set_visible(true);
+                pscreen_->set_visible(true);
                 modify_game(&libgame::game::start);
             }
         }
@@ -93,60 +97,60 @@ class playing final: public state
     private:
         void handle_game_event(const libgame::events::start&)
         {
-            fsm_.game_screen.clear();
+            pscreen_->clear();
         }
 
         void handle_game_event(const libgame::events::score_change& event)
         {
-            fsm_.game_screen.set_score(event.score);
+            pscreen_->set_score(event.score);
         }
 
         void handle_game_event(const libgame::events::hi_score_change& event)
         {
-            fsm_.game_screen.set_hi_score(event.score);
+            pscreen_->set_hi_score(event.score);
         }
 
         void handle_game_event(const libgame::events::next_input_creation& event)
         {
-            fsm_.game_screen.create_next_input(event.tiles);
+            pscreen_->create_next_input(event.tiles);
         }
 
         void handle_game_event(const libgame::events::next_input_insertion& event)
         {
-            fsm_.game_screen.insert_next_input(event.layout);
+            pscreen_->insert_next_input(event.layout);
             mark_tiles_for_nullification();
             fsm_.database.set_game_state(pgame_->get_state());
         }
 
         void handle_game_event(const libgame::events::input_layout_change& event)
         {
-            fsm_.game_screen.set_input_layout(event.layout);
+            pscreen_->set_input_layout(event.layout);
             mark_tiles_for_nullification();
         }
 
         void handle_game_event(const libgame::events::input_tile_drop& event)
         {
-            fsm_.game_screen.drop_input_tiles(event.drops);
+            pscreen_->drop_input_tiles(event.drops);
         }
 
         void handle_game_event(const libgame::events::board_tile_drop& event)
         {
-            fsm_.game_screen.drop_board_tiles(event.drops);
+            pscreen_->drop_board_tiles(event.drops);
         }
 
         void handle_game_event(const libgame::events::tile_nullification& event)
         {
-            fsm_.game_screen.nullify_tiles(event.nullified_tile_coordinates);
+            pscreen_->nullify_tiles(event.nullified_tile_coordinates);
         }
 
         void handle_game_event(const libgame::events::tile_merge& event)
         {
-            fsm_.game_screen.merge_tiles(event.merges);
+            pscreen_->merge_tiles(event.merges);
         }
 
         void handle_game_event(const libgame::events::end_of_game&)
         {
-            fsm_.game_screen.set_game_over_screen_visible(true);
+            pscreen_->set_game_over_screen_visible(true);
             fsm_.database.set_game_state(pgame_->get_state());
         }
 
@@ -169,6 +173,14 @@ class playing final: public state
         }
 
     private:
+        screen::callback_set make_view_callbacks()
+        {
+            auto callbacks = screen::callback_set{};
+            callbacks.handle_clear_request. assign<&playing::handle_view_clear_request> (*this);
+            callbacks.handle_move_request.  assign<&playing::handle_view_move_request>  (*this);
+            return callbacks;
+        }
+
         /*
         Call given libgame::game's modifier function and handle the returned
         events.
@@ -190,11 +202,12 @@ class playing final: public state
         {
             targeted_tiles_.clear();
             pgame_->get_targeted_tiles(targeted_tiles_);
-            fsm_.game_screen.mark_tiles_for_nullification(targeted_tiles_);
+            pscreen_->mark_tiles_for_nullification(targeted_tiles_);
         }
 
     private:
         fsm& fsm_;
+        std::shared_ptr<libview::screens::game> pscreen_;
         std::unique_ptr<libgame::game> pgame_;
 
         //used by modify_game()

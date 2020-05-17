@@ -33,6 +33,13 @@ namespace libview::screens
 class game: public Object2D, public features::drawable, public features::animable, public features::key_event_handler
 {
     public:
+        struct callback_set
+        {
+            libutil::callback<void(data_types::move)> handle_move_request;
+            libutil::callback<void()> handle_clear_request;
+        };
+
+    public:
         game
         (
             Object2D& parent,

@@ -27,7 +27,6 @@ fsm::fsm
 ):
     pstate(std::make_unique<states::loading_database>(*this)),
     database(database),
-    view(view),
-    game_screen(view.get_game_screen())
+    view(view)
 {
 }

@@ -36,9 +36,23 @@ class view
         using mouse_event = Magnum::Platform::Sdl2Application::MouseEvent;
 
     public:
-        view(const callback_set& callbacks);
+        view();
 
         ~view();
+
+        template<class T, class... Args>
+        std::shared_ptr<T> make_screen(Args&&... args)
+        {
+            return std::make_shared<T>
+            (
+                get_scene(),
+                get_drawables(),
+                get_animables(),
+                get_clickables(),
+                get_key_event_handlers(),
+                std::forward<Args>(args)...
+            );
+        }
 
     //Magnum event handling
     public:
@@ -50,8 +64,12 @@ class view
 
         void handle_mouse_press(mouse_event& event);
 
-    public:
-        screens::game& get_game_screen();
+    private:
+        Scene2D& get_scene();
+        features::drawable_group& get_drawables();
+        features::animable_group& get_animables();
+        features::clickable_group& get_clickables();
+        features::key_event_handler_group& get_key_event_handlers();
 
     private:
         class impl;
