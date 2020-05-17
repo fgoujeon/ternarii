@@ -17,6 +17,8 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+#include "states/loading_database.hpp"
+#include "fsm.hpp"
 #include <libdb/database.hpp>
 #include <libgame/game.hpp>
 #include <libview/view.hpp>
@@ -42,7 +44,7 @@ class app: public Magnum::Platform::Sdl2Application
             },
             database_([this](const libdb::event& event){handle_database_event(event);}),
             view_(make_view_callbacks()),
-            game_screen_(view_.get_game_screen())
+            fsm_(database_, view_)
         {
         }
 
@@ -74,101 +76,6 @@ class app: public Magnum::Platform::Sdl2Application
         }
 
     private:
-        void handle_game_event(const libgame::events::start&)
-        {
-            game_screen_.clear();
-        }
-
-        void handle_game_event(const libgame::events::score_change& event)
-        {
-            game_screen_.set_score(event.score);
-        }
-
-        void handle_game_event(const libgame::events::hi_score_change& event)
-        {
-            game_screen_.set_hi_score(event.score);
-        }
-
-        void handle_game_event(const libgame::events::next_input_creation& event)
-        {
-            game_screen_.create_next_input(event.tiles);
-        }
-
-        void handle_game_event(const libgame::events::next_input_insertion& event)
-        {
-            game_screen_.insert_next_input(event.layout);
-            mark_tiles_for_nullification();
-            database_.set_game_state(pgame_->get_state());
-        }
-
-        void handle_game_event(const libgame::events::input_layout_change& event)
-        {
-            game_screen_.set_input_layout(event.layout);
-            mark_tiles_for_nullification();
-        }
-
-        void handle_game_event(const libgame::events::input_tile_drop& event)
-        {
-            game_screen_.drop_input_tiles(event.drops);
-        }
-
-        void handle_game_event(const libgame::events::board_tile_drop& event)
-        {
-            game_screen_.drop_board_tiles(event.drops);
-        }
-
-        void handle_game_event(const libgame::events::tile_nullification& event)
-        {
-            game_screen_.nullify_tiles(event.nullified_tile_coordinates);
-        }
-
-        void handle_game_event(const libgame::events::tile_merge& event)
-        {
-            game_screen_.merge_tiles(event.merges);
-        }
-
-        void handle_game_event(const libgame::events::end_of_game&)
-        {
-            game_screen_.set_game_over_screen_visible(true);
-            database_.set_game_state(pgame_->get_state());
-        }
-
-        void handle_game_events(const libgame::event_list& events)
-        {
-            for(const auto& event: events)
-            {
-                std::visit
-                (
-                    [this](const auto& event)
-                    {
-#ifndef NDEBUG
-                        std::cout << event << '\n';
-#endif
-                        handle_game_event(event);
-                    },
-                    event
-                );
-            }
-        }
-
-        /*
-        Call given libgame::game's modifier function and handle the returned
-        events.
-        */
-        template<class Fn>
-        void modify_game(Fn&& fn)
-        {
-            if(!pgame_)
-            {
-                return;
-            }
-
-            game_events_.clear();
-            std::invoke(fn, *pgame_, game_events_);
-            handle_game_events(game_events_);
-        }
-
-    private:
         libview::callback_set make_view_callbacks()
         {
             auto callbacks = libview::callback_set{};
@@ -179,95 +86,33 @@ class app: public Magnum::Platform::Sdl2Application
 
         void handle_view_clear_request()
         {
-            modify_game(&libgame::game::start);
+            fsm_.pstate->handle_view_clear_request();
         }
 
         void handle_view_move_request(const libview::data_types::move m)
         {
-            using move = libview::data_types::move;
-
-            switch(m)
-            {
-                case move::left_shift:
-                    modify_game(&libgame::game::shift_input_left);
-                    break;
-                case move::right_shift:
-                    modify_game(&libgame::game::shift_input_right);
-                    break;
-                case move::clockwise_rotation:
-                    modify_game(&libgame::game::rotate_input);
-                    break;
-                case move::drop:
-                    modify_game(&libgame::game::drop_input_tiles);
-                    break;
-            }
+            fsm_.pstate->handle_view_move_request(m);
         }
 
     private:
-        void handle_database_event2(const libdb::events::end_of_loading&)
-        {
-            if(pgame_) return;
-
-            //load game state from database
-            const auto& opt_game_state = database_.get_game_state();
-
-            //create game
-            if(opt_game_state)
-            {
-                pgame_ = std::make_unique<libgame::game>(*opt_game_state);
-
-                //initialize view
-                game_screen_.set_score(pgame_->get_score());
-                game_screen_.set_hi_score(pgame_->get_hi_score());
-                game_screen_.create_next_input(pgame_->get_input_tiles());
-                game_screen_.insert_next_input(pgame_->get_input_layout());
-                game_screen_.create_next_input(pgame_->get_next_input_tiles());
-                game_screen_.set_board_tiles(pgame_->get_board_tiles());
-                mark_tiles_for_nullification();
-                game_screen_.set_game_over_screen_visible(pgame_->is_game_over());
-                game_screen_.set_visible(true);
-            }
-            else
-            {
-                pgame_ = std::make_unique<libgame::game>();
-
-                game_screen_.set_visible(true);
-                modify_game(&libgame::game::start);
-            }
-        }
-
         void handle_database_event(const libdb::event& event)
         {
             std::visit
             (
                 [this](const auto& event)
                 {
-                    handle_database_event2(event);
+                    fsm_.pstate->handle_database_event(event);
                 },
                 event
             );
-        }
-
-        void mark_tiles_for_nullification()
-        {
-            targeted_tiles_.clear();
-            pgame_->get_targeted_tiles(targeted_tiles_);
-            game_screen_.mark_tiles_for_nullification(targeted_tiles_);
         }
 
     private:
         libdb::database database_;
 
         libview::view view_;
-        libview::screens::game& game_screen_;
 
-        std::unique_ptr<libgame::game> pgame_;
-
-        //used by modify_game()
-        libgame::event_list game_events_;
-
-        //used by mark_tiles_for_nullification()
-        libcommon::data_types::tile_coordinate_list targeted_tiles_;
+        fsm fsm_;
 };
 
 MAGNUM_APPLICATION_MAIN(app)
