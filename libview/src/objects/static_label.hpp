@@ -66,6 +66,7 @@ class static_label: public Object2D, public features::drawable
 
     private:
         Magnum::Text::Renderer2D renderer_;
+        const float font_size_ = 0;
         Magnum::Color4 color_;
         Magnum::Color4 outline_color_;
         float outline_start_ = 0.5f;

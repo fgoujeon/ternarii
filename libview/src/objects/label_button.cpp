@@ -40,7 +40,10 @@ label_button::label_button
     label_(*this, drawables, text, 0.4f, Magnum::Text::Alignment::MiddleCenter)
 {
     background_rectangle_.scale({1.5f, 0.35f});
+
     label_.set_color(colors::dark_gray);
+    label_.set_outline_color(colors::dark_gray);
+    label_.set_outline_range(0.5, 0.49);
 }
 
 void label_button::set_enabled(const bool enabled)
