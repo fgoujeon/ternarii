@@ -50,13 +50,13 @@ class title::impl
         {
             logo_.set_color(colors::light_gray);
             logo_.set_outline_color(colors::dark_gray);
-            logo_.scale({1.5f, 1.5f});
+            logo_.scale({2.0f, 2.0f});
             logo_.translate({0.0f, 4.5f});
 
             logo_text_.set_color(colors::light_gray);
             logo_text_.set_outline_color(colors::dark_gray);
-            logo_text_.scale({1.4f, 1.4f});
-            logo_text_.translate({0.0f, 2.9f});
+            logo_text_.scale({1.8f, 1.8f});
+            logo_text_.translate({0.0f, 2.3f});
 
             drop_button_.rotate(180.0_degf);
             drop_button_.translate({0.0f, 0.0f});

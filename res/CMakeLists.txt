@@ -36,7 +36,7 @@ function(add_ttf_to_sdf_command FILENAME)
 endfunction()
 
 #expects 100x100 px SVG
-function(add_svg_to_sdf_command FILENAME)
+function(add_svg_to_sdf_command FILENAME OUTPUT_SIZE)
     set(SVG_FILE "${CMAKE_CURRENT_SOURCE_DIR}/src/images/${FILENAME}.svg")
     set(INTERMEDIATE_PNG_FILE ${FILENAME}.svg.png)
     set(SDF_TGA_FILE "${CMAKE_CURRENT_BINARY_DIR}/out/images/${FILENAME}.tga")
@@ -44,27 +44,27 @@ function(add_svg_to_sdf_command FILENAME)
     add_custom_command(
         DEPENDS ${SVG_FILE}
         OUTPUT ${INTERMEDIATE_PNG_FILE}
-        COMMAND ${INKSCAPE_PROGRAM} ARGS -o ${INTERMEDIATE_PNG_FILE} --export-area=-4:-4:104:104 -w 1024 -h 1024 ${SVG_FILE}
+        COMMAND ${INKSCAPE_PROGRAM} ARGS -o ${INTERMEDIATE_PNG_FILE} --export-area=-4:-4:104:104 -w 2048 -h 2048 ${SVG_FILE}
     )
 
     add_custom_command(
         DEPENDS ${INTERMEDIATE_PNG_FILE}
         OUTPUT ${SDF_TGA_FILE}
         COMMAND ${CMAKE_COMMAND} ARGS -E make_directory "${CMAKE_CURRENT_BINARY_DIR}/out/images"
-        COMMAND ${MAGNUM_DISTANCEFIELDCONVERTER_PROGRAM} ARGS --output-size "64 64" --radius 32 --converter TgaImageConverter ${INTERMEDIATE_PNG_FILE} ${SDF_TGA_FILE}
+        COMMAND ${MAGNUM_DISTANCEFIELDCONVERTER_PROGRAM} ARGS --output-size "${OUTPUT_SIZE} ${OUTPUT_SIZE}" --radius 32 --converter TgaImageConverter ${INTERMEDIATE_PNG_FILE} ${SDF_TGA_FILE}
     )
 endfunction()
 
 add_ttf_to_sdf_command(DejaVuSans)
 
-add_svg_to_sdf_command(board_corner)
-add_svg_to_sdf_command(column_nullifier)
-add_svg_to_sdf_command(logo)
-add_svg_to_sdf_command(logo_text)
-add_svg_to_sdf_command(move_button)
-add_svg_to_sdf_command(number_nullifier)
-add_svg_to_sdf_command(rotate_button)
-add_svg_to_sdf_command(row_nullifier)
+add_svg_to_sdf_command(board_corner     64)
+add_svg_to_sdf_command(column_nullifier 64)
+add_svg_to_sdf_command(logo             64)
+add_svg_to_sdf_command(logo_text        512)
+add_svg_to_sdf_command(move_button      64)
+add_svg_to_sdf_command(number_nullifier 64)
+add_svg_to_sdf_command(rotate_button    64)
+add_svg_to_sdf_command(row_nullifier    64)
 
 add_custom_target(
     res ALL
