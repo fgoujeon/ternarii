@@ -44,8 +44,20 @@ class title::impl
             const callback_set& callbacks
         ):
             callbacks_(callbacks),
+            logo_(self, drawables_, "/res/images/logo.tga"),
+            logo_text_(self, drawables_, "/res/images/logo_text.tga"),
             drop_button_(self, drawables_, clickables, "/res/images/move_button.tga", [this]{callbacks_.play_request();})
         {
+            logo_.set_color(colors::light_gray);
+            logo_.set_outline_color(colors::dark_gray);
+            logo_.scale({1.5f, 1.5f});
+            logo_.translate({0.0f, 4.5f});
+
+            logo_text_.set_color(colors::light_gray);
+            logo_text_.set_outline_color(colors::dark_gray);
+            logo_text_.scale({1.4f, 1.4f});
+            logo_text_.translate({0.0f, 2.9f});
+
             drop_button_.rotate(180.0_degf);
             drop_button_.translate({0.0f, 0.0f});
         }
@@ -55,6 +67,8 @@ class title::impl
 
         features::drawable_group drawables_;
 
+        objects::sdf_image logo_;
+        objects::sdf_image logo_text_;
         objects::button drop_button_;
 };
 

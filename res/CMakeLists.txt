@@ -56,22 +56,27 @@ function(add_svg_to_sdf_command FILENAME)
 endfunction()
 
 add_ttf_to_sdf_command(DejaVuSans)
-add_svg_to_sdf_command(move_button)
-add_svg_to_sdf_command(rotate_button)
+
 add_svg_to_sdf_command(board_corner)
 add_svg_to_sdf_command(column_nullifier)
-add_svg_to_sdf_command(row_nullifier)
+add_svg_to_sdf_command(logo)
+add_svg_to_sdf_command(logo_text)
+add_svg_to_sdf_command(move_button)
 add_svg_to_sdf_command(number_nullifier)
+add_svg_to_sdf_command(rotate_button)
+add_svg_to_sdf_command(row_nullifier)
 
 add_custom_target(
     res ALL
     SOURCES
-        "${CMAKE_CURRENT_BINARY_DIR}/out/fonts/DejaVuSans.tga"
         "${CMAKE_CURRENT_BINARY_DIR}/out/fonts/DejaVuSans.conf"
-        "${CMAKE_CURRENT_BINARY_DIR}/out/images/move_button.tga"
-        "${CMAKE_CURRENT_BINARY_DIR}/out/images/rotate_button.tga"
+        "${CMAKE_CURRENT_BINARY_DIR}/out/fonts/DejaVuSans.tga"
         "${CMAKE_CURRENT_BINARY_DIR}/out/images/board_corner.tga"
         "${CMAKE_CURRENT_BINARY_DIR}/out/images/column_nullifier.tga"
-        "${CMAKE_CURRENT_BINARY_DIR}/out/images/row_nullifier.tga"
+        "${CMAKE_CURRENT_BINARY_DIR}/out/images/logo.tga"
+        "${CMAKE_CURRENT_BINARY_DIR}/out/images/logo_text.tga"
+        "${CMAKE_CURRENT_BINARY_DIR}/out/images/move_button.tga"
         "${CMAKE_CURRENT_BINARY_DIR}/out/images/number_nullifier.tga"
+        "${CMAKE_CURRENT_BINARY_DIR}/out/images/rotate_button.tga"
+        "${CMAKE_CURRENT_BINARY_DIR}/out/images/row_nullifier.tga"
 )
