@@ -42,6 +42,14 @@ namespace features
     using drawable_group = SceneGraph::DrawableGroup2D;
 }
 
+struct feature_group_set
+{
+    features::drawable_group drawables;
+    features::animable_group animables;
+    features::clickable_group clickables;
+    features::key_event_handler_group key_event_handlers;
+};
+
 } //namespace
 
 #endif

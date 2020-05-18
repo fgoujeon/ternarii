@@ -29,7 +29,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libview::screens
 {
 
-class title: public Object2D, public features::drawable
+class title: public Object2D
 {
     public:
         struct callback_set
@@ -41,16 +41,11 @@ class title: public Object2D, public features::drawable
         title
         (
             Object2D& parent,
-            features::drawable_group& drawables,
-            features::animable_group& animables,
-            features::clickable_group& clickables,
-            features::key_event_handler_group& key_event_handlers,
+            feature_group_set& feature_groups,
             const callback_set& callbacks
         );
 
         ~title();
-
-        void draw(const Magnum::Matrix3& /*transformation_matrix*/, SceneGraph::Camera2D& camera) override;
 
     public:
         void clear();

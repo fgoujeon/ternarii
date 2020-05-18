@@ -44,14 +44,14 @@ struct title::impl
     impl
     (
         title& self,
-        features::clickable_group& clickables,
+        feature_group_set& feature_groups,
         const callback_set& callbacks
     ):
         callbacks(callbacks),
-        logo(self, drawables, "/res/images/logo.tga"),
-        logo_text(self, drawables, "/res/images/logo_text.tga"),
-        drop_button(self, drawables, clickables, "/res/images/move_button.tga", [this]{this->callbacks.play_request();}),
-        version_label(self, drawables, version_text, 0.2, Magnum::Text::Alignment::MiddleRight)
+        logo(self, feature_groups.drawables, "/res/images/logo.tga"),
+        logo_text(self, feature_groups.drawables, "/res/images/logo_text.tga"),
+        drop_button(self, feature_groups.drawables, feature_groups.clickables, "/res/images/move_button.tga", [this]{this->callbacks.play_request();}),
+        version_label(self, feature_groups.drawables, version_text, 0.2, Magnum::Text::Alignment::MiddleRight)
     {
         logo.set_color(colors::light_gray);
         logo.set_outline_color(colors::dark_gray);
@@ -74,8 +74,6 @@ struct title::impl
 
     callback_set callbacks;
 
-    features::drawable_group drawables;
-
     objects::sdf_image logo;
     objects::sdf_image logo_text;
     objects::sdf_image_button drop_button;
@@ -85,23 +83,14 @@ struct title::impl
 title::title
 (
     Object2D& parent,
-    features::drawable_group& drawables,
-    features::animable_group& /*animables*/,
-    features::clickable_group& clickables,
-    features::key_event_handler_group& /*key_event_handlers*/,
+    feature_group_set& feature_groups,
     const callback_set& callbacks
 ):
     Object2D{&parent},
-    features::drawable{*this, &drawables},
-    pimpl_(std::make_unique<impl>(*this, clickables, callbacks))
+    pimpl_(std::make_unique<impl>(*this, feature_groups, callbacks))
 {
 }
 
 title::~title() = default;
-
-void title::draw(const Magnum::Matrix3& /*transformation_matrix*/, SceneGraph::Camera2D& camera)
-{
-    camera.draw(pimpl_->drawables);
-}
 
 } //namespace

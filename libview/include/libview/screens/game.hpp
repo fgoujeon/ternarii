@@ -43,10 +43,7 @@ class game: public Object2D, public features::drawable, public features::animabl
         game
         (
             Object2D& parent,
-            features::drawable_group& drawables,
-            features::animable_group& animables,
-            features::clickable_group& clickables,
-            features::key_event_handler_group& key_event_handlers,
+            feature_group_set& feature_groups,
             const callback_set& callbacks
         );
 
@@ -91,7 +88,7 @@ class game: public Object2D, public features::drawable, public features::animabl
         void send_move_request(const data_types::move move);
 
     private:
-        class impl;
+        struct impl;
         std::unique_ptr<impl> pimpl_;
 };
 

@@ -31,86 +31,81 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libview
 {
 
-class view::impl final
+struct view::impl final
 {
-    public:
-        impl():
-            camera_object_(&scene_),
-            camera_(camera_object_)
-        {
-            camera_.setAspectRatioPolicy(SceneGraph::AspectRatioPolicy::Extend);
-            camera_.setProjectionMatrix(Magnum::Matrix3::projection({9.0f, 16.0f}));
-            camera_.setViewport(Magnum::GL::defaultFramebuffer.viewport().size());
+    impl():
+        camera_object(&scene),
+        camera(camera_object)
+    {
+        camera.setAspectRatioPolicy(SceneGraph::AspectRatioPolicy::Extend);
+        camera.setProjectionMatrix(Magnum::Matrix3::projection({9.0f, 16.0f}));
+        camera.setViewport(Magnum::GL::defaultFramebuffer.viewport().size());
 
-            //configure renderer
-            Magnum::GL::Renderer::setClearColor(colors::dark_gray);
-            Magnum::GL::Renderer::enable(Magnum::GL::Renderer::Feature::Blending);
-            Magnum::GL::Renderer::setBlendFunction(Magnum::GL::Renderer::BlendFunction::SourceAlpha, Magnum::GL::Renderer::BlendFunction::OneMinusSourceAlpha);
-            Magnum::GL::Renderer::setBlendEquation(Magnum::GL::Renderer::BlendEquation::Add, Magnum::GL::Renderer::BlendEquation::Add);
+        //configure renderer
+        Magnum::GL::Renderer::setClearColor(colors::dark_gray);
+        Magnum::GL::Renderer::enable(Magnum::GL::Renderer::Feature::Blending);
+        Magnum::GL::Renderer::setBlendFunction(Magnum::GL::Renderer::BlendFunction::SourceAlpha, Magnum::GL::Renderer::BlendFunction::OneMinusSourceAlpha);
+        Magnum::GL::Renderer::setBlendEquation(Magnum::GL::Renderer::BlendEquation::Add, Magnum::GL::Renderer::BlendEquation::Add);
+    }
+
+    void draw()
+    {
+        const auto now = libutil::clock::now();
+
+        //advance animations
+        for(std::size_t i = 0; i < feature_groups.animables.size(); ++i)
+        {
+            feature_groups.animables[i].advance(now);
         }
 
-        void draw()
-        {
-            const auto now = libutil::clock::now();
+        camera.draw(feature_groups.drawables);
+    }
 
-            //advance animations
-            for(std::size_t i = 0; i < animables_.size(); ++i)
+    void set_viewport(const Magnum::Vector2i& size)
+    {
+        camera.setViewport(size);
+    }
+
+    void handle_key_press(key_event& event)
+    {
+        for(std::size_t i = 0; i < feature_groups.key_event_handlers.size(); ++i)
+        {
+            feature_groups.key_event_handlers[i].handle_key_press(event);
+        }
+    }
+
+    void handle_mouse_press(mouse_event& event)
+    {
+        //integer window-space coordinates (with origin in top left corner and Y down)
+        const auto& window_space_position = event.position();
+
+        //convert to floating-point world-space coordinates (with origin at camera position and Y up)
+        const auto world_space_position =
+            (Magnum::Vector2{window_space_position} / Magnum::Vector2{Magnum::GL::defaultFramebuffer.viewport().size()} - Magnum::Vector2{0.5f})
+            * Magnum::Vector2::yScale(-1.0f)
+            * camera.projectionSize()
+        ;
+
+        for(std::size_t i = 0; i < feature_groups.clickables.size(); ++i)
+        {
+            auto& clickable = feature_groups.clickables[i];
+
+            //convert to model-space coordinates of clickable
+            const auto clickable_space_position = clickable.object().absoluteTransformationMatrix().inverted().transformPoint(world_space_position);
+
+            //check if click position is inside clickable
+            if(clickable.is_inside(clickable_space_position))
             {
-                animables_[i].advance(now);
-            }
-
-            camera_.draw(drawables_);
-        }
-
-        void set_viewport(const Magnum::Vector2i& size)
-        {
-            camera_.setViewport(size);
-        }
-
-        void handle_key_press(key_event& event)
-        {
-            for(std::size_t i = 0; i < key_event_handlers_.size(); ++i)
-            {
-                key_event_handlers_[i].handle_key_press(event);
-            }
-        }
-
-        void handle_mouse_press(mouse_event& event)
-        {
-            //integer window-space coordinates (with origin in top left corner and Y down)
-            const auto& window_space_position = event.position();
-
-            //convert to floating-point world-space coordinates (with origin at camera position and Y up)
-            const auto world_space_position =
-                (Magnum::Vector2{window_space_position} / Magnum::Vector2{Magnum::GL::defaultFramebuffer.viewport().size()} - Magnum::Vector2{0.5f})
-                * Magnum::Vector2::yScale(-1.0f)
-                * camera_.projectionSize()
-            ;
-
-            for(std::size_t i = 0; i < clickables_.size(); ++i)
-            {
-                auto& button = clickables_[i];
-
-                //convert to model-space coordinates of button
-                const auto button_space_position = button.object().absoluteTransformationMatrix().inverted().transformPoint(world_space_position);
-
-                //check if click position is inside button
-                if(button.is_inside(button_space_position))
-                {
-                    button.mouse_press_event();
-                }
+                clickable.mouse_press_event();
             }
         }
+    }
 
-    public:
-        Scene2D scene_;
-        Object2D camera_object_;
-        SceneGraph::Camera2D camera_;
+    Scene2D scene;
+    Object2D camera_object;
+    SceneGraph::Camera2D camera;
 
-        features::drawable_group drawables_;
-        features::animable_group animables_;
-        features::clickable_group clickables_;
-        features::key_event_handler_group key_event_handlers_;
+    feature_group_set feature_groups;
 };
 
 view::view():
@@ -142,27 +137,12 @@ void view::handle_mouse_press(mouse_event& event)
 
 Scene2D& view::get_scene()
 {
-    return pimpl_->scene_;
+    return pimpl_->scene;
 }
 
-features::drawable_group& view::get_drawables()
+feature_group_set& view::get_feature_groups()
 {
-    return pimpl_->drawables_;
-}
-
-features::animable_group& view::get_animables()
-{
-    return pimpl_->animables_;
-}
-
-features::clickable_group& view::get_clickables()
-{
-    return pimpl_->clickables_;
-}
-
-features::key_event_handler_group& view::get_key_event_handlers()
-{
-    return pimpl_->key_event_handlers_;
+    return pimpl_->feature_groups;
 }
 
 } //namespace

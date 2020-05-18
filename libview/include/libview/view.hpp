@@ -46,10 +46,7 @@ class view
             return std::make_shared<T>
             (
                 get_scene(),
-                get_drawables(),
-                get_animables(),
-                get_clickables(),
-                get_key_event_handlers(),
+                get_feature_groups(),
                 std::forward<Args>(args)...
             );
         }
@@ -66,13 +63,11 @@ class view
 
     private:
         Scene2D& get_scene();
-        features::drawable_group& get_drawables();
-        features::animable_group& get_animables();
-        features::clickable_group& get_clickables();
-        features::key_event_handler_group& get_key_event_handlers();
+
+        feature_group_set& get_feature_groups();
 
     private:
-        class impl;
+        struct impl;
         std::unique_ptr<impl> pimpl_;
 };
 

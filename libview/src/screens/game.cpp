@@ -34,102 +34,97 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libview::screens
 {
 
-class game::impl
+struct game::impl
 {
-    public:
-        impl
-        (
-            game& self,
-            features::clickable_group& clickables,
-            const callback_set& callbacks
-        ):
-            callbacks_(callbacks),
-            background_(self, drawables_),
-            tile_grid_(self, drawables_),
-            score_display_(self, drawables_),
-            hi_score_display_(self, drawables_),
-            left_button_   (self, drawables_, clickables, "/res/images/move_button.tga",   [this]{send_move_request(data_types::move::left_shift);}         ),
-            right_button_  (self, drawables_, clickables, "/res/images/move_button.tga",   [this]{send_move_request(data_types::move::right_shift);}        ),
-            drop_button_   (self, drawables_, clickables, "/res/images/move_button.tga",   [this]{send_move_request(data_types::move::drop);}               ),
-            rotate_button_ (self, drawables_, clickables, "/res/images/rotate_button.tga", [this]{send_move_request(data_types::move::clockwise_rotation);} ),
-            game_over_screen_(self, drawables_, clickables, [this]{callbacks_.handle_clear_request();})
+    impl
+    (
+        game& self,
+        features::clickable_group& clickables,
+        const callback_set& callbacks
+    ):
+        callbacks(callbacks),
+        background(self, drawables),
+        tile_grid(self, drawables),
+        score_display(self, drawables),
+        hi_score_display(self, drawables),
+        left_button   (self, drawables, clickables, "/res/images/move_button.tga",   [this]{send_move_request(data_types::move::left_shift);}         ),
+        right_button  (self, drawables, clickables, "/res/images/move_button.tga",   [this]{send_move_request(data_types::move::right_shift);}        ),
+        drop_button   (self, drawables, clickables, "/res/images/move_button.tga",   [this]{send_move_request(data_types::move::drop);}               ),
+        rotate_button (self, drawables, clickables, "/res/images/rotate_button.tga", [this]{send_move_request(data_types::move::clockwise_rotation);} ),
+        game_over_screen(self, drawables, clickables, [this]{this->callbacks.handle_clear_request();})
+    {
+        background.scale({16.0f, 16.0f});
+        background.translate({0.0f, -1.0f});
+        background.set_color(Magnum::Color4{1.0, 1.0, 1.0, 0.02});
+
+        score_display.set_visible(true);
+        score_display.scale({0.7f, 0.7f});
+        score_display.translate({3.1f, 7.6f});
+
+        hi_score_display.scale({0.3f, 0.3f});
+        hi_score_display.translate({3.0f, 6.8f});
+
+        tile_grid.translate({0.0f, 1.0f});
+
+        left_button.scale({0.90f, 0.90f});
+        left_button.translate({-3.25f, -5.75f});
+
+        right_button.rotate(180.0_degf);
+        right_button.scale({0.90f, 0.90f});
+        right_button.translate({-1.5f, -6.75f});
+
+        drop_button.rotate(90.0_degf);
+        drop_button.scale({0.90f, 0.90f});
+        drop_button.translate({1.5f, -6.75f});
+
+        rotate_button.scale({0.90f, 0.90f});
+        rotate_button.translate({3.25f, -5.75f});
+
+        game_over_screen.translate({0.0f, 4.5f});
+    }
+
+    void send_move_request(const data_types::move move)
+    {
+        /*
+        Note: We want to ignore user inputs when we're animating, so that:
+        - we don't queue too many animations;
+        - user moves only when they knows what they're moving.
+        */
+
+        if(!tile_grid.is_animating())
         {
-            background_.scale({16.0f, 16.0f});
-            background_.translate({0.0f, -1.0f});
-            background_.set_color(Magnum::Color4{1.0, 1.0, 1.0, 0.02});
-
-            score_display_.set_visible(true);
-            score_display_.scale({0.7f, 0.7f});
-            score_display_.translate({3.1f, 7.6f});
-
-            hi_score_display_.scale({0.3f, 0.3f});
-            hi_score_display_.translate({3.0f, 6.8f});
-
-            tile_grid_.translate({0.0f, 1.0f});
-
-            left_button_.scale({0.90f, 0.90f});
-            left_button_.translate({-3.25f, -5.75f});
-
-            right_button_.rotate(180.0_degf);
-            right_button_.scale({0.90f, 0.90f});
-            right_button_.translate({-1.5f, -6.75f});
-
-            drop_button_.rotate(90.0_degf);
-            drop_button_.scale({0.90f, 0.90f});
-            drop_button_.translate({1.5f, -6.75f});
-
-            rotate_button_.scale({0.90f, 0.90f});
-            rotate_button_.translate({3.25f, -5.75f});
-
-            game_over_screen_.translate({0.0f, 4.5f});
+            callbacks.handle_move_request(move);
         }
+    }
 
-        void send_move_request(const data_types::move move)
-        {
-            /*
-            Note: We want to ignore user inputs when we're animating, so that:
-            - we don't queue too many animations;
-            - user moves only when they knows what they're moving.
-            */
+    callback_set callbacks;
 
-            if(!tile_grid_.is_animating())
-            {
-                callbacks_.handle_move_request(move);
-            }
-        }
+    features::drawable_group drawables;
 
-    public:
-        callback_set callbacks_;
+    bool visible = false;
 
-        features::drawable_group drawables_;
-
-        bool visible_ = false;
-
-        objects::background background_;
-        objects::tile_grid tile_grid_;
-        objects::score_display score_display_;
-        objects::score_display hi_score_display_;
-        objects::sdf_image_button left_button_;
-        objects::sdf_image_button right_button_;
-        objects::sdf_image_button drop_button_;
-        objects::sdf_image_button rotate_button_;
-        objects::game_over_screen game_over_screen_;
+    objects::background background;
+    objects::tile_grid tile_grid;
+    objects::score_display score_display;
+    objects::score_display hi_score_display;
+    objects::sdf_image_button left_button;
+    objects::sdf_image_button right_button;
+    objects::sdf_image_button drop_button;
+    objects::sdf_image_button rotate_button;
+    objects::game_over_screen game_over_screen;
 };
 
 game::game
 (
     Object2D& parent,
-    features::drawable_group& drawables,
-    features::animable_group& animables,
-    features::clickable_group& clickables,
-    features::key_event_handler_group& key_event_handlers,
+    feature_group_set& feature_groups,
     const callback_set& callbacks
 ):
     Object2D{&parent},
-    features::drawable{*this, &drawables},
-    features::animable{*this, &animables},
-    features::key_event_handler{*this, &key_event_handlers},
-    pimpl_(std::make_unique<impl>(*this, clickables, callbacks))
+    features::drawable{*this, &feature_groups.drawables},
+    features::animable{*this, &feature_groups.animables},
+    features::key_event_handler{*this, &feature_groups.key_event_handlers},
+    pimpl_(std::make_unique<impl>(*this, feature_groups.clickables, callbacks))
 {
 }
 
@@ -137,13 +132,13 @@ game::~game() = default;
 
 void game::draw(const Magnum::Matrix3& /*transformation_matrix*/, SceneGraph::Camera2D& camera)
 {
-    camera.draw(pimpl_->drawables_);
+    camera.draw(pimpl_->drawables);
 }
 
 void game::advance(const libutil::time_point& now)
 {
-    pimpl_->background_.advance(now);
-    pimpl_->tile_grid_.advance(now);
+    pimpl_->background.advance(now);
+    pimpl_->tile_grid.advance(now);
 }
 
 void game::handle_key_press(key_event& event)
@@ -170,77 +165,77 @@ void game::handle_key_press(key_event& event)
 
 void game::clear()
 {
-    pimpl_->tile_grid_.clear();
-    pimpl_->game_over_screen_.set_visible(false);
+    pimpl_->tile_grid.clear();
+    pimpl_->game_over_screen.set_visible(false);
 }
 
 void game::set_score(const int value)
 {
-    pimpl_->score_display_.set_score(value);
+    pimpl_->score_display.set_score(value);
 }
 
 void game::set_hi_score(const int value)
 {
     if(value != 0)
     {
-        pimpl_->hi_score_display_.set_score(value);
-        pimpl_->hi_score_display_.set_visible(true);
+        pimpl_->hi_score_display.set_score(value);
+        pimpl_->hi_score_display.set_visible(true);
     }
 }
 
 void game::create_next_input(const data_types::input_tile_array& tiles)
 {
-    pimpl_->tile_grid_.create_next_input(tiles);
+    pimpl_->tile_grid.create_next_input(tiles);
 }
 
 void game::insert_next_input(const data_types::input_layout& layout)
 {
-    pimpl_->tile_grid_.insert_next_input(layout);
+    pimpl_->tile_grid.insert_next_input(layout);
 }
 
 void game::set_input_layout(const data_types::input_layout& layout)
 {
-    pimpl_->tile_grid_.set_input_layout(layout);
+    pimpl_->tile_grid.set_input_layout(layout);
 }
 
 void game::drop_input_tiles(const data_types::input_tile_drop_list& drops)
 {
-    pimpl_->tile_grid_.drop_input_tiles(drops);
+    pimpl_->tile_grid.drop_input_tiles(drops);
 }
 
 void game::drop_board_tiles(const data_types::board_tile_drop_list& drops)
 {
-    pimpl_->tile_grid_.drop_board_tiles(drops);
+    pimpl_->tile_grid.drop_board_tiles(drops);
 }
 
 void game::nullify_tiles(const data_types::tile_coordinate_list& nullified_tile_coordinates)
 {
-    pimpl_->tile_grid_.nullify_tiles(nullified_tile_coordinates);
+    pimpl_->tile_grid.nullify_tiles(nullified_tile_coordinates);
 }
 
 void game::merge_tiles(const data_types::tile_merge_list& merges)
 {
-    pimpl_->tile_grid_.merge_tiles(merges);
+    pimpl_->tile_grid.merge_tiles(merges);
 }
 
 void game::mark_tiles_for_nullification(const data_types::tile_coordinate_list& tile_coordinates)
 {
-    pimpl_->tile_grid_.mark_tiles_for_nullification(tile_coordinates);
+    pimpl_->tile_grid.mark_tiles_for_nullification(tile_coordinates);
 }
 
 void game::set_board_tiles(const data_types::board_tile_array& tiles)
 {
-    pimpl_->tile_grid_.set_board_tiles(tiles);
+    pimpl_->tile_grid.set_board_tiles(tiles);
 }
 
 void game::set_visible(const bool visible)
 {
-    pimpl_->visible_ = visible;
+    pimpl_->visible = visible;
 }
 
 void game::set_game_over_screen_visible(const bool visible)
 {
-    pimpl_->game_over_screen_.set_visible(visible);
+    pimpl_->game_over_screen.set_visible(visible);
 }
 
 } //namespace
