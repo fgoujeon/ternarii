@@ -18,12 +18,8 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 #include <libview/screens/title.hpp>
-#include "../objects/background.hpp"
-#include "../objects/game_over_screen.hpp"
-#include "../objects/sdf_image_button.hpp"
+#include "../objects/label_button.hpp"
 #include "../objects/sdf_image.hpp"
-#include "../objects/tile_grid.hpp"
-#include "../objects/score_display.hpp"
 #include "../colors.hpp"
 #include "../common.hpp"
 #include <libview/events.hpp>
@@ -50,7 +46,7 @@ struct title::impl
         callbacks(callbacks),
         logo(self, feature_groups.drawables, "/res/images/logo.tga"),
         logo_text(self, feature_groups.drawables, "/res/images/logo_text.tga"),
-        drop_button(self, feature_groups.drawables, feature_groups.clickables, "/res/images/move_button.tga", [this]{this->callbacks.play_request();}),
+        play_button(self, feature_groups.drawables, feature_groups.clickables, "PLAY", [this]{this->callbacks.play_request();}),
         version_label(self, feature_groups.drawables, version_text, 0.2, Magnum::Text::Alignment::MiddleRight)
     {
         logo.set_color(colors::light_gray);
@@ -63,8 +59,7 @@ struct title::impl
         logo_text.scale({1.8f, 1.8f});
         logo_text.translate({0.0f, 2.3f});
 
-        drop_button.rotate(180.0_degf);
-        drop_button.translate({0.0f, 0.0f});
+        play_button.translate({0.0f, 0.0f});
 
         version_label.set_color(colors::light_gray);
         version_label.set_outline_color(colors::dark_gray);
@@ -76,7 +71,7 @@ struct title::impl
 
     objects::sdf_image logo;
     objects::sdf_image logo_text;
-    objects::sdf_image_button drop_button;
+    objects::label_button play_button;
     objects::static_label version_label;
 };
 
