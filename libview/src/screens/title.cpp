@@ -30,11 +30,6 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libview::screens
 {
 
-namespace
-{
-    constexpr auto version_text = "version " PROJECT_VERSION " (" PROJECT_DATE ")";
-}
-
 struct title::impl
 {
     impl
@@ -47,7 +42,7 @@ struct title::impl
         logo(self, feature_groups.drawables, "/res/images/logo.tga"),
         logo_text(self, feature_groups.drawables, "/res/images/logo_text.tga"),
         play_button(self, feature_groups.drawables, feature_groups.clickables, "PLAY", [this]{this->callbacks.play_request();}),
-        version_label(self, feature_groups.drawables, version_text, 0.2, Magnum::Text::Alignment::MiddleRight)
+        about_button(self, feature_groups.drawables, feature_groups.clickables, "ABOUT", [this]{this->callbacks.about_request();})
     {
         logo.set_color(colors::light_gray);
         logo.set_outline_color(colors::dark_gray);
@@ -61,10 +56,7 @@ struct title::impl
 
         play_button.translate({0.0f, 0.0f});
 
-        version_label.set_color(colors::light_gray);
-        version_label.set_outline_color(colors::dark_gray);
-        version_label.set_outline_range(0.47, 0.40);
-        version_label.translate({4.0f, -7.0f});
+        about_button.translate({0.0f, -1.0f});
     }
 
     callback_set callbacks;
@@ -72,7 +64,7 @@ struct title::impl
     objects::sdf_image logo;
     objects::sdf_image logo_text;
     objects::label_button play_button;
-    objects::static_label version_label;
+    objects::label_button about_button;
 };
 
 title::title

@@ -21,6 +21,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #define STATES_SHOWING_TITLE_SCREEN_HPP
 
 #include "playing.hpp"
+#include "showing_about_screen.hpp"
 #include "../fsm.hpp"
 #include <libview/screens/title.hpp>
 
@@ -38,6 +39,7 @@ class showing_title_screen final: public state
         {
             auto callbacks = screen::callback_set{};
             callbacks.play_request.assign<&showing_title_screen::handle_play_request>(*this);
+            callbacks.about_request.assign<&showing_title_screen::handle_about_request>(*this);
             pscreen_ = fsm_.view.make_screen<libview::screens::title>(callbacks);
         }
 
@@ -45,6 +47,11 @@ class showing_title_screen final: public state
         void handle_play_request()
         {
             fsm_.set_state<playing>();
+        }
+
+        void handle_about_request()
+        {
+            fsm_.set_state<showing_about_screen>();
         }
 
     private:

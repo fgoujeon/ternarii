@@ -35,6 +35,7 @@ class title: public Object2D
         struct callback_set
         {
             libutil::callback<void()> play_request;
+            libutil::callback<void()> about_request;
         };
 
     public:
