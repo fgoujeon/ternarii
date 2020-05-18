@@ -40,6 +40,12 @@ struct fsm
         libview::view& view
     );
 
+    template<class State>
+    void set_state()
+    {
+        pstate = std::make_unique<State>(*this);
+    }
+
     std::unique_ptr<state> pstate;
 
     libdb::database& database;

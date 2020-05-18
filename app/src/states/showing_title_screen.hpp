@@ -17,30 +17,39 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef STATES_LOADING_DATABASE_HPP
-#define STATES_LOADING_DATABASE_HPP
+#ifndef STATES_SHOWING_TITLE_SCREEN_HPP
+#define STATES_SHOWING_TITLE_SCREEN_HPP
 
-#include "showing_title_screen.hpp"
+#include "playing.hpp"
 #include "../fsm.hpp"
+#include <libview/screens/title.hpp>
 
 namespace states
 {
 
-class loading_database final: public state
+class showing_title_screen final: public state
 {
+    private:
+        using screen = libview::screens::title;
+
     public:
-        loading_database(fsm& ctx):
+        showing_title_screen(fsm& ctx):
             fsm_(ctx)
         {
+            auto callbacks = screen::callback_set{};
+            callbacks.play_request.assign<&showing_title_screen::handle_play_request>(*this);
+            pscreen_ = fsm_.view.make_screen<libview::screens::title>(callbacks);
         }
 
-        void handle_database_event(const libdb::events::end_of_loading&) override
+    private:
+        void handle_play_request()
         {
-            fsm_.set_state<showing_title_screen>();
+            fsm_.set_state<playing>();
         }
 
     private:
         fsm& fsm_;
+        std::shared_ptr<screen> pscreen_;
 };
 
 } //namespace
