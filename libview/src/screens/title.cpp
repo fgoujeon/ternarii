@@ -34,42 +34,52 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libview::screens
 {
 
-class title::impl
+namespace
 {
-    public:
-        impl
-        (
-            title& self,
-            features::clickable_group& clickables,
-            const callback_set& callbacks
-        ):
-            callbacks_(callbacks),
-            logo_(self, drawables_, "/res/images/logo.tga"),
-            logo_text_(self, drawables_, "/res/images/logo_text.tga"),
-            drop_button_(self, drawables_, clickables, "/res/images/move_button.tga", [this]{callbacks_.play_request();})
-        {
-            logo_.set_color(colors::light_gray);
-            logo_.set_outline_color(colors::dark_gray);
-            logo_.scale({2.0f, 2.0f});
-            logo_.translate({0.0f, 4.5f});
+    constexpr auto version_text = "version " PROJECT_VERSION " (" PROJECT_DATE ")";
+}
 
-            logo_text_.set_color(colors::light_gray);
-            logo_text_.set_outline_color(colors::dark_gray);
-            logo_text_.scale({1.8f, 1.8f});
-            logo_text_.translate({0.0f, 2.3f});
+struct title::impl
+{
+    impl
+    (
+        title& self,
+        features::clickable_group& clickables,
+        const callback_set& callbacks
+    ):
+        callbacks(callbacks),
+        logo(self, drawables, "/res/images/logo.tga"),
+        logo_text(self, drawables, "/res/images/logo_text.tga"),
+        drop_button(self, drawables, clickables, "/res/images/move_button.tga", [this]{this->callbacks.play_request();}),
+        version_label(self, drawables, version_text, 0.2, Magnum::Text::Alignment::MiddleRight)
+    {
+        logo.set_color(colors::light_gray);
+        logo.set_outline_color(colors::dark_gray);
+        logo.scale({2.0f, 2.0f});
+        logo.translate({0.0f, 4.5f});
 
-            drop_button_.rotate(180.0_degf);
-            drop_button_.translate({0.0f, 0.0f});
-        }
+        logo_text.set_color(colors::light_gray);
+        logo_text.set_outline_color(colors::dark_gray);
+        logo_text.scale({1.8f, 1.8f});
+        logo_text.translate({0.0f, 2.3f});
 
-    public:
-        callback_set callbacks_;
+        drop_button.rotate(180.0_degf);
+        drop_button.translate({0.0f, 0.0f});
 
-        features::drawable_group drawables_;
+        version_label.set_color(colors::light_gray);
+        version_label.set_outline_color(colors::dark_gray);
+        version_label.set_outline_range(0.47, 0.40);
+        version_label.translate({4.0f, -7.0f});
+    }
 
-        objects::sdf_image logo_;
-        objects::sdf_image logo_text_;
-        objects::button drop_button_;
+    callback_set callbacks;
+
+    features::drawable_group drawables;
+
+    objects::sdf_image logo;
+    objects::sdf_image logo_text;
+    objects::button drop_button;
+    objects::static_label version_label;
 };
 
 title::title
@@ -91,7 +101,7 @@ title::~title() = default;
 
 void title::draw(const Magnum::Matrix3& /*transformation_matrix*/, SceneGraph::Camera2D& camera)
 {
-    camera.draw(pimpl_->drawables_);
+    camera.draw(pimpl_->drawables);
 }
 
 } //namespace

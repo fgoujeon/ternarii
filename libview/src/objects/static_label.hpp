@@ -69,7 +69,7 @@ class static_label: public Object2D, public features::drawable
         Magnum::Color4 color_;
         Magnum::Color4 outline_color_;
         float outline_start_ = 0.5f;
-        float outline_end_ = 1.0f;
+        float outline_end_ = 0.4f;
 };
 
 } //namespace

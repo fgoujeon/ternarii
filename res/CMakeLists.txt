@@ -31,7 +31,7 @@ function(add_ttf_to_sdf_command FILENAME)
         DEPENDS ${TTF_FILE}
         OUTPUT "${SDF_TGA_FILE}" "${SDF_CONF_FILE}"
         COMMAND ${CMAKE_COMMAND} ARGS -E make_directory "${CMAKE_CURRENT_BINARY_DIR}/out/fonts"
-        COMMAND ${MAGNUM_FONTCONVERTER_PROGRAM} ARGS --font FreeTypeFont --converter MagnumFontConverter --characters 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 ' --font-size 128 --output-size "512 512" --radius 32 "${TTF_FILE}" "${SDF_FILE_PREFIX}"
+        COMMAND ${MAGNUM_FONTCONVERTER_PROGRAM} ARGS --font FreeTypeFont --converter MagnumFontConverter --characters 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.-() ' --font-size 128 --output-size "512 512" --radius 32 "${TTF_FILE}" "${SDF_FILE_PREFIX}"
     )
 endfunction()
 

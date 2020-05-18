@@ -85,7 +85,7 @@ class title: public Object2D, public features::drawable
         void send_move_request(const data_types::move move);
 
     private:
-        class impl;
+        struct impl;
         std::unique_ptr<impl> pimpl_;
 };
 
