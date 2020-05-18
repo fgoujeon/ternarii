@@ -20,7 +20,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include <libview/screens/title.hpp>
 #include "../objects/background.hpp"
 #include "../objects/game_over_screen.hpp"
-#include "../objects/button.hpp"
+#include "../objects/sdf_image_button.hpp"
 #include "../objects/sdf_image.hpp"
 #include "../objects/tile_grid.hpp"
 #include "../objects/score_display.hpp"
@@ -78,7 +78,7 @@ struct title::impl
 
     objects::sdf_image logo;
     objects::sdf_image logo_text;
-    objects::button drop_button;
+    objects::sdf_image_button drop_button;
     objects::static_label version_label;
 };
 

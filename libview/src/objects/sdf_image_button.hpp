@@ -17,8 +17,8 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef LIBVIEW_OBJECTS_BUTTON_HPP
-#define LIBVIEW_OBJECTS_BUTTON_HPP
+#ifndef LIBVIEW_OBJECTS_SDF_IMAGE_BUTTON_HPP
+#define LIBVIEW_OBJECTS_SDF_IMAGE_BUTTON_HPP
 
 #include "sdf_image.hpp"
 #include "../common.hpp"
@@ -26,15 +26,17 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libview::objects
 {
 
-class button: public Object2D, public features::clickable
+class sdf_image_button: public Object2D, public features::clickable
 {
     public:
         using mouse_press_callback = std::function<void()>;
 
     public:
-        button
+        sdf_image_button
         (
-            Object2D& parent, features::drawable_group& drawables, features::clickable_group& clickables,
+            Object2D& parent,
+            features::drawable_group& drawables,
+            features::clickable_group& clickables,
             const std::filesystem::path& image_path,
             const mouse_press_callback& cb
         );

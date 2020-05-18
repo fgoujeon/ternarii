@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#include "button.hpp"
+#include "sdf_image_button.hpp"
 #include "../text.hpp"
 #include "../colors.hpp"
 #include <Magnum/GL/Mesh.h>
@@ -29,7 +29,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libview::objects
 {
 
-button::button
+sdf_image_button::sdf_image_button
 (
     Object2D& parent, features::drawable_group& drawables, features::clickable_group& clickables,
     const std::filesystem::path& image_path,
@@ -44,7 +44,7 @@ button::button
     image_.set_outline_color(colors::dark_gray);
 }
 
-bool button::is_inside(const Magnum::Vector2& model_space_position) const
+bool sdf_image_button::is_inside(const Magnum::Vector2& model_space_position) const
 {
     const auto x = model_space_position.x();
     const auto y = model_space_position.y();
@@ -52,7 +52,7 @@ bool button::is_inside(const Magnum::Vector2& model_space_position) const
     return squared_distance <= 1;
 }
 
-void button::mouse_press_event()
+void sdf_image_button::mouse_press_event()
 {
     mouse_press_callback_();
 }

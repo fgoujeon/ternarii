@@ -20,7 +20,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include <libview/screens/game.hpp>
 #include "../objects/background.hpp"
 #include "../objects/game_over_screen.hpp"
-#include "../objects/button.hpp"
+#include "../objects/sdf_image_button.hpp"
 #include "../objects/sdf_image.hpp"
 #include "../objects/tile_grid.hpp"
 #include "../objects/score_display.hpp"
@@ -109,10 +109,10 @@ class game::impl
         objects::tile_grid tile_grid_;
         objects::score_display score_display_;
         objects::score_display hi_score_display_;
-        objects::button left_button_;
-        objects::button right_button_;
-        objects::button drop_button_;
-        objects::button rotate_button_;
+        objects::sdf_image_button left_button_;
+        objects::sdf_image_button right_button_;
+        objects::sdf_image_button drop_button_;
+        objects::sdf_image_button rotate_button_;
         objects::game_over_screen game_over_screen_;
 };
 
