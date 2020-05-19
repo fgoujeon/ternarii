@@ -20,22 +20,22 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #ifndef LIBVIEW_OBJECTS_BACKGROUND_HPP
 #define LIBVIEW_OBJECTS_BACKGROUND_HPP
 
-#include "../time.hpp"
-#include "../magnum_common.hpp"
+#include "../common.hpp"
+#include <libutil/time.hpp>
 #include <Magnum/Math/Color.h>
 #include <Magnum/Magnum.h>
 
 namespace libview::objects
 {
 
-class background: public Object2D, public SceneGraph::Drawable2D
+class background: public Object2D, public features::drawable
 {
     public:
-        background(SceneGraph::DrawableGroup2D& drawables, Object2D& parent);
+        background(Object2D& parent, features::drawable_group& drawables);
 
         void set_color(const Magnum::Color4& color);
 
-        void advance(const time_point& now);
+        void advance(const libutil::time_point& now);
 
     private:
         void draw(const Magnum::Matrix3& transformation_matrix, SceneGraph::Camera2D& camera) override;

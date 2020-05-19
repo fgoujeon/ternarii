@@ -26,16 +26,14 @@ namespace libview::objects
 
 game_over_screen::new_game_button::new_game_button
 (
-    const mouse_press_callback& cb,
-    SceneGraph::DrawableGroup2D& drawables,
-    clickable_group& clickables,
-    Object2D& parent
+    Object2D& parent, features::drawable_group& drawables, features::clickable_group& clickables,
+    const mouse_press_callback& cb
 ):
     Object2D{&parent},
-    clickable{*this, &clickables},
+    features::clickable{*this, &clickables},
     mouse_press_callback_(cb),
-    background_rectangle_(colors::dark_gray, drawables, *this),
-    label_("NEW GAME", 0.4f, Magnum::Text::Alignment::MiddleCenter, drawables, *this)
+    background_rectangle_(*this, drawables, colors::dark_gray),
+    label_(*this, drawables, "NEW GAME", 0.4f, Magnum::Text::Alignment::MiddleCenter)
 {
     background_rectangle_.scale({1.5f, 0.35f});
     label_.set_color(colors::light_gray);
@@ -67,17 +65,15 @@ void game_over_screen::new_game_button::mouse_press_event()
 
 game_over_screen::game_over_screen
 (
-    const std::function<void()>& new_game_button_press_callback,
-    SceneGraph::DrawableGroup2D& drawables,
-    clickable_group& clickables,
-    Object2D& parent
+    Object2D& parent, features::drawable_group& drawables, features::clickable_group& clickables,
+    const std::function<void()>& new_game_button_press_callback
 ):
     Object2D{&parent},
-    SceneGraph::Drawable2D{*this, &drawables},
+    features::drawable{*this, &drawables},
     drawables_(drawables),
-    background_rectangle_(colors::light_gray, drawable_children_, *this),
-    label_("GAME OVER", 1.0f, Magnum::Text::Alignment::MiddleCenter, drawable_children_, *this),
-    new_game_button_(new_game_button_press_callback, drawable_children_, clickables, *this)
+    background_rectangle_(*this, drawable_children_, colors::light_gray),
+    label_(*this, drawable_children_, "GAME OVER", 1.0f, Magnum::Text::Alignment::MiddleCenter),
+    new_game_button_(*this, drawable_children_, clickables, new_game_button_press_callback)
 {
     background_rectangle_.scale({50.0f, 1.0f});
     label_.set_color(colors::dark_gray);

@@ -17,22 +17,25 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef LIBVIEW_TEXT_HPP
-#define LIBVIEW_TEXT_HPP
+#ifndef LIBVIEW_FEATURES_CLICKABLE_HPP
+#define LIBVIEW_FEATURES_CLICKABLE_HPP
 
-#include "common.hpp"
-#include <MagnumPlugins/MagnumFont/MagnumFont.h>
-#include <Magnum/Shaders/DistanceFieldVector.h>
-#include <Magnum/Text/GlyphCache.h>
+#include <Magnum/SceneGraph/AbstractGroupedFeature.h>
 
-namespace libview::text
+namespace libview::features
 {
 
-Magnum::Text::MagnumFont& get_font();
+class clickable: public Magnum::SceneGraph::AbstractGroupedFeature2D<clickable>
+{
+    public:
+        using Magnum::SceneGraph::AbstractGroupedFeature2D<clickable>::AbstractGroupedFeature2D;
 
-Magnum::Text::GlyphCache& get_glyph_cache();
+        virtual bool is_inside(const Magnum::Vector2& model_space_position) const = 0;
 
-Magnum::Shaders::DistanceFieldVector2D& get_shader();
+        virtual void mouse_press_event(){}
+};
+
+using clickable_group = Magnum::SceneGraph::FeatureGroup2D<clickable>;
 
 } //namespace
 

@@ -17,17 +17,25 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef LIBVIEW_TIME_HPP
-#define LIBVIEW_TIME_HPP
+#include "showing_about_screen.hpp"
+#include "showing_title_screen.hpp"
 
-#include <chrono>
-
-namespace libview
+namespace states
 {
 
-using clock = std::chrono::steady_clock;
-using time_point = std::chrono::time_point<clock>;
+showing_about_screen::showing_about_screen(fsm& ctx):
+    fsm_(ctx),
+    pscreen_
+    (
+        fsm_.view.make_screen<screen>
+        (
+            screen::callback_set
+            {
+                .back_request = [this]{fsm_.set_state<showing_title_screen>();}
+            }
+        )
+    )
+{
+}
 
 } //namespace
-
-#endif

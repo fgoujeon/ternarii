@@ -42,9 +42,9 @@ namespace
     }
 }
 
-rounded_square::rounded_square(const Magnum::Color4& color, SceneGraph::DrawableGroup2D& drawables, Object2D& parent):
+rounded_square::rounded_square(Object2D& parent, features::drawable_group& drawables, const Magnum::Color4& color):
     Object2D{&parent},
-    SceneGraph::Drawable2D{*this, &drawables},
+    features::drawable{*this, &drawables},
     color_(color)
 {
 }

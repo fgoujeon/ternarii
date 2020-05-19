@@ -23,7 +23,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include "rounded_square.hpp"
 #include "sdf_image.hpp"
 #include "tile.hpp"
-#include "../magnum_common.hpp"
+#include "../common.hpp"
 #include <Magnum/Math/Color.h>
 #include <Magnum/Magnum.h>
 
@@ -33,7 +33,7 @@ namespace libview::objects
 class sdf_image_tile: public tile
 {
     public:
-        sdf_image_tile(const std::filesystem::path& image_path, SceneGraph::DrawableGroup2D& drawables, Object2D& parent);
+        sdf_image_tile(Object2D& parent, features::drawable_group& drawables, const std::filesystem::path& image_path);
 
         void set_alpha(const float alpha) override;
 
@@ -41,7 +41,7 @@ class sdf_image_tile: public tile
         void draw(const Magnum::Matrix3& transformation_matrix, SceneGraph::Camera2D& camera) override;
 
     private:
-        SceneGraph::DrawableGroup2D drawable_children_;
+        features::drawable_group drawable_children_;
         Magnum::Color3 square_color_;
         rounded_square square_;
         sdf_image image_;

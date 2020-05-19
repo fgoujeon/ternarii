@@ -20,7 +20,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #ifndef LIBVIEW_ANIMATION_HPP
 #define LIBVIEW_ANIMATION_HPP
 
-#include "time.hpp"
+#include <libutil/time.hpp>
 #include <Magnum/Animation/Player.h>
 #include <chrono>
 #include <list>
@@ -194,7 +194,7 @@ class animation
             );
         }
 
-        void advance(const time_point& now)
+        void advance(const libutil::time_point& now)
         {
             if(!started_)
             {

@@ -17,22 +17,24 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef LIBVIEW_TEXT_HPP
-#define LIBVIEW_TEXT_HPP
+#ifndef LIBVIEW_FEATURES_ANIMABLE_HPP
+#define LIBVIEW_FEATURES_ANIMABLE_HPP
 
-#include "common.hpp"
-#include <MagnumPlugins/MagnumFont/MagnumFont.h>
-#include <Magnum/Shaders/DistanceFieldVector.h>
-#include <Magnum/Text/GlyphCache.h>
+#include <Magnum/SceneGraph/AbstractGroupedFeature.h>
+#include <libutil/time.hpp>
 
-namespace libview::text
+namespace libview::features
 {
 
-Magnum::Text::MagnumFont& get_font();
+class animable: public Magnum::SceneGraph::AbstractGroupedFeature2D<animable>
+{
+    public:
+        using Magnum::SceneGraph::AbstractGroupedFeature2D<animable>::AbstractGroupedFeature2D;
 
-Magnum::Text::GlyphCache& get_glyph_cache();
+        virtual void advance(const libutil::time_point& now) = 0;
+};
 
-Magnum::Shaders::DistanceFieldVector2D& get_shader();
+using animable_group = Magnum::SceneGraph::FeatureGroup2D<animable>;
 
 } //namespace
 

@@ -17,22 +17,39 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef LIBVIEW_TEXT_HPP
-#define LIBVIEW_TEXT_HPP
+#ifndef LIBVIEW_SCREENS_ABOUT_HPP
+#define LIBVIEW_SCREENS_ABOUT_HPP
 
-#include "common.hpp"
-#include <MagnumPlugins/MagnumFont/MagnumFont.h>
-#include <Magnum/Shaders/DistanceFieldVector.h>
-#include <Magnum/Text/GlyphCache.h>
+#include "../common.hpp"
+#include <libutil/time.hpp>
+#include <Magnum/Math/Color.h>
+#include <Magnum/Platform/Sdl2Application.h>
 
-namespace libview::text
+namespace libview::screens
 {
 
-Magnum::Text::MagnumFont& get_font();
+class about: public Object2D
+{
+    public:
+        struct callback_set
+        {
+            std::function<void()> back_request;
+        };
 
-Magnum::Text::GlyphCache& get_glyph_cache();
+    public:
+        about
+        (
+            Object2D& parent,
+            feature_group_set& feature_groups,
+            const callback_set& callbacks
+        );
 
-Magnum::Shaders::DistanceFieldVector2D& get_shader();
+        ~about();
+
+    private:
+        struct impl;
+        std::unique_ptr<impl> pimpl_;
+};
 
 } //namespace
 

@@ -17,44 +17,53 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#include "button.hpp"
+#include "label_button.hpp"
 #include "../text.hpp"
 #include "../colors.hpp"
-#include <Magnum/GL/Mesh.h>
-#include <Magnum/Shaders/Flat.h>
-#include <Magnum/Shaders/Vector.h>
 #include <Magnum/Text/AbstractFont.h>
-#include <Magnum/Text/GlyphCache.h>
 
 namespace libview::objects
 {
 
-button::button
+label_button::label_button
 (
-    const std::filesystem::path& image_path,
-    const mouse_press_callback& cb,
-    SceneGraph::DrawableGroup2D& drawables,
-    clickable_group& clickables,
-    Object2D& parent
+    Object2D& parent,
+    features::drawable_group& drawables,
+    features::clickable_group& clickables,
+    const char* const text,
+    const mouse_press_callback& cb
 ):
     Object2D{&parent},
-    clickable{*this, &clickables},
+    features::clickable{*this, &clickables},
     mouse_press_callback_(cb),
-    image_(image_path, drawables, *this)
+    background_rectangle_(*this, drawables, colors::light_gray),
+    label_(*this, drawables, text, 0.4f, Magnum::Text::Alignment::MiddleCenter)
 {
-    image_.set_color(colors::light_gray);
-    image_.set_outline_color(colors::dark_gray);
+    background_rectangle_.scale({1.5f, 0.35f});
+
+    label_.set_color(colors::dark_gray);
+    label_.set_outline_color(colors::dark_gray);
+    label_.set_outline_range(0.5, 0.49);
 }
 
-bool button::is_inside(const Magnum::Vector2& model_space_position) const
+void label_button::set_enabled(const bool enabled)
 {
+    enabled_ = enabled;
+}
+
+bool label_button::is_inside(const Magnum::Vector2& model_space_position) const
+{
+    if(!enabled_)
+    {
+        return false;
+    }
+
     const auto x = model_space_position.x();
     const auto y = model_space_position.y();
-    const auto squared_distance = x * x + y * y;
-    return squared_distance <= 1;
+    return -1.5 <= x && x <= 1.5 && -0.35 <= y && y <= 0.35;
 }
 
-void button::mouse_press_event()
+void label_button::mouse_press_event()
 {
     mouse_press_callback_();
 }

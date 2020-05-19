@@ -17,19 +17,26 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef LIBVIEW_EVENTS_HPP
-#define LIBVIEW_EVENTS_HPP
+#ifndef STATES_SHOWING_ABOUT_SCREEN_HPP
+#define STATES_SHOWING_ABOUT_SCREEN_HPP
 
-#include "data_types.hpp"
-#include <libutil/callback.hpp>
+#include "../fsm.hpp"
+#include <libview/screens/about.hpp>
 
-namespace libview
+namespace states
 {
 
-struct callback_set
+class showing_about_screen final: public state
 {
-    libutil::callback<void(data_types::move)> handle_move_request;
-    libutil::callback<void()> handle_clear_request;
+    private:
+        using screen = libview::screens::about;
+
+    public:
+        showing_about_screen(fsm& ctx);
+
+    private:
+        fsm& fsm_;
+        std::shared_ptr<screen> pscreen_;
 };
 
 } //namespace

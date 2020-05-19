@@ -26,16 +26,11 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libview::objects
 {
 
-sdf_image_tile::sdf_image_tile(const std::filesystem::path& image_path, SceneGraph::DrawableGroup2D& drawables, Object2D& parent):
-    tile{drawables, parent},
+sdf_image_tile::sdf_image_tile(Object2D& parent, features::drawable_group& drawables, const std::filesystem::path& image_path):
+    tile{parent, drawables},
     square_color_(colors::light_gray),
-    square_(Magnum::Color4{square_color_, 0.0f}, drawable_children_, *this),
-    image_
-    (
-        image_path,
-        drawable_children_,
-        *this
-    )
+    square_(*this, drawable_children_, Magnum::Color4{square_color_, 0.0f}),
+    image_(*this, drawable_children_, image_path)
 {
     image_.set_color(Magnum::Color4{colors::black, 0});
     image_.set_outline_color(Magnum::Color4{colors::black, 0});

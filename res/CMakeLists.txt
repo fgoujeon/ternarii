@@ -31,12 +31,20 @@ function(add_ttf_to_sdf_command FILENAME)
         DEPENDS ${TTF_FILE}
         OUTPUT "${SDF_TGA_FILE}" "${SDF_CONF_FILE}"
         COMMAND ${CMAKE_COMMAND} ARGS -E make_directory "${CMAKE_CURRENT_BINARY_DIR}/out/fonts"
-        COMMAND ${MAGNUM_FONTCONVERTER_PROGRAM} ARGS --font FreeTypeFont --converter MagnumFontConverter --characters 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 ' --font-size 128 --output-size "512 512" --radius 32 "${TTF_FILE}" "${SDF_FILE_PREFIX}"
+        COMMAND ${MAGNUM_FONTCONVERTER_PROGRAM} ARGS
+            --font FreeTypeFont
+            --converter MagnumFontConverter
+            --characters "'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789íš.-+(),\;:/_ '"
+            --font-size 128
+            --output-size "512 512"
+            --radius 32
+            "${TTF_FILE}"
+            "${SDF_FILE_PREFIX}"
     )
 endfunction()
 
 #expects 100x100 px SVG
-function(add_svg_to_sdf_command FILENAME)
+function(add_svg_to_sdf_command FILENAME OUTPUT_SIZE)
     set(SVG_FILE "${CMAKE_CURRENT_SOURCE_DIR}/src/images/${FILENAME}.svg")
     set(INTERMEDIATE_PNG_FILE ${FILENAME}.svg.png)
     set(SDF_TGA_FILE "${CMAKE_CURRENT_BINARY_DIR}/out/images/${FILENAME}.tga")
@@ -44,34 +52,39 @@ function(add_svg_to_sdf_command FILENAME)
     add_custom_command(
         DEPENDS ${SVG_FILE}
         OUTPUT ${INTERMEDIATE_PNG_FILE}
-        COMMAND ${INKSCAPE_PROGRAM} ARGS -o ${INTERMEDIATE_PNG_FILE} --export-area=-4:-4:104:104 -w 1024 -h 1024 ${SVG_FILE}
+        COMMAND ${INKSCAPE_PROGRAM} ARGS -o ${INTERMEDIATE_PNG_FILE} --export-area=-4:-4:104:104 -w 2048 -h 2048 ${SVG_FILE}
     )
 
     add_custom_command(
         DEPENDS ${INTERMEDIATE_PNG_FILE}
         OUTPUT ${SDF_TGA_FILE}
         COMMAND ${CMAKE_COMMAND} ARGS -E make_directory "${CMAKE_CURRENT_BINARY_DIR}/out/images"
-        COMMAND ${MAGNUM_DISTANCEFIELDCONVERTER_PROGRAM} ARGS --output-size "64 64" --radius 32 --converter TgaImageConverter ${INTERMEDIATE_PNG_FILE} ${SDF_TGA_FILE}
+        COMMAND ${MAGNUM_DISTANCEFIELDCONVERTER_PROGRAM} ARGS --output-size "${OUTPUT_SIZE} ${OUTPUT_SIZE}" --radius 32 --converter TgaImageConverter ${INTERMEDIATE_PNG_FILE} ${SDF_TGA_FILE}
     )
 endfunction()
 
 add_ttf_to_sdf_command(DejaVuSans)
-add_svg_to_sdf_command(move_button)
-add_svg_to_sdf_command(rotate_button)
-add_svg_to_sdf_command(board_corner)
-add_svg_to_sdf_command(column_nullifier)
-add_svg_to_sdf_command(row_nullifier)
-add_svg_to_sdf_command(number_nullifier)
+
+add_svg_to_sdf_command(board_corner     64)
+add_svg_to_sdf_command(column_nullifier 64)
+add_svg_to_sdf_command(logo             64)
+add_svg_to_sdf_command(logo_text        512)
+add_svg_to_sdf_command(move_button      64)
+add_svg_to_sdf_command(number_nullifier 64)
+add_svg_to_sdf_command(rotate_button    64)
+add_svg_to_sdf_command(row_nullifier    64)
 
 add_custom_target(
     res ALL
     SOURCES
-        "${CMAKE_CURRENT_BINARY_DIR}/out/fonts/DejaVuSans.tga"
         "${CMAKE_CURRENT_BINARY_DIR}/out/fonts/DejaVuSans.conf"
-        "${CMAKE_CURRENT_BINARY_DIR}/out/images/move_button.tga"
-        "${CMAKE_CURRENT_BINARY_DIR}/out/images/rotate_button.tga"
+        "${CMAKE_CURRENT_BINARY_DIR}/out/fonts/DejaVuSans.tga"
         "${CMAKE_CURRENT_BINARY_DIR}/out/images/board_corner.tga"
         "${CMAKE_CURRENT_BINARY_DIR}/out/images/column_nullifier.tga"
-        "${CMAKE_CURRENT_BINARY_DIR}/out/images/row_nullifier.tga"
+        "${CMAKE_CURRENT_BINARY_DIR}/out/images/logo.tga"
+        "${CMAKE_CURRENT_BINARY_DIR}/out/images/logo_text.tga"
+        "${CMAKE_CURRENT_BINARY_DIR}/out/images/move_button.tga"
         "${CMAKE_CURRENT_BINARY_DIR}/out/images/number_nullifier.tga"
+        "${CMAKE_CURRENT_BINARY_DIR}/out/images/rotate_button.tga"
+        "${CMAKE_CURRENT_BINARY_DIR}/out/images/row_nullifier.tga"
 )

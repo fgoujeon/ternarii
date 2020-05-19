@@ -17,22 +17,24 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef LIBVIEW_TEXT_HPP
-#define LIBVIEW_TEXT_HPP
+#ifndef LIBVIEW_SRC_COMMON_HPP
+#define LIBVIEW_SRC_COMMON_HPP
 
-#include "common.hpp"
-#include <MagnumPlugins/MagnumFont/MagnumFont.h>
-#include <Magnum/Shaders/DistanceFieldVector.h>
-#include <Magnum/Text/GlyphCache.h>
+#include <libview/common.hpp>
+#include <Magnum/SceneGraph/AbstractGroupedFeature.h>
+#include <Magnum/SceneGraph/Camera.h>
+#include <Magnum/SceneGraph/Drawable.h>
+#include <Magnum/SceneGraph/MatrixTransformation2D.h>
+#include <Magnum/SceneGraph/Object.h>
+#include <Magnum/SceneGraph/Scene.h>
+#include <Magnum/Math/Color.h>
 
-namespace libview::text
+namespace libview
 {
 
-Magnum::Text::MagnumFont& get_font();
+using namespace Magnum::Math::Literals;
 
-Magnum::Text::GlyphCache& get_glyph_cache();
-
-Magnum::Shaders::DistanceFieldVector2D& get_shader();
+using Vector2 = Magnum::Vector2;
 
 } //namespace
 

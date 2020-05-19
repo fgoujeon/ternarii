@@ -20,7 +20,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #ifndef LIBVIEW_OBJECTS_STATIC_LABEL_HPP
 #define LIBVIEW_OBJECTS_STATIC_LABEL_HPP
 
-#include "../magnum_common.hpp"
+#include "../common.hpp"
 #include <Magnum/Text/Renderer.h>
 #include <Magnum/Math/Color.h>
 #include <Magnum/Magnum.h>
@@ -28,16 +28,16 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libview::objects
 {
 
-class static_label: public Object2D, public SceneGraph::Drawable2D
+class static_label: public Object2D, public features::drawable
 {
     public:
         static_label
         (
+            Object2D& parent,
+            features::drawable_group& drawables,
             const char* const value,
             const float font_size,
-            const Magnum::Text::Alignment alignment,
-            SceneGraph::DrawableGroup2D& drawables,
-            Object2D& parent
+            const Magnum::Text::Alignment alignment
         );
 
         void set_color(const Magnum::Color4& color)
@@ -66,10 +66,11 @@ class static_label: public Object2D, public SceneGraph::Drawable2D
 
     private:
         Magnum::Text::Renderer2D renderer_;
+        const float font_size_ = 0;
         Magnum::Color4 color_;
         Magnum::Color4 outline_color_;
         float outline_start_ = 0.5f;
-        float outline_end_ = 1.0f;
+        float outline_end_ = 0.4f;
 };
 
 } //namespace

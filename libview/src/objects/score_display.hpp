@@ -20,16 +20,16 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #ifndef LIBVIEW_OBJECTS_SCORE_DISPLAY_HPP
 #define LIBVIEW_OBJECTS_SCORE_DISPLAY_HPP
 
-#include "../magnum_common.hpp"
+#include "../common.hpp"
 #include <Magnum/Text/Renderer.h>
 
 namespace libview::objects
 {
 
-class score_display: public Object2D, public SceneGraph::Drawable2D
+class score_display: public Object2D, public features::drawable
 {
     public:
-        explicit score_display(SceneGraph::DrawableGroup2D& drawables, Object2D& parent);
+        explicit score_display(Object2D& parent, features::drawable_group& drawables);
 
         void set_score(const int value);
 

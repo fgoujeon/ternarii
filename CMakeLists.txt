@@ -18,11 +18,12 @@
 cmake_minimum_required(VERSION 3.14)
 project(ternarii)
 
+find_program(GIT_PROGRAM git)
+
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/modules/" ${CMAKE_MODULE_PATH})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --preload-file ${CMAKE_BINARY_DIR}/res/out@/res")
 
-find_program(GIT_PROGRAM git)
 execute_process(
     COMMAND ${GIT_PROGRAM} "describe" "--dirty"
     WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
@@ -30,6 +31,14 @@ execute_process(
     OUTPUT_STRIP_TRAILING_WHITESPACE
 )
 message(STATUS "PROJECT_VERSION = ${PROJECT_VERSION}")
+
+execute_process(
+    COMMAND ${GIT_PROGRAM} "log" "-1" "--format=%as"
+    WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+    OUTPUT_VARIABLE PROJECT_DATE
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+message(STATUS "PROJECT_DATE = ${PROJECT_DATE}")
 
 find_package(
     Magnum 2019.10 REQUIRED

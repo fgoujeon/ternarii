@@ -20,7 +20,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #ifndef LIBVIEW_OBJECTS_SDF_IMAGE_HPP
 #define LIBVIEW_OBJECTS_SDF_IMAGE_HPP
 
-#include "../magnum_common.hpp"
+#include "../common.hpp"
 #include <Magnum/GL/Texture.h>
 #include <Magnum/Math/Color.h>
 #include <Magnum/Magnum.h>
@@ -30,14 +30,14 @@ namespace libview::objects
 {
 
 //Signed distance field image object
-class sdf_image: public Object2D, public SceneGraph::Drawable2D
+class sdf_image: public Object2D, public features::drawable
 {
     public:
         sdf_image
         (
-            const std::filesystem::path& image_path,
-            SceneGraph::DrawableGroup2D& drawables,
-            Object2D& parent
+            Object2D& parent,
+            features::drawable_group& drawables,
+            const std::filesystem::path& image_path
         );
 
         void set_color(const Magnum::Color4& color);

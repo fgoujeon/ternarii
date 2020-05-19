@@ -29,6 +29,13 @@ set_property(
     PROPERTY CXX_STANDARD 20
 )
 
+target_compile_definitions(
+    libview
+    PRIVATE
+        PROJECT_VERSION=\"${PROJECT_VERSION}\"
+        PROJECT_DATE=\"${PROJECT_DATE}\"
+)
+
 target_include_directories(libview PUBLIC include)
 
 target_link_libraries(

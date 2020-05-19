@@ -17,22 +17,16 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef LIBVIEW_TEXT_HPP
-#define LIBVIEW_TEXT_HPP
+#ifndef LIBUTIL_TIME_HPP
+#define LIBUTIL_TIME_HPP
 
-#include "common.hpp"
-#include <MagnumPlugins/MagnumFont/MagnumFont.h>
-#include <Magnum/Shaders/DistanceFieldVector.h>
-#include <Magnum/Text/GlyphCache.h>
+#include <chrono>
 
-namespace libview::text
+namespace libutil
 {
 
-Magnum::Text::MagnumFont& get_font();
-
-Magnum::Text::GlyphCache& get_glyph_cache();
-
-Magnum::Shaders::DistanceFieldVector2D& get_shader();
+using clock = std::chrono::steady_clock;
+using time_point = std::chrono::time_point<clock>;
 
 } //namespace
 

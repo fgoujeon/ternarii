@@ -20,7 +20,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #ifndef LIBVIEW_VIEW_HPP
 #define LIBVIEW_VIEW_HPP
 
-#include "events.hpp"
+#include "screens/game.hpp"
 #include "data_types.hpp"
 #include <Magnum/Platform/Sdl2Application.h>
 #include <memory>
@@ -35,9 +35,20 @@ class view
         using mouse_event = Magnum::Platform::Sdl2Application::MouseEvent;
 
     public:
-        view(const callback_set& callbacks);
+        view();
 
         ~view();
+
+        template<class T, class... Args>
+        std::shared_ptr<T> make_screen(Args&&... args)
+        {
+            return std::make_shared<T>
+            (
+                get_scene(),
+                get_feature_groups(),
+                std::forward<Args>(args)...
+            );
+        }
 
     //Magnum event handling
     public:
@@ -49,37 +60,13 @@ class view
 
         void handle_mouse_press(mouse_event& event);
 
-    public:
-        void clear();
+    private:
+        Scene2D& get_scene();
 
-        void set_score(const int value);
-
-        void set_hi_score(const int value);
-
-        void create_next_input(const data_types::input_tile_array& tiles);
-
-        void insert_next_input(const data_types::input_layout& layout);
-
-        void set_input_layout(const data_types::input_layout& layout);
-
-        void drop_input_tiles(const data_types::input_tile_drop_list& drops);
-
-        void drop_board_tiles(const data_types::board_tile_drop_list& drops);
-
-        void nullify_tiles(const data_types::tile_coordinate_list& nullified_tile_coordinates);
-
-        void merge_tiles(const data_types::tile_merge_list& merges);
-
-        void mark_tiles_for_nullification(const data_types::tile_coordinate_list& tile_coordinates);
-
-        void set_board_tiles(const data_types::board_tile_array& tiles);
-
-        void set_visible(const bool visible);
-
-        void set_game_over_screen_visible(const bool visible);
+        feature_group_set& get_feature_groups();
 
     private:
-        class impl;
+        struct impl;
         std::unique_ptr<impl> pimpl_;
 };
 

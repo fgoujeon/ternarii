@@ -109,7 +109,7 @@ namespace
     }
 }
 
-tile_grid::tile_grid(SceneGraph::DrawableGroup2D& drawables, Object2D& parent):
+tile_grid::tile_grid(Object2D& parent, features::drawable_group& drawables):
     Object2D{&parent},
     drawables_(drawables)
 {
@@ -117,7 +117,7 @@ tile_grid::tile_grid(SceneGraph::DrawableGroup2D& drawables, Object2D& parent):
     {
         auto add_corner = [&](const float x, const float y, const auto rotation)
         {
-            auto pobj = std::make_unique<sdf_image>("/res/images/board_corner.tga", drawables_, *this);
+            auto pobj = std::make_unique<sdf_image>(*this, drawables, "/res/images/board_corner.tga");
             pobj->rotate(rotation);
             pobj->scale({0.50f, 0.50f});
             pobj->translate({x, y});
@@ -430,7 +430,7 @@ void tile_grid::set_board_tiles(const data_types::board_tile_array& tiles)
     );
 }
 
-void tile_grid::advance(const time_point& now)
+void tile_grid::advance(const libutil::time_point& now)
 {
     auto keep_advancing = true;
 
@@ -469,19 +469,19 @@ std::shared_ptr<objects::tile> tile_grid::make_tile
         {
             [&](const data_types::tiles::number& tile) -> tile_ptr
             {
-                return std::make_shared<number_tile>(tile.value, drawables_, *this);
+                return std::make_shared<number_tile>(*this, drawables_, tile.value);
             },
             [&](const data_types::tiles::column_nullifier&) -> tile_ptr
             {
-                return std::make_shared<sdf_image_tile>("/res/images/column_nullifier.tga", drawables_, *this);
+                return std::make_shared<sdf_image_tile>(*this, drawables_, "/res/images/column_nullifier.tga");
             },
             [&](const data_types::tiles::row_nullifier&) -> tile_ptr
             {
-                return std::make_shared<sdf_image_tile>("/res/images/row_nullifier.tga", drawables_, *this);
+                return std::make_shared<sdf_image_tile>(*this, drawables_, "/res/images/row_nullifier.tga");
             },
             [&](const data_types::tiles::number_nullifier&) -> tile_ptr
             {
-                return std::make_shared<sdf_image_tile>("/res/images/number_nullifier.tga", drawables_, *this);
+                return std::make_shared<sdf_image_tile>(*this, drawables_, "/res/images/number_nullifier.tga");
             }
         },
         tile

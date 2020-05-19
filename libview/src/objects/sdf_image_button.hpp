@@ -17,28 +17,39 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef LIBVIEW_OBJECTS_ROUNDED_SQUARE_HPP
-#define LIBVIEW_OBJECTS_ROUNDED_SQUARE_HPP
+#ifndef LIBVIEW_OBJECTS_SDF_IMAGE_BUTTON_HPP
+#define LIBVIEW_OBJECTS_SDF_IMAGE_BUTTON_HPP
 
+#include "sdf_image.hpp"
 #include "../common.hpp"
-#include <Magnum/Math/Color.h>
-#include <Magnum/Magnum.h>
 
 namespace libview::objects
 {
 
-class rounded_square: public Object2D, public features::drawable
+class sdf_image_button: public Object2D, public features::clickable
 {
     public:
-        rounded_square(Object2D& parent, features::drawable_group& drawables, const Magnum::Color4& color);
+        using mouse_press_callback = std::function<void()>;
 
-        void set_color(const Magnum::Color4& color);
+    public:
+        sdf_image_button
+        (
+            Object2D& parent,
+            features::drawable_group& drawables,
+            features::clickable_group& clickables,
+            const std::filesystem::path& image_path,
+            const mouse_press_callback& cb
+        );
+
+    //features::clickable virtual functions
+    private:
+        bool is_inside(const Magnum::Vector2& model_space_position) const override;
+
+        void mouse_press_event() override;
 
     private:
-        void draw(const Magnum::Matrix3& transformation_matrix, SceneGraph::Camera2D& camera) override;
-
-    private:
-        Magnum::Color4 color_;
+        const mouse_press_callback mouse_press_callback_;
+        sdf_image image_;
 };
 
 } //namespace

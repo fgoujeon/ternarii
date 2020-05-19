@@ -17,15 +17,39 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef LIBUTIL_CONSTANT_HPP
-#define LIBUTIL_CONSTANT_HPP
+#ifndef FSM_HPP
+#define FSM_HPP
 
-namespace libutil
+#include <libdb/database.hpp>
+#include <libgame/game.hpp>
+#include <libview/view.hpp>
+#include <memory>
+
+struct state
 {
+    virtual ~state() = default;
+    virtual void handle_database_event(const libdb::events::end_of_loading&){}
+};
 
-template<auto v>
-struct constant{};
+//Finite state machine
+struct fsm
+{
+    fsm
+    (
+        libdb::database& database,
+        libview::view& view
+    );
 
-} //namespace
+    template<class State>
+    void set_state()
+    {
+        pstate = std::make_unique<State>(*this);
+    }
+
+    std::unique_ptr<state> pstate;
+
+    libdb::database& database;
+    libview::view& view;
+};
 
 #endif

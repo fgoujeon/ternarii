@@ -17,22 +17,26 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef LIBVIEW_TEXT_HPP
-#define LIBVIEW_TEXT_HPP
+#ifndef LIBVIEW_FEATURES_KEY_EVENT_HANDLER_HPP
+#define LIBVIEW_FEATURES_KEY_EVENT_HANDLER_HPP
 
-#include "common.hpp"
-#include <MagnumPlugins/MagnumFont/MagnumFont.h>
-#include <Magnum/Shaders/DistanceFieldVector.h>
-#include <Magnum/Text/GlyphCache.h>
+#include <Magnum/SceneGraph/AbstractGroupedFeature.h>
+#include <Magnum/Platform/Sdl2Application.h>
 
-namespace libview::text
+namespace libview::features
 {
 
-Magnum::Text::MagnumFont& get_font();
+class key_event_handler: public Magnum::SceneGraph::AbstractGroupedFeature2D<key_event_handler>
+{
+    public:
+        using key_event = Magnum::Platform::Sdl2Application::KeyEvent;
 
-Magnum::Text::GlyphCache& get_glyph_cache();
+        using Magnum::SceneGraph::AbstractGroupedFeature2D<key_event_handler>::AbstractGroupedFeature2D;
 
-Magnum::Shaders::DistanceFieldVector2D& get_shader();
+        virtual void handle_key_press(key_event& event) = 0;
+};
+
+using key_event_handler_group = Magnum::SceneGraph::FeatureGroup2D<key_event_handler>;
 
 } //namespace
 

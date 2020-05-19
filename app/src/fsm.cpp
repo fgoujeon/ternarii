@@ -17,27 +17,16 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef LIBVIEW_CLICKABLE_HPP
-#define LIBVIEW_CLICKABLE_HPP
+#include "fsm.hpp"
+#include "states/loading_database.hpp"
 
-#include "magnum_common.hpp"
-#include <Magnum/SceneGraph/AbstractGroupedFeature.h>
-
-namespace libview
+fsm::fsm
+(
+    libdb::database& database,
+    libview::view& view
+):
+    pstate(std::make_unique<states::loading_database>(*this)),
+    database(database),
+    view(view)
 {
-
-class clickable: public Magnum::SceneGraph::AbstractGroupedFeature2D<clickable>
-{
-    public:
-        using Magnum::SceneGraph::AbstractGroupedFeature2D<clickable>::AbstractGroupedFeature2D;
-
-        virtual bool is_inside(const Magnum::Vector2& model_space_position) const = 0;
-
-        virtual void mouse_press_event(){}
-};
-
-using clickable_group = Magnum::SceneGraph::FeatureGroup2D<clickable>;
-
-} //namespace
-
-#endif
+}

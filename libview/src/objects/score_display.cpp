@@ -55,9 +55,9 @@ namespace
     }
 }
 
-score_display::score_display(SceneGraph::DrawableGroup2D& drawables, Object2D& parent):
+score_display::score_display(Object2D& parent, features::drawable_group& drawables):
     Object2D{&parent},
-    SceneGraph::Drawable2D{*this, &drawables},
+    features::drawable{*this, &drawables},
     renderer_(text::get_font(), text::get_glyph_cache(), 1.0f, Magnum::Text::Alignment::TopRight)
 {
     renderer_.reserve(40, Magnum::GL::BufferUsage::DynamicDraw, Magnum::GL::BufferUsage::StaticDraw);

@@ -17,22 +17,31 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef LIBVIEW_TEXT_HPP
-#define LIBVIEW_TEXT_HPP
+#ifndef STATES_LOADING_DATABASE_HPP
+#define STATES_LOADING_DATABASE_HPP
 
-#include "common.hpp"
-#include <MagnumPlugins/MagnumFont/MagnumFont.h>
-#include <Magnum/Shaders/DistanceFieldVector.h>
-#include <Magnum/Text/GlyphCache.h>
+#include "showing_title_screen.hpp"
+#include "../fsm.hpp"
 
-namespace libview::text
+namespace states
 {
 
-Magnum::Text::MagnumFont& get_font();
+class loading_database final: public state
+{
+    public:
+        loading_database(fsm& ctx):
+            fsm_(ctx)
+        {
+        }
 
-Magnum::Text::GlyphCache& get_glyph_cache();
+        void handle_database_event(const libdb::events::end_of_loading&) override
+        {
+            fsm_.set_state<showing_title_screen>();
+        }
 
-Magnum::Shaders::DistanceFieldVector2D& get_shader();
+    private:
+        fsm& fsm_;
+};
 
 } //namespace
 

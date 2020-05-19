@@ -17,32 +17,34 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef LIBVIEW_OBJECTS_BUTTON_HPP
-#define LIBVIEW_OBJECTS_BUTTON_HPP
+#ifndef LIBVIEW_OBJECTS_LABEL_BUTTON_HPP
+#define LIBVIEW_OBJECTS_LABEL_BUTTON_HPP
 
-#include "sdf_image.hpp"
-#include "../clickable.hpp"
-#include "../magnum_common.hpp"
+#include "static_label.hpp"
+#include "square.hpp"
+#include "../common.hpp"
 
 namespace libview::objects
 {
 
-class button: public Object2D, public clickable
+class label_button: public Object2D, public features::clickable
 {
     public:
         using mouse_press_callback = std::function<void()>;
 
     public:
-        explicit button
+        label_button
         (
-            const std::filesystem::path& image_path,
-            const mouse_press_callback& cb,
-            SceneGraph::DrawableGroup2D& drawables,
-            clickable_group& clickables,
-            Object2D& parent
+            Object2D& parent,
+            features::drawable_group& drawables,
+            features::clickable_group& clickables,
+            const char* const text,
+            const mouse_press_callback& cb
         );
 
-    //clickable virtual functions
+        void set_enabled(const bool enabled);
+
+    //features::clickable virtual functions
     private:
         bool is_inside(const Magnum::Vector2& model_space_position) const override;
 
@@ -50,7 +52,9 @@ class button: public Object2D, public clickable
 
     private:
         const mouse_press_callback mouse_press_callback_;
-        sdf_image image_;
+        square background_rectangle_;
+        static_label label_;
+        bool enabled_ = true;
 };
 
 } //namespace

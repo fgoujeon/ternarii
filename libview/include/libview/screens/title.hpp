@@ -17,22 +17,42 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#include <Magnum/SceneGraph/Camera.h>
-#include <Magnum/SceneGraph/Drawable.h>
-#include <Magnum/SceneGraph/MatrixTransformation2D.h>
-#include <Magnum/SceneGraph/Object.h>
-#include <Magnum/SceneGraph/Scene.h>
-#include <Magnum/Math/Color.h>
+#ifndef LIBVIEW_SCREENS_TITLE_HPP
+#define LIBVIEW_SCREENS_TITLE_HPP
 
-namespace libview
+#include "../common.hpp"
+#include <libview/data_types.hpp>
+#include <libutil/time.hpp>
+#include <Magnum/Math/Color.h>
+#include <Magnum/Platform/Sdl2Application.h>
+
+namespace libview::screens
 {
 
-using namespace Magnum::Math::Literals;
+class title: public Object2D
+{
+    public:
+        struct callback_set
+        {
+            std::function<void()> play_request;
+            std::function<void()> about_request;
+        };
 
-using Vector2 = Magnum::Vector2;
+    public:
+        title
+        (
+            Object2D& parent,
+            feature_group_set& feature_groups,
+            const callback_set& callbacks
+        );
 
-namespace SceneGraph = Magnum::SceneGraph;
-using Object2D = SceneGraph::Object<Magnum::SceneGraph::MatrixTransformation2D>;
-using Scene2D = SceneGraph::Scene<Magnum::SceneGraph::MatrixTransformation2D>;
+        ~title();
+
+    private:
+        struct impl;
+        std::unique_ptr<impl> pimpl_;
+};
 
 } //namespace
+
+#endif
