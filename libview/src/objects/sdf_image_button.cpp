@@ -54,7 +54,23 @@ bool sdf_image_button::is_inside(const Magnum::Vector2& model_space_position) co
 
 void sdf_image_button::handle_mouse_press()
 {
+    image_.set_color(colors::white);
     mouse_press_callback_();
+}
+
+void sdf_image_button::handle_mouse_release()
+{
+    image_.set_color(colors::light_gray);
+}
+
+void sdf_image_button::handle_mouse_enter()
+{
+    image_.set_color(colors::white);
+}
+
+void sdf_image_button::handle_mouse_leave()
+{
+    image_.set_color(colors::light_gray);
 }
 
 } //namespace

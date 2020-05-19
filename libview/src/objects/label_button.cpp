@@ -65,12 +65,24 @@ bool label_button::is_inside(const Magnum::Vector2& model_space_position) const
 
 void label_button::handle_mouse_press()
 {
+    background_rectangle_.set_color(colors::white);
     callbacks_.mouse_press_callback();
 }
 
 void label_button::handle_mouse_release()
 {
+    background_rectangle_.set_color(colors::light_gray);
     callbacks_.mouse_release_callback();
+}
+
+void label_button::handle_mouse_enter()
+{
+    background_rectangle_.set_color(colors::white);
+}
+
+void label_button::handle_mouse_leave()
+{
+    background_rectangle_.set_color(colors::light_gray);
 }
 
 } //namespace

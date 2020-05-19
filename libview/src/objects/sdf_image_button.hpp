@@ -48,6 +48,12 @@ class sdf_image_button: public Object2D, public features::clickable
 
         void handle_mouse_press() override;
 
+        void handle_mouse_release() override;
+
+        void handle_mouse_enter() override;
+
+        void handle_mouse_leave() override;
+
     private:
         const mouse_press_callback mouse_press_callback_;
         sdf_image image_;

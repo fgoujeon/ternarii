@@ -31,8 +31,10 @@ namespace libview
 class view
 {
     public:
-        using key_event = Magnum::Platform::Sdl2Application::KeyEvent;
-        using mouse_event = Magnum::Platform::Sdl2Application::MouseEvent;
+        using application = Magnum::Platform::Sdl2Application;
+        using key_event        = application::KeyEvent;
+        using mouse_event      = application::MouseEvent;
+        using mouse_move_event = application::MouseMoveEvent;
 
     public:
         view();
@@ -61,6 +63,8 @@ class view
         void handle_mouse_press(mouse_event& event);
 
         void handle_mouse_release(mouse_event& event);
+
+        void handle_mouse_move(mouse_move_event& event);
 
     private:
         Scene2D& get_scene();

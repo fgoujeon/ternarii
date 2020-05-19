@@ -76,30 +76,26 @@ struct view::impl final
 
     void handle_mouse_press(mouse_event& event)
     {
+        //Only manage left button
+        if(event.button() != mouse_event::Button::Left)
+        {
+            return;
+        }
+
         handle_mouse_event
         (
             event,
-            [](features::clickable& clickable)
+            [](features::clickable& clickable, const bool is_inside)
             {
-                clickable.handle_mouse_press();
+                if(is_inside)
+                {
+                    clickable.handle_mouse_press();
+                }
             }
         );
     }
 
     void handle_mouse_release(mouse_event& event)
-    {
-        handle_mouse_event
-        (
-            event,
-            [](features::clickable& clickable)
-            {
-                clickable.handle_mouse_release();
-            }
-        );
-    }
-
-    template<class F>
-    void handle_mouse_event(mouse_event& event, F&& f)
     {
         //Only manage left button
         if(event.button() != mouse_event::Button::Left)
@@ -107,6 +103,34 @@ struct view::impl final
             return;
         }
 
+        handle_mouse_event
+        (
+            event,
+            [](features::clickable& clickable, const bool is_inside)
+            {
+                if(is_inside)
+                {
+                    clickable.handle_mouse_release();
+                }
+            }
+        );
+    }
+
+    void handle_mouse_move(mouse_move_event& event)
+    {
+        handle_mouse_event
+        (
+            event,
+            [](features::clickable& clickable, const bool is_inside)
+            {
+                clickable.handle_mouse_move(is_inside);
+            }
+        );
+    }
+
+    template<class Event, class F>
+    void handle_mouse_event(Event& event, F&& f)
+    {
         //Integer window-space coordinates (with origin in top left corner and Y down)
         const auto& window_space_position = event.position();
 
@@ -125,10 +149,9 @@ struct view::impl final
             const auto clickable_space_position = clickable.object().absoluteTransformationMatrix().inverted().transformPoint(world_space_position);
 
             //Check if click position is inside clickable
-            if(clickable.is_inside(clickable_space_position))
-            {
-                f(clickable);
-            }
+            const auto is_inside = clickable.is_inside(clickable_space_position);
+
+            f(clickable, is_inside);
         }
     }
 
@@ -169,6 +192,11 @@ void view::handle_mouse_press(mouse_event& event)
 void view::handle_mouse_release(mouse_event& event)
 {
     pimpl_->handle_mouse_release(event);
+}
+
+void view::handle_mouse_move(mouse_move_event& event)
+{
+    pimpl_->handle_mouse_move(event);
 }
 
 Scene2D& view::get_scene()

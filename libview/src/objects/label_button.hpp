@@ -57,6 +57,10 @@ class label_button: public Object2D, public features::clickable
 
         void handle_mouse_release() override;
 
+        void handle_mouse_enter() override;
+
+        void handle_mouse_leave() override;
+
     private:
         const callback_set callbacks_;
         square background_rectangle_;
