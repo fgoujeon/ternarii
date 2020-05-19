@@ -26,6 +26,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include <libutil/time.hpp>
 #include <Magnum/Math/Color.h>
 #include <Magnum/Platform/Sdl2Application.h>
+#include <libutil/void_function.hpp>
 
 namespace libview::screens
 {
@@ -35,8 +36,8 @@ class game: public Object2D, public features::drawable, public features::animabl
     public:
         struct callback_set
         {
-            std::function<void(data_types::move)> handle_move_request;
-            std::function<void()> handle_clear_request;
+            libutil::void_function<data_types::move> handle_move_request;
+            libutil::void_function<> handle_clear_request;
         };
 
     public:

@@ -23,6 +23,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include "../common.hpp"
 #include <libview/data_types.hpp>
 #include <libutil/time.hpp>
+#include <libutil/void_function.hpp>
 #include <Magnum/Math/Color.h>
 #include <Magnum/Platform/Sdl2Application.h>
 
@@ -34,8 +35,8 @@ class title: public Object2D
     public:
         struct callback_set
         {
-            std::function<void()> play_request;
-            std::function<void()> about_request;
+            libutil::void_function<> play_request;
+            libutil::void_function<> about_request;
         };
 
     public:

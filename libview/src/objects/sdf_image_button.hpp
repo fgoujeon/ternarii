@@ -22,6 +22,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "sdf_image.hpp"
 #include "../common.hpp"
+#include <libutil/void_function.hpp>
 
 namespace libview::objects
 {
@@ -29,7 +30,7 @@ namespace libview::objects
 class sdf_image_button: public Object2D, public features::clickable
 {
     public:
-        using mouse_press_callback = std::function<void()>;
+        using mouse_press_callback = libutil::void_function<>;
 
     public:
         sdf_image_button
@@ -45,7 +46,7 @@ class sdf_image_button: public Object2D, public features::clickable
     private:
         bool is_inside(const Magnum::Vector2& model_space_position) const override;
 
-        void mouse_press_event() override;
+        void handle_mouse_press() override;
 
     private:
         const mouse_press_callback mouse_press_callback_;

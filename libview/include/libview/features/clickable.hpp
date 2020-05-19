@@ -32,7 +32,9 @@ class clickable: public Magnum::SceneGraph::AbstractGroupedFeature2D<clickable>
 
         virtual bool is_inside(const Magnum::Vector2& model_space_position) const = 0;
 
-        virtual void mouse_press_event(){}
+        virtual void handle_mouse_press(){}
+
+        virtual void handle_mouse_release(){}
 };
 
 using clickable_group = Magnum::SceneGraph::FeatureGroup2D<clickable>;

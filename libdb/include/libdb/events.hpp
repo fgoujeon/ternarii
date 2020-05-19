@@ -22,6 +22,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 
 #include <variant>
 #include <functional>
+#include <libutil/void_function.hpp>
 
 namespace libdb
 {
@@ -36,7 +37,7 @@ using event = std::variant
     events::end_of_loading
 >;
 
-using event_handler = std::function<void(const event&)>;
+using event_handler = libutil::void_function<const event&>;
 
 } //namespace
 

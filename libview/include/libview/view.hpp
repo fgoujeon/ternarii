@@ -60,6 +60,8 @@ class view
 
         void handle_mouse_press(mouse_event& event);
 
+        void handle_mouse_release(mouse_event& event);
+
     private:
         Scene2D& get_scene();
 

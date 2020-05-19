@@ -31,11 +31,11 @@ label_button::label_button
     features::drawable_group& drawables,
     features::clickable_group& clickables,
     const char* const text,
-    const mouse_press_callback& cb
+    const callback_set& callbacks
 ):
     Object2D{&parent},
     features::clickable{*this, &clickables},
-    mouse_press_callback_(cb),
+    callbacks_(callbacks),
     background_rectangle_(*this, drawables, colors::light_gray),
     label_(*this, drawables, text, 0.4f, Magnum::Text::Alignment::MiddleCenter)
 {
@@ -63,9 +63,14 @@ bool label_button::is_inside(const Magnum::Vector2& model_space_position) const
     return -1.5 <= x && x <= 1.5 && -0.35 <= y && y <= 0.35;
 }
 
-void label_button::mouse_press_event()
+void label_button::handle_mouse_press()
 {
-    mouse_press_callback_();
+    callbacks_.mouse_press_callback();
+}
+
+void label_button::handle_mouse_release()
+{
+    callbacks_.mouse_release_callback();
 }
 
 } //namespace

@@ -56,7 +56,7 @@ bool game_over_screen::new_game_button::is_inside(const Magnum::Vector2& model_s
     return -1.5 <= x && x <= 1.5 && -0.35 <= y && y <= 0.35;
 }
 
-void game_over_screen::new_game_button::mouse_press_event()
+void game_over_screen::new_game_button::handle_mouse_press()
 {
     mouse_press_callback_();
 }
@@ -66,7 +66,7 @@ void game_over_screen::new_game_button::mouse_press_event()
 game_over_screen::game_over_screen
 (
     Object2D& parent, features::drawable_group& drawables, features::clickable_group& clickables,
-    const std::function<void()>& new_game_button_press_callback
+    const libutil::void_function<>& new_game_button_press_callback
 ):
     Object2D{&parent},
     features::drawable{*this, &drawables},

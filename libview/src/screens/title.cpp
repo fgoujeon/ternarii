@@ -40,8 +40,28 @@ struct title::impl
         callbacks(callbacks),
         logo(self, feature_groups.drawables, "/res/images/logo.tga"),
         logo_text(self, feature_groups.drawables, "/res/images/logo_text.tga"),
-        play_button(self, feature_groups.drawables, feature_groups.clickables, "PLAY", [this]{this->callbacks.play_request();}),
-        about_button(self, feature_groups.drawables, feature_groups.clickables, "ABOUT", [this]{this->callbacks.about_request();})
+        play_button
+        (
+            self,
+            feature_groups.drawables,
+            feature_groups.clickables,
+            "PLAY",
+            objects::label_button::callback_set
+            {
+                .mouse_release_callback = [this]{this->callbacks.play_request();}
+            }
+        ),
+        about_button
+        (
+            self,
+            feature_groups.drawables,
+            feature_groups.clickables,
+            "ABOUT",
+            objects::label_button::callback_set
+            {
+                .mouse_release_callback = [this]{this->callbacks.about_request();}
+            }
+        )
     {
         logo.set_color(colors::light_gray);
         logo.set_outline_color(colors::dark_gray);

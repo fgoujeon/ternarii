@@ -75,7 +75,17 @@ struct about::impl
         callbacks(callbacks),
         title_label(self, feature_groups.drawables, "ABOUT", 0.6, Magnum::Text::Alignment::MiddleCenter),
         body_label(self, feature_groups.drawables, body_label_str, 0.3, Magnum::Text::Alignment::MiddleCenter),
-        back_button(self, feature_groups.drawables, feature_groups.clickables, "BACK", [this]{this->callbacks.back_request();})
+        back_button
+        (
+            self,
+            feature_groups.drawables,
+            feature_groups.clickables,
+            "BACK",
+            objects::label_button::callback_set
+            {
+                .mouse_release_callback = [this]{this->callbacks.back_request();}
+            }
+        )
     {
         title_label.set_color(colors::light_gray);
         title_label.set_outline_color(colors::dark_gray);

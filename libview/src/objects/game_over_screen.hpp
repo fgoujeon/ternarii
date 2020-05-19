@@ -23,6 +23,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include "square.hpp"
 #include "static_label.hpp"
 #include "../common.hpp"
+#include <libutil/void_function.hpp>
 
 namespace libview::objects
 {
@@ -33,7 +34,7 @@ class game_over_screen: public Object2D, public features::drawable
         class new_game_button: public Object2D, public features::clickable
         {
             public:
-                using mouse_press_callback = std::function<void()>;
+                using mouse_press_callback = libutil::void_function<>;
 
             public:
                 new_game_button
@@ -48,7 +49,7 @@ class game_over_screen: public Object2D, public features::drawable
             private:
                 bool is_inside(const Magnum::Vector2& model_space_position) const override;
 
-                void mouse_press_event() override;
+                void handle_mouse_press() override;
 
             private:
                 const mouse_press_callback mouse_press_callback_;
@@ -63,7 +64,7 @@ class game_over_screen: public Object2D, public features::drawable
             Object2D& parent,
             features::drawable_group& drawables,
             features::clickable_group& clickables,
-            const std::function<void()>& new_game_button_press_callback
+            const libutil::void_function<>& new_game_button_press_callback
         );
 
         void set_visible(const bool visible);

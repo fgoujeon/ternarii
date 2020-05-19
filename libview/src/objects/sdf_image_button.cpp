@@ -52,7 +52,7 @@ bool sdf_image_button::is_inside(const Magnum::Vector2& model_space_position) co
     return squared_distance <= 1;
 }
 
-void sdf_image_button::mouse_press_event()
+void sdf_image_button::handle_mouse_press()
 {
     mouse_press_callback_();
 }

@@ -76,6 +76,31 @@ struct view::impl final
 
     void handle_mouse_press(mouse_event& event)
     {
+        handle_mouse_event
+        (
+            event,
+            [](features::clickable& clickable)
+            {
+                clickable.handle_mouse_press();
+            }
+        );
+    }
+
+    void handle_mouse_release(mouse_event& event)
+    {
+        handle_mouse_event
+        (
+            event,
+            [](features::clickable& clickable)
+            {
+                clickable.handle_mouse_release();
+            }
+        );
+    }
+
+    template<class F>
+    void handle_mouse_event(mouse_event& event, F&& f)
+    {
         //integer window-space coordinates (with origin in top left corner and Y down)
         const auto& window_space_position = event.position();
 
@@ -96,7 +121,7 @@ struct view::impl final
             //check if click position is inside clickable
             if(clickable.is_inside(clickable_space_position))
             {
-                clickable.mouse_press_event();
+                f(clickable);
             }
         }
     }
@@ -133,6 +158,11 @@ void view::handle_key_press(key_event& event)
 void view::handle_mouse_press(mouse_event& event)
 {
     pimpl_->handle_mouse_press(event);
+}
+
+void view::handle_mouse_release(mouse_event& event)
+{
+    pimpl_->handle_mouse_release(event);
 }
 
 Scene2D& view::get_scene()
