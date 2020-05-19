@@ -101,10 +101,16 @@ struct view::impl final
     template<class F>
     void handle_mouse_event(mouse_event& event, F&& f)
     {
-        //integer window-space coordinates (with origin in top left corner and Y down)
+        //Only manage left button
+        if(event.button() != mouse_event::Button::Left)
+        {
+            return;
+        }
+
+        //Integer window-space coordinates (with origin in top left corner and Y down)
         const auto& window_space_position = event.position();
 
-        //convert to floating-point world-space coordinates (with origin at camera position and Y up)
+        //Convert to floating-point world-space coordinates (with origin at camera position and Y up)
         const auto world_space_position =
             (Magnum::Vector2{window_space_position} / Magnum::Vector2{Magnum::GL::defaultFramebuffer.viewport().size()} - Magnum::Vector2{0.5f})
             * Magnum::Vector2::yScale(-1.0f)
@@ -115,10 +121,10 @@ struct view::impl final
         {
             auto& clickable = feature_groups.clickables[i];
 
-            //convert to model-space coordinates of clickable
+            //Convert to model-space coordinates of clickable
             const auto clickable_space_position = clickable.object().absoluteTransformationMatrix().inverted().transformPoint(world_space_position);
 
-            //check if click position is inside clickable
+            //Check if click position is inside clickable
             if(clickable.is_inside(clickable_space_position))
             {
                 f(clickable);
