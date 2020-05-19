@@ -24,16 +24,18 @@ namespace states
 {
 
 showing_about_screen::showing_about_screen(fsm& ctx):
-    fsm_(ctx)
+    fsm_(ctx),
+    pscreen_
+    (
+        fsm_.view.make_screen<screen>
+        (
+            screen::callback_set
+            {
+                .back_request = [this]{fsm_.set_state<showing_title_screen>();}
+            }
+        )
+    )
 {
-    auto callbacks = screen::callback_set{};
-    callbacks.back_request.assign<&showing_about_screen::handle_back_request>(*this);
-    pscreen_ = fsm_.view.make_screen<screen>(callbacks);
-}
-
-void showing_about_screen::handle_back_request()
-{
-    fsm_.set_state<showing_title_screen>();
 }
 
 } //namespace

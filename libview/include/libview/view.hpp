@@ -21,7 +21,6 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #define LIBVIEW_VIEW_HPP
 
 #include "screens/game.hpp"
-#include "events.hpp"
 #include "data_types.hpp"
 #include <Magnum/Platform/Sdl2Application.h>
 #include <memory>

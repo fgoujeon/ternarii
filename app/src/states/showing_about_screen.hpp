@@ -35,9 +35,6 @@ class showing_about_screen final: public state
         showing_about_screen(fsm& ctx);
 
     private:
-        void handle_back_request();
-
-    private:
         fsm& fsm_;
         std::shared_ptr<screen> pscreen_;
 };

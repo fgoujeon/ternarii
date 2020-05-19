@@ -35,23 +35,19 @@ class showing_title_screen final: public state
 
     public:
         showing_title_screen(fsm& ctx):
-            fsm_(ctx)
+            fsm_(ctx),
+            pscreen_
+            (
+                fsm_.view.make_screen<libview::screens::title>
+                (
+                    screen::callback_set
+                    {
+                        .play_request  = [this]{fsm_.set_state<playing>();},
+                        .about_request = [this]{fsm_.set_state<showing_about_screen>();}
+                    }
+                )
+            )
         {
-            auto callbacks = screen::callback_set{};
-            callbacks.play_request.assign<&showing_title_screen::handle_play_request>(*this);
-            callbacks.about_request.assign<&showing_title_screen::handle_about_request>(*this);
-            pscreen_ = fsm_.view.make_screen<libview::screens::title>(callbacks);
-        }
-
-    private:
-        void handle_play_request()
-        {
-            fsm_.set_state<playing>();
-        }
-
-        void handle_about_request()
-        {
-            fsm_.set_state<showing_about_screen>();
         }
 
     private:

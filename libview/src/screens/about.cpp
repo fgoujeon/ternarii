@@ -22,7 +22,6 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include "../objects/sdf_image.hpp"
 #include "../colors.hpp"
 #include "../common.hpp"
-#include <libview/events.hpp>
 #include <libutil/time.hpp>
 #include <Magnum/Math/Color.h>
 #include <Magnum/Platform/Sdl2Application.h>

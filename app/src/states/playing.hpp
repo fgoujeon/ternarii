@@ -38,7 +38,17 @@ class playing final: public state
     public:
         playing(fsm& f):
             fsm_(f),
-            pscreen_(fsm_.view.make_screen<screen>(make_view_callbacks()))
+            pscreen_
+            (
+                fsm_.view.make_screen<screen>
+                (
+                    screen::callback_set
+                    {
+                        .handle_move_request  = [this](const libview::data_types::move m){playing::handle_view_move_request(m);},
+                        .handle_clear_request = [this]{playing::handle_view_clear_request();}
+                    }
+                )
+            )
         {
             //load game state from database
             const auto& opt_game_state = fsm_.database.get_game_state();
@@ -173,14 +183,6 @@ class playing final: public state
         }
 
     private:
-        screen::callback_set make_view_callbacks()
-        {
-            auto callbacks = screen::callback_set{};
-            callbacks.handle_clear_request. assign<&playing::handle_view_clear_request> (*this);
-            callbacks.handle_move_request.  assign<&playing::handle_view_move_request>  (*this);
-            return callbacks;
-        }
-
         /*
         Call given libgame::game's modifier function and handle the returned
         events.

@@ -20,9 +20,9 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #ifndef LIBVIEW_SCREENS_GAME_HPP
 #define LIBVIEW_SCREENS_GAME_HPP
 
-#include <libview/events.hpp>
 #include "../features/key_event_handler.hpp"
 #include "../common.hpp"
+#include <libview/data_types.hpp>
 #include <libutil/time.hpp>
 #include <Magnum/Math/Color.h>
 #include <Magnum/Platform/Sdl2Application.h>
@@ -35,8 +35,8 @@ class game: public Object2D, public features::drawable, public features::animabl
     public:
         struct callback_set
         {
-            libutil::callback<void(data_types::move)> handle_move_request;
-            libutil::callback<void()> handle_clear_request;
+            std::function<void(data_types::move)> handle_move_request;
+            std::function<void()> handle_clear_request;
         };
 
     public:

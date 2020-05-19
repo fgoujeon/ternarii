@@ -20,8 +20,8 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #ifndef LIBVIEW_SCREENS_TITLE_HPP
 #define LIBVIEW_SCREENS_TITLE_HPP
 
-#include <libview/events.hpp>
 #include "../common.hpp"
+#include <libview/data_types.hpp>
 #include <libutil/time.hpp>
 #include <Magnum/Math/Color.h>
 #include <Magnum/Platform/Sdl2Application.h>
@@ -34,8 +34,8 @@ class title: public Object2D
     public:
         struct callback_set
         {
-            libutil::callback<void()> play_request;
-            libutil::callback<void()> about_request;
+            std::function<void()> play_request;
+            std::function<void()> about_request;
         };
 
     public:

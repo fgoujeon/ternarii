@@ -20,7 +20,6 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #ifndef LIBVIEW_SCREENS_ABOUT_HPP
 #define LIBVIEW_SCREENS_ABOUT_HPP
 
-#include <libview/events.hpp>
 #include "../common.hpp"
 #include <libutil/time.hpp>
 #include <Magnum/Math/Color.h>
@@ -34,7 +33,7 @@ class about: public Object2D
     public:
         struct callback_set
         {
-            libutil::callback<void()> back_request;
+            std::function<void()> back_request;
         };
 
     public:
