@@ -21,6 +21,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #define LIBVIEW_OBJECTS_GAME_OVER_SCREEN_HPP
 
 #include "square.hpp"
+#include "label_button.hpp"
 #include "static_label.hpp"
 #include "../common.hpp"
 #include <libutil/void_function.hpp>
@@ -30,34 +31,6 @@ namespace libview::objects
 
 class game_over_screen: public Object2D, public features::drawable
 {
-    private:
-        class new_game_button: public Object2D, public features::clickable
-        {
-            public:
-                using mouse_press_callback = libutil::void_function<>;
-
-            public:
-                new_game_button
-                (
-                    Object2D& parent, features::drawable_group& drawables, features::clickable_group& clickables,
-                    const mouse_press_callback& cb
-                );
-
-                void set_enabled(const bool enabled);
-
-            //features::clickable virtual functions
-            private:
-                bool is_inside(const Magnum::Vector2& model_space_position) const override;
-
-                void handle_mouse_press() override;
-
-            private:
-                const mouse_press_callback mouse_press_callback_;
-                square background_rectangle_;
-                static_label label_;
-                bool enabled_ = false;
-        };
-
     public:
         game_over_screen
         (
@@ -77,7 +50,7 @@ class game_over_screen: public Object2D, public features::drawable
         features::drawable_group drawable_children_;
         square background_rectangle_;
         static_label label_;
-        new_game_button new_game_button_;
+        objects::label_button new_game_button_;
         bool visible_ = false;
 };
 
