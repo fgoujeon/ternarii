@@ -17,28 +17,24 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef LIBDB_EVENTS_HPP
-#define LIBDB_EVENTS_HPP
+#include "styles.hpp"
 
-#include <variant>
-#include <functional>
-#include <libutil/void_function.hpp>
-
-namespace libdb
+namespace libview::styles
 {
 
-namespace events
+objects::label_button::style white_label_button
 {
-    struct end_of_loading{};
-}
-
-using event = std::variant
-<
-    events::end_of_loading
->;
-
-using event_handler = libutil::void_function<const event&>;
+    .label = objects::static_label::style
+    {
+        .alignment = Magnum::Text::Alignment::MiddleCenter,
+        .font_size = 0.2f,
+        .color = colors::dark_gray,
+        .outline_color = colors::dark_gray,
+        .outline_range = {0.6f, 0.5f}
+    },
+    .color = colors::light_gray,
+    .highlight_color = colors::white,
+    .outline_color = colors::dark_gray
+};
 
 } //namespace
-
-#endif

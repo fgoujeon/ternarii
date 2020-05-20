@@ -21,8 +21,9 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #define LIBVIEW_OBJECTS_LABEL_BUTTON_HPP
 
 #include "static_label.hpp"
-#include "square.hpp"
+#include "sdf_image.hpp"
 #include "../common.hpp"
+#include <libutil/void_function.hpp>
 
 namespace libview::objects
 {
@@ -30,7 +31,19 @@ namespace libview::objects
 class label_button: public Object2D, public features::clickable
 {
     public:
-        using mouse_press_callback = std::function<void()>;
+        struct callback_set
+        {
+            libutil::void_function<> mouse_press_callback;
+            libutil::void_function<> mouse_release_callback;
+        };
+
+        struct style
+        {
+            static_label::style label;
+            Magnum::Color4 color;
+            Magnum::Color4 highlight_color;
+            Magnum::Color4 outline_color;
+        };
 
     public:
         label_button
@@ -39,7 +52,8 @@ class label_button: public Object2D, public features::clickable
             features::drawable_group& drawables,
             features::clickable_group& clickables,
             const char* const text,
-            const mouse_press_callback& cb
+            const style& stl,
+            const callback_set& callbacks
         );
 
         void set_enabled(const bool enabled);
@@ -48,11 +62,18 @@ class label_button: public Object2D, public features::clickable
     private:
         bool is_inside(const Magnum::Vector2& model_space_position) const override;
 
-        void mouse_press_event() override;
+        void handle_mouse_press() override;
+
+        void handle_mouse_release() override;
+
+        void handle_mouse_enter() override;
+
+        void handle_mouse_leave() override;
 
     private:
-        const mouse_press_callback mouse_press_callback_;
-        square background_rectangle_;
+        style style_;
+        const callback_set callbacks_;
+        sdf_image background_rectangle_;
         static_label label_;
         bool enabled_ = true;
 };

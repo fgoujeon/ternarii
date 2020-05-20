@@ -74,6 +74,16 @@ class app: public Magnum::Platform::Sdl2Application
             view_.handle_mouse_press(event);
         }
 
+        void mouseReleaseEvent(MouseEvent& event) override
+        {
+            view_.handle_mouse_release(event);
+        }
+
+        void mouseMoveEvent(MouseMoveEvent& event) override
+        {
+            view_.handle_mouse_move(event);
+        }
+
     private:
         void handle_database_event(const libdb::event& event)
         {

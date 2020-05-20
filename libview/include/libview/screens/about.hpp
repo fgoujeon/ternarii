@@ -24,6 +24,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include <libutil/time.hpp>
 #include <Magnum/Math/Color.h>
 #include <Magnum/Platform/Sdl2Application.h>
+#include <libutil/void_function.hpp>
 
 namespace libview::screens
 {
@@ -33,7 +34,7 @@ class about: public Object2D
     public:
         struct callback_set
         {
-            std::function<void()> back_request;
+            libutil::void_function<> back_request;
         };
 
     public:

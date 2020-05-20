@@ -62,13 +62,16 @@ number_tile::number_tile(Object2D& parent, features::drawable_group& drawables, 
         *this,
         drawable_children_,
         std::to_string(value).c_str(),
-        1.2f,
-        Magnum::Text::Alignment::MiddleCenter
+        static_label::style
+        {
+            .alignment = Magnum::Text::Alignment::MiddleCenter,
+            .font_size = 1.2f,
+            .color = Magnum::Color4{colors::white, 0},
+            .outline_color = Magnum::Color4{colors::dark_gray, 0},
+            .outline_range = {0.45f, 0.40f}
+        }
     )
 {
-    label_.set_color(Magnum::Color4{colors::white, 0});
-    label_.set_outline_color(Magnum::Color4{colors::dark_gray, 0});
-    label_.set_outline_range(0.45, 0.40);
 }
 
 void number_tile::set_alpha(const float alpha)

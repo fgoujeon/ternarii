@@ -76,10 +76,65 @@ struct view::impl final
 
     void handle_mouse_press(mouse_event& event)
     {
-        //integer window-space coordinates (with origin in top left corner and Y down)
+        //Only manage left button
+        if(event.button() != mouse_event::Button::Left)
+        {
+            return;
+        }
+
+        handle_mouse_event
+        (
+            event,
+            [](features::clickable& clickable, const bool is_inside)
+            {
+                if(is_inside)
+                {
+                    clickable.handle_mouse_press();
+                }
+            }
+        );
+    }
+
+    void handle_mouse_release(mouse_event& event)
+    {
+        //Only manage left button
+        if(event.button() != mouse_event::Button::Left)
+        {
+            return;
+        }
+
+        handle_mouse_event
+        (
+            event,
+            [](features::clickable& clickable, const bool is_inside)
+            {
+                if(is_inside)
+                {
+                    clickable.handle_mouse_release();
+                }
+            }
+        );
+    }
+
+    void handle_mouse_move(mouse_move_event& event)
+    {
+        handle_mouse_event
+        (
+            event,
+            [](features::clickable& clickable, const bool is_inside)
+            {
+                clickable.handle_mouse_move(is_inside);
+            }
+        );
+    }
+
+    template<class Event, class F>
+    void handle_mouse_event(Event& event, F&& f)
+    {
+        //Integer window-space coordinates (with origin in top left corner and Y down)
         const auto& window_space_position = event.position();
 
-        //convert to floating-point world-space coordinates (with origin at camera position and Y up)
+        //Convert to floating-point world-space coordinates (with origin at camera position and Y up)
         const auto world_space_position =
             (Magnum::Vector2{window_space_position} / Magnum::Vector2{Magnum::GL::defaultFramebuffer.viewport().size()} - Magnum::Vector2{0.5f})
             * Magnum::Vector2::yScale(-1.0f)
@@ -90,14 +145,13 @@ struct view::impl final
         {
             auto& clickable = feature_groups.clickables[i];
 
-            //convert to model-space coordinates of clickable
+            //Convert to model-space coordinates of clickable
             const auto clickable_space_position = clickable.object().absoluteTransformationMatrix().inverted().transformPoint(world_space_position);
 
-            //check if click position is inside clickable
-            if(clickable.is_inside(clickable_space_position))
-            {
-                clickable.mouse_press_event();
-            }
+            //Check if click position is inside clickable
+            const auto is_inside = clickable.is_inside(clickable_space_position);
+
+            f(clickable, is_inside);
         }
     }
 
@@ -133,6 +187,16 @@ void view::handle_key_press(key_event& event)
 void view::handle_mouse_press(mouse_event& event)
 {
     pimpl_->handle_mouse_press(event);
+}
+
+void view::handle_mouse_release(mouse_event& event)
+{
+    pimpl_->handle_mouse_release(event);
+}
+
+void view::handle_mouse_move(mouse_move_event& event)
+{
+    pimpl_->handle_mouse_move(event);
 }
 
 Scene2D& view::get_scene()

@@ -19,68 +19,53 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "game_over_screen.hpp"
 #include "../text.hpp"
+#include "../styles.hpp"
 #include "../colors.hpp"
 
 namespace libview::objects
 {
 
-game_over_screen::new_game_button::new_game_button
-(
-    Object2D& parent, features::drawable_group& drawables, features::clickable_group& clickables,
-    const mouse_press_callback& cb
-):
-    Object2D{&parent},
-    features::clickable{*this, &clickables},
-    mouse_press_callback_(cb),
-    background_rectangle_(*this, drawables, colors::dark_gray),
-    label_(*this, drawables, "NEW GAME", 0.4f, Magnum::Text::Alignment::MiddleCenter)
-{
-    background_rectangle_.scale({1.5f, 0.35f});
-    label_.set_color(colors::light_gray);
-}
-
-void game_over_screen::new_game_button::set_enabled(const bool enabled)
-{
-    enabled_ = enabled;
-}
-
-bool game_over_screen::new_game_button::is_inside(const Magnum::Vector2& model_space_position) const
-{
-    if(!enabled_)
-    {
-        return false;
-    }
-
-    const auto x = model_space_position.x();
-    const auto y = model_space_position.y();
-    return -1.5 <= x && x <= 1.5 && -0.35 <= y && y <= 0.35;
-}
-
-void game_over_screen::new_game_button::mouse_press_event()
-{
-    mouse_press_callback_();
-}
-
-
-
 game_over_screen::game_over_screen
 (
     Object2D& parent, features::drawable_group& drawables, features::clickable_group& clickables,
-    const std::function<void()>& new_game_button_press_callback
+    const libutil::void_function<>& new_game_button_press_callback
 ):
     Object2D{&parent},
     features::drawable{*this, &drawables},
     drawables_(drawables),
     background_rectangle_(*this, drawable_children_, colors::light_gray),
-    label_(*this, drawable_children_, "GAME OVER", 1.0f, Magnum::Text::Alignment::MiddleCenter),
-    new_game_button_(*this, drawable_children_, clickables, new_game_button_press_callback)
+    label_
+    (
+        *this,
+        drawable_children_,
+        "GAME OVER",
+        static_label::style
+        {
+            .alignment = Magnum::Text::Alignment::MiddleCenter,
+            .font_size = 1.0f,
+            .color = colors::dark_gray,
+            .outline_color = colors::dark_gray,
+            .outline_range = {0.48f, 0.5f}
+        }
+    ),
+    new_game_button_
+    (
+        *this,
+        drawable_children_,
+        clickables,
+        "NEW GAME",
+        styles::white_label_button,
+        objects::label_button::callback_set
+        {
+            .mouse_release_callback = [new_game_button_press_callback]{new_game_button_press_callback();}
+        }
+    )
 {
     background_rectangle_.scale({50.0f, 1.0f});
-    label_.set_color(colors::dark_gray);
-    label_.set_outline_color(colors::dark_gray);
-    label_.set_outline_range(0.47, 0.5);
-    label_.translate({0.0f, 0.5f});
 
+    label_.translate({0.0f, 0.4f});
+
+    new_game_button_.scale({1.8f, 1.8f});
     new_game_button_.translate({0.0f, -0.5f});
 }
 

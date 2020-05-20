@@ -21,6 +21,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include "../objects/label_button.hpp"
 #include "../objects/sdf_image.hpp"
 #include "../colors.hpp"
+#include "../styles.hpp"
 #include "../common.hpp"
 #include <libutil/time.hpp>
 #include <Magnum/Math/Color.h>
@@ -40,22 +41,46 @@ struct title::impl
         callbacks(callbacks),
         logo(self, feature_groups.drawables, "/res/images/logo.tga"),
         logo_text(self, feature_groups.drawables, "/res/images/logo_text.tga"),
-        play_button(self, feature_groups.drawables, feature_groups.clickables, "PLAY", [this]{this->callbacks.play_request();}),
-        about_button(self, feature_groups.drawables, feature_groups.clickables, "ABOUT", [this]{this->callbacks.about_request();})
+        play_button
+        (
+            self,
+            feature_groups.drawables,
+            feature_groups.clickables,
+            "PLAY",
+            styles::white_label_button,
+            objects::label_button::callback_set
+            {
+                .mouse_release_callback = [this]{this->callbacks.play_request();}
+            }
+        ),
+        about_button
+        (
+            self,
+            feature_groups.drawables,
+            feature_groups.clickables,
+            "ABOUT",
+            styles::white_label_button,
+            objects::label_button::callback_set
+            {
+                .mouse_release_callback = [this]{this->callbacks.about_request();}
+            }
+        )
     {
         logo.set_color(colors::light_gray);
         logo.set_outline_color(colors::dark_gray);
-        logo.scale({2.0f, 2.0f});
+        logo.scale({2.5f, 2.5f});
         logo.translate({0.0f, 4.5f});
 
         logo_text.set_color(colors::light_gray);
         logo_text.set_outline_color(colors::dark_gray);
-        logo_text.scale({1.8f, 1.8f});
-        logo_text.translate({0.0f, 2.3f});
+        logo_text.scale({2.0f, 2.0f});
+        logo_text.translate({0.0f, 1.9f});
 
-        play_button.translate({0.0f, 0.0f});
+        play_button.scale({3.0f, 3.0f});
+        play_button.translate({0.0f, -1.0f});
 
-        about_button.translate({0.0f, -1.0f});
+        about_button.scale({3.0f, 3.0f});
+        about_button.translate({0.0f, -2.5f});
     }
 
     callback_set callbacks;

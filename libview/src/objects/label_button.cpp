@@ -31,19 +31,24 @@ label_button::label_button
     features::drawable_group& drawables,
     features::clickable_group& clickables,
     const char* const text,
-    const mouse_press_callback& cb
+    const style& stl,
+    const callback_set& callbacks
 ):
     Object2D{&parent},
     features::clickable{*this, &clickables},
-    mouse_press_callback_(cb),
-    background_rectangle_(*this, drawables, colors::light_gray),
-    label_(*this, drawables, text, 0.4f, Magnum::Text::Alignment::MiddleCenter)
+    style_(stl),
+    callbacks_(callbacks),
+    background_rectangle_(*this, drawables, "/res/images/rounded_rectangle.tga"),
+    label_
+    (
+        *this,
+        drawables,
+        text,
+        stl.label
+    )
 {
-    background_rectangle_.scale({1.5f, 0.35f});
-
-    label_.set_color(colors::dark_gray);
-    label_.set_outline_color(colors::dark_gray);
-    label_.set_outline_range(0.5, 0.49);
+    background_rectangle_.set_color(style_.color);
+    background_rectangle_.set_outline_color(style_.outline_color);
 }
 
 void label_button::set_enabled(const bool enabled)
@@ -60,12 +65,29 @@ bool label_button::is_inside(const Magnum::Vector2& model_space_position) const
 
     const auto x = model_space_position.x();
     const auto y = model_space_position.y();
-    return -1.5 <= x && x <= 1.5 && -0.35 <= y && y <= 0.35;
+    return -1 <= x && x <= 1 && -0.2 <= y && y <= 0.2;
 }
 
-void label_button::mouse_press_event()
+void label_button::handle_mouse_press()
 {
-    mouse_press_callback_();
+    background_rectangle_.set_color(style_.highlight_color);
+    callbacks_.mouse_press_callback();
+}
+
+void label_button::handle_mouse_release()
+{
+    background_rectangle_.set_color(style_.color);
+    callbacks_.mouse_release_callback();
+}
+
+void label_button::handle_mouse_enter()
+{
+    background_rectangle_.set_color(style_.highlight_color);
+}
+
+void label_button::handle_mouse_leave()
+{
+    background_rectangle_.set_color(style_.color);
 }
 
 } //namespace

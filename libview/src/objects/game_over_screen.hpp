@@ -21,49 +21,23 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #define LIBVIEW_OBJECTS_GAME_OVER_SCREEN_HPP
 
 #include "square.hpp"
+#include "label_button.hpp"
 #include "static_label.hpp"
 #include "../common.hpp"
+#include <libutil/void_function.hpp>
 
 namespace libview::objects
 {
 
 class game_over_screen: public Object2D, public features::drawable
 {
-    private:
-        class new_game_button: public Object2D, public features::clickable
-        {
-            public:
-                using mouse_press_callback = std::function<void()>;
-
-            public:
-                new_game_button
-                (
-                    Object2D& parent, features::drawable_group& drawables, features::clickable_group& clickables,
-                    const mouse_press_callback& cb
-                );
-
-                void set_enabled(const bool enabled);
-
-            //features::clickable virtual functions
-            private:
-                bool is_inside(const Magnum::Vector2& model_space_position) const override;
-
-                void mouse_press_event() override;
-
-            private:
-                const mouse_press_callback mouse_press_callback_;
-                square background_rectangle_;
-                static_label label_;
-                bool enabled_ = false;
-        };
-
     public:
         game_over_screen
         (
             Object2D& parent,
             features::drawable_group& drawables,
             features::clickable_group& clickables,
-            const std::function<void()>& new_game_button_press_callback
+            const libutil::void_function<>& new_game_button_press_callback
         );
 
         void set_visible(const bool visible);
@@ -76,7 +50,7 @@ class game_over_screen: public Object2D, public features::drawable
         features::drawable_group drawable_children_;
         square background_rectangle_;
         static_label label_;
-        new_game_button new_game_button_;
+        objects::label_button new_game_button_;
         bool visible_ = false;
 };
 
