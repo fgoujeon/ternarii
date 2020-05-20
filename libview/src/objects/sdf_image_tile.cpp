@@ -29,13 +29,31 @@ namespace libview::objects
 sdf_image_tile::sdf_image_tile(Object2D& parent, features::drawable_group& drawables, const std::filesystem::path& image_path):
     tile{parent, drawables},
     square_color_(colors::light_gray),
-    square_(*this, drawable_children_, "/res/images/rounded_square.tga"),
-    image_(*this, drawable_children_, image_path)
+    square_
+    (
+        *this,
+        drawable_children_,
+        "/res/images/rounded_square.tga",
+        sdf_image::style
+        {
+            .color = Magnum::Color4{square_color_, 0.0f},
+            .outline_color = Magnum::Color4{colors::black, 0},
+            .outline_range = {0.5f, 0.35f}
+        }
+    ),
+    image_
+    (
+        *this,
+        drawable_children_,
+        image_path,
+        sdf_image::style
+        {
+            .color = Magnum::Color4{colors::black, 0},
+            .outline_color = Magnum::Color4{colors::black, 0},
+            .outline_range = {0.5f, 0.4f}
+        }
+    )
 {
-    square_.set_color(Magnum::Color4{square_color_, 0.0f});
-
-    image_.set_color(Magnum::Color4{colors::black, 0});
-    image_.set_outline_color(Magnum::Color4{colors::black, 0});
 }
 
 void sdf_image_tile::set_alpha(const float alpha)

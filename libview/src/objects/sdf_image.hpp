@@ -33,11 +33,20 @@ namespace libview::objects
 class sdf_image: public Object2D, public features::drawable
 {
     public:
+        struct style
+        {
+            Magnum::Color4 color;
+            Magnum::Color4 outline_color;
+            Magnum::Vector2 outline_range;
+        };
+
+    public:
         sdf_image
         (
             Object2D& parent,
             features::drawable_group& drawables,
-            const std::filesystem::path& image_path
+            const std::filesystem::path& image_path,
+            const style& stl
         );
 
         void set_color(const Magnum::Color4& color);
@@ -48,9 +57,8 @@ class sdf_image: public Object2D, public features::drawable
         void draw(const Magnum::Matrix3& transformation_matrix, SceneGraph::Camera2D& camera) override;
 
     private:
+        style style_;
         Magnum::GL::Texture2D texture_;
-        Magnum::Color4 color_;
-        Magnum::Color4 outline_color_;
 };
 
 } //namespace

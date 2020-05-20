@@ -38,7 +38,18 @@ label_button::label_button
     features::clickable{*this, &clickables},
     style_(stl),
     callbacks_(callbacks),
-    background_rectangle_(*this, drawables, "/res/images/rounded_rectangle.tga"),
+    background_rectangle_
+    (
+        *this,
+        drawables,
+        "/res/images/rounded_rectangle.tga",
+        sdf_image::style
+        {
+            .color = style_.color,
+            .outline_color = style_.outline_color,
+            .outline_range = {0.5f, 0.35f}
+        }
+    ),
     label_
     (
         *this,

@@ -38,10 +38,19 @@ sdf_image_button::sdf_image_button
     Object2D{&parent},
     features::clickable{*this, &clickables},
     mouse_press_callback_(cb),
-    image_(*this, drawables, image_path)
+    image_
+    (
+        *this,
+        drawables,
+        image_path,
+        sdf_image::style
+        {
+            .color = colors::light_gray,
+            .outline_color = colors::dark_gray,
+            .outline_range = {0.5f, 0.3f}
+        }
+    )
 {
-    image_.set_color(colors::light_gray);
-    image_.set_outline_color(colors::dark_gray);
 }
 
 bool sdf_image_button::is_inside(const Magnum::Vector2& model_space_position) const

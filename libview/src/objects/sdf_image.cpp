@@ -71,31 +71,38 @@ namespace
     }
 }
 
-sdf_image::sdf_image(Object2D& parent, features::drawable_group& drawables, const std::filesystem::path& image_path):
+sdf_image::sdf_image
+(
+    Object2D& parent,
+    features::drawable_group& drawables,
+    const std::filesystem::path& image_path,
+    const style& stl
+):
     Object2D{&parent},
     features::drawable{*this, &drawables},
+    style_(stl),
     texture_(make_texture(image_path))
 {
 }
 
 void sdf_image::set_color(const Magnum::Color4& color)
 {
-    color_ = color;
+    style_.color = color;
 }
 
 void sdf_image::set_outline_color(const Magnum::Color4& color)
 {
-    outline_color_ = color;
+    style_.outline_color = color;
 }
 
 void sdf_image::draw(const Magnum::Matrix3& transformation_matrix, SceneGraph::Camera2D& camera)
 {
-    get_shader().setColor(color_);
+    get_shader().setColor(style_.color);
     get_shader().bindVectorTexture(texture_);
     get_shader().setTransformationProjectionMatrix(camera.projectionMatrix() * transformation_matrix);
     get_shader().setSmoothness(0.24f / transformation_matrix.uniformScaling());
-    get_shader().setOutlineColor(outline_color_);
-    get_shader().setOutlineRange(0.50, 0.40);
+    get_shader().setOutlineColor(style_.outline_color);
+    get_shader().setOutlineRange(style_.outline_range[0], style_.outline_range[1]);
     get_mesh().draw(get_shader());
 }
 
