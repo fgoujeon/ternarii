@@ -33,10 +33,22 @@ game_over_screen::new_game_button::new_game_button
     features::clickable{*this, &clickables},
     mouse_press_callback_(cb),
     background_rectangle_(*this, drawables, colors::dark_gray),
-    label_(*this, drawables, "NEW GAME", 0.4f, Magnum::Text::Alignment::MiddleCenter)
+    label_
+    (
+        *this,
+        drawables,
+        "NEW GAME",
+        static_label::style
+        {
+            .alignment = Magnum::Text::Alignment::MiddleCenter,
+            .font_size = 0.4f,
+            .color = colors::light_gray,
+            .outline_color = colors::light_gray,
+            .outline_range = {0.5f, 0.45f}
+        }
+    )
 {
     background_rectangle_.scale({1.5f, 0.35f});
-    label_.set_color(colors::light_gray);
 }
 
 void game_over_screen::new_game_button::set_enabled(const bool enabled)
@@ -72,14 +84,25 @@ game_over_screen::game_over_screen
     features::drawable{*this, &drawables},
     drawables_(drawables),
     background_rectangle_(*this, drawable_children_, colors::light_gray),
-    label_(*this, drawable_children_, "GAME OVER", 1.0f, Magnum::Text::Alignment::MiddleCenter),
+    label_
+    (
+        *this,
+        drawable_children_,
+        "GAME OVER",
+        static_label::style
+        {
+            .alignment = Magnum::Text::Alignment::MiddleCenter,
+            .font_size = 1.0f,
+            .color = colors::dark_gray,
+            .outline_color = colors::dark_gray,
+            .outline_range = {0.48f, 0.5f}
+        }
+    ),
     new_game_button_(*this, drawable_children_, clickables, new_game_button_press_callback)
 {
     background_rectangle_.scale({50.0f, 1.0f});
-    label_.set_color(colors::dark_gray);
-    label_.set_outline_color(colors::dark_gray);
-    label_.set_outline_range(0.47, 0.5);
-    label_.translate({0.0f, 0.5f});
+
+    label_.translate({0.0f, 0.4f});
 
     new_game_button_.translate({0.0f, -0.5f});
 }

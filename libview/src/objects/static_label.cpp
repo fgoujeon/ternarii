@@ -28,13 +28,12 @@ static_label::static_label
     Object2D& parent,
     features::drawable_group& drawables,
     const char* const value,
-    const float font_size,
-    const Magnum::Text::Alignment alignment
+    const style& stl
 ):
     Object2D{&parent},
     features::drawable{*this, &drawables},
-    renderer_(text::get_font(), text::get_glyph_cache(), font_size, alignment),
-    font_size_(font_size)
+    renderer_(text::get_font(), text::get_glyph_cache(), stl.font_size, stl.alignment),
+    style_(stl)
 {
     renderer_.reserve(std::strlen(value), Magnum::GL::BufferUsage::DynamicDraw, Magnum::GL::BufferUsage::StaticDraw);
     renderer_.render(value);
@@ -44,10 +43,10 @@ void static_label::draw(const Magnum::Matrix3& transformation_matrix, SceneGraph
 {
     text::get_shader().bindVectorTexture(text::get_glyph_cache().texture());
     text::get_shader().setTransformationProjectionMatrix(camera.projectionMatrix() * transformation_matrix);
-    text::get_shader().setColor(color_);
-    text::get_shader().setSmoothness(0.035f / (transformation_matrix.uniformScaling() * font_size_));
-    text::get_shader().setOutlineColor(outline_color_);
-    text::get_shader().setOutlineRange(outline_start_, outline_end_);
+    text::get_shader().setColor(style_.color);
+    text::get_shader().setSmoothness(0.035f / (transformation_matrix.uniformScaling() * style_.font_size));
+    text::get_shader().setOutlineColor(style_.outline_color);
+    text::get_shader().setOutlineRange(style_.outline_range[0], style_.outline_range[1]);
 
     renderer_.mesh().draw(text::get_shader());
 }

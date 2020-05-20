@@ -31,34 +31,32 @@ namespace libview::objects
 class static_label: public Object2D, public features::drawable
 {
     public:
+        struct style
+        {
+            Magnum::Text::Alignment alignment = Magnum::Text::Alignment::MiddleCenter;
+            const float font_size = 1.0f;
+            Magnum::Color4 color;
+            Magnum::Color4 outline_color;
+            Magnum::Vector2 outline_range = {0.5f, 0.5f};
+        };
+
+    public:
         static_label
         (
             Object2D& parent,
             features::drawable_group& drawables,
             const char* const value,
-            const float font_size,
-            const Magnum::Text::Alignment alignment
+            const style& style
         );
 
         void set_color(const Magnum::Color4& color)
         {
-            color_ = color;
+            style_.color = color;
         }
 
         void set_outline_color(const Magnum::Color4& outline_color)
         {
-            outline_color_ = outline_color;
-        }
-
-        void set_outline_range(const float start, const float end)
-        {
-            outline_start_ = start;
-            outline_end_ = end;
-        }
-
-        void remove_outline()
-        {
-            set_outline_range(0.5f, 1.0f);
+            style_.outline_color = outline_color;
         }
 
     private:
@@ -66,11 +64,7 @@ class static_label: public Object2D, public features::drawable
 
     private:
         Magnum::Text::Renderer2D renderer_;
-        const float font_size_ = 0;
-        Magnum::Color4 color_;
-        Magnum::Color4 outline_color_;
-        float outline_start_ = 0.5f;
-        float outline_end_ = 0.4f;
+        style style_;
 };
 
 } //namespace

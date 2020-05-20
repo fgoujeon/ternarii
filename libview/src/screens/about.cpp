@@ -73,8 +73,34 @@ struct about::impl
         const callback_set& callbacks
     ):
         callbacks(callbacks),
-        title_label(self, feature_groups.drawables, "ABOUT", 0.6, Magnum::Text::Alignment::MiddleCenter),
-        body_label(self, feature_groups.drawables, body_label_str, 0.3, Magnum::Text::Alignment::MiddleCenter),
+        title_label
+        (
+            self,
+            feature_groups.drawables,
+            "ABOUT",
+            objects::static_label::style
+            {
+                .alignment = Magnum::Text::Alignment::MiddleCenter,
+                .font_size = 0.6f,
+                .color = colors::light_gray,
+                .outline_color = colors::dark_gray,
+                .outline_range = {0.47f, 0.40f}
+            }
+        ),
+        body_label
+        (
+            self,
+            feature_groups.drawables,
+            body_label_str,
+            objects::static_label::style
+            {
+                .alignment = Magnum::Text::Alignment::MiddleCenter,
+                .font_size = 0.3f,
+                .color = colors::light_gray,
+                .outline_color = colors::dark_gray,
+                .outline_range = {0.47f, 0.40f}
+            }
+        ),
         back_button
         (
             self,
@@ -83,7 +109,14 @@ struct about::impl
             "BACK",
             objects::label_button::style
             {
-                .label_size = 0.2f
+                .label = objects::static_label::style
+                {
+                    .alignment = Magnum::Text::Alignment::MiddleCenter,
+                    .font_size = 0.2f,
+                    .color = colors::dark_gray,
+                    .outline_color = colors::dark_gray,
+                    .outline_range = {0.6f, 0.5f}
+                }
             },
             objects::label_button::callback_set
             {
@@ -91,15 +124,7 @@ struct about::impl
             }
         )
     {
-        title_label.set_color(colors::light_gray);
-        title_label.set_outline_color(colors::dark_gray);
-        title_label.set_outline_range(0.47, 0.40);
         title_label.translate({0.0f, 7.0f});
-
-        body_label.set_color(colors::light_gray);
-        body_label.set_outline_color(colors::dark_gray);
-        body_label.set_outline_range(0.47, 0.40);
-        body_label.translate({0.0f, 0.0f});
 
         back_button.scale({2.0f, 2.0f});
         back_button.translate({0.0f, -7.0f});

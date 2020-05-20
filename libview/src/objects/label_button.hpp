@@ -39,7 +39,7 @@ class label_button: public Object2D, public features::clickable
 
         struct style
         {
-            float label_size = 1.0f;
+            static_label::style label;
         };
 
     public:

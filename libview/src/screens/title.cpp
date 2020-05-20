@@ -48,7 +48,14 @@ struct title::impl
             "PLAY",
             objects::label_button::style
             {
-                .label_size = 0.2f
+                .label = objects::static_label::style
+                {
+                    .alignment = Magnum::Text::Alignment::MiddleCenter,
+                    .font_size = 0.2f,
+                    .color = colors::dark_gray,
+                    .outline_color = colors::dark_gray,
+                    .outline_range = {0.6f, 0.5f}
+                }
             },
             objects::label_button::callback_set
             {
@@ -63,7 +70,14 @@ struct title::impl
             "ABOUT",
             objects::label_button::style
             {
-                .label_size = 0.2f
+                .label = objects::static_label::style
+                {
+                    .alignment = Magnum::Text::Alignment::MiddleCenter,
+                    .font_size = 0.2f,
+                    .color = colors::dark_gray,
+                    .outline_color = colors::dark_gray,
+                    .outline_range = {0.6f, 0.5f}
+                }
             },
             objects::label_button::callback_set
             {

@@ -39,14 +39,16 @@ label_button::label_button
     style_(stl),
     callbacks_(callbacks),
     background_rectangle_(*this, drawables, "/res/images/rounded_rectangle.tga"),
-    label_(*this, drawables, text, style_.label_size, Magnum::Text::Alignment::MiddleCenter)
+    label_
+    (
+        *this,
+        drawables,
+        text,
+        stl.label
+    )
 {
     background_rectangle_.set_color(colors::light_gray);
     background_rectangle_.set_outline_color(colors::dark_gray);
-
-    label_.set_color(colors::dark_gray);
-    label_.set_outline_color(colors::dark_gray);
-    label_.set_outline_range(0.48, 0.5);
 }
 
 void label_button::set_enabled(const bool enabled)
