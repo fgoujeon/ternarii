@@ -20,7 +20,6 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #ifndef LIBVIEW_OBJECTS_SDF_IMAGE_TILE_HPP
 #define LIBVIEW_OBJECTS_SDF_IMAGE_TILE_HPP
 
-#include "rounded_square.hpp"
 #include "sdf_image.hpp"
 #include "tile.hpp"
 #include "../common.hpp"
@@ -43,7 +42,7 @@ class sdf_image_tile: public tile
     private:
         features::drawable_group drawable_children_;
         Magnum::Color3 square_color_;
-        rounded_square square_;
+        sdf_image square_;
         sdf_image image_;
 };
 

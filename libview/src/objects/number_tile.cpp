@@ -56,7 +56,7 @@ namespace
 number_tile::number_tile(Object2D& parent, features::drawable_group& drawables, const int value):
     tile(parent, drawables),
     square_color_(value_to_color(value)),
-    square_(*this, drawable_children_, Magnum::Color4{square_color_, 0.0f}),
+    square_(*this, drawable_children_, "/res/images/rounded_square.tga"),
     label_
     (
         *this,
@@ -72,6 +72,7 @@ number_tile::number_tile(Object2D& parent, features::drawable_group& drawables, 
         }
     )
 {
+    square_.set_color(Magnum::Color4{square_color_, 0.0f});
 }
 
 void number_tile::set_alpha(const float alpha)
