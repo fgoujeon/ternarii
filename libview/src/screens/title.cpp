@@ -21,6 +21,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include "../objects/label_button.hpp"
 #include "../objects/sdf_image.hpp"
 #include "../colors.hpp"
+#include "../styles.hpp"
 #include "../common.hpp"
 #include <libutil/time.hpp>
 #include <Magnum/Math/Color.h>
@@ -46,20 +47,7 @@ struct title::impl
             feature_groups.drawables,
             feature_groups.clickables,
             "PLAY",
-            objects::label_button::style
-            {
-                .label = objects::static_label::style
-                {
-                    .alignment = Magnum::Text::Alignment::MiddleCenter,
-                    .font_size = 0.2f,
-                    .color = colors::dark_gray,
-                    .outline_color = colors::dark_gray,
-                    .outline_range = {0.6f, 0.5f}
-                },
-                .color = colors::light_gray,
-                .highlight_color = colors::white,
-                .outline_color = colors::dark_gray
-            },
+            styles::white_label_button,
             objects::label_button::callback_set
             {
                 .mouse_release_callback = [this]{this->callbacks.play_request();}
@@ -71,20 +59,7 @@ struct title::impl
             feature_groups.drawables,
             feature_groups.clickables,
             "ABOUT",
-            objects::label_button::style
-            {
-                .label = objects::static_label::style
-                {
-                    .alignment = Magnum::Text::Alignment::MiddleCenter,
-                    .font_size = 0.2f,
-                    .color = colors::dark_gray,
-                    .outline_color = colors::dark_gray,
-                    .outline_range = {0.6f, 0.5f}
-                },
-                .color = colors::light_gray,
-                .highlight_color = colors::white,
-                .outline_color = colors::dark_gray
-            },
+            styles::white_label_button,
             objects::label_button::callback_set
             {
                 .mouse_release_callback = [this]{this->callbacks.about_request();}
