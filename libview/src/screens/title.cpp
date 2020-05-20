@@ -46,6 +46,10 @@ struct title::impl
             feature_groups.drawables,
             feature_groups.clickables,
             "PLAY",
+            objects::label_button::style
+            {
+                .label_size = 0.2f
+            },
             objects::label_button::callback_set
             {
                 .mouse_release_callback = [this]{this->callbacks.play_request();}
@@ -57,6 +61,10 @@ struct title::impl
             feature_groups.drawables,
             feature_groups.clickables,
             "ABOUT",
+            objects::label_button::style
+            {
+                .label_size = 0.2f
+            },
             objects::label_button::callback_set
             {
                 .mouse_release_callback = [this]{this->callbacks.about_request();}
@@ -65,17 +73,19 @@ struct title::impl
     {
         logo.set_color(colors::light_gray);
         logo.set_outline_color(colors::dark_gray);
-        logo.scale({2.0f, 2.0f});
+        logo.scale({2.5f, 2.5f});
         logo.translate({0.0f, 4.5f});
 
         logo_text.set_color(colors::light_gray);
         logo_text.set_outline_color(colors::dark_gray);
-        logo_text.scale({1.8f, 1.8f});
-        logo_text.translate({0.0f, 2.3f});
+        logo_text.scale({2.0f, 2.0f});
+        logo_text.translate({0.0f, 1.9f});
 
-        play_button.translate({0.0f, 0.0f});
+        play_button.scale({3.0f, 3.0f});
+        play_button.translate({0.0f, -1.0f});
 
-        about_button.translate({0.0f, -1.0f});
+        about_button.scale({3.0f, 3.0f});
+        about_button.translate({0.0f, -2.5f});
     }
 
     callback_set callbacks;

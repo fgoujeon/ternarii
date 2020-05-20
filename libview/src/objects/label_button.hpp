@@ -21,7 +21,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #define LIBVIEW_OBJECTS_LABEL_BUTTON_HPP
 
 #include "static_label.hpp"
-#include "square.hpp"
+#include "sdf_image.hpp"
 #include "../common.hpp"
 #include <libutil/void_function.hpp>
 
@@ -37,6 +37,11 @@ class label_button: public Object2D, public features::clickable
             libutil::void_function<> mouse_release_callback;
         };
 
+        struct style
+        {
+            float label_size = 1.0f;
+        };
+
     public:
         label_button
         (
@@ -44,6 +49,7 @@ class label_button: public Object2D, public features::clickable
             features::drawable_group& drawables,
             features::clickable_group& clickables,
             const char* const text,
+            const style& stl,
             const callback_set& callbacks
         );
 
@@ -62,8 +68,9 @@ class label_button: public Object2D, public features::clickable
         void handle_mouse_leave() override;
 
     private:
+        style style_;
         const callback_set callbacks_;
-        square background_rectangle_;
+        sdf_image background_rectangle_;
         static_label label_;
         bool enabled_ = true;
 };

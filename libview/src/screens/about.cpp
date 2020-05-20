@@ -81,6 +81,10 @@ struct about::impl
             feature_groups.drawables,
             feature_groups.clickables,
             "BACK",
+            objects::label_button::style
+            {
+                .label_size = 0.2f
+            },
             objects::label_button::callback_set
             {
                 .mouse_release_callback = [this]{this->callbacks.back_request();}
@@ -97,6 +101,7 @@ struct about::impl
         body_label.set_outline_range(0.47, 0.40);
         body_label.translate({0.0f, 0.0f});
 
+        back_button.scale({2.0f, 2.0f});
         back_button.translate({0.0f, -7.0f});
     }
 

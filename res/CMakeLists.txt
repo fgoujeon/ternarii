@@ -65,14 +65,15 @@ endfunction()
 
 add_ttf_to_sdf_command(DejaVuSans)
 
-add_svg_to_sdf_command(board_corner     64)
-add_svg_to_sdf_command(column_nullifier 64)
-add_svg_to_sdf_command(logo             64)
-add_svg_to_sdf_command(logo_text        512)
-add_svg_to_sdf_command(move_button      64)
-add_svg_to_sdf_command(number_nullifier 64)
-add_svg_to_sdf_command(rotate_button    64)
-add_svg_to_sdf_command(row_nullifier    64)
+add_svg_to_sdf_command(board_corner      64)
+add_svg_to_sdf_command(column_nullifier  64)
+add_svg_to_sdf_command(logo              64)
+add_svg_to_sdf_command(logo_text         512)
+add_svg_to_sdf_command(move_button       64)
+add_svg_to_sdf_command(number_nullifier  64)
+add_svg_to_sdf_command(rotate_button     64)
+add_svg_to_sdf_command(rounded_rectangle 64)
+add_svg_to_sdf_command(row_nullifier     64)
 
 add_custom_target(
     res ALL
@@ -86,5 +87,6 @@ add_custom_target(
         "${CMAKE_CURRENT_BINARY_DIR}/out/images/move_button.tga"
         "${CMAKE_CURRENT_BINARY_DIR}/out/images/number_nullifier.tga"
         "${CMAKE_CURRENT_BINARY_DIR}/out/images/rotate_button.tga"
+        "${CMAKE_CURRENT_BINARY_DIR}/out/images/rounded_rectangle.tga"
         "${CMAKE_CURRENT_BINARY_DIR}/out/images/row_nullifier.tga"
 )
