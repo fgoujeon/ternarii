@@ -116,7 +116,10 @@ struct about::impl
                     .color = colors::dark_gray,
                     .outline_color = colors::dark_gray,
                     .outline_range = {0.6f, 0.5f}
-                }
+                },
+                .color = colors::light_gray,
+                .highlight_color = colors::white,
+                .outline_color = colors::dark_gray
             },
             objects::label_button::callback_set
             {

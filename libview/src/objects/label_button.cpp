@@ -47,8 +47,8 @@ label_button::label_button
         stl.label
     )
 {
-    background_rectangle_.set_color(colors::light_gray);
-    background_rectangle_.set_outline_color(colors::dark_gray);
+    background_rectangle_.set_color(style_.color);
+    background_rectangle_.set_outline_color(style_.outline_color);
 }
 
 void label_button::set_enabled(const bool enabled)
@@ -70,24 +70,24 @@ bool label_button::is_inside(const Magnum::Vector2& model_space_position) const
 
 void label_button::handle_mouse_press()
 {
-    background_rectangle_.set_color(colors::white);
+    background_rectangle_.set_color(style_.highlight_color);
     callbacks_.mouse_press_callback();
 }
 
 void label_button::handle_mouse_release()
 {
-    background_rectangle_.set_color(colors::light_gray);
+    background_rectangle_.set_color(style_.color);
     callbacks_.mouse_release_callback();
 }
 
 void label_button::handle_mouse_enter()
 {
-    background_rectangle_.set_color(colors::white);
+    background_rectangle_.set_color(style_.highlight_color);
 }
 
 void label_button::handle_mouse_leave()
 {
-    background_rectangle_.set_color(colors::light_gray);
+    background_rectangle_.set_color(style_.color);
 }
 
 } //namespace

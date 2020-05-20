@@ -40,6 +40,9 @@ class label_button: public Object2D, public features::clickable
         struct style
         {
             static_label::style label;
+            Magnum::Color4 color;
+            Magnum::Color4 highlight_color;
+            Magnum::Color4 outline_color;
         };
 
     public:
