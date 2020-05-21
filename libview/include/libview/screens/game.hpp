@@ -38,6 +38,7 @@ class game: public Object2D, public features::drawable, public features::animabl
         {
             libutil::void_function<data_types::move> handle_move_request;
             libutil::void_function<> handle_clear_request;
+            libutil::void_function<> handle_exit_request;
         };
 
     public:

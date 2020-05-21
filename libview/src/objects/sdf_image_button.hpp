@@ -30,7 +30,11 @@ namespace libview::objects
 class sdf_image_button: public Object2D, public features::clickable
 {
     public:
-        using mouse_press_callback = libutil::void_function<>;
+        struct callback_set
+        {
+            libutil::void_function<> handle_mouse_press;
+            libutil::void_function<> handle_mouse_release;
+        };
 
     public:
         sdf_image_button
@@ -39,7 +43,7 @@ class sdf_image_button: public Object2D, public features::clickable
             features::drawable_group& drawables,
             features::clickable_group& clickables,
             const std::filesystem::path& image_path,
-            const mouse_press_callback& cb
+            const callback_set& callbacks
         );
 
     //features::clickable virtual functions
@@ -55,7 +59,7 @@ class sdf_image_button: public Object2D, public features::clickable
         void handle_mouse_leave() override;
 
     private:
-        const mouse_press_callback mouse_press_callback_;
+        callback_set callbacks_;
         sdf_image image_;
 };
 
