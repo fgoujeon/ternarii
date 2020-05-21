@@ -37,7 +37,7 @@ class view
         using mouse_move_event = application::MouseMoveEvent;
 
     public:
-        view();
+        view(bool show_debug_grid);
 
         ~view();
 
