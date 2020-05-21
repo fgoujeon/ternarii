@@ -100,7 +100,7 @@ void sdf_image::draw(const Magnum::Matrix3& transformation_matrix, SceneGraph::C
     get_shader().setColor(style_.color);
     get_shader().bindVectorTexture(texture_);
     get_shader().setTransformationProjectionMatrix(camera.projectionMatrix() * transformation_matrix);
-    get_shader().setSmoothness(0.24f / transformation_matrix.uniformScaling());
+    get_shader().setSmoothness(0.12f / transformation_matrix.uniformScaling());
     get_shader().setOutlineColor(style_.outline_color);
     get_shader().setOutlineRange(style_.outline_range[0], style_.outline_range[1]);
     get_mesh().draw(get_shader());
