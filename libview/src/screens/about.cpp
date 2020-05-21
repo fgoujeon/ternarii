@@ -34,20 +34,20 @@ namespace
 {
     constexpr auto body_label_str =
 "Ternarii, a game by Florian Goujeon\n\n"
-"Current version is " PROJECT_VERSION ", released on " PROJECT_DATE ".\n\n"
-R"^(Ternarii is largely inspired by NaturalChimie, a fantastic,
-soon-to-be discontinued game by Motion Twin.
+"Current version is " PROJECT_VERSION ",\nreleased on " PROJECT_DATE ".\n\n"
+R"^(Ternarii is largely inspired by NaturalChimie,
+a fantastic, soon-to-be discontinued game by Motion Twin.
 
 Ternarii is powered by:
 - Emscripten, by Emscripten contributors;
-- Magnum and Corrade, by Vladimír Vondruš and contributors;
+- Magnum/Corrade, by Vladimír Vondruš and contributors;
 - JSON for Modern C++, by Niels Lohmann.
 
 Ternarii is free software: you can redistribute it and/or
 modify it under the terms of the GNU General Public
-License as published by the Free Software Foundation, either
-version 3 of the License, or (at your option) any later
-version.
+License as published by the Free Software Foundation,
+either version 3 of the License, or (at your option)
+any later version.
 
 Ternarii is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied
@@ -55,8 +55,8 @@ warranty of MERCHANTABILITY or FITNESS FOR A
 PARTICULAR PURPOSE.
 See the GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public
-License along with Ternarii.
+You should have received a copy of the GNU General
+Public License along with Ternarii.
 If not, see https://www.gnu.org/licenses/.
 
 Official website: http://ternarii.com
