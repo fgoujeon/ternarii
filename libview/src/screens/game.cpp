@@ -33,6 +33,22 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libview::screens
 {
 
+#define MOVE_BUTTON_INITIALIZER(IMAGE, MOVE) \
+    MOVE##_button \
+    ( \
+        self, \
+        drawables, \
+        clickables, \
+        IMAGE, \
+        objects::sdf_image_button::callback_set \
+        { \
+            .handle_mouse_press = [this] \
+            { \
+                send_move_request(data_types::move::MOVE); \
+            } \
+        } \
+    )
+
 struct game::impl
 {
     impl
@@ -46,11 +62,21 @@ struct game::impl
         tile_grid(self, drawables),
         score_display(self, drawables),
         hi_score_display(self, drawables),
-        exit_button   (self, drawables, clickables, "/res/images/exit.tga",          [this]{this->callbacks.handle_exit_request();}                   ),
-        left_button   (self, drawables, clickables, "/res/images/move_button.tga",   [this]{send_move_request(data_types::move::left_shift);}         ),
-        right_button  (self, drawables, clickables, "/res/images/move_button.tga",   [this]{send_move_request(data_types::move::right_shift);}        ),
-        drop_button   (self, drawables, clickables, "/res/images/move_button.tga",   [this]{send_move_request(data_types::move::drop);}               ),
-        rotate_button (self, drawables, clickables, "/res/images/rotate_button.tga", [this]{send_move_request(data_types::move::clockwise_rotation);} ),
+        exit_button
+        (
+            self,
+            drawables,
+            clickables,
+            "/res/images/exit.tga",
+            objects::sdf_image_button::callback_set
+            {
+                .handle_mouse_release = [this]{this->callbacks.handle_exit_request();}
+            }
+        ),
+        MOVE_BUTTON_INITIALIZER("/res/images/move_button.tga",   left_shift),
+        MOVE_BUTTON_INITIALIZER("/res/images/move_button.tga",   right_shift),
+        MOVE_BUTTON_INITIALIZER("/res/images/move_button.tga",   drop),
+        MOVE_BUTTON_INITIALIZER("/res/images/rotate_button.tga", clockwise_rotation),
         game_over_screen(self, drawables, clickables, [this]{this->callbacks.handle_clear_request();})
     {
         background.scale({16.0f, 16.0f});
@@ -69,19 +95,19 @@ struct game::impl
         exit_button.scale({0.5f, 0.5f});
         exit_button.translate({-2.8f, 7.0f});
 
-        left_button.scale({0.90f, 0.90f});
-        left_button.translate({-3.25f, -5.75f});
+        left_shift_button.scale({0.90f, 0.90f});
+        left_shift_button.translate({-3.25f, -5.75f});
 
-        right_button.rotate(180.0_degf);
-        right_button.scale({0.90f, 0.90f});
-        right_button.translate({-1.5f, -6.75f});
+        right_shift_button.rotate(180.0_degf);
+        right_shift_button.scale({0.90f, 0.90f});
+        right_shift_button.translate({-1.5f, -6.75f});
 
         drop_button.rotate(90.0_degf);
         drop_button.scale({0.90f, 0.90f});
         drop_button.translate({1.5f, -6.75f});
 
-        rotate_button.scale({0.90f, 0.90f});
-        rotate_button.translate({3.25f, -5.75f});
+        clockwise_rotation_button.scale({0.90f, 0.90f});
+        clockwise_rotation_button.translate({3.25f, -5.75f});
 
         game_over_screen.translate({0.0f, 4.5f});
     }
@@ -111,10 +137,10 @@ struct game::impl
     objects::score_display score_display;
     objects::score_display hi_score_display;
     objects::sdf_image_button exit_button;
-    objects::sdf_image_button left_button;
-    objects::sdf_image_button right_button;
+    objects::sdf_image_button left_shift_button;
+    objects::sdf_image_button right_shift_button;
     objects::sdf_image_button drop_button;
-    objects::sdf_image_button rotate_button;
+    objects::sdf_image_button clockwise_rotation_button;
     objects::game_over_screen game_over_screen;
 };
 
