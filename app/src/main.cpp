@@ -22,6 +22,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include <libdb/database.hpp>
 #include <libgame/game.hpp>
 #include <libview/view.hpp>
+#include <libutil/log.hpp>
 #include <Magnum/GL/DefaultFramebuffer.h>
 #include <Magnum/GL/Context.h>
 #include <Magnum/GL/Renderer.h>
@@ -30,26 +31,25 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include <Magnum/Platform/Sdl2Application.h>
 #include <Corrade/Utility/Arguments.h>
 
-#ifndef NDEBUG
-#include <iostream>
-#endif
-
 namespace
 {
     struct configuration
     {
         bool show_debug_grid = false;
+        bool enable_log = false;
     };
 
     configuration parse_command_line(const int argc, char** const argv)
     {
         Corrade::Utility::Arguments args;
         args.addBooleanOption("debug-grid").setHelp("debug-grid", "show debug grid");
+        args.addBooleanOption("log").setHelp("log", "enable log");
         args.parse(argc, argv);
 
         return configuration
         {
-            .show_debug_grid = args.isSet("debug-grid")
+            .show_debug_grid = args.isSet("debug-grid"),
+            .enable_log = args.isSet("log")
         };
     }
 }
@@ -68,6 +68,10 @@ class app: public Magnum::Platform::Sdl2Application
             view_(conf_.show_debug_grid),
             fsm_(database_, view_)
         {
+            if(conf_.enable_log)
+            {
+                libutil::log::enable();
+            }
         }
 
     //Sdl2Application virtual functions

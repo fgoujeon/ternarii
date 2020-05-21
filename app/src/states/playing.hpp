@@ -22,10 +22,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "../fsm.hpp"
 #include <libgame/game.hpp>
-
-#ifndef NDEBUG
-#include <iostream>
-#endif
+#include <libutil/log.hpp>
 
 namespace states
 {
@@ -172,9 +169,7 @@ class playing final: public state
                 (
                     [this](const auto& event)
                     {
-#ifndef NDEBUG
-                        std::cout << event << '\n';
-#endif
+                        libutil::log::info(event);
                         handle_game_event(event);
                     },
                     event

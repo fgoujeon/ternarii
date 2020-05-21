@@ -20,6 +20,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include "json_conversion.hpp"
 #include <libdb/database.hpp>
 #include <nlohmann/json.hpp>
+#include <libutil/log.hpp>
 #include <emscripten.h>
 #include <filesystem>
 #include <fstream>
@@ -138,9 +139,7 @@ struct database::impl
             auto json = nlohmann::json{};
             ifs >> json;
 
-#ifndef NDEBUG
-            std::cout << to_string(json) << std::endl;
-#endif
+            libutil::log::info(json);
 
             //convert json to state
             auto game_state = data_types::game_state{};

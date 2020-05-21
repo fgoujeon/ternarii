@@ -17,9 +17,21 @@
 
 cmake_minimum_required(VERSION 3.10)
 
-add_library(libutil INTERFACE)
+file(GLOB_RECURSE INCLUDE_FILES include/*)
+file(GLOB_RECURSE SRC_FILES src/*)
+
+add_library(
+    libutil
+    ${INCLUDE_FILES}
+    ${SRC_FILES}
+)
+
+set_property(
+    TARGET libutil
+    PROPERTY CXX_STANDARD 20
+)
 
 target_include_directories(
     libutil
-    INTERFACE include
+    PUBLIC include
 )
