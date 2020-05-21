@@ -46,6 +46,7 @@ struct game::impl
         tile_grid(self, drawables),
         score_display(self, drawables),
         hi_score_display(self, drawables),
+        exit_button   (self, drawables, clickables, "/res/images/exit.tga",          [this]{this->callbacks.handle_exit_request();}                   ),
         left_button   (self, drawables, clickables, "/res/images/move_button.tga",   [this]{send_move_request(data_types::move::left_shift);}         ),
         right_button  (self, drawables, clickables, "/res/images/move_button.tga",   [this]{send_move_request(data_types::move::right_shift);}        ),
         drop_button   (self, drawables, clickables, "/res/images/move_button.tga",   [this]{send_move_request(data_types::move::drop);}               ),
@@ -58,12 +59,15 @@ struct game::impl
 
         score_display.set_visible(true);
         score_display.scale({0.7f, 0.7f});
-        score_display.translate({3.1f, 7.6f});
+        score_display.translate({3.4f, 7.6f});
 
         hi_score_display.scale({0.3f, 0.3f});
-        hi_score_display.translate({3.0f, 6.8f});
+        hi_score_display.translate({3.3f, 6.8f});
 
         tile_grid.translate({0.0f, 1.0f});
+
+        exit_button.scale({0.5f, 0.5f});
+        exit_button.translate({-2.8f, 7.0f});
 
         left_button.scale({0.90f, 0.90f});
         left_button.translate({-3.25f, -5.75f});
@@ -106,6 +110,7 @@ struct game::impl
     objects::tile_grid tile_grid;
     objects::score_display score_display;
     objects::score_display hi_score_display;
+    objects::sdf_image_button exit_button;
     objects::sdf_image_button left_button;
     objects::sdf_image_button right_button;
     objects::sdf_image_button drop_button;

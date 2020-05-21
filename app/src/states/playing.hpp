@@ -33,53 +33,10 @@ class playing final: public state
         using screen = libview::screens::game;
 
     public:
-        playing(fsm& f):
-            fsm_(f),
-            pscreen_
-            (
-                fsm_.view.make_screen<screen>
-                (
-                    screen::callback_set
-                    {
-                        .handle_move_request  = [this](const libview::data_types::move m){playing::handle_view_move_request(m);},
-                        .handle_clear_request = [this]{playing::handle_view_clear_request();}
-                    }
-                )
-            )
-        {
-            //load game state from database
-            const auto& opt_game_state = fsm_.database.get_game_state();
+        playing(fsm& f);
 
-            //create game
-            if(opt_game_state)
-            {
-                pgame_ = std::make_unique<libgame::game>(*opt_game_state);
-
-                //initialize view
-                pscreen_->set_score(pgame_->get_score());
-                pscreen_->set_hi_score(pgame_->get_hi_score());
-                pscreen_->create_next_input(pgame_->get_input_tiles());
-                pscreen_->insert_next_input(pgame_->get_input_layout());
-                pscreen_->create_next_input(pgame_->get_next_input_tiles());
-                pscreen_->set_board_tiles(pgame_->get_board_tiles());
-                mark_tiles_for_nullification();
-                pscreen_->set_game_over_screen_visible(pgame_->is_game_over());
-                pscreen_->set_visible(true);
-            }
-            else
-            {
-                pgame_ = std::make_unique<libgame::game>();
-
-                pscreen_->set_visible(true);
-                modify_game(&libgame::game::start);
-            }
-        }
-
-        void handle_view_clear_request()
-        {
-            modify_game(&libgame::game::start);
-        }
-
+    //View event handlers
+    private:
         void handle_view_move_request(const libview::data_types::move m)
         {
             using move = libview::data_types::move;
@@ -101,6 +58,7 @@ class playing final: public state
             }
         }
 
+    //Game event handlers
     private:
         void handle_game_event(const libgame::events::start&)
         {

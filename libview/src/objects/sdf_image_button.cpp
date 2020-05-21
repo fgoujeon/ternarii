@@ -31,7 +31,9 @@ namespace libview::objects
 
 sdf_image_button::sdf_image_button
 (
-    Object2D& parent, features::drawable_group& drawables, features::clickable_group& clickables,
+    Object2D& parent,
+    features::drawable_group& drawables,
+    features::clickable_group& clickables,
     const std::filesystem::path& image_path,
     const mouse_press_callback& cb
 ):

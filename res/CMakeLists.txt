@@ -65,6 +65,7 @@ endfunction()
 
 add_ttf_to_sdf_command(DejaVuSans)
 
+add_svg_to_sdf_command(exit              64)
 add_svg_to_sdf_command(board_corner      64)
 add_svg_to_sdf_command(column_nullifier  64)
 add_svg_to_sdf_command(logo              64)
@@ -81,6 +82,7 @@ add_custom_target(
     SOURCES
         "${CMAKE_CURRENT_BINARY_DIR}/out/fonts/DejaVuSans.conf"
         "${CMAKE_CURRENT_BINARY_DIR}/out/fonts/DejaVuSans.tga"
+        "${CMAKE_CURRENT_BINARY_DIR}/out/images/exit.tga"
         "${CMAKE_CURRENT_BINARY_DIR}/out/images/board_corner.tga"
         "${CMAKE_CURRENT_BINARY_DIR}/out/images/column_nullifier.tga"
         "${CMAKE_CURRENT_BINARY_DIR}/out/images/logo.tga"
