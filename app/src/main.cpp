@@ -28,21 +28,44 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include <Magnum/GL/Version.h>
 #include <Magnum/Math/Color.h>
 #include <Magnum/Platform/Sdl2Application.h>
+#include <Corrade/Utility/Arguments.h>
 
 #ifndef NDEBUG
 #include <iostream>
 #endif
 
+namespace
+{
+    struct configuration
+    {
+        bool show_debug_grid = false;
+    };
+
+    configuration parse_command_line(const int argc, char** const argv)
+    {
+        Corrade::Utility::Arguments args;
+        args.addBooleanOption("debug-grid").setHelp("debug-grid", "show debug grid");
+        args.parse(argc, argv);
+
+        return configuration
+        {
+            .show_debug_grid = args.isSet("debug-grid")
+        };
+    }
+}
+
 class app: public Magnum::Platform::Sdl2Application
 {
     public:
-        explicit app(const Arguments& arguments):
+        explicit app(const Arguments& args):
             Magnum::Platform::Sdl2Application
             {
-                arguments,
+                args,
                 Configuration{}.setWindowFlags(Configuration::WindowFlag::Resizable)
             },
+            conf_(parse_command_line(args.argc, args.argv)),
             database_([this](const libdb::event& event){handle_database_event(event);}),
+            view_(conf_.show_debug_grid),
             fsm_(database_, view_)
         {
         }
@@ -98,6 +121,8 @@ class app: public Magnum::Platform::Sdl2Application
         }
 
     private:
+        configuration conf_;
+
         libdb::database database_;
 
         libview::view view_;

@@ -34,10 +34,9 @@ namespace libview
 
 struct view::impl final
 {
-    impl():
+    impl(const bool show_debug_grid):
         camera_object(&scene),
-        camera(camera_object),
-        debug_grid(camera_object, feature_groups.drawables)
+        camera(camera_object)
     {
         camera.setAspectRatioPolicy(SceneGraph::AspectRatioPolicy::Extend);
         camera.setProjectionMatrix(Magnum::Matrix3::projection({9.0f, 16.0f}));
@@ -48,6 +47,11 @@ struct view::impl final
         Magnum::GL::Renderer::enable(Magnum::GL::Renderer::Feature::Blending);
         Magnum::GL::Renderer::setBlendFunction(Magnum::GL::Renderer::BlendFunction::SourceAlpha, Magnum::GL::Renderer::BlendFunction::OneMinusSourceAlpha);
         Magnum::GL::Renderer::setBlendEquation(Magnum::GL::Renderer::BlendEquation::Add, Magnum::GL::Renderer::BlendEquation::Add);
+
+        if(show_debug_grid)
+        {
+            pdebug_grid = std::make_unique<objects::debug_grid>(camera_object, feature_groups.drawables);
+        }
     }
 
     void draw()
@@ -163,11 +167,11 @@ struct view::impl final
 
     feature_group_set feature_groups;
 
-    objects::debug_grid debug_grid;
+    std::unique_ptr<objects::debug_grid> pdebug_grid;
 };
 
-view::view():
-    pimpl_(std::make_unique<impl>())
+view::view(const bool show_debug_grid):
+    pimpl_(std::make_unique<impl>(show_debug_grid))
 {
 }
 
