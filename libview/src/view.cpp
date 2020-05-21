@@ -18,6 +18,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 #include <libview/view.hpp>
+#include "objects/debug_grid.hpp"
 #include "colors.hpp"
 #include "common.hpp"
 #include <libutil/time.hpp>
@@ -35,7 +36,8 @@ struct view::impl final
 {
     impl():
         camera_object(&scene),
-        camera(camera_object)
+        camera(camera_object),
+        debug_grid(camera_object, feature_groups.drawables)
     {
         camera.setAspectRatioPolicy(SceneGraph::AspectRatioPolicy::Extend);
         camera.setProjectionMatrix(Magnum::Matrix3::projection({9.0f, 16.0f}));
@@ -160,6 +162,8 @@ struct view::impl final
     SceneGraph::Camera2D camera;
 
     feature_group_set feature_groups;
+
+    objects::debug_grid debug_grid;
 };
 
 view::view():
