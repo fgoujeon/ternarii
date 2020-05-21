@@ -32,20 +32,37 @@ class debug_grid: public Object2D
         debug_grid(Object2D& parent, features::drawable_group& drawables):
             Object2D{&parent}
         {
-            for(int x = 0; x < 9; ++x)
+            const auto line_color = 0x111111_rgbf;
+            const auto line_thickness = 0.03f;
+
+            //Center point
             {
-                for(int y = 0; y < 16; ++y)
-                {
-                    auto psquare = std::make_unique<square>(*this, drawables, 0x111111_rgbf);
-                    psquare->scale({0.48f, 0.48f});
-                    psquare->translate({-4.0f + x, -7.5f + y});
-                    squares_.push_back(std::move(psquare));
-                }
+                auto ppoint = std::make_unique<square>(*this, drawables, line_color);
+                ppoint->scale({line_thickness * 4, line_thickness * 4});
+                squares.push_back(std::move(ppoint));
+            }
+
+            //Horizontal lines
+            for(int i = 0; i < 17; ++i)
+            {
+                auto pline = std::make_unique<square>(*this, drawables, line_color);
+                pline->scale({4.5f, line_thickness});
+                pline->translate({0.0f, -8.0f + i});
+                squares.push_back(std::move(pline));
+            }
+
+            //Vertical lines
+            for(int i = 0; i < 9; ++i)
+            {
+                auto pline = std::make_unique<square>(*this, drawables, line_color);
+                pline->scale({line_thickness, 8.0f});
+                pline->translate({-4.0f + i, 0.0f});
+                squares.push_back(std::move(pline));
             }
         }
 
     private:
-        std::vector<std::unique_ptr<square>> squares_;
+        std::vector<std::unique_ptr<square>> squares;
 };
 
 } //namespace
