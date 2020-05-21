@@ -39,8 +39,30 @@ struct title::impl
         const callback_set& callbacks
     ):
         callbacks(callbacks),
-        logo(self, feature_groups.drawables, "/res/images/logo.tga"),
-        logo_text(self, feature_groups.drawables, "/res/images/logo_text.tga"),
+        logo
+        (
+            self,
+            feature_groups.drawables,
+            "/res/images/logo.tga",
+            objects::sdf_image::style
+            {
+                .color = colors::light_gray,
+                .outline_color = colors::dark_gray,
+                .outline_range = {0.5f, 0.4f}
+            }
+        ),
+        logo_text
+        (
+            self,
+            feature_groups.drawables,
+            "/res/images/logo_text.tga",
+            objects::sdf_image::style
+            {
+                .color = colors::light_gray,
+                .outline_color = colors::dark_gray,
+                .outline_range = {0.5f, 0.4f}
+            }
+        ),
         play_button
         (
             self,

@@ -117,12 +117,21 @@ tile_grid::tile_grid(Object2D& parent, features::drawable_group& drawables):
     {
         auto add_corner = [&](const float x, const float y, const auto rotation)
         {
-            auto pobj = std::make_unique<sdf_image>(*this, drawables, "/res/images/board_corner.tga");
+            auto pobj = std::make_unique<sdf_image>
+            (
+                *this,
+                drawables,
+                "/res/images/board_corner.tga",
+                sdf_image::style
+                {
+                    .color = colors::light_gray,
+                    .outline_color = colors::dark_gray,
+                    .outline_range = {0.5f, 0.4f}
+                }
+            );
             pobj->rotate(rotation);
             pobj->scale({0.50f, 0.50f});
             pobj->translate({x, y});
-            pobj->set_color(colors::light_gray);
-            pobj->set_outline_color(colors::dark_gray);
 
             board_corners_.push_back(std::move(pobj));
         };
@@ -487,7 +496,7 @@ std::shared_ptr<objects::tile> tile_grid::make_tile
         tile
     );
 
-    ptile->scale({0.46f, 0.46f});
+    ptile->scale({0.49f, 0.49f});
     ptile->translate(position);
 
     return ptile;

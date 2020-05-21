@@ -56,7 +56,18 @@ namespace
 number_tile::number_tile(Object2D& parent, features::drawable_group& drawables, const int value):
     tile(parent, drawables),
     square_color_(value_to_color(value)),
-    square_(*this, drawable_children_, Magnum::Color4{square_color_, 0.0f}),
+    square_
+    (
+        *this,
+        drawable_children_,
+        "/res/images/rounded_square.tga",
+        sdf_image::style
+        {
+            .color = Magnum::Color4{square_color_, 0.0f},
+            .outline_color = Magnum::Color4{colors::black, 0.0f},
+            .outline_range = {0.5f, 0.3f}
+        }
+    ),
     label_
     (
         *this,
