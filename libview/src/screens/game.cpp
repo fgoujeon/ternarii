@@ -79,6 +79,8 @@ struct game::impl
         MOVE_BUTTON_INITIALIZER("/res/images/rotate_button.tga", clockwise_rotation),
         game_over_screen(self, drawables, clickables, [this]{this->callbacks.handle_clear_request();})
     {
+        const auto move_button_scaling = 0.85f;
+
         background.scale({16.0f, 16.0f});
         background.translate({0.0f, -1.0f});
         background.set_color(Magnum::Color4{1.0, 1.0, 1.0, 0.02});
@@ -95,18 +97,18 @@ struct game::impl
         exit_button.scale({0.5f, 0.5f});
         exit_button.translate({-2.8f, 7.0f});
 
-        left_shift_button.scale({0.90f, 0.90f});
+        left_shift_button.scale({move_button_scaling, move_button_scaling});
         left_shift_button.translate({-3.25f, -5.75f});
 
         right_shift_button.rotate(180.0_degf);
-        right_shift_button.scale({0.90f, 0.90f});
+        right_shift_button.scale({move_button_scaling, move_button_scaling});
         right_shift_button.translate({-1.5f, -6.75f});
 
         drop_button.rotate(90.0_degf);
-        drop_button.scale({0.90f, 0.90f});
+        drop_button.scale({move_button_scaling, move_button_scaling});
         drop_button.translate({1.5f, -6.75f});
 
-        clockwise_rotation_button.scale({0.90f, 0.90f});
+        clockwise_rotation_button.scale({move_button_scaling, move_button_scaling});
         clockwise_rotation_button.translate({3.25f, -5.75f});
 
         game_over_screen.translate({0.0f, 4.5f});
