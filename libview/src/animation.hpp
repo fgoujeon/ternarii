@@ -231,14 +231,14 @@ class animator
 
             while(!animations_.empty() && keep_advancing)
             {
-                auto& animation = animations_.front();
+                auto& anim = animations_.front();
 
-                if(!animation.is_done())
+                if(!anim.is_done())
                 {
-                    animation.advance(now);
+                    anim.advance(now);
                 }
 
-                if(animation.is_done())
+                if(anim.is_done())
                 {
                     animations_.pop_front();
                     keep_advancing = true;
@@ -255,9 +255,9 @@ class animator
             return !animations_.empty();
         }
 
-        animation& emplace_back()
+        void push(animation&& anim)
         {
-            return animations_.emplace_back();
+            return animations_.push_back(std::move(anim));
         }
 
     private:
