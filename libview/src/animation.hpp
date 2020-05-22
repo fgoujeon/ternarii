@@ -222,7 +222,47 @@ class animation
         bool started_ = false;
 };
 
-using animation_list = std::list<animation>;
+class animator
+{
+    public:
+        void advance(const libutil::time_point& now)
+        {
+            auto keep_advancing = true;
+
+            while(!animations_.empty() && keep_advancing)
+            {
+                auto& animation = animations_.front();
+
+                if(!animation.is_done())
+                {
+                    animation.advance(now);
+                }
+
+                if(animation.is_done())
+                {
+                    animations_.pop_front();
+                    keep_advancing = true;
+                }
+                else
+                {
+                    keep_advancing = false;
+                }
+            }
+        }
+
+        bool is_animating() const
+        {
+            return !animations_.empty();
+        }
+
+        animation& emplace_back()
+        {
+            return animations_.emplace_back();
+        }
+
+    private:
+        std::list<animation> animations_;
+};
 
 } //namespace
 

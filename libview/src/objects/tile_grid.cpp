@@ -151,7 +151,7 @@ tile_grid::tile_grid(Object2D& parent, features::drawable_group& drawables):
 
 bool tile_grid::is_animating() const
 {
-    return !animations_.empty();
+    return animator_.is_animating();
 }
 
 void tile_grid::clear()
@@ -173,7 +173,7 @@ void tile_grid::create_next_input(const data_types::input_tile_array& tiles)
 {
     const auto animation_duration_s = 0.15f;
 
-    auto& animation = animations_.emplace_back();
+    auto& animation = animator_.emplace_back();
 
     //Animate insertion of current next input into input.
     {
@@ -245,7 +245,7 @@ void tile_grid::set_input_layout(const data_types::input_layout& layout)
 
     const auto dst_positions = get_input_tile_positions(input_tiles_, layout, 3.0f);
 
-    auto& animation = animations_.emplace_back();
+    auto& animation = animator_.emplace_back();
 
     libutil::for_each
     (
@@ -278,7 +278,7 @@ void tile_grid::set_input_layout(const data_types::input_layout& layout)
 
 void tile_grid::drop_input_tiles(const data_types::input_tile_drop_list& drops)
 {
-    auto& animation = animations_.emplace_back();
+    auto& animation = animator_.emplace_back();
 
     for(const auto& drop: drops)
     {
@@ -299,12 +299,12 @@ void tile_grid::drop_input_tiles(const data_types::input_tile_drop_list& drops)
         ptile = nullptr;
     }
 
-    animations_.emplace_back().add_pause(0.05);
+    animator_.emplace_back().add_pause(0.05);
 }
 
 void tile_grid::drop_board_tiles(const data_types::board_tile_drop_list& drops)
 {
-    auto& animation = animations_.emplace_back();
+    auto& animation = animator_.emplace_back();
 
     for(const auto& drop: drops)
     {
@@ -325,12 +325,12 @@ void tile_grid::drop_board_tiles(const data_types::board_tile_drop_list& drops)
         ptile = nullptr;
     }
 
-    animations_.emplace_back().add_pause(0.05);
+    animator_.emplace_back().add_pause(0.05);
 }
 
 void tile_grid::nullify_tiles(const data_types::tile_coordinate_list& nullified_tile_coordinates)
 {
-    auto& animation = animations_.emplace_back();
+    auto& animation = animator_.emplace_back();
 
     for(const auto& coord: nullified_tile_coordinates)
     {
@@ -346,13 +346,13 @@ void tile_grid::nullify_tiles(const data_types::tile_coordinate_list& nullified_
         ptile = nullptr;
     }
 
-    animations_.emplace_back().add_pause(0.05);
+    animator_.emplace_back().add_pause(0.05);
 }
 
 void tile_grid::merge_tiles(const data_types::tile_merge_list& merges)
 {
-    auto& animation0 = animations_.emplace_back();
-    auto& animation1 = animations_.emplace_back();
+    auto& animation0 = animator_.emplace_back();
+    auto& animation1 = animator_.emplace_back();
 
     for(const auto& merge: merges)
     {
@@ -391,12 +391,12 @@ void tile_grid::merge_tiles(const data_types::tile_merge_list& merges)
         animation1.add_alpha_transition(0, 1, 0.2, pdst_tile);
     }
 
-    animations_.emplace_back().add_pause(0.05);
+    animator_.emplace_back().add_pause(0.05);
 }
 
 void tile_grid::mark_tiles_for_nullification(const data_types::tile_coordinate_list& tile_coordinates)
 {
-    auto& animation = animations_.emplace_back();
+    auto& animation = animator_.emplace_back();
 
     //Unmark all board tiles
     for(auto& ptile: board_tiles_)
@@ -441,27 +441,7 @@ void tile_grid::set_board_tiles(const data_types::board_tile_array& tiles)
 
 void tile_grid::advance(const libutil::time_point& now)
 {
-    auto keep_advancing = true;
-
-    while(!animations_.empty() && keep_advancing)
-    {
-        auto& animation = animations_.front();
-
-        if(!animation.is_done())
-        {
-            animation.advance(now);
-        }
-
-        if(animation.is_done())
-        {
-            animations_.pop_front();
-            keep_advancing = true;
-        }
-        else
-        {
-            keep_advancing = false;
-        }
-    }
+    animator_.advance(now);
 }
 
 std::shared_ptr<objects::tile> tile_grid::make_tile
