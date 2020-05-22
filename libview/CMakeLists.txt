@@ -34,6 +34,8 @@ target_compile_definitions(
     PRIVATE
         PROJECT_VERSION=\"${PROJECT_VERSION}\"
         PROJECT_DATE=\"${PROJECT_DATE}\"
+        TERNARII_SDF_IMAGE_RADIUS=${TERNARII_SDF_IMAGE_RADIUS}
+        TERNARII_SDF_IMAGE_PNG_SIZE=${TERNARII_SDF_IMAGE_PNG_SIZE}
 )
 
 target_include_directories(libview PUBLIC include)
