@@ -40,6 +40,12 @@ execute_process(
 )
 message(STATUS "PROJECT_DATE = ${PROJECT_DATE}")
 
+#SDF (Signed distance field) image configuration.
+#It's better if "PNG_FILE_SIZE + 2 * RADIUS" is a power of two, because
+#the bordered PNG will be downscaled to a power of two as well.
+set(TERNARII_SDF_IMAGE_RADIUS 32) #SDF radius
+set(TERNARII_SDF_IMAGE_PNG_SIZE 960) #width and height of PNG image directly generated from SVG
+
 find_package(
     Magnum 2019.10 REQUIRED
     GL

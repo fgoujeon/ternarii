@@ -90,7 +90,7 @@ struct title::impl
     {
         logo.set_color(colors::light_gray);
         logo.set_outline_color(colors::dark_gray);
-        logo.scale({2.5f, 2.5f});
+        logo.scale({2.3f, 2.3f});
         logo.translate({0.0f, 4.5f});
 
         logo_text.set_color(colors::light_gray);
@@ -98,10 +98,10 @@ struct title::impl
         logo_text.scale({2.0f, 2.0f});
         logo_text.translate({0.0f, 1.9f});
 
-        play_button.scale({3.0f, 3.0f});
+        play_button.scale({2.8f, 2.8f});
         play_button.translate({0.0f, -1.0f});
 
-        about_button.scale({3.0f, 3.0f});
+        about_button.scale({2.8f, 2.8f});
         about_button.translate({0.0f, -2.5f});
     }
 

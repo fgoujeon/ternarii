@@ -496,7 +496,7 @@ std::shared_ptr<objects::tile> tile_grid::make_tile
         tile
     );
 
-    ptile->scale({0.49f, 0.49f});
+    ptile->scale({0.46f, 0.46f});
     ptile->translate(position);
 
     return ptile;

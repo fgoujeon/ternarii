@@ -69,6 +69,16 @@ namespace
 
         return texture;
     }
+
+    /*
+    We want the object scaling to be applied to the original PNG image
+    (i.e. WITHOUT the distance field). To do so, we must upscale the object
+    by the following factor.
+    */
+    constexpr auto original_size = static_cast<float>(TERNARII_SDF_IMAGE_PNG_SIZE);
+    constexpr auto radius = static_cast<float>(TERNARII_SDF_IMAGE_RADIUS);
+    constexpr auto scaling_factor = (original_size + 2 * radius) / original_size;
+    constexpr auto scaling_matrix = Magnum::Matrix3::scaling({scaling_factor, scaling_factor});
 }
 
 sdf_image::sdf_image
@@ -99,8 +109,8 @@ void sdf_image::draw(const Magnum::Matrix3& transformation_matrix, SceneGraph::C
 {
     get_shader().setColor(style_.color);
     get_shader().bindVectorTexture(texture_);
-    get_shader().setTransformationProjectionMatrix(camera.projectionMatrix() * transformation_matrix);
-    get_shader().setSmoothness(0.24f / transformation_matrix.uniformScaling());
+    get_shader().setTransformationProjectionMatrix(camera.projectionMatrix() * transformation_matrix * scaling_matrix);
+    get_shader().setSmoothness(0.12f / transformation_matrix.uniformScaling());
     get_shader().setOutlineColor(style_.outline_color);
     get_shader().setOutlineRange(style_.outline_range[0], style_.outline_range[1]);
     get_mesh().draw(get_shader());
