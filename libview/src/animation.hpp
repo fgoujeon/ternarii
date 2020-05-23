@@ -20,6 +20,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #ifndef LIBVIEW_ANIMATION_HPP
 #define LIBVIEW_ANIMATION_HPP
 
+#include <libutil/unique_function.hpp>
 #include <libutil/time.hpp>
 #include <Magnum/Animation/Player.h>
 #include <chrono>
@@ -30,13 +31,7 @@ namespace libview
 {
 
 using player_t = Magnum::Animation::Player<std::chrono::nanoseconds, Magnum::Float>;
-
-struct abstract_track
-{
-    virtual ~abstract_track(){}
-
-    virtual void add_to_player(player_t&) = 0;
-};
+using player_supplier_t = libutil::unique_function<void(player_t&)>;
 
 namespace tracks
 {
@@ -45,47 +40,29 @@ namespace tracks
         float duration_s = 0;
     };
 
-    class pause_impl: public abstract_track
-    {
-        private:
-            using desc_t = pause;
-            using track_t = Magnum::Animation::Track<Magnum::Float, int>;
-
-        public:
-            pause_impl(const desc_t& desc):
-                desc_(desc)
-            {
-            }
-
-            void add_to_player(player_t& p) override
-            {
-                track_ = track_t
-                (
-                    {
-                        {0.0f, 0},
-                        {desc_.duration_s, 0}
-                    },
-                    Magnum::Math::lerp,
-                    Magnum::Animation::Extrapolation::Constant
-                );
-
-                p.addWithCallback
-                (
-                    track_,
-                    [](Magnum::Float, const int&, void*){},
-                    nullptr
-                );
-            }
-
-        private:
-            desc_t desc_;
-            track_t track_;
-    };
-
     inline
-    std::unique_ptr<abstract_track> make_impl(const pause& desc)
+    player_supplier_t make_player_supplier(const pause& info)
     {
-        return std::make_unique<pause_impl>(desc);
+        using track_t = Magnum::Animation::Track<Magnum::Float, int>;
+        return [info, track = track_t{}](player_t& player) mutable
+        {
+            track = track_t
+            (
+                {
+                    {0.0f, 0},
+                    {info.duration_s, 0}
+                },
+                Magnum::Math::lerp,
+                Magnum::Animation::Extrapolation::Constant
+            );
+
+            player.addWithCallback
+            (
+                track,
+                [](Magnum::Float, const int&, void*){},
+                nullptr
+            );
+        };
     }
 
 
@@ -99,59 +76,40 @@ namespace tracks
     };
 
     template<class Object>
-    class fixed_duration_translation_impl: public abstract_track
+    player_supplier_t make_player_supplier(const fixed_duration_translation<Object>& info)
     {
-        private:
-            using desc_t = fixed_duration_translation<Object>;
-            using track_t = Magnum::Animation::Track<Magnum::Float, Magnum::Vector2>;
+        using track_t = Magnum::Animation::Track<Magnum::Float, Magnum::Vector2>;
+        return [info, track = track_t{}](player_t& player) mutable
+        {
+            const auto& current_position = info.pobj->transformation().translation();
 
-        public:
-            fixed_duration_translation_impl(const desc_t& desc):
-                desc_(desc)
+            if(current_position == info.finish_position)
             {
+                return;
             }
 
-            void add_to_player(player_t& p) override
+            track = track_t
             {
-                const auto& current_position = desc_.pobj->transformation().translation();
-
-                if(current_position == desc_.finish_position)
                 {
-                    return;
-                }
+                    {0.0f, current_position},
+                    {info.duration_s, info.finish_position}
+                },
+                Magnum::Math::lerp,
+                Magnum::Animation::Extrapolation::Constant
+            };
 
-                track_ = track_t
+            player.addWithCallback
+            (
+                track,
+                [](Magnum::Float, const Magnum::Vector2& translation, Object& obj)
                 {
-                    {
-                        {0.0f, current_position},
-                        {desc_.duration_s, desc_.finish_position}
-                    },
-                    Magnum::Math::lerp,
-                    Magnum::Animation::Extrapolation::Constant
-                };
-
-                p.addWithCallback
-                (
-                    track_,
-                    [](Magnum::Float, const Magnum::Vector2& translation, Object& obj)
-                    {
-                        const auto current_translation = obj.transformation().translation();
-                        const auto translation_delta = translation - current_translation;
-                        obj.translate(translation_delta);
-                    },
-                    *desc_.pobj
-                );
-            }
-
-        private:
-            desc_t desc_;
-            track_t track_;
-    };
-
-    template<class Object>
-    std::unique_ptr<abstract_track> make_impl(const fixed_duration_translation<Object>& desc)
-    {
-        return std::make_unique<fixed_duration_translation_impl<Object>>(desc);
+                    const auto current_translation = obj.transformation().translation();
+                    const auto translation_delta = translation - current_translation;
+                    obj.translate(translation_delta);
+                },
+                *info.pobj
+            );
+        };
     }
 
 
@@ -165,66 +123,47 @@ namespace tracks
     };
 
     template<class Object>
-    class fixed_speed_translation_impl: public abstract_track
+    player_supplier_t make_player_supplier(const fixed_speed_translation<Object>& info)
     {
-        private:
-            using desc_t = fixed_speed_translation<Object>;
-            using track_t = Magnum::Animation::Track<Magnum::Float, Magnum::Vector2>;
+        using track_t = Magnum::Animation::Track<Magnum::Float, Magnum::Vector2>;
+        return [info, track = track_t{}](player_t& player) mutable
+        {
+            const auto& current_position = info.pobj->transformation().translation();
 
-        public:
-            fixed_speed_translation_impl(const desc_t& desc):
-                desc_(desc)
+            if(current_position == info.finish_position)
             {
+                return;
             }
 
-            void add_to_player(player_t& p) override
+            const auto x1 = current_position.x();
+            const auto y1 = current_position.y();
+            const auto x2 = info.finish_position.x();
+            const auto y2 = info.finish_position.y();
+            const auto distance = std::sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
+            const auto time = distance / info.speed;
+
+            track = track_t
             {
-                const auto& current_position = desc_.pobj->transformation().translation();
-
-                if(current_position == desc_.finish_position)
                 {
-                    return;
-                }
+                    {0.0f, current_position},
+                    {time, info.finish_position}
+                },
+                Magnum::Math::lerp,
+                Magnum::Animation::Extrapolation::Constant
+            };
 
-                const auto x1 = current_position.x();
-                const auto y1 = current_position.y();
-                const auto x2 = desc_.finish_position.x();
-                const auto y2 = desc_.finish_position.y();
-                const auto distance = std::sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
-                const auto time = distance / desc_.speed;
-
-                track_ = track_t
+            player.addWithCallback
+            (
+                track,
+                [](Magnum::Float, const Magnum::Vector2& translation, Object& obj)
                 {
-                    {
-                        {0.0f, current_position},
-                        {time, desc_.finish_position}
-                    },
-                    Magnum::Math::lerp,
-                    Magnum::Animation::Extrapolation::Constant
-                };
-
-                p.addWithCallback
-                (
-                    track_,
-                    [](Magnum::Float, const Magnum::Vector2& translation, Object& obj)
-                    {
-                        const auto current_translation = obj.transformation().translation();
-                        const auto translation_delta = translation - current_translation;
-                        obj.translate(translation_delta);
-                    },
-                    *desc_.pobj
-                );
-            }
-
-        private:
-            desc_t desc_;
-            track_t track_;
-    };
-
-    template<class Object>
-    std::unique_ptr<abstract_track> make_impl(const fixed_speed_translation<Object>& desc)
-    {
-        return std::make_unique<fixed_speed_translation_impl<Object>>(desc);
+                    const auto current_translation = obj.transformation().translation();
+                    const auto translation_delta = translation - current_translation;
+                    obj.translate(translation_delta);
+                },
+                *info.pobj
+            );
+        };
     }
 
 
@@ -238,57 +177,38 @@ namespace tracks
     };
 
     template<class Object>
-    class alpha_transition_impl: public abstract_track
+    player_supplier_t make_player_supplier(const alpha_transition<Object>& info)
     {
-        private:
-            using desc_t = alpha_transition<Object>;
-            using track_t = Magnum::Animation::Track<Magnum::Float, float>;
+        using track_t = Magnum::Animation::Track<Magnum::Float, float>;
+        return [info, track = track_t{}](player_t& player) mutable
+        {
+            const auto current_alpha = info.pobj->get_alpha();
 
-        public:
-            alpha_transition_impl(const desc_t& desc):
-                desc_(desc)
+            if(current_alpha == info.finish_alpha)
             {
+                return;
             }
 
-            void add_to_player(player_t& p) override
+            track = track_t
             {
-                const auto current_alpha = desc_.pobj->get_alpha();
-
-                if(current_alpha == desc_.finish_alpha)
                 {
-                    return;
-                }
+                    {0.0f, current_alpha},
+                    {info.duration_s, info.finish_alpha}
+                },
+                Magnum::Math::lerp,
+                Magnum::Animation::Extrapolation::Constant
+            };
 
-                track_ = track_t
+            player.addWithCallback
+            (
+                track,
+                [](Magnum::Float, const float& alpha, Object& obj)
                 {
-                    {
-                        {0.0f, current_alpha},
-                        {desc_.duration_s, desc_.finish_alpha}
-                    },
-                    Magnum::Math::lerp,
-                    Magnum::Animation::Extrapolation::Constant
-                };
-
-                p.addWithCallback
-                (
-                    track_,
-                    [](Magnum::Float, const float& alpha, Object& obj)
-                    {
-                        obj.set_alpha(alpha);
-                    },
-                    *desc_.pobj
-                );
-            }
-
-        private:
-            desc_t desc_;
-            track_t track_;
-    };
-
-    template<class Object>
-    std::unique_ptr<abstract_track> make_impl(const alpha_transition<Object>& desc)
-    {
-        return std::make_unique<alpha_transition_impl<Object>>(desc);
+                    obj.set_alpha(alpha);
+                },
+                *info.pobj
+            );
+        };
     }
 
 
@@ -301,49 +221,30 @@ namespace tracks
     };
 
     template<class Object>
-    class immediate_alpha_transition_impl: public abstract_track
+    player_supplier_t make_player_supplier(const immediate_alpha_transition<Object>& info)
     {
-        private:
-            using desc_t = immediate_alpha_transition<Object>;
-            using track_t = Magnum::Animation::Track<Magnum::Float, float>;
-
-        public:
-            immediate_alpha_transition_impl(const desc_t& desc):
-                desc_(desc)
+        using track_t = Magnum::Animation::Track<Magnum::Float, float>;
+        return [info, track = track_t{}](player_t& player) mutable
+        {
+            track = track_t
             {
-            }
-
-            void add_to_player(player_t& p) override
-            {
-                track_ = track_t
                 {
-                    {
-                        {0.0f, desc_.finish_alpha},
-                    },
-                    Magnum::Math::lerp,
-                    Magnum::Animation::Extrapolation::Constant
-                };
+                    {0.0f, info.finish_alpha},
+                },
+                Magnum::Math::lerp,
+                Magnum::Animation::Extrapolation::Constant
+            };
 
-                p.addWithCallback
-                (
-                    track_,
-                    [](Magnum::Float, const float& alpha, Object& obj)
-                    {
-                        obj.set_alpha(alpha);
-                    },
-                    *desc_.pobj
-                );
-            }
-
-        private:
-            desc_t desc_;
-            track_t track_;
-    };
-
-    template<class Object>
-    std::unique_ptr<abstract_track> make_impl(const immediate_alpha_transition<Object>& desc)
-    {
-        return std::make_unique<immediate_alpha_transition_impl<Object>>(desc);
+            player.addWithCallback
+            (
+                track,
+                [](Magnum::Float, const float& alpha, Object& obj)
+                {
+                    obj.set_alpha(alpha);
+                },
+                *info.pobj
+            );
+        };
     }
 }
 
@@ -351,20 +252,23 @@ class animation
 {
     public:
         template<class Descriptor>
-        void add(const Descriptor& desc)
+        void add(const Descriptor& info)
         {
-            tracks_.push_back(make_impl(desc));
+            tracks_.push_back(make_player_supplier(info));
         }
 
         void advance(const libutil::time_point& now)
         {
             if(!started_)
             {
-                for(auto& ptrack: tracks_)
+                //Supply player with tracks
+                for(auto& player_supplier: tracks_)
                 {
-                    ptrack->add_to_player(player_);
+                    player_supplier(player_);
                 }
+
                 player_.play(now.time_since_epoch());
+
                 started_ = true;
             }
 
@@ -377,7 +281,7 @@ class animation
         }
 
     private:
-        std::vector<std::unique_ptr<abstract_track>> tracks_;
+        std::vector<player_supplier_t> tracks_;
         player_t player_;
         bool started_ = false;
 };
