@@ -31,16 +31,16 @@ namespace libview
 
 using player_t = Magnum::Animation::Player<std::chrono::nanoseconds, Magnum::Float>;
 
-struct track_and_data
+struct abstract_track
 {
-    virtual ~track_and_data(){}
+    virtual ~abstract_track(){}
 
     virtual void add_to_player(player_t&) = 0;
 };
 
 namespace tracks
 {
-    class pause: public track_and_data
+    class pause: public abstract_track
     {
         private:
             using track_t = Magnum::Animation::Track<Magnum::Float, int>;
@@ -77,7 +77,7 @@ namespace tracks
     };
 
     template<class Object>
-    class fixed_duration_translation: public track_and_data
+    class fixed_duration_translation: public abstract_track
     {
         private:
             using track_t = Magnum::Animation::Track<Magnum::Float, Magnum::Vector2>;
@@ -86,12 +86,10 @@ namespace tracks
             fixed_duration_translation
             (
                 const std::shared_ptr<Object>& pobj,
-                const Magnum::Vector2& start_position,
                 const Magnum::Vector2& finish_position,
                 const float duration_s
             ):
                 pobj_(pobj),
-                start_position_(start_position),
                 finish_position_(finish_position),
                 duration_s_(duration_s)
             {
@@ -99,10 +97,17 @@ namespace tracks
 
             void add_to_player(player_t& p) override
             {
+                const auto& current_position = pobj_->transformation().translation();
+
+                if(current_position == finish_position_)
+                {
+                    return;
+                }
+
                 track_ = track_t
                 {
                     {
-                        {0.0f, start_position_},
+                        {0.0f, current_position},
                         {duration_s_, finish_position_}
                     },
                     Magnum::Math::lerp,
@@ -124,14 +129,13 @@ namespace tracks
 
         private:
             std::shared_ptr<Object> pobj_;
-            Magnum::Vector2 start_position_;
             Magnum::Vector2 finish_position_;
             float duration_s_;
             track_t track_;
     };
 
     template<class Object>
-    class fixed_speed_translation: public track_and_data
+    class fixed_speed_translation: public abstract_track
     {
         private:
             using track_t = Magnum::Animation::Track<Magnum::Float, Magnum::Vector2>;
@@ -140,12 +144,10 @@ namespace tracks
             fixed_speed_translation
             (
                 const std::shared_ptr<Object>& pobj,
-                const Magnum::Vector2& start_position,
                 const Magnum::Vector2& finish_position,
                 const float speed //in distance unit per second
             ):
                 pobj_(pobj),
-                start_position_(start_position),
                 finish_position_(finish_position),
                 speed_(speed)
             {
@@ -153,8 +155,15 @@ namespace tracks
 
             void add_to_player(player_t& p) override
             {
-                const auto x1 = start_position_.x();
-                const auto y1 = start_position_.y();
+                const auto& current_position = pobj_->transformation().translation();
+
+                if(current_position == finish_position_)
+                {
+                    return;
+                }
+
+                const auto x1 = current_position.x();
+                const auto y1 = current_position.y();
                 const auto x2 = finish_position_.x();
                 const auto y2 = finish_position_.y();
                 const auto distance = std::sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
@@ -163,7 +172,7 @@ namespace tracks
                 track_ = track_t
                 {
                     {
-                        {0.0f, start_position_},
+                        {0.0f, current_position},
                         {time, finish_position_}
                     },
                     Magnum::Math::lerp,
@@ -185,14 +194,13 @@ namespace tracks
 
         private:
             std::shared_ptr<Object> pobj_;
-            Magnum::Vector2 start_position_;
             Magnum::Vector2 finish_position_;
             float speed_;
             track_t track_;
     };
 
     template<class Object>
-    class alpha_transition: public track_and_data
+    class alpha_transition: public abstract_track
     {
         private:
             using track_t = Magnum::Animation::Track<Magnum::Float, float>;
@@ -201,12 +209,10 @@ namespace tracks
             alpha_transition
             (
                 const std::shared_ptr<Object>& pobj,
-                const float start_alpha,
                 const float finish_alpha,
                 const float duration_s //in seconds
             ):
                 pobj_(pobj),
-                start_alpha_(start_alpha),
                 finish_alpha_(finish_alpha),
                 duration_s_(duration_s)
             {
@@ -214,10 +220,17 @@ namespace tracks
 
             void add_to_player(player_t& p) override
             {
+                const auto current_alpha = pobj_->get_alpha();
+
+                if(current_alpha == finish_alpha_)
+                {
+                    return;
+                }
+
                 track_ = track_t
                 {
                     {
-                        {0.0f, start_alpha_},
+                        {0.0f, current_alpha},
                         {duration_s_, finish_alpha_}
                     },
                     Magnum::Math::lerp,
@@ -237,14 +250,13 @@ namespace tracks
 
         private:
             std::shared_ptr<Object> pobj_;
-            float start_alpha_;
             float finish_alpha_;
             float duration_s_;
             track_t track_;
     };
 
     template<class Object>
-    class immediate_alpha_transition: public track_and_data
+    class immediate_alpha_transition: public abstract_track
     {
         private:
             using track_t = Magnum::Animation::Track<Magnum::Float, float>;
@@ -325,7 +337,7 @@ class animation
         }
 
     private:
-        std::vector<std::unique_ptr<track_and_data>> tracks_;
+        std::vector<std::unique_ptr<abstract_track>> tracks_;
         player_t player_;
         bool started_ = false;
 };

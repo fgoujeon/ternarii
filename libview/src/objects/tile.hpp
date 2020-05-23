@@ -37,6 +37,8 @@ class tile: public Object2D, public features::drawable
 
         virtual ~tile() = default;
 
+        virtual float get_alpha() const = 0;
+
         virtual void set_alpha(const float alpha) = 0;
 };
 

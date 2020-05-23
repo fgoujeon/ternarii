@@ -56,8 +56,14 @@ sdf_image_tile::sdf_image_tile(Object2D& parent, features::drawable_group& drawa
 {
 }
 
+float sdf_image_tile::get_alpha() const
+{
+    return alpha_;
+}
+
 void sdf_image_tile::set_alpha(const float alpha)
 {
+    alpha_ = alpha;
     square_.set_color({square_color_, alpha});
     image_.set_color({colors::black, alpha});
     image_.set_outline_color({colors::black, alpha});
