@@ -40,14 +40,20 @@ struct abstract_track
 
 namespace tracks
 {
-    class pause: public abstract_track
+    struct pause
+    {
+        float duration_s = 0;
+    };
+
+    class pause_impl: public abstract_track
     {
         private:
+            using desc_t = pause;
             using track_t = Magnum::Animation::Track<Magnum::Float, int>;
 
         public:
-            pause(const float duration_s):
-                duration_s_(duration_s)
+            pause_impl(const desc_t& desc):
+                desc_(desc)
             {
             }
 
@@ -57,7 +63,7 @@ namespace tracks
                 (
                     {
                         {0.0f, 0},
-                        {duration_s_, 0}
+                        {desc_.duration_s, 0}
                     },
                     Magnum::Math::lerp,
                     Magnum::Animation::Extrapolation::Constant
@@ -72,34 +78,44 @@ namespace tracks
             }
 
         private:
-            float duration_s_ = 0;
+            desc_t desc_;
             track_t track_;
     };
 
+    inline
+    std::unique_ptr<abstract_track> make_impl(const pause& desc)
+    {
+        return std::make_unique<pause_impl>(desc);
+    }
+
+
+
     template<class Object>
-    class fixed_duration_translation: public abstract_track
+    struct fixed_duration_translation
+    {
+        std::shared_ptr<Object> pobj;
+        Magnum::Vector2 finish_position;
+        float duration_s = 0; //in seconds
+    };
+
+    template<class Object>
+    class fixed_duration_translation_impl: public abstract_track
     {
         private:
+            using desc_t = fixed_duration_translation<Object>;
             using track_t = Magnum::Animation::Track<Magnum::Float, Magnum::Vector2>;
 
         public:
-            fixed_duration_translation
-            (
-                const std::shared_ptr<Object>& pobj,
-                const Magnum::Vector2& finish_position,
-                const float duration_s
-            ):
-                pobj_(pobj),
-                finish_position_(finish_position),
-                duration_s_(duration_s)
+            fixed_duration_translation_impl(const desc_t& desc):
+                desc_(desc)
             {
             }
 
             void add_to_player(player_t& p) override
             {
-                const auto& current_position = pobj_->transformation().translation();
+                const auto& current_position = desc_.pobj->transformation().translation();
 
-                if(current_position == finish_position_)
+                if(current_position == desc_.finish_position)
                 {
                     return;
                 }
@@ -108,7 +124,7 @@ namespace tracks
                 {
                     {
                         {0.0f, current_position},
-                        {duration_s_, finish_position_}
+                        {desc_.duration_s, desc_.finish_position}
                     },
                     Magnum::Math::lerp,
                     Magnum::Animation::Extrapolation::Constant
@@ -123,57 +139,65 @@ namespace tracks
                         const auto translation_delta = translation - current_translation;
                         obj.translate(translation_delta);
                     },
-                    *pobj_
+                    *desc_.pobj
                 );
             }
 
         private:
-            std::shared_ptr<Object> pobj_;
-            Magnum::Vector2 finish_position_;
-            float duration_s_;
+            desc_t desc_;
             track_t track_;
     };
 
     template<class Object>
-    class fixed_speed_translation: public abstract_track
+    std::unique_ptr<abstract_track> make_impl(const fixed_duration_translation<Object>& desc)
+    {
+        return std::make_unique<fixed_duration_translation_impl<Object>>(desc);
+    }
+
+
+
+    template<class Object>
+    struct fixed_speed_translation
+    {
+        std::shared_ptr<Object> pobj;
+        Magnum::Vector2 finish_position;
+        float speed = 0; //in distance unit per second
+    };
+
+    template<class Object>
+    class fixed_speed_translation_impl: public abstract_track
     {
         private:
+            using desc_t = fixed_speed_translation<Object>;
             using track_t = Magnum::Animation::Track<Magnum::Float, Magnum::Vector2>;
 
         public:
-            fixed_speed_translation
-            (
-                const std::shared_ptr<Object>& pobj,
-                const Magnum::Vector2& finish_position,
-                const float speed //in distance unit per second
-            ):
-                pobj_(pobj),
-                finish_position_(finish_position),
-                speed_(speed)
+            fixed_speed_translation_impl(const desc_t& desc):
+                desc_(desc)
             {
             }
 
             void add_to_player(player_t& p) override
             {
-                const auto& current_position = pobj_->transformation().translation();
+                const auto& current_position = desc_.pobj->transformation().translation();
 
-                if(current_position == finish_position_)
+                if(current_position == desc_.finish_position)
                 {
                     return;
                 }
 
                 const auto x1 = current_position.x();
                 const auto y1 = current_position.y();
-                const auto x2 = finish_position_.x();
-                const auto y2 = finish_position_.y();
+                const auto x2 = desc_.finish_position.x();
+                const auto y2 = desc_.finish_position.y();
                 const auto distance = std::sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
-                const auto time = distance / speed_;
+                const auto time = distance / desc_.speed;
 
                 track_ = track_t
                 {
                     {
                         {0.0f, current_position},
-                        {time, finish_position_}
+                        {time, desc_.finish_position}
                     },
                     Magnum::Math::lerp,
                     Magnum::Animation::Extrapolation::Constant
@@ -188,41 +212,49 @@ namespace tracks
                         const auto translation_delta = translation - current_translation;
                         obj.translate(translation_delta);
                     },
-                    *pobj_
+                    *desc_.pobj
                 );
             }
 
         private:
-            std::shared_ptr<Object> pobj_;
-            Magnum::Vector2 finish_position_;
-            float speed_;
+            desc_t desc_;
             track_t track_;
     };
 
     template<class Object>
-    class alpha_transition: public abstract_track
+    std::unique_ptr<abstract_track> make_impl(const fixed_speed_translation<Object>& desc)
+    {
+        return std::make_unique<fixed_speed_translation_impl<Object>>(desc);
+    }
+
+
+
+    template<class Object>
+    struct alpha_transition
+    {
+        std::shared_ptr<Object> pobj;
+        float finish_alpha = 0;
+        float duration_s = 0; //in seconds
+    };
+
+    template<class Object>
+    class alpha_transition_impl: public abstract_track
     {
         private:
+            using desc_t = alpha_transition<Object>;
             using track_t = Magnum::Animation::Track<Magnum::Float, float>;
 
         public:
-            alpha_transition
-            (
-                const std::shared_ptr<Object>& pobj,
-                const float finish_alpha,
-                const float duration_s //in seconds
-            ):
-                pobj_(pobj),
-                finish_alpha_(finish_alpha),
-                duration_s_(duration_s)
+            alpha_transition_impl(const desc_t& desc):
+                desc_(desc)
             {
             }
 
             void add_to_player(player_t& p) override
             {
-                const auto current_alpha = pobj_->get_alpha();
+                const auto current_alpha = desc_.pobj->get_alpha();
 
-                if(current_alpha == finish_alpha_)
+                if(current_alpha == desc_.finish_alpha)
                 {
                     return;
                 }
@@ -231,7 +263,7 @@ namespace tracks
                 {
                     {
                         {0.0f, current_alpha},
-                        {duration_s_, finish_alpha_}
+                        {desc_.duration_s, desc_.finish_alpha}
                     },
                     Magnum::Math::lerp,
                     Magnum::Animation::Extrapolation::Constant
@@ -244,31 +276,40 @@ namespace tracks
                     {
                         obj.set_alpha(alpha);
                     },
-                    *pobj_
+                    *desc_.pobj
                 );
             }
 
         private:
-            std::shared_ptr<Object> pobj_;
-            float finish_alpha_;
-            float duration_s_;
+            desc_t desc_;
             track_t track_;
     };
 
     template<class Object>
-    class immediate_alpha_transition: public abstract_track
+    std::unique_ptr<abstract_track> make_impl(const alpha_transition<Object>& desc)
+    {
+        return std::make_unique<alpha_transition_impl<Object>>(desc);
+    }
+
+
+
+    template<class Object>
+    struct immediate_alpha_transition
+    {
+        std::shared_ptr<Object> pobj;
+        float finish_alpha = 0;
+    };
+
+    template<class Object>
+    class immediate_alpha_transition_impl: public abstract_track
     {
         private:
+            using desc_t = immediate_alpha_transition<Object>;
             using track_t = Magnum::Animation::Track<Magnum::Float, float>;
 
         public:
-            immediate_alpha_transition
-            (
-                const std::shared_ptr<Object>& pobj,
-                const float finish_alpha
-            ):
-                pobj_(pobj),
-                finish_alpha_(finish_alpha)
+            immediate_alpha_transition_impl(const desc_t& desc):
+                desc_(desc)
             {
             }
 
@@ -277,7 +318,7 @@ namespace tracks
                 track_ = track_t
                 {
                     {
-                        {0.0f, finish_alpha_},
+                        {0.0f, desc_.finish_alpha},
                     },
                     Magnum::Math::lerp,
                     Magnum::Animation::Extrapolation::Constant
@@ -290,30 +331,29 @@ namespace tracks
                     {
                         obj.set_alpha(alpha);
                     },
-                    *pobj_
+                    *desc_.pobj
                 );
             }
 
         private:
-            std::shared_ptr<Object> pobj_;
-            float finish_alpha_;
+            desc_t desc_;
             track_t track_;
     };
+
+    template<class Object>
+    std::unique_ptr<abstract_track> make_impl(const immediate_alpha_transition<Object>& desc)
+    {
+        return std::make_unique<immediate_alpha_transition_impl<Object>>(desc);
+    }
 }
 
 class animation
 {
     public:
-        template<class Track, class... Args>
-        void add(Args&&... args)
+        template<class Descriptor>
+        void add(const Descriptor& desc)
         {
-            tracks_.push_back
-            (
-                std::make_unique<Track>
-                (
-                    std::forward<Args>(args)...
-                )
-            );
+            tracks_.push_back(make_impl(desc));
         }
 
         void advance(const libutil::time_point& now)
