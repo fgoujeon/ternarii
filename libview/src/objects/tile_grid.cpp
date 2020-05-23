@@ -185,14 +185,14 @@ void tile_grid::create_next_input(const data_types::input_tile_array& tiles)
             {
                 if(ptile)
                 {
-                    anim.add_fixed_duration_translation
+                    anim.add<tracks::fixed_duration_translation<tile>>
                     (
+                        ptile,
                         ptile->transformation().translation(),
                         dst_position,
-                        animation_duration_s,
-                        ptile
+                        animation_duration_s
                     );
-                    anim.add_alpha_transition(0.4, 1, animation_duration_s, ptile);
+                    anim.add<tracks::alpha_transition<tile>>(ptile, 0.4, 1, animation_duration_s);
                 }
             },
             input_tiles_,
@@ -211,7 +211,7 @@ void tile_grid::create_next_input(const data_types::input_tile_array& tiles)
                 if(opt_tile.has_value())
                 {
                     pnext_input_tile = make_tile(opt_tile.value(), position);
-                    anim.add_alpha_transition(0, 0.4, animation_duration_s, pnext_input_tile);
+                    anim.add<tracks::alpha_transition<tile>>(pnext_input_tile, 0, 0.4, animation_duration_s);
                 }
             },
             tiles,
@@ -265,12 +265,12 @@ void tile_grid::set_input_layout(const data_types::input_layout& layout)
                 return;
             }
 
-            anim.add_fixed_speed_translation
+            anim.add<tracks::fixed_speed_translation<tile>>
             (
+                ptile,
                 src_position,
                 dst_position,
-                20,
-                ptile
+                20
             );
         },
         input_tiles_,
@@ -291,12 +291,12 @@ void tile_grid::drop_input_tiles(const data_types::input_tile_drop_list& drops)
         const auto src_position = ptile->transformation().translation();
         const auto dst_position = tile_coordinate_to_position(drop.board_coordinate);
 
-        anim.add_fixed_speed_translation
+        anim.add<tracks::fixed_speed_translation<tile>>
         (
+            ptile,
             src_position,
             dst_position,
-            24,
-            ptile
+            24
         );
 
         libutil::at(board_tiles_, drop.board_coordinate.row, drop.board_coordinate.col) = ptile;
@@ -306,7 +306,7 @@ void tile_grid::drop_input_tiles(const data_types::input_tile_drop_list& drops)
     animator_.push(std::move(anim));
 
     auto pause = animation{};
-    pause.add_pause(0.05);
+    pause.add<tracks::pause>(0.05);
     animator_.push(std::move(pause));
 }
 
@@ -321,12 +321,12 @@ void tile_grid::drop_board_tiles(const data_types::board_tile_drop_list& drops)
         const auto src_position = tile_coordinate_to_position(data_types::tile_coordinate{drop.src_row, drop.col});
         const auto dst_position = tile_coordinate_to_position(data_types::tile_coordinate{drop.dst_row, drop.col});
 
-        anim.add_fixed_speed_translation
+        anim.add<tracks::fixed_speed_translation<tile>>
         (
+            ptile,
             src_position,
             dst_position,
-            24,
-            ptile
+            24
         );
 
         libutil::at(board_tiles_, drop.dst_row, drop.col) = ptile;
@@ -336,7 +336,7 @@ void tile_grid::drop_board_tiles(const data_types::board_tile_drop_list& drops)
     animator_.push(std::move(anim));
 
     auto pause = animation{};
-    pause.add_pause(0.05);
+    pause.add<tracks::pause>(0.05);
     animator_.push(std::move(pause));
 }
 
@@ -353,7 +353,7 @@ void tile_grid::nullify_tiles(const data_types::tile_coordinate_list& nullified_
             continue;
         }
 
-        anim.add_alpha_transition(1, 0, 0.4, ptile);
+        anim.add<tracks::alpha_transition<tile>>(ptile, 1, 0, 0.4);
 
         ptile = nullptr;
     }
@@ -361,7 +361,7 @@ void tile_grid::nullify_tiles(const data_types::tile_coordinate_list& nullified_
     animator_.push(std::move(anim));
 
     auto pause = animation{};
-    pause.add_pause(0.05);
+    pause.add<tracks::pause>(0.05);
     animator_.push(std::move(pause));
 }
 
@@ -382,17 +382,17 @@ void tile_grid::merge_tiles(const data_types::tile_merge_list& merges)
             //first, translate source tile toward position of destination tile
             if(dst_position != src_position)
             {
-                anim0.add_fixed_speed_translation
+                anim0.add<tracks::fixed_speed_translation<tile>>
                 (
+                    psrc_tile,
                     src_position,
                     dst_position,
-                    6,
-                    psrc_tile
+                    6
                 );
             }
 
             //then, make it disappear with a fade out
-            anim1.add_alpha_transition(1, 0, 0.2, psrc_tile);
+            anim1.add<tracks::alpha_transition<tile>>(psrc_tile, 1, 0, 0.2);
 
             //remove the tile object from the matrix so that it is deleted once
             //the animation ends
@@ -404,11 +404,11 @@ void tile_grid::merge_tiles(const data_types::tile_merge_list& merges)
         libutil::at(board_tiles_, merge.dst_tile_coordinate.row, merge.dst_tile_coordinate.col) = pdst_tile;
 
         //make destination tile appear with a fade in
-        anim1.add_alpha_transition(0, 1, 0.2, pdst_tile);
+        anim1.add<tracks::alpha_transition<tile>>(pdst_tile, 0, 1, 0.2);
     }
 
     auto pause = animation{};
-    pause.add_pause(0.05);
+    pause.add<tracks::pause>(0.05);
 
     animator_.push(std::move(anim0));
     animator_.push(std::move(anim1));
@@ -424,7 +424,7 @@ void tile_grid::mark_tiles_for_nullification(const data_types::tile_coordinate_l
     {
         if(ptile)
         {
-            anim.add_alpha_transition(1, ptile);
+            anim.add<tracks::immediate_alpha_transition<tile>>(ptile, 1);
         }
     }
 
@@ -434,7 +434,7 @@ void tile_grid::mark_tiles_for_nullification(const data_types::tile_coordinate_l
         auto& ptile = libutil::at(board_tiles_, coords.row, coords.col);
         if(ptile)
         {
-            anim.add_alpha_transition(0.5, ptile);
+            anim.add<tracks::immediate_alpha_transition<tile>>(ptile, 0.5);
         }
     }
 
