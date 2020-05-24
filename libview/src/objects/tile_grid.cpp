@@ -302,10 +302,7 @@ void tile_grid::drop_input_tiles(const data_types::input_tile_drop_list& drops)
     }
 
     animator_.push(std::move(anim));
-
-    auto pause = animation{};
-    pause.add(tracks::pause{0.05});
-    animator_.push(std::move(pause));
+    animator_.push(tracks::pause{0.05});
 }
 
 void tile_grid::drop_board_tiles(const data_types::board_tile_drop_list& drops)
@@ -333,10 +330,7 @@ void tile_grid::drop_board_tiles(const data_types::board_tile_drop_list& drops)
     }
 
     animator_.push(std::move(anim));
-
-    auto pause = animation{};
-    pause.add(tracks::pause{0.05});
-    animator_.push(std::move(pause));
+    animator_.push(tracks::pause{0.05});
 }
 
 void tile_grid::nullify_tiles(const data_types::tile_coordinate_list& nullified_tile_coordinates)
@@ -358,10 +352,7 @@ void tile_grid::nullify_tiles(const data_types::tile_coordinate_list& nullified_
     }
 
     animator_.push(std::move(anim));
-
-    auto pause = animation{};
-    pause.add(tracks::pause{0.05});
-    animator_.push(std::move(pause));
+    animator_.push(tracks::pause{0.05});
 }
 
 void tile_grid::merge_tiles(const data_types::tile_merge_list& merges)
@@ -410,12 +401,9 @@ void tile_grid::merge_tiles(const data_types::tile_merge_list& merges)
         anim1.add(tracks::alpha_transition<tile>{pdst_tile, 1, 0.2});
     }
 
-    auto pause = animation{};
-    pause.add(tracks::pause{0.05});
-
     animator_.push(std::move(anim0));
     animator_.push(std::move(anim1));
-    animator_.push(std::move(pause));
+    animator_.push(tracks::pause{0.05});
 }
 
 void tile_grid::mark_tiles_for_nullification(const data_types::tile_coordinate_list& tile_coordinates)

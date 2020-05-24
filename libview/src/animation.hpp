@@ -248,9 +248,28 @@ namespace tracks
     }
 }
 
+//An animation is made of several tracks. Tracks are played concurrently.
 class animation
 {
     public:
+        animation() = default;
+
+        animation(const animation&) = delete;
+
+        animation(animation&&) = default;
+
+        /*
+        Create a one-track animation.
+        This constructor is implicit so that one-track animations can be
+        pushed into the animator like so:
+            some_animator.push(some_track{...});
+        */
+        template<class Track>
+        animation(const Track& track)
+        {
+            add(track);
+        }
+
         template<class Track>
         void add(const Track& track)
         {
@@ -286,6 +305,8 @@ class animation
         bool started_ = false;
 };
 
+//An animator manages a queue of animations. Pushed animations are played
+//sequentially.
 class animator
 {
     public:
