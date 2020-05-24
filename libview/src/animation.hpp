@@ -41,16 +41,16 @@ namespace tracks
     };
 
     inline
-    player_supplier_t make_player_supplier(const pause& info)
+    player_supplier_t make_player_supplier(const pause& track)
     {
-        using track_t = Magnum::Animation::Track<Magnum::Float, int>;
-        return [info, track = track_t{}](player_t& player) mutable
+        using track_impl_t = Magnum::Animation::Track<Magnum::Float, int>;
+        return [track, track_impl = track_impl_t{}](player_t& player) mutable
         {
-            track = track_t
+            track_impl = track_impl_t
             (
                 {
                     {0.0f, 0},
-                    {info.duration_s, 0}
+                    {track.duration_s, 0}
                 },
                 Magnum::Math::lerp,
                 Magnum::Animation::Extrapolation::Constant
@@ -58,7 +58,7 @@ namespace tracks
 
             player.addWithCallback
             (
-                track,
+                track_impl,
                 [](Magnum::Float, const int&, void*){},
                 nullptr
             );
@@ -76,23 +76,23 @@ namespace tracks
     };
 
     template<class Object>
-    player_supplier_t make_player_supplier(const fixed_duration_translation<Object>& info)
+    player_supplier_t make_player_supplier(const fixed_duration_translation<Object>& track)
     {
-        using track_t = Magnum::Animation::Track<Magnum::Float, Magnum::Vector2>;
-        return [info, track = track_t{}](player_t& player) mutable
+        using track_impl_t = Magnum::Animation::Track<Magnum::Float, Magnum::Vector2>;
+        return [track, track_impl = track_impl_t{}](player_t& player) mutable
         {
-            const auto& current_position = info.pobj->transformation().translation();
+            const auto& current_position = track.pobj->transformation().translation();
 
-            if(current_position == info.finish_position)
+            if(current_position == track.finish_position)
             {
                 return;
             }
 
-            track = track_t
+            track_impl = track_impl_t
             {
                 {
                     {0.0f, current_position},
-                    {info.duration_s, info.finish_position}
+                    {track.duration_s, track.finish_position}
                 },
                 Magnum::Math::lerp,
                 Magnum::Animation::Extrapolation::Constant
@@ -100,14 +100,14 @@ namespace tracks
 
             player.addWithCallback
             (
-                track,
+                track_impl,
                 [](Magnum::Float, const Magnum::Vector2& translation, Object& obj)
                 {
                     const auto current_translation = obj.transformation().translation();
                     const auto translation_delta = translation - current_translation;
                     obj.translate(translation_delta);
                 },
-                *info.pobj
+                *track.pobj
             );
         };
     }
@@ -123,30 +123,30 @@ namespace tracks
     };
 
     template<class Object>
-    player_supplier_t make_player_supplier(const fixed_speed_translation<Object>& info)
+    player_supplier_t make_player_supplier(const fixed_speed_translation<Object>& track)
     {
-        using track_t = Magnum::Animation::Track<Magnum::Float, Magnum::Vector2>;
-        return [info, track = track_t{}](player_t& player) mutable
+        using track_impl_t = Magnum::Animation::Track<Magnum::Float, Magnum::Vector2>;
+        return [track, track_impl = track_impl_t{}](player_t& player) mutable
         {
-            const auto& current_position = info.pobj->transformation().translation();
+            const auto& current_position = track.pobj->transformation().translation();
 
-            if(current_position == info.finish_position)
+            if(current_position == track.finish_position)
             {
                 return;
             }
 
             const auto x1 = current_position.x();
             const auto y1 = current_position.y();
-            const auto x2 = info.finish_position.x();
-            const auto y2 = info.finish_position.y();
+            const auto x2 = track.finish_position.x();
+            const auto y2 = track.finish_position.y();
             const auto distance = std::sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
-            const auto time = distance / info.speed;
+            const auto time = distance / track.speed;
 
-            track = track_t
+            track_impl = track_impl_t
             {
                 {
                     {0.0f, current_position},
-                    {time, info.finish_position}
+                    {time, track.finish_position}
                 },
                 Magnum::Math::lerp,
                 Magnum::Animation::Extrapolation::Constant
@@ -154,14 +154,14 @@ namespace tracks
 
             player.addWithCallback
             (
-                track,
+                track_impl,
                 [](Magnum::Float, const Magnum::Vector2& translation, Object& obj)
                 {
                     const auto current_translation = obj.transformation().translation();
                     const auto translation_delta = translation - current_translation;
                     obj.translate(translation_delta);
                 },
-                *info.pobj
+                *track.pobj
             );
         };
     }
@@ -177,23 +177,23 @@ namespace tracks
     };
 
     template<class Object>
-    player_supplier_t make_player_supplier(const alpha_transition<Object>& info)
+    player_supplier_t make_player_supplier(const alpha_transition<Object>& track)
     {
-        using track_t = Magnum::Animation::Track<Magnum::Float, float>;
-        return [info, track = track_t{}](player_t& player) mutable
+        using track_impl_t = Magnum::Animation::Track<Magnum::Float, float>;
+        return [track, track_impl = track_impl_t{}](player_t& player) mutable
         {
-            const auto current_alpha = info.pobj->get_alpha();
+            const auto current_alpha = track.pobj->get_alpha();
 
-            if(current_alpha == info.finish_alpha)
+            if(current_alpha == track.finish_alpha)
             {
                 return;
             }
 
-            track = track_t
+            track_impl = track_impl_t
             {
                 {
                     {0.0f, current_alpha},
-                    {info.duration_s, info.finish_alpha}
+                    {track.duration_s, track.finish_alpha}
                 },
                 Magnum::Math::lerp,
                 Magnum::Animation::Extrapolation::Constant
@@ -201,12 +201,12 @@ namespace tracks
 
             player.addWithCallback
             (
-                track,
+                track_impl,
                 [](Magnum::Float, const float& alpha, Object& obj)
                 {
                     obj.set_alpha(alpha);
                 },
-                *info.pobj
+                *track.pobj
             );
         };
     }
@@ -221,15 +221,15 @@ namespace tracks
     };
 
     template<class Object>
-    player_supplier_t make_player_supplier(const immediate_alpha_transition<Object>& info)
+    player_supplier_t make_player_supplier(const immediate_alpha_transition<Object>& track)
     {
-        using track_t = Magnum::Animation::Track<Magnum::Float, float>;
-        return [info, track = track_t{}](player_t& player) mutable
+        using track_impl_t = Magnum::Animation::Track<Magnum::Float, float>;
+        return [track, track_impl = track_impl_t{}](player_t& player) mutable
         {
-            track = track_t
+            track_impl = track_impl_t
             {
                 {
-                    {0.0f, info.finish_alpha},
+                    {0.0f, track.finish_alpha},
                 },
                 Magnum::Math::lerp,
                 Magnum::Animation::Extrapolation::Constant
@@ -237,12 +237,12 @@ namespace tracks
 
             player.addWithCallback
             (
-                track,
+                track_impl,
                 [](Magnum::Float, const float& alpha, Object& obj)
                 {
                     obj.set_alpha(alpha);
                 },
-                *info.pobj
+                *track.pobj
             );
         };
     }
@@ -251,10 +251,10 @@ namespace tracks
 class animation
 {
     public:
-        template<class Descriptor>
-        void add(const Descriptor& info)
+        template<class Track>
+        void add(const Track& track)
         {
-            tracks_.push_back(make_player_supplier(info));
+            player_suppliers_.push_back(make_player_supplier(track));
         }
 
         void advance(const libutil::time_point& now)
@@ -262,7 +262,7 @@ class animation
             if(!started_)
             {
                 //Supply player with tracks
-                for(auto& player_supplier: tracks_)
+                for(auto& player_supplier: player_suppliers_)
                 {
                     player_supplier(player_);
                 }
@@ -281,7 +281,7 @@ class animation
         }
 
     private:
-        std::vector<player_supplier_t> tracks_;
+        std::vector<player_supplier_t> player_suppliers_;
         player_t player_;
         bool started_ = false;
 };
