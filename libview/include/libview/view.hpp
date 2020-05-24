@@ -36,8 +36,14 @@ class view
         using mouse_event      = application::MouseEvent;
         using mouse_move_event = application::MouseMoveEvent;
 
+        struct configuration
+        {
+            bool show_fps_counter = false;
+            bool show_debug_grid = false;
+        };
+
     public:
-        view(bool show_debug_grid);
+        view(const configuration& conf);
 
         ~view();
 

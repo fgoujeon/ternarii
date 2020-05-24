@@ -37,6 +37,7 @@ namespace
     {
         bool show_debug_grid = false;
         bool enable_log = false;
+        bool show_fps_counter = false;
     };
 
     configuration parse_command_line(const int argc, char** const argv)
@@ -44,12 +45,14 @@ namespace
         Corrade::Utility::Arguments args;
         args.addBooleanOption("debug-grid").setHelp("debug-grid", "show debug grid");
         args.addBooleanOption("log").setHelp("log", "enable log");
+        args.addBooleanOption("fps").setHelp("log", "show FPS counter");
         args.parse(argc, argv);
 
         return configuration
         {
             .show_debug_grid = args.isSet("debug-grid"),
-            .enable_log = args.isSet("log")
+            .enable_log = args.isSet("log"),
+            .show_fps_counter = args.isSet("fps")
         };
     }
 }
@@ -65,7 +68,14 @@ class app: public Magnum::Platform::Sdl2Application
             },
             conf_(parse_command_line(args.argc, args.argv)),
             database_([this](const libdb::event& event){handle_database_event(event);}),
-            view_(conf_.show_debug_grid),
+            view_
+            (
+                libview::view::configuration
+                {
+                    .show_fps_counter = conf_.show_fps_counter,
+                    .show_debug_grid = conf_.show_debug_grid
+                }
+            ),
             fsm_(database_, view_)
         {
             if(conf_.enable_log)

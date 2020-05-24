@@ -18,6 +18,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 #include <libview/view.hpp>
+#include "objects/label.hpp"
 #include "objects/debug_grid.hpp"
 #include "colors.hpp"
 #include "common.hpp"
@@ -34,7 +35,8 @@ namespace libview
 
 struct view::impl final
 {
-    impl(const bool show_debug_grid):
+    impl(const configuration& conf):
+        conf_(conf),
         camera_object(&scene),
         camera(camera_object)
     {
@@ -48,7 +50,23 @@ struct view::impl final
         Magnum::GL::Renderer::setBlendFunction(Magnum::GL::Renderer::BlendFunction::SourceAlpha, Magnum::GL::Renderer::BlendFunction::OneMinusSourceAlpha);
         Magnum::GL::Renderer::setBlendEquation(Magnum::GL::Renderer::BlendEquation::Add, Magnum::GL::Renderer::BlendEquation::Add);
 
-        if(show_debug_grid)
+        if(conf.show_fps_counter)
+        {
+            pfps_counter = std::make_unique<objects::label>
+            (
+                camera_object,
+                feature_groups.drawables,
+                objects::label::style
+                {
+                    .alignment = Magnum::Text::Alignment::MiddleLeft,
+                    .font_size = 0.3f,
+                    .color = colors::white
+                }
+            );
+            pfps_counter->translate({-4.0f, -7.0f});
+        }
+
+        if(conf.show_debug_grid)
         {
             pdebug_grid = std::make_unique<objects::debug_grid>(camera_object, feature_groups.drawables);
         }
@@ -62,6 +80,25 @@ struct view::impl final
         for(std::size_t i = 0; i < feature_groups.animables.size(); ++i)
         {
             feature_groups.animables[i].advance(now);
+        }
+
+        //Update FPS counter
+        if(conf_.show_fps_counter)
+        {
+            const auto measure_duration_s = std::chrono::duration<double>{now - fps_measure_start_time}.count();
+            if(measure_duration_s > 0.5)
+            {
+                const auto fps = static_cast<int>(std::round(fps_measure_count / measure_duration_s));
+                pfps_counter->set_text(std::to_string(fps).c_str());
+
+                //reset
+                fps_measure_start_time = now;
+                fps_measure_count = 0;
+            }
+            else
+            {
+                ++fps_measure_count;
+            }
         }
 
         camera.draw(feature_groups.drawables);
@@ -161,6 +198,8 @@ struct view::impl final
         }
     }
 
+    configuration conf_;
+
     Scene2D scene;
     Object2D camera_object;
     SceneGraph::Camera2D camera;
@@ -168,10 +207,14 @@ struct view::impl final
     feature_group_set feature_groups;
 
     std::unique_ptr<objects::debug_grid> pdebug_grid;
+    std::unique_ptr<objects::label> pfps_counter;
+
+    libutil::time_point fps_measure_start_time = libutil::clock::now();
+    int fps_measure_count = 0;
 };
 
-view::view(const bool show_debug_grid):
-    pimpl_(std::make_unique<impl>(show_debug_grid))
+view::view(const configuration& conf):
+    pimpl_(std::make_unique<impl>(conf))
 {
 }
 
