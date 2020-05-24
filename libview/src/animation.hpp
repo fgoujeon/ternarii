@@ -20,185 +20,274 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #ifndef LIBVIEW_ANIMATION_HPP
 #define LIBVIEW_ANIMATION_HPP
 
+#include <libutil/unique_function.hpp>
 #include <libutil/time.hpp>
 #include <Magnum/Animation/Player.h>
 #include <chrono>
 #include <list>
+#include <memory>
 
 namespace libview
 {
 
-class animation
+using player_t = Magnum::Animation::Player<std::chrono::nanoseconds, Magnum::Float>;
+using player_supplier_t = libutil::unique_function<void(player_t&)>;
+
+namespace tracks
 {
-    public:
-        void add_pause(const float duration_s)
+    struct pause
+    {
+        float duration_s = 0;
+    };
+
+    inline
+    player_supplier_t make_player_supplier(const pause& track)
+    {
+        using track_impl_t = Magnum::Animation::Track<Magnum::Float, int>;
+        return [track, track_impl = track_impl_t{}](player_t& player) mutable
         {
-            auto track = Magnum::Animation::Track<Magnum::Float, int>
-            {
+            track_impl = track_impl_t
+            (
                 {
                     {0.0f, 0},
-                    {duration_s, 0}
+                    {track.duration_s, 0}
                 },
                 Magnum::Math::lerp,
                 Magnum::Animation::Extrapolation::Constant
-            };
+            );
 
-            pauses_.push_back(std::move(track));
-
-            player_.addWithCallback
+            player.addWithCallback
             (
-                pauses_.back(),
+                track_impl,
                 [](Magnum::Float, const int&, void*){},
                 nullptr
             );
-        }
+        };
+    }
 
-        template<class Object>
-        void add_fixed_duration_translation
-        (
-            const Magnum::Vector2& start_position,
-            const Magnum::Vector2& finish_position,
-            const float duration_s,
-            const std::shared_ptr<Object>& pobj
-        )
+
+
+    template<class Object>
+    struct fixed_duration_translation
+    {
+        std::shared_ptr<Object> pobj;
+        Magnum::Vector2 finish_position;
+        float duration_s = 0; //in seconds
+    };
+
+    template<class Object>
+    player_supplier_t make_player_supplier(const fixed_duration_translation<Object>& track)
+    {
+        using track_impl_t = Magnum::Animation::Track<Magnum::Float, Magnum::Vector2>;
+        return [track, track_impl = track_impl_t{}](player_t& player) mutable
         {
-            auto track = Magnum::Animation::Track<Magnum::Float, Magnum::Vector2>
+            const auto& current_position = track.pobj->transformation().translation();
+
+            if(current_position == track.finish_position)
+            {
+                return;
+            }
+
+            track_impl = track_impl_t
             {
                 {
-                    {0.0f, start_position},
-                    {duration_s, finish_position}
+                    {0.0f, current_position},
+                    {track.duration_s, track.finish_position}
                 },
                 Magnum::Math::lerp,
                 Magnum::Animation::Extrapolation::Constant
             };
 
-            translations_.push_back(std::move(track));
-            objects_.push_back(pobj);
-
-            player_.addWithCallback
+            player.addWithCallback
             (
-                translations_.back(),
+                track_impl,
                 [](Magnum::Float, const Magnum::Vector2& translation, Object& obj)
                 {
                     const auto current_translation = obj.transformation().translation();
                     const auto translation_delta = translation - current_translation;
                     obj.translate(translation_delta);
                 },
-                *pobj
+                *track.pobj
             );
-        }
+        };
+    }
 
-        template<class Object>
-        void add_fixed_speed_translation
-        (
-            const Magnum::Vector2& start_position,
-            const Magnum::Vector2& finish_position,
-            const float speed, //in distance unit per second
-            const std::shared_ptr<Object>& pobj
-        )
+
+
+    template<class Object>
+    struct fixed_speed_translation
+    {
+        std::shared_ptr<Object> pobj;
+        Magnum::Vector2 finish_position;
+        float speed = 0; //in distance unit per second
+    };
+
+    template<class Object>
+    player_supplier_t make_player_supplier(const fixed_speed_translation<Object>& track)
+    {
+        using track_impl_t = Magnum::Animation::Track<Magnum::Float, Magnum::Vector2>;
+        return [track, track_impl = track_impl_t{}](player_t& player) mutable
         {
-            const auto x1 = start_position.x();
-            const auto y1 = start_position.y();
-            const auto x2 = finish_position.x();
-            const auto y2 = finish_position.y();
+            const auto& current_position = track.pobj->transformation().translation();
+
+            if(current_position == track.finish_position)
+            {
+                return;
+            }
+
+            const auto x1 = current_position.x();
+            const auto y1 = current_position.y();
+            const auto x2 = track.finish_position.x();
+            const auto y2 = track.finish_position.y();
             const auto distance = std::sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
-            const auto time = distance / speed;
+            const auto time = distance / track.speed;
 
-            auto track = Magnum::Animation::Track<Magnum::Float, Magnum::Vector2>
+            track_impl = track_impl_t
             {
                 {
-                    {0.0f, start_position},
-                    {time, finish_position}
+                    {0.0f, current_position},
+                    {time, track.finish_position}
                 },
                 Magnum::Math::lerp,
                 Magnum::Animation::Extrapolation::Constant
             };
 
-            translations_.push_back(std::move(track));
-            objects_.push_back(pobj);
-
-            player_.addWithCallback
+            player.addWithCallback
             (
-                translations_.back(),
+                track_impl,
                 [](Magnum::Float, const Magnum::Vector2& translation, Object& obj)
                 {
                     const auto current_translation = obj.transformation().translation();
                     const auto translation_delta = translation - current_translation;
                     obj.translate(translation_delta);
                 },
-                *pobj
+                *track.pobj
             );
-        }
+        };
+    }
 
-        template<class Object>
-        void add_alpha_transition
-        (
-            const float start_alpha,
-            const float finish_alpha,
-            const float duration_s, //in seconds
-            const std::shared_ptr<Object>& pobj
-        )
+
+
+    template<class Object>
+    struct alpha_transition
+    {
+        std::shared_ptr<Object> pobj;
+        float finish_alpha = 0;
+        float duration_s = 0; //in seconds
+    };
+
+    template<class Object>
+    player_supplier_t make_player_supplier(const alpha_transition<Object>& track)
+    {
+        using track_impl_t = Magnum::Animation::Track<Magnum::Float, float>;
+        return [track, track_impl = track_impl_t{}](player_t& player) mutable
         {
-            auto track = Magnum::Animation::Track<Magnum::Float, float>
+            const auto current_alpha = track.pobj->get_alpha();
+
+            if(current_alpha == track.finish_alpha)
+            {
+                return;
+            }
+
+            track_impl = track_impl_t
             {
                 {
-                    {0.0f, start_alpha},
-                    {duration_s, finish_alpha}
+                    {0.0f, current_alpha},
+                    {track.duration_s, track.finish_alpha}
                 },
                 Magnum::Math::lerp,
                 Magnum::Animation::Extrapolation::Constant
             };
 
-            alpha_transitions_.push_back(std::move(track));
-            objects_.push_back(pobj);
-
-            player_.addWithCallback
+            player.addWithCallback
             (
-                alpha_transitions_.back(),
+                track_impl,
                 [](Magnum::Float, const float& alpha, Object& obj)
                 {
                     obj.set_alpha(alpha);
                 },
-                *pobj
+                *track.pobj
             );
-        }
+        };
+    }
 
-        //Immediate
-        template<class Object>
-        void add_alpha_transition
-        (
-            const float finish_alpha,
-            const std::shared_ptr<Object>& pobj
-        )
+
+
+    template<class Object>
+    struct immediate_alpha_transition
+    {
+        std::shared_ptr<Object> pobj;
+        float finish_alpha = 0;
+    };
+
+    template<class Object>
+    player_supplier_t make_player_supplier(const immediate_alpha_transition<Object>& track)
+    {
+        using track_impl_t = Magnum::Animation::Track<Magnum::Float, float>;
+        return [track, track_impl = track_impl_t{}](player_t& player) mutable
         {
-            auto track = Magnum::Animation::Track<Magnum::Float, float>
+            track_impl = track_impl_t
             {
                 {
-                    {0.0f, finish_alpha}
+                    {0.0f, track.finish_alpha},
                 },
                 Magnum::Math::lerp,
                 Magnum::Animation::Extrapolation::Constant
             };
 
-            alpha_transitions_.push_back(std::move(track));
-            objects_.push_back(pobj);
-
-            player_.addWithCallback
+            player.addWithCallback
             (
-                alpha_transitions_.back(),
+                track_impl,
                 [](Magnum::Float, const float& alpha, Object& obj)
                 {
                     obj.set_alpha(alpha);
                 },
-                *pobj
+                *track.pobj
             );
+        };
+    }
+}
+
+//An animation is made of several tracks. Tracks are played concurrently.
+class animation
+{
+    public:
+        animation() = default;
+
+        animation(const animation&) = delete;
+
+        animation(animation&&) = default;
+
+        /*
+        Create a one-track animation.
+        This constructor is implicit so that one-track animations can be
+        pushed into the animator like so:
+            some_animator.push(some_track{...});
+        */
+        template<class Track>
+        animation(const Track& track)
+        {
+            add(track);
+        }
+
+        template<class Track>
+        void add(const Track& track)
+        {
+            player_suppliers_.push_back(make_player_supplier(track));
         }
 
         void advance(const libutil::time_point& now)
         {
             if(!started_)
             {
+                //Supply player with tracks
+                for(auto& player_supplier: player_suppliers_)
+                {
+                    player_supplier(player_);
+                }
+
                 player_.play(now.time_since_epoch());
+
                 started_ = true;
             }
 
@@ -211,18 +300,54 @@ class animation
         }
 
     private:
-        Magnum::Animation::Player<std::chrono::nanoseconds, Magnum::Float> player_;
-
-        //for storage only
-        std::list<Magnum::Animation::Track<Magnum::Float, int>> pauses_;
-        std::list<Magnum::Animation::Track<Magnum::Float, Magnum::Vector2>> translations_;
-        std::list<Magnum::Animation::Track<Magnum::Float, float>> alpha_transitions_;
-        std::vector<std::shared_ptr<Object2D>> objects_;
-
+        std::vector<player_supplier_t> player_suppliers_;
+        player_t player_;
         bool started_ = false;
 };
 
-using animation_list = std::list<animation>;
+//An animator manages a queue of animations. Pushed animations are played
+//sequentially.
+class animator
+{
+    public:
+        void push(animation&& anim)
+        {
+            return animations_.push_back(std::move(anim));
+        }
+
+        bool is_animating() const
+        {
+            return !animations_.empty();
+        }
+
+        void advance(const libutil::time_point& now)
+        {
+            auto keep_advancing = true;
+
+            while(!animations_.empty() && keep_advancing)
+            {
+                auto& anim = animations_.front();
+
+                if(!anim.is_done())
+                {
+                    anim.advance(now);
+                }
+
+                if(anim.is_done())
+                {
+                    animations_.pop_front();
+                    keep_advancing = true;
+                }
+                else
+                {
+                    keep_advancing = false;
+                }
+            }
+        }
+
+    private:
+        std::list<animation> animations_;
+};
 
 } //namespace
 

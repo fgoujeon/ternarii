@@ -34,6 +34,8 @@ class sdf_image_tile: public tile
     public:
         sdf_image_tile(Object2D& parent, features::drawable_group& drawables, const std::filesystem::path& image_path);
 
+        float get_alpha() const override;
+
         void set_alpha(const float alpha) override;
 
     private:
@@ -41,6 +43,7 @@ class sdf_image_tile: public tile
 
     private:
         features::drawable_group drawable_children_;
+        float alpha_ = 0;
         Magnum::Color3 square_color_;
         sdf_image square_;
         sdf_image image_;

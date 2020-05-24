@@ -79,7 +79,7 @@ class tile_grid: public Object2D
     private:
         features::drawable_group& drawables_;
 
-        animation_list animations_;
+        animator animator_;
 
         std::vector<std::unique_ptr<sdf_image>> board_corners_;
         input_tile_array next_input_tiles_ = {};

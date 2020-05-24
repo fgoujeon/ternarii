@@ -85,8 +85,14 @@ number_tile::number_tile(Object2D& parent, features::drawable_group& drawables, 
 {
 }
 
+float number_tile::get_alpha() const
+{
+    return alpha_;
+}
+
 void number_tile::set_alpha(const float alpha)
 {
+    alpha_ = alpha;
     square_.set_color({square_color_, alpha});
     label_.set_color({colors::white, alpha});
     label_.set_outline_color({colors::dark_gray, alpha});
