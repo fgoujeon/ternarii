@@ -54,12 +54,12 @@ namespace
 }
 
 number_tile::number_tile(Object2D& parent, features::drawable_group& drawables, const int value):
-    tile(parent, drawables),
+    tile(parent),
     square_color_(value_to_color(value)),
     square_
     (
         *this,
-        drawable_children_,
+        drawables,
         "/res/images/rounded_square.tga",
         sdf_image::style
         {
@@ -71,7 +71,7 @@ number_tile::number_tile(Object2D& parent, features::drawable_group& drawables, 
     label_
     (
         *this,
-        drawable_children_,
+        drawables,
         std::to_string(value).c_str(),
         static_label::style
         {
@@ -96,11 +96,6 @@ void number_tile::set_alpha(const float alpha)
     square_.set_color({square_color_, alpha});
     label_.set_color({colors::white, alpha});
     label_.set_outline_color({colors::dark_gray, alpha});
-}
-
-void number_tile::draw(const Magnum::Matrix3& /*transformation_matrix*/, SceneGraph::Camera2D& camera)
-{
-    camera.draw(drawable_children_);
 }
 
 } //namespace

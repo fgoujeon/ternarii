@@ -27,12 +27,12 @@ namespace libview::objects
 {
 
 sdf_image_tile::sdf_image_tile(Object2D& parent, features::drawable_group& drawables, const std::filesystem::path& image_path):
-    tile{parent, drawables},
+    tile{parent},
     square_color_(colors::light_gray),
     square_
     (
         *this,
-        drawable_children_,
+        drawables,
         "/res/images/rounded_square.tga",
         sdf_image::style
         {
@@ -44,7 +44,7 @@ sdf_image_tile::sdf_image_tile(Object2D& parent, features::drawable_group& drawa
     image_
     (
         *this,
-        drawable_children_,
+        drawables,
         image_path,
         sdf_image::style
         {
@@ -67,11 +67,6 @@ void sdf_image_tile::set_alpha(const float alpha)
     square_.set_color({square_color_, alpha});
     image_.set_color({colors::black, alpha});
     image_.set_outline_color({colors::black, alpha});
-}
-
-void sdf_image_tile::draw(const Magnum::Matrix3& /*transformation_matrix*/, SceneGraph::Camera2D& camera)
-{
-    camera.draw(drawable_children_);
 }
 
 } //namespace

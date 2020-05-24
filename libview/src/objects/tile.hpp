@@ -26,12 +26,11 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libview::objects
 {
 
-class tile: public Object2D, public features::drawable
+class tile: public Object2D
 {
     public:
-        tile(Object2D& parent, features::drawable_group& drawables):
-            Object2D{&parent},
-            features::drawable{*this, &drawables}
+        tile(Object2D& parent):
+            Object2D{&parent}
         {
         }
 

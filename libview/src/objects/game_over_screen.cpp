@@ -27,17 +27,17 @@ namespace libview::objects
 
 game_over_screen::game_over_screen
 (
-    Object2D& parent, features::drawable_group& drawables, features::clickable_group& clickables,
+    Object2D& parent,
+    features::drawable_group& drawables,
+    features::clickable_group& clickables,
     const libutil::void_function<>& new_game_button_press_callback
 ):
     Object2D{&parent},
-    features::drawable{*this, &drawables},
-    drawables_(drawables),
-    background_rectangle_(*this, drawable_children_, colors::light_gray),
+    background_rectangle_(*this, drawables, colors::light_gray),
     label_
     (
         *this,
-        drawable_children_,
+        drawables,
         "GAME OVER",
         static_label::style
         {
@@ -51,7 +51,7 @@ game_over_screen::game_over_screen
     new_game_button_
     (
         *this,
-        drawable_children_,
+        drawables,
         clickables,
         "NEW GAME",
         styles::white_label_button,
@@ -67,24 +67,6 @@ game_over_screen::game_over_screen
 
     new_game_button_.scale({1.8f, 1.8f});
     new_game_button_.translate({0.0f, -0.5f});
-}
-
-void game_over_screen::set_visible(const bool visible)
-{
-    visible_ = visible;
-    new_game_button_.set_enabled(visible);
-
-    //bring to foreground
-    drawables_.remove(*this);
-    drawables_.add(*this);
-}
-
-void game_over_screen::draw(const Magnum::Matrix3& /*transformation_matrix*/, SceneGraph::Camera2D& camera)
-{
-    if(visible_)
-    {
-        camera.draw(drawable_children_);
-    }
 }
 
 } //namespace

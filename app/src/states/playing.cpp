@@ -55,13 +55,11 @@ playing::playing(fsm& f):
         pscreen_->set_board_tiles(pgame_->get_board_tiles());
         mark_tiles_for_nullification();
         pscreen_->set_game_over_screen_visible(pgame_->is_game_over());
-        pscreen_->set_visible(true);
     }
     else
     {
         pgame_ = std::make_unique<libgame::game>();
 
-        pscreen_->set_visible(true);
         modify_game(&libgame::game::start);
     }
 }

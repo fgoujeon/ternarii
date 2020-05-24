@@ -39,10 +39,6 @@ class sdf_image_tile: public tile
         void set_alpha(const float alpha) override;
 
     private:
-        void draw(const Magnum::Matrix3& transformation_matrix, SceneGraph::Camera2D& camera) override;
-
-    private:
-        features::drawable_group drawable_children_;
         float alpha_ = 0;
         Magnum::Color3 square_color_;
         sdf_image square_;

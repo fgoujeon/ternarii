@@ -31,7 +31,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libview::screens
 {
 
-class game: public Object2D, public features::drawable, public features::animable, public features::key_event_handler
+class game: public Object2D, public features::animable, public features::key_event_handler
 {
     public:
         struct callback_set
@@ -50,8 +50,6 @@ class game: public Object2D, public features::drawable, public features::animabl
         );
 
         ~game();
-
-        void draw(const Magnum::Matrix3& /*transformation_matrix*/, SceneGraph::Camera2D& camera) override;
 
         void advance(const libutil::time_point& now) override;
 
@@ -81,8 +79,6 @@ class game: public Object2D, public features::drawable, public features::animabl
         void mark_tiles_for_nullification(const data_types::tile_coordinate_list& tile_coordinates);
 
         void set_board_tiles(const data_types::board_tile_array& tiles);
-
-        void set_visible(const bool visible);
 
         void set_game_over_screen_visible(const bool visible);
 

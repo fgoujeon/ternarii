@@ -37,8 +37,8 @@ namespace libview::screens
     MOVE##_button \
     ( \
         self, \
-        drawables, \
-        clickables, \
+        feature_groups.drawables, \
+        feature_groups.clickables, \
         IMAGE, \
         objects::sdf_image_button::callback_set \
         { \
@@ -54,19 +54,20 @@ struct game::impl
     impl
     (
         game& self,
-        features::clickable_group& clickables,
+        feature_group_set& feature_groups,
         const callback_set& callbacks
     ):
+        feature_groups(feature_groups),
         callbacks(callbacks),
-        background(self, drawables),
-        tile_grid(self, drawables),
-        score_display(self, drawables),
-        hi_score_display(self, drawables),
+        background(self, feature_groups.drawables),
+        tile_grid(self, feature_groups.drawables),
+        score_display(self, feature_groups.drawables),
+        hi_score_display(self, feature_groups.drawables),
         exit_button
         (
             self,
-            drawables,
-            clickables,
+            feature_groups.drawables,
+            feature_groups.clickables,
             "/res/images/exit.tga",
             objects::sdf_image_button::callback_set
             {
@@ -76,8 +77,7 @@ struct game::impl
         MOVE_BUTTON_INITIALIZER("/res/images/move_button.tga",   left_shift),
         MOVE_BUTTON_INITIALIZER("/res/images/move_button.tga",   right_shift),
         MOVE_BUTTON_INITIALIZER("/res/images/move_button.tga",   drop),
-        MOVE_BUTTON_INITIALIZER("/res/images/rotate_button.tga", clockwise_rotation),
-        game_over_screen(self, drawables, clickables, [this]{this->callbacks.handle_clear_request();})
+        MOVE_BUTTON_INITIALIZER("/res/images/rotate_button.tga", clockwise_rotation)
     {
         const auto move_button_scaling = 0.85f;
 
@@ -110,8 +110,6 @@ struct game::impl
 
         clockwise_rotation_button.scale({move_button_scaling, move_button_scaling});
         clockwise_rotation_button.translate({3.25f, -5.75f});
-
-        game_over_screen.translate({0.0f, 4.5f});
     }
 
     void send_move_request(const data_types::move move)
@@ -128,11 +126,9 @@ struct game::impl
         }
     }
 
+    feature_group_set& feature_groups;
+
     callback_set callbacks;
-
-    features::drawable_group drawables;
-
-    bool visible = false;
 
     objects::background background;
     objects::tile_grid tile_grid;
@@ -143,7 +139,8 @@ struct game::impl
     objects::sdf_image_button right_shift_button;
     objects::sdf_image_button drop_button;
     objects::sdf_image_button clockwise_rotation_button;
-    objects::game_over_screen game_over_screen;
+
+    std::unique_ptr<objects::game_over_screen> pgame_over_screen;
 };
 
 game::game
@@ -153,19 +150,13 @@ game::game
     const callback_set& callbacks
 ):
     Object2D{&parent},
-    features::drawable{*this, &feature_groups.drawables},
     features::animable{*this, &feature_groups.animables},
     features::key_event_handler{*this, &feature_groups.key_event_handlers},
-    pimpl_(std::make_unique<impl>(*this, feature_groups.clickables, callbacks))
+    pimpl_(std::make_unique<impl>(*this, feature_groups, callbacks))
 {
 }
 
 game::~game() = default;
-
-void game::draw(const Magnum::Matrix3& /*transformation_matrix*/, SceneGraph::Camera2D& camera)
-{
-    camera.draw(pimpl_->drawables);
-}
 
 void game::advance(const libutil::time_point& now)
 {
@@ -198,7 +189,7 @@ void game::handle_key_press(key_event& event)
 void game::clear()
 {
     pimpl_->tile_grid.clear();
-    pimpl_->game_over_screen.set_visible(false);
+    pimpl_->pgame_over_screen.reset();
 }
 
 void game::set_score(const int value)
@@ -260,14 +251,23 @@ void game::set_board_tiles(const data_types::board_tile_array& tiles)
     pimpl_->tile_grid.set_board_tiles(tiles);
 }
 
-void game::set_visible(const bool visible)
-{
-    pimpl_->visible = visible;
-}
-
 void game::set_game_over_screen_visible(const bool visible)
 {
-    pimpl_->game_over_screen.set_visible(visible);
+    if(visible)
+    {
+        pimpl_->pgame_over_screen = std::make_unique<objects::game_over_screen>
+        (
+            *this,
+            pimpl_->feature_groups.drawables,
+            pimpl_->feature_groups.clickables,
+            [this]{pimpl_->callbacks.handle_clear_request();}
+        );
+        pimpl_->pgame_over_screen->translate({0.0f, 4.5f});
+    }
+    else
+    {
+        pimpl_->pgame_over_screen.reset();
+    }
 }
 
 } //namespace

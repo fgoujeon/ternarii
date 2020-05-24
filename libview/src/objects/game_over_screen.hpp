@@ -29,7 +29,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libview::objects
 {
 
-class game_over_screen: public Object2D, public features::drawable
+class game_over_screen: public Object2D
 {
     public:
         game_over_screen
@@ -40,18 +40,10 @@ class game_over_screen: public Object2D, public features::drawable
             const libutil::void_function<>& new_game_button_press_callback
         );
 
-        void set_visible(const bool visible);
-
     private:
-        void draw(const Magnum::Matrix3& transformation_matrix, SceneGraph::Camera2D& camera) override;
-
-    private:
-        features::drawable_group& drawables_;
-        features::drawable_group drawable_children_;
         square background_rectangle_;
         static_label label_;
         objects::label_button new_game_button_;
-        bool visible_ = false;
 };
 
 } //namespace
