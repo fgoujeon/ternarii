@@ -24,7 +24,7 @@ namespace libview::styles
 
 objects::label_button::style white_label_button
 {
-    .label = objects::static_label::style
+    .label = objects::label::style
     {
         .alignment = Magnum::Text::Alignment::MiddleCenter,
         .font_size = 0.2f,

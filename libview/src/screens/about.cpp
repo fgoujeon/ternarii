@@ -78,37 +78,37 @@ struct about::impl
         (
             self,
             feature_groups.drawables,
-            "ABOUT",
-            objects::static_label::style
+            objects::label::style
             {
                 .alignment = Magnum::Text::Alignment::MiddleCenter,
                 .font_size = 0.6f,
                 .color = colors::light_gray,
                 .outline_color = colors::dark_gray,
                 .outline_range = {0.47f, 0.40f}
-            }
+            },
+            "ABOUT"
         ),
         body_label
         (
             self,
             feature_groups.drawables,
-            body_label_str,
-            objects::static_label::style
+            objects::label::style
             {
                 .alignment = Magnum::Text::Alignment::MiddleCenter,
                 .font_size = 0.3f,
                 .color = colors::light_gray,
                 .outline_color = colors::dark_gray,
                 .outline_range = {0.47f, 0.40f}
-            }
+            },
+            body_label_str
         ),
         back_button
         (
             self,
             feature_groups.drawables,
             feature_groups.clickables,
-            "BACK",
             styles::white_label_button,
+            "BACK",
             objects::label_button::callback_set
             {
                 .mouse_release_callback = [this]{this->callbacks.back_request();}
@@ -123,8 +123,8 @@ struct about::impl
 
     callback_set callbacks;
 
-    objects::static_label title_label;
-    objects::static_label body_label;
+    objects::label title_label;
+    objects::label body_label;
     objects::label_button back_button;
 };
 

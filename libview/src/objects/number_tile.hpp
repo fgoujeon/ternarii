@@ -21,7 +21,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #define LIBVIEW_OBJECTS_NUMBER_TILE_HPP
 
 #include "sdf_image.hpp"
-#include "static_label.hpp"
+#include "label.hpp"
 #include "tile.hpp"
 #include "../common.hpp"
 #include <Magnum/Math/Color.h>
@@ -43,7 +43,7 @@ class number_tile: public tile
         float alpha_ = 0;
         Magnum::Color3 square_color_;
         sdf_image square_;
-        static_label label_;
+        label label_;
 };
 
 } //namespace

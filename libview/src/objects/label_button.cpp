@@ -30,8 +30,8 @@ label_button::label_button
     Object2D& parent,
     features::drawable_group& drawables,
     features::clickable_group& clickables,
-    const char* const text,
     const style& stl,
+    const char* const text,
     const callback_set& callbacks
 ):
     Object2D{&parent},
@@ -54,8 +54,8 @@ label_button::label_button
     (
         *this,
         drawables,
-        text,
-        stl.label
+        stl.label,
+        text
     )
 {
     background_rectangle_.set_color(style_.color);

@@ -22,7 +22,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "square.hpp"
 #include "label_button.hpp"
-#include "static_label.hpp"
+#include "label.hpp"
 #include "../common.hpp"
 #include <libutil/void_function.hpp>
 
@@ -42,7 +42,7 @@ class game_over_screen: public Object2D
 
     private:
         square background_rectangle_;
-        static_label label_;
+        label label_;
         objects::label_button new_game_button_;
 };
 

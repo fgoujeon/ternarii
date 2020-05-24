@@ -38,23 +38,23 @@ game_over_screen::game_over_screen
     (
         *this,
         drawables,
-        "GAME OVER",
-        static_label::style
+        label::style
         {
             .alignment = Magnum::Text::Alignment::MiddleCenter,
             .font_size = 1.0f,
             .color = colors::dark_gray,
             .outline_color = colors::dark_gray,
             .outline_range = {0.48f, 0.5f}
-        }
+        },
+        "GAME OVER"
     ),
     new_game_button_
     (
         *this,
         drawables,
         clickables,
-        "NEW GAME",
         styles::white_label_button,
+        "NEW GAME",
         objects::label_button::callback_set
         {
             .mouse_release_callback = [new_game_button_press_callback]{new_game_button_press_callback();}

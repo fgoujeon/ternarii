@@ -20,7 +20,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #ifndef LIBVIEW_OBJECTS_LABEL_BUTTON_HPP
 #define LIBVIEW_OBJECTS_LABEL_BUTTON_HPP
 
-#include "static_label.hpp"
+#include "label.hpp"
 #include "sdf_image.hpp"
 #include "../common.hpp"
 #include <libutil/void_function.hpp>
@@ -39,7 +39,7 @@ class label_button: public Object2D, public features::clickable
 
         struct style
         {
-            static_label::style label;
+            label::style label;
             Magnum::Color4 color;
             Magnum::Color4 highlight_color;
             Magnum::Color4 outline_color;
@@ -51,8 +51,8 @@ class label_button: public Object2D, public features::clickable
             Object2D& parent,
             features::drawable_group& drawables,
             features::clickable_group& clickables,
-            const char* const text,
             const style& stl,
+            const char* const text,
             const callback_set& callbacks
         );
 
@@ -74,7 +74,7 @@ class label_button: public Object2D, public features::clickable
         style style_;
         const callback_set callbacks_;
         sdf_image background_rectangle_;
-        static_label label_;
+        label label_;
         bool enabled_ = true;
 };
 

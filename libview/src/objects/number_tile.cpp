@@ -72,15 +72,15 @@ number_tile::number_tile(Object2D& parent, features::drawable_group& drawables, 
     (
         *this,
         drawables,
-        std::to_string(value).c_str(),
-        static_label::style
+        label::style
         {
             .alignment = Magnum::Text::Alignment::MiddleCenter,
             .font_size = 1.2f,
             .color = Magnum::Color4{colors::white, 0},
             .outline_color = Magnum::Color4{colors::dark_gray, 0},
             .outline_range = {0.45f, 0.40f}
-        }
+        },
+        std::to_string(value).c_str()
     )
 {
 }

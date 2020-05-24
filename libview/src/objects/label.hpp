@@ -17,18 +17,19 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef LIBVIEW_OBJECTS_STATIC_LABEL_HPP
-#define LIBVIEW_OBJECTS_STATIC_LABEL_HPP
+#ifndef LIBVIEW_OBJECTS_LABEL_HPP
+#define LIBVIEW_OBJECTS_LABEL_HPP
 
 #include "../common.hpp"
 #include <Magnum/Text/Renderer.h>
 #include <Magnum/Math/Color.h>
 #include <Magnum/Magnum.h>
+#include <string_view>
 
 namespace libview::objects
 {
 
-class static_label: public Object2D, public features::drawable
+class label: public Object2D, public features::drawable
 {
     public:
         struct style
@@ -41,13 +42,15 @@ class static_label: public Object2D, public features::drawable
         };
 
     public:
-        static_label
+        label
         (
             Object2D& parent,
             features::drawable_group& drawables,
-            const char* const value,
-            const style& style
+            const style& style,
+            const std::string_view& value = {}
         );
+
+        void set_text(const std::string_view& value);
 
         void set_color(const Magnum::Color4& color)
         {
@@ -65,6 +68,7 @@ class static_label: public Object2D, public features::drawable
     private:
         Magnum::Text::Renderer2D renderer_;
         style style_;
+        bool visible_ = true;
 };
 
 } //namespace

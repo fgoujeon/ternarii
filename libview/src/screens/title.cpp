@@ -68,8 +68,8 @@ struct title::impl
             self,
             feature_groups.drawables,
             feature_groups.clickables,
-            "PLAY",
             styles::white_label_button,
+            "PLAY",
             objects::label_button::callback_set
             {
                 .mouse_release_callback = [this]{this->callbacks.play_request();}
@@ -80,8 +80,8 @@ struct title::impl
             self,
             feature_groups.drawables,
             feature_groups.clickables,
-            "ABOUT",
             styles::white_label_button,
+            "ABOUT",
             objects::label_button::callback_set
             {
                 .mouse_release_callback = [this]{this->callbacks.about_request();}
