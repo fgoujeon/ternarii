@@ -39,9 +39,9 @@ R"^(Ternarii is largely inspired by NaturalChimie,
 a fantastic, soon-to-be discontinued game by Motion Twin.
 
 Ternarii is powered by:
-- Emscripten, by Emscripten contributors;
 - Magnum/Corrade, by Vladimír Vondruš and contributors;
-- JSON for Modern C++, by Niels Lohmann.
+- JSON for Modern C++, by Niels Lohmann;
+- Emscripten, by Emscripten contributors.
 
 Ternarii is free software: you can redistribute it and/or
 modify it under the terms of the GNU General Public
