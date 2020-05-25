@@ -335,7 +335,8 @@ void tile_grid::drop_board_tiles(const data_types::board_tile_drop_list& drops)
 
 void tile_grid::nullify_tiles(const data_types::tile_coordinate_list& nullified_tile_coordinates)
 {
-    auto anim = animation{};
+    auto anim0 = animation{};
+    auto anim1 = animation{};
 
     for(const auto& coord: nullified_tile_coordinates)
     {
@@ -346,12 +347,14 @@ void tile_grid::nullify_tiles(const data_types::tile_coordinate_list& nullified_
             continue;
         }
 
-        anim.add(tracks::alpha_transition<tile>{ptile, 0, 0.4});
+        anim0.add(tracks::immediate_alpha_transition<tile>{ptile, 1});
+        anim1.add(tracks::alpha_transition<tile>{ptile, 0, 0.4});
 
         ptile = nullptr;
     }
 
-    animator_.push(std::move(anim));
+    animator_.push(std::move(anim0));
+    animator_.push(std::move(anim1));
     animator_.push(tracks::pause{0.05});
 }
 
