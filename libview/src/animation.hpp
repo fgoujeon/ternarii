@@ -67,16 +67,15 @@ namespace tracks
 
 
 
-    template<class Object>
     struct fixed_duration_translation
     {
-        std::shared_ptr<Object> pobj;
+        std::shared_ptr<Object2D> pobj;
         Magnum::Vector2 finish_position;
         float duration_s = 0; //in seconds
     };
 
-    template<class Object>
-    player_supplier_t make_player_supplier(const fixed_duration_translation<Object>& track)
+    inline
+    player_supplier_t make_player_supplier(const fixed_duration_translation& track)
     {
         using track_impl_t = Magnum::Animation::Track<Magnum::Float, Magnum::Vector2>;
         return [track, track_impl = track_impl_t{}](player_t& player) mutable
@@ -101,7 +100,7 @@ namespace tracks
             player.addWithCallback
             (
                 track_impl,
-                [](Magnum::Float, const Magnum::Vector2& translation, Object& obj)
+                [](Magnum::Float, const Magnum::Vector2& translation, Object2D& obj)
                 {
                     const auto current_translation = obj.transformation().translation();
                     const auto translation_delta = translation - current_translation;
@@ -114,16 +113,15 @@ namespace tracks
 
 
 
-    template<class Object>
     struct fixed_speed_translation
     {
-        std::shared_ptr<Object> pobj;
+        std::shared_ptr<Object2D> pobj;
         Magnum::Vector2 finish_position;
         float speed = 0; //in distance unit per second
     };
 
-    template<class Object>
-    player_supplier_t make_player_supplier(const fixed_speed_translation<Object>& track)
+    inline
+    player_supplier_t make_player_supplier(const fixed_speed_translation& track)
     {
         using track_impl_t = Magnum::Animation::Track<Magnum::Float, Magnum::Vector2>;
         return [track, track_impl = track_impl_t{}](player_t& player) mutable
@@ -155,7 +153,7 @@ namespace tracks
             player.addWithCallback
             (
                 track_impl,
-                [](Magnum::Float, const Magnum::Vector2& translation, Object& obj)
+                [](Magnum::Float, const Magnum::Vector2& translation, Object2D& obj)
                 {
                     const auto current_translation = obj.transformation().translation();
                     const auto translation_delta = translation - current_translation;

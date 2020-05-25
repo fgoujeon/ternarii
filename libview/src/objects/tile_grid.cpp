@@ -187,7 +187,7 @@ void tile_grid::create_next_input(const data_types::input_tile_array& tiles)
                 {
                     anim.add
                     (
-                        tracks::fixed_duration_translation<tile>
+                        tracks::fixed_duration_translation
                         {
                             ptile,
                             dst_position,
@@ -262,7 +262,7 @@ void tile_grid::set_input_layout(const data_types::input_layout& layout)
 
             anim.add
             (
-                tracks::fixed_speed_translation<tile>
+                tracks::fixed_speed_translation
                 {
                     ptile,
                     dst_position,
@@ -289,7 +289,7 @@ void tile_grid::drop_input_tiles(const data_types::input_tile_drop_list& drops)
 
         anim.add
         (
-            tracks::fixed_speed_translation<tile>
+            tracks::fixed_speed_translation
             {
                 ptile,
                 dst_position,
@@ -317,7 +317,7 @@ void tile_grid::drop_board_tiles(const data_types::board_tile_drop_list& drops)
 
         anim.add
         (
-            tracks::fixed_speed_translation<tile>
+            tracks::fixed_speed_translation
             {
                 ptile,
                 dst_position,
@@ -374,7 +374,7 @@ void tile_grid::merge_tiles(const data_types::tile_merge_list& merges)
             //first, translate source tile toward position of destination tile
             anim0.add
             (
-                tracks::fixed_speed_translation<tile>
+                tracks::fixed_speed_translation
                 {
                     psrc_tile,
                     dst_position,
