@@ -22,6 +22,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 
 #include <libutil/unique_function.hpp>
 #include <libutil/time.hpp>
+#include <Magnum/Animation/Easing.h>
 #include <Magnum/Animation/Player.h>
 #include <chrono>
 #include <list>
@@ -67,11 +68,56 @@ namespace tracks
 
 
 
+    struct immediate_translation
+    {
+        std::shared_ptr<Object2D> pobj;
+        Magnum::Vector2 finish_position;
+    };
+
+    inline
+    player_supplier_t make_player_supplier(const immediate_translation& track)
+    {
+        using track_impl_t = Magnum::Animation::Track<Magnum::Float, Magnum::Vector2>;
+        return [track, track_impl = track_impl_t{}](player_t& player) mutable
+        {
+            const auto& current_position = track.pobj->transformation().translation();
+
+            if(current_position == track.finish_position)
+            {
+                return;
+            }
+
+            track_impl = track_impl_t
+            {
+                {
+                    {0.0f, track.finish_position},
+                },
+                Magnum::Math::lerp,
+                Magnum::Animation::Extrapolation::Constant
+            };
+
+            player.addWithCallback
+            (
+                track_impl,
+                [](Magnum::Float, const Magnum::Vector2& translation, Object2D& obj)
+                {
+                    const auto current_translation = obj.transformation().translation();
+                    const auto translation_delta = translation - current_translation;
+                    obj.translate(translation_delta);
+                },
+                *track.pobj
+            );
+        };
+    }
+
+
+
     struct fixed_duration_translation
     {
         std::shared_ptr<Object2D> pobj;
         Magnum::Vector2 finish_position;
         float duration_s = 0; //in seconds
+        Magnum::Animation::Track<Magnum::Float, Magnum::Vector2>::Interpolator interpolator = Magnum::Math::lerp;
     };
 
     inline
@@ -93,7 +139,7 @@ namespace tracks
                     {0.0f, current_position},
                     {track.duration_s, track.finish_position}
                 },
-                Magnum::Math::lerp,
+                track.interpolator,
                 Magnum::Animation::Extrapolation::Constant
             };
 

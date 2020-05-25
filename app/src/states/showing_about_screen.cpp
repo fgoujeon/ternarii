@@ -36,6 +36,7 @@ showing_about_screen::showing_about_screen(fsm& ctx):
         )
     )
 {
+    fsm_.view.set_screen(pscreen_);
 }
 
 } //namespace

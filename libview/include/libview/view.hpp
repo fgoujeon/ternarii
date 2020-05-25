@@ -50,13 +50,20 @@ class view
         template<class T, class... Args>
         std::shared_ptr<T> make_screen(Args&&... args)
         {
-            return std::make_shared<T>
+            auto pscreen = std::make_shared<T>
             (
                 get_scene(),
                 get_feature_groups(),
                 std::forward<Args>(args)...
             );
+
+            //Move it out of view for now
+            pscreen->translate({0.0f, 100.0f});
+
+            return pscreen;
         }
+
+        void set_screen(const std::shared_ptr<Object2D>& pscreen);
 
     //Magnum event handling
     public:

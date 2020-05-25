@@ -62,6 +62,8 @@ playing::playing(fsm& f):
 
         modify_game(&libgame::game::start);
     }
+
+    fsm_.view.set_screen(pscreen_);
 }
 
 } //namespace

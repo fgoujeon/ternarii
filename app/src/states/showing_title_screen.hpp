@@ -48,6 +48,7 @@ class showing_title_screen final: public state
                 )
             )
         {
+            fsm_.view.set_screen(pscreen_);
         }
 
     private:
