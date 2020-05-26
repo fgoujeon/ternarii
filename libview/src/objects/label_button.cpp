@@ -47,7 +47,7 @@ label_button::label_button
         {
             .color = style_.color,
             .outline_color = style_.outline_color,
-            .outline_range = {0.5f, 0.35f}
+            .outline_range = {0.5f, 0.47f}
         }
     ),
     label_

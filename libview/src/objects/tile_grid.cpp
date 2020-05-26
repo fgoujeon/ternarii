@@ -125,8 +125,8 @@ tile_grid::tile_grid(Object2D& parent, features::drawable_group& drawables):
                 sdf_image::style
                 {
                     .color = colors::light_gray,
-                    .outline_color = colors::dark_gray,
-                    .outline_range = {0.5f, 0.4f}
+                    .outline_color = colors::black,
+                    .outline_range = {0.5f, 0.3f}
                 }
             );
             pobj->rotate(rotation);

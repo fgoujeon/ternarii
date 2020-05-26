@@ -65,7 +65,7 @@ number_tile::number_tile(Object2D& parent, features::drawable_group& drawables, 
         {
             .color = square_color_,
             .outline_color = colors::black,
-            .outline_range = {0.5f, 0.3f}
+            .outline_range = {0.5f, 0.4f}
         }
     ),
     label_
