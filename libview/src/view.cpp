@@ -231,7 +231,11 @@ void view::show_screen
     screen_transition trans
 )
 {
-    const auto duration_s = 0.7f;
+    const auto duration_s =
+        trans == screen_transition::top_to_bottom ?
+        1.0f :
+        0.7f
+    ;
 
     const auto new_screen_start_position = [&]
     {
