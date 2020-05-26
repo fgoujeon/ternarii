@@ -493,6 +493,7 @@ std::shared_ptr<Object2D> tile_grid::make_tile
         tile
     );
 
+    ptile->set_alpha(0.0f);
     ptile->scale({0.46f, 0.46f});
     ptile->translate(position);
 

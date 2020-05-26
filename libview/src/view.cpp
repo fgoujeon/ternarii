@@ -41,7 +41,7 @@ struct view::impl final
         camera_object(&scene),
         camera(camera_object)
     {
-        camera.setAspectRatioPolicy(SceneGraph::AspectRatioPolicy::Extend);
+        camera.setAspectRatioPolicy(Magnum::SceneGraph::AspectRatioPolicy::Extend);
         camera.setProjectionMatrix(Magnum::Matrix3::projection({9.0f, 16.0f}));
         camera.setViewport(Magnum::GL::defaultFramebuffer.viewport().size());
 
@@ -204,7 +204,7 @@ struct view::impl final
 
     Scene2D scene;
     Object2D camera_object;
-    SceneGraph::Camera2D camera;
+    Magnum::SceneGraph::Camera2D camera;
 
     feature_group_set feature_groups;
 

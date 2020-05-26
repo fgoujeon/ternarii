@@ -34,8 +34,6 @@ namespace libview
 
 using namespace Magnum::Math::Literals;
 
-using Vector2 = Magnum::Vector2;
-
 } //namespace
 
 #endif

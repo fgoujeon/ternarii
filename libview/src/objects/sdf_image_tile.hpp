@@ -34,7 +34,7 @@ class sdf_image_tile: public Object2D
         sdf_image_tile(Object2D& parent, features::drawable_group& drawables, const std::filesystem::path& image_path);
 
     private:
-        Magnum::Color3 square_color_;
+        Magnum::Color4 square_color_;
         sdf_image square_;
         sdf_image image_;
 };
