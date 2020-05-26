@@ -240,7 +240,7 @@ void view::set_screen(const std::shared_ptr<Object2D>& pscreen)
         tracks::immediate_translation
         {
             pscreen,
-            {25.0f, 0.0f}
+            {12.0f, 0.0f}
         }
     );
 
@@ -254,9 +254,19 @@ void view::set_screen(const std::shared_ptr<Object2D>& pscreen)
             tracks::fixed_duration_translation
             {
                 .pobj = pimpl_->pscreen,
-                .finish_position = {-25.0f, 0.0f},
+                .finish_position = {-12.0f, 0.0f},
                 .duration_s = duration_s,
                 .interpolator = interpolator
+            }
+        );
+
+        anim.add
+        (
+            tracks::alpha_transition
+            {
+                .pobj = pimpl_->pscreen,
+                .finish_alpha = 0.0f,
+                .duration_s = duration_s
             }
         );
     }
@@ -271,6 +281,16 @@ void view::set_screen(const std::shared_ptr<Object2D>& pscreen)
                 .finish_position = {0.0f, 0.0f},
                 .duration_s = duration_s,
                 .interpolator = interpolator
+            }
+        );
+
+        anim.add
+        (
+            tracks::alpha_transition
+            {
+                .pobj = pscreen,
+                .finish_alpha = 1.0f,
+                .duration_s = duration_s
             }
         );
     }

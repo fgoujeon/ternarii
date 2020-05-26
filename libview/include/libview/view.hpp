@@ -56,9 +56,7 @@ class view
                 get_feature_groups(),
                 std::forward<Args>(args)...
             );
-
-            //Move it out of view for now
-            pscreen->translate({0.0f, 100.0f});
+            pscreen->set_alpha(0.0f);
 
             return pscreen;
         }
