@@ -58,9 +58,9 @@ void background::advance(const libutil::time_point& now)
     get_shader().set_time(now);
 }
 
-void background::draw(const Magnum::Matrix3& transformation_matrix, SceneGraph::Camera2D& camera)
+void background::draw(const Magnum::Matrix3& transformation_matrix, Magnum::SceneGraph::Camera2D& camera)
 {
-    get_shader().setColor(color_);
+    get_shader().setColor(get_color_transformation_matrix() * color_);
     get_shader().setTransformationProjectionMatrix
     (
         camera.projectionMatrix() *

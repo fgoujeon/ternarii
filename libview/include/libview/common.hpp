@@ -27,19 +27,79 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include <Magnum/SceneGraph/Object.h>
 #include <Magnum/SceneGraph/Drawable.h>
 #include <Magnum/SceneGraph/Scene.h>
+#include <Magnum/Math/Matrix4.h>
+#include <Magnum/Magnum.h>
 
 namespace libview
 {
 
-namespace SceneGraph = Magnum::SceneGraph;
+class Object2D: public Magnum::SceneGraph::Object<Magnum::SceneGraph::MatrixTransformation2D>
+{
+    private:
+        using base_t = Magnum::SceneGraph::Object<Magnum::SceneGraph::MatrixTransformation2D>;
 
-using Scene2D = SceneGraph::Scene<Magnum::SceneGraph::MatrixTransformation2D>;
-using Object2D = SceneGraph::Object<Magnum::SceneGraph::MatrixTransformation2D>;
+    public:
+        Object2D(Object2D* pparent = nullptr):
+            base_t(pparent),
+            pparent_(pparent)
+        {
+        }
+
+        virtual ~Object2D() = default;
+
+        float get_alpha() const
+        {
+            return alpha_;
+        }
+
+        float get_absolute_alpha() const
+        {
+            if(pparent_)
+            {
+                return alpha_ * pparent_->get_absolute_alpha();
+            }
+
+            return alpha_;
+        }
+
+        Magnum::Matrix4 get_color_transformation_matrix() const
+        {
+            const auto alpha_factor = get_absolute_alpha();
+            return Magnum::Matrix4
+            {
+                {1.0f, 0.0f, 0.0f, 0.0f},
+                {0.0f, 1.0f, 0.0f, 0.0f},
+                {0.0f, 0.0f, 1.0f, 0.0f},
+                {0.0f, 0.0f, 0.0f, alpha_factor},
+            };
+        }
+
+        void set_alpha(const float value)
+        {
+            alpha_ = value;
+        }
+
+    private:
+        Object2D* pparent_ = nullptr;
+        float alpha_ = 1.0f;
+};
+
+class Scene2D: public Object2D
+{
+    public:
+        explicit Scene2D() = default;
+
+    private:
+        bool isScene() const override final
+        {
+            return true;
+        }
+};
 
 namespace features
 {
-    using drawable = SceneGraph::Drawable2D;
-    using drawable_group = SceneGraph::DrawableGroup2D;
+    using drawable = Magnum::SceneGraph::Drawable2D;
+    using drawable_group = Magnum::SceneGraph::DrawableGroup2D;
 }
 
 struct feature_group_set

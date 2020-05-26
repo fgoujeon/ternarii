@@ -63,7 +63,7 @@ class label: public Object2D, public features::drawable
         }
 
     private:
-        void draw(const Magnum::Matrix3& transformation_matrix, SceneGraph::Camera2D& camera) override;
+        void draw(const Magnum::Matrix3& transformation_matrix, Magnum::SceneGraph::Camera2D& camera) override;
 
     private:
         Magnum::Text::Renderer2D renderer_;

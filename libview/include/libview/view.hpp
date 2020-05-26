@@ -36,6 +36,13 @@ class view
         using mouse_event      = application::MouseEvent;
         using mouse_move_event = application::MouseMoveEvent;
 
+        enum class screen_transition
+        {
+            top_to_bottom,
+            left_to_right,
+            right_to_left
+        };
+
         struct configuration
         {
             bool show_fps_counter = false;
@@ -50,13 +57,22 @@ class view
         template<class T, class... Args>
         std::shared_ptr<T> make_screen(Args&&... args)
         {
-            return std::make_shared<T>
+            auto pscreen = std::make_shared<T>
             (
                 get_scene(),
                 get_feature_groups(),
                 std::forward<Args>(args)...
             );
+            pscreen->set_alpha(0.0f);
+
+            return pscreen;
         }
+
+        void show_screen
+        (
+            const std::shared_ptr<Object2D>& pscreen,
+            screen_transition trans
+        );
 
     //Magnum event handling
     public:

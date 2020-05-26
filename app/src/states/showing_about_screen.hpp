@@ -28,11 +28,14 @@ namespace states
 
 class showing_about_screen final: public state
 {
+    public:
+        using screen_transition = libview::view::screen_transition;
+
     private:
         using screen = libview::screens::about;
 
     public:
-        showing_about_screen(fsm& ctx);
+        showing_about_screen(fsm& ctx, screen_transition trans);
 
     private:
         fsm& fsm_;

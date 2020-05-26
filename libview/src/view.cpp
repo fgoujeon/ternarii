@@ -21,6 +21,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include "objects/label.hpp"
 #include "objects/debug_grid.hpp"
 #include "colors.hpp"
+#include "animation.hpp"
 #include "common.hpp"
 #include <libutil/time.hpp>
 #include <Magnum/GL/Context.h>
@@ -40,7 +41,7 @@ struct view::impl final
         camera_object(&scene),
         camera(camera_object)
     {
-        camera.setAspectRatioPolicy(SceneGraph::AspectRatioPolicy::Extend);
+        camera.setAspectRatioPolicy(Magnum::SceneGraph::AspectRatioPolicy::Extend);
         camera.setProjectionMatrix(Magnum::Matrix3::projection({9.0f, 16.0f}));
         camera.setViewport(Magnum::GL::defaultFramebuffer.viewport().size());
 
@@ -77,6 +78,7 @@ struct view::impl final
         const auto now = libutil::clock::now();
 
         //advance animations
+        screen_transition_animator.advance(now);
         for(std::size_t i = 0; i < feature_groups.animables.size(); ++i)
         {
             feature_groups.animables[i].advance(now);
@@ -202,10 +204,13 @@ struct view::impl final
 
     Scene2D scene;
     Object2D camera_object;
-    SceneGraph::Camera2D camera;
+    Magnum::SceneGraph::Camera2D camera;
 
     feature_group_set feature_groups;
 
+    animator screen_transition_animator;
+
+    std::shared_ptr<Object2D> pscreen;
     std::unique_ptr<objects::debug_grid> pdebug_grid;
     std::unique_ptr<objects::label> pfps_counter;
 
@@ -219,6 +224,107 @@ view::view(const configuration& conf):
 }
 
 view::~view() = default;
+
+void view::show_screen
+(
+    const std::shared_ptr<Object2D>& pscreen,
+    screen_transition trans
+)
+{
+    const auto duration_s = 0.7f;
+
+    const auto new_screen_start_position = [&]
+    {
+        switch(trans)
+        {
+            default:
+            case screen_transition::top_to_bottom:
+                return Magnum::Vector2{0.0f, 4.0f};
+            case screen_transition::right_to_left:
+                return Magnum::Vector2{12.0f, 0.0f};
+            case screen_transition::left_to_right:
+                return Magnum::Vector2{-12.0f, 0.0f};
+        }
+    }();
+
+    const auto old_screen_finish_position = Magnum::Vector2
+    {
+        -new_screen_start_position.x(),
+        -new_screen_start_position.y()
+    };
+
+    const auto interpolator = Magnum::Animation::ease
+    <
+        Magnum::Vector2,
+        Magnum::Math::lerp,
+        Magnum::Animation::Easing::exponentialOut
+    >();
+
+    pimpl_->screen_transition_animator.push
+    (
+        tracks::immediate_translation
+        {
+            pscreen,
+            new_screen_start_position
+        }
+    );
+
+    auto anim = animation{};
+
+    //Hide old screen, if any
+    if(pimpl_->pscreen)
+    {
+        anim.add
+        (
+            tracks::fixed_duration_translation
+            {
+                .pobj = pimpl_->pscreen,
+                .finish_position = old_screen_finish_position,
+                .duration_s = duration_s,
+                .interpolator = interpolator
+            }
+        );
+
+        anim.add
+        (
+            tracks::alpha_transition
+            {
+                .pobj = pimpl_->pscreen,
+                .finish_alpha = 0.0f,
+                .duration_s = duration_s
+            }
+        );
+    }
+
+    //Show new screen
+    {
+        anim.add
+        (
+            tracks::fixed_duration_translation
+            {
+                .pobj = pscreen,
+                .finish_position = {0.0f, 0.0f},
+                .duration_s = duration_s,
+                .interpolator = interpolator
+            }
+        );
+
+        anim.add
+        (
+            tracks::alpha_transition
+            {
+                .pobj = pscreen,
+                .finish_alpha = 1.0f,
+                .duration_s = duration_s
+            }
+        );
+    }
+
+    pimpl_->screen_transition_animator.push(std::move(anim));
+
+    //Save new screen for future transition
+    pimpl_->pscreen = pscreen;
+}
 
 void view::draw()
 {

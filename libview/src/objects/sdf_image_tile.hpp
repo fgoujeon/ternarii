@@ -21,7 +21,6 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #define LIBVIEW_OBJECTS_SDF_IMAGE_TILE_HPP
 
 #include "sdf_image.hpp"
-#include "tile.hpp"
 #include "../common.hpp"
 #include <Magnum/Math/Color.h>
 #include <Magnum/Magnum.h>
@@ -29,18 +28,13 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libview::objects
 {
 
-class sdf_image_tile: public tile
+class sdf_image_tile: public Object2D
 {
     public:
         sdf_image_tile(Object2D& parent, features::drawable_group& drawables, const std::filesystem::path& image_path);
 
-        float get_alpha() const override;
-
-        void set_alpha(const float alpha) override;
-
     private:
-        float alpha_ = 0;
-        Magnum::Color3 square_color_;
+        Magnum::Color4 square_color_;
         sdf_image square_;
         sdf_image image_;
 };

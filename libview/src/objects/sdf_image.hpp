@@ -54,7 +54,7 @@ class sdf_image: public Object2D, public features::drawable
         void set_outline_color(const Magnum::Color4& color);
 
     private:
-        void draw(const Magnum::Matrix3& transformation_matrix, SceneGraph::Camera2D& camera) override;
+        void draw(const Magnum::Matrix3& transformation_matrix, Magnum::SceneGraph::Camera2D& camera) override;
 
     private:
         style style_;

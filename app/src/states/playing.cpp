@@ -23,7 +23,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace states
 {
 
-playing::playing(fsm& f):
+playing::playing(fsm& f, const screen_transition trans):
     fsm_(f),
     pscreen_
     (
@@ -33,7 +33,7 @@ playing::playing(fsm& f):
             {
                 .handle_move_request  = [this](const libview::data_types::move m){handle_view_move_request(m);},
                 .handle_clear_request = [this]{modify_game(&libgame::game::start);},
-                .handle_exit_request  = [this]{fsm_.set_state<states::showing_title_screen>();}
+                .handle_exit_request  = [this]{fsm_.set_state<states::showing_title_screen>(screen_transition::left_to_right);}
             }
         )
     )
@@ -62,6 +62,8 @@ playing::playing(fsm& f):
 
         modify_game(&libgame::game::start);
     }
+
+    fsm_.view.show_screen(pscreen_, trans);
 }
 
 } //namespace

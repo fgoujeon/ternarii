@@ -194,7 +194,7 @@ void tile_grid::create_next_input(const data_types::input_tile_array& tiles)
                             animation_duration_s
                         }
                     );
-                    anim.add(tracks::alpha_transition<tile>{ptile, 1, animation_duration_s});
+                    anim.add(tracks::alpha_transition{ptile, 1, animation_duration_s});
                 }
             },
             input_tiles_,
@@ -213,7 +213,7 @@ void tile_grid::create_next_input(const data_types::input_tile_array& tiles)
                 if(opt_tile.has_value())
                 {
                     pnext_input_tile = make_tile(opt_tile.value(), position);
-                    anim.add(tracks::alpha_transition<tile>{pnext_input_tile, 0.4, animation_duration_s});
+                    anim.add(tracks::alpha_transition{pnext_input_tile, 0.4, animation_duration_s});
                 }
             },
             tiles,
@@ -347,8 +347,8 @@ void tile_grid::nullify_tiles(const data_types::tile_coordinate_list& nullified_
             continue;
         }
 
-        anim0.add(tracks::immediate_alpha_transition<tile>{ptile, 1});
-        anim1.add(tracks::alpha_transition<tile>{ptile, 0, 0.4});
+        anim0.add(tracks::immediate_alpha_transition{ptile, 1});
+        anim1.add(tracks::alpha_transition{ptile, 0, 0.4});
 
         ptile = nullptr;
     }
@@ -385,7 +385,7 @@ void tile_grid::merge_tiles(const data_types::tile_merge_list& merges)
             //then, make it disappear with a fade out
             anim1.add
             (
-                tracks::alpha_transition<tile>
+                tracks::alpha_transition
                 {
                     psrc_tile, 0, 0.2
                 }
@@ -401,7 +401,7 @@ void tile_grid::merge_tiles(const data_types::tile_merge_list& merges)
         libutil::at(board_tiles_, merge.dst_tile_coordinate.row, merge.dst_tile_coordinate.col) = pdst_tile;
 
         //make destination tile appear with a fade in
-        anim1.add(tracks::alpha_transition<tile>{pdst_tile, 1, 0.2});
+        anim1.add(tracks::alpha_transition{pdst_tile, 1, 0.2});
     }
 
     animator_.push(std::move(anim0));
@@ -418,7 +418,7 @@ void tile_grid::mark_tiles_for_nullification(const data_types::tile_coordinate_l
     {
         if(ptile)
         {
-            anim.add(tracks::immediate_alpha_transition<tile>{ptile, 1});
+            anim.add(tracks::immediate_alpha_transition{ptile, 1});
         }
     }
 
@@ -428,7 +428,7 @@ void tile_grid::mark_tiles_for_nullification(const data_types::tile_coordinate_l
         auto& ptile = libutil::at(board_tiles_, coords.row, coords.col);
         if(ptile)
         {
-            anim.add(tracks::immediate_alpha_transition<tile>{ptile, 0.5});
+            anim.add(tracks::immediate_alpha_transition{ptile, 0.5});
         }
     }
 
@@ -461,31 +461,31 @@ void tile_grid::advance(const libutil::time_point& now)
     animator_.advance(now);
 }
 
-std::shared_ptr<objects::tile> tile_grid::make_tile
+std::shared_ptr<Object2D> tile_grid::make_tile
 (
     const data_types::tile& tile,
     const Magnum::Vector2& position
 )
 {
-    using tile_ptr = std::shared_ptr<objects::tile>;
+    using result_t = std::shared_ptr<Object2D>;
 
     auto ptile = std::visit
     (
         libutil::overload
         {
-            [&](const data_types::tiles::number& tile) -> tile_ptr
+            [&](const data_types::tiles::number& tile) -> result_t
             {
                 return std::make_shared<number_tile>(*this, drawables_, tile.value);
             },
-            [&](const data_types::tiles::column_nullifier&) -> tile_ptr
+            [&](const data_types::tiles::column_nullifier&) -> result_t
             {
                 return std::make_shared<sdf_image_tile>(*this, drawables_, "/res/images/column_nullifier.tga");
             },
-            [&](const data_types::tiles::row_nullifier&) -> tile_ptr
+            [&](const data_types::tiles::row_nullifier&) -> result_t
             {
                 return std::make_shared<sdf_image_tile>(*this, drawables_, "/res/images/row_nullifier.tga");
             },
-            [&](const data_types::tiles::number_nullifier&) -> tile_ptr
+            [&](const data_types::tiles::number_nullifier&) -> result_t
             {
                 return std::make_shared<sdf_image_tile>(*this, drawables_, "/res/images/number_nullifier.tga");
             }
@@ -493,6 +493,7 @@ std::shared_ptr<objects::tile> tile_grid::make_tile
         tile
     );
 
+    ptile->set_alpha(0.0f);
     ptile->scale({0.46f, 0.46f});
     ptile->translate(position);
 
