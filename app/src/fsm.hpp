@@ -40,10 +40,10 @@ struct fsm
         libview::view& view
     );
 
-    template<class State>
-    void set_state()
+    template<class State, class... Args>
+    void set_state(Args&&... args)
     {
-        pstate = std::make_unique<State>(*this);
+        pstate = std::make_unique<State>(*this, std::forward<Args>(args)...);
     }
 
     std::unique_ptr<state> pstate;

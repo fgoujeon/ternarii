@@ -32,9 +32,10 @@ class showing_title_screen final: public state
 {
     private:
         using screen = libview::screens::title;
+        using screen_transition = libview::view::screen_transition;
 
     public:
-        showing_title_screen(fsm& ctx):
+        showing_title_screen(fsm& ctx, const libview::view::screen_transition trans):
             fsm_(ctx),
             pscreen_
             (
@@ -42,13 +43,13 @@ class showing_title_screen final: public state
                 (
                     screen::callback_set
                     {
-                        .play_request  = [this]{fsm_.set_state<playing>();},
-                        .about_request = [this]{fsm_.set_state<showing_about_screen>();}
+                        .play_request  = [this]{fsm_.set_state<playing>(screen_transition::right_to_left);},
+                        .about_request = [this]{fsm_.set_state<showing_about_screen>(screen_transition::right_to_left);}
                     }
                 )
             )
         {
-            fsm_.view.set_screen(pscreen_);
+            fsm_.view.show_screen(pscreen_, trans);
         }
 
     private:

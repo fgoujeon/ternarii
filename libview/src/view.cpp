@@ -225,9 +225,34 @@ view::view(const configuration& conf):
 
 view::~view() = default;
 
-void view::set_screen(const std::shared_ptr<Object2D>& pscreen)
+void view::show_screen
+(
+    const std::shared_ptr<Object2D>& pscreen,
+    screen_transition trans
+)
 {
     const auto duration_s = 0.7f;
+
+    const auto new_screen_start_position = [&]
+    {
+        switch(trans)
+        {
+            default:
+            case screen_transition::top_to_bottom:
+                return Magnum::Vector2{0.0f, 4.0f};
+            case screen_transition::right_to_left:
+                return Magnum::Vector2{12.0f, 0.0f};
+            case screen_transition::left_to_right:
+                return Magnum::Vector2{-12.0f, 0.0f};
+        }
+    }();
+
+    const auto old_screen_finish_position = Magnum::Vector2
+    {
+        -new_screen_start_position.x(),
+        -new_screen_start_position.y()
+    };
+
     const auto interpolator = Magnum::Animation::ease
     <
         Magnum::Vector2,
@@ -240,7 +265,7 @@ void view::set_screen(const std::shared_ptr<Object2D>& pscreen)
         tracks::immediate_translation
         {
             pscreen,
-            {12.0f, 0.0f}
+            new_screen_start_position
         }
     );
 
@@ -254,7 +279,7 @@ void view::set_screen(const std::shared_ptr<Object2D>& pscreen)
             tracks::fixed_duration_translation
             {
                 .pobj = pimpl_->pscreen,
-                .finish_position = {-12.0f, 0.0f},
+                .finish_position = old_screen_finish_position,
                 .duration_s = duration_s,
                 .interpolator = interpolator
             }

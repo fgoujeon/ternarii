@@ -23,7 +23,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace states
 {
 
-showing_about_screen::showing_about_screen(fsm& ctx):
+showing_about_screen::showing_about_screen(fsm& ctx, const screen_transition trans):
     fsm_(ctx),
     pscreen_
     (
@@ -31,12 +31,12 @@ showing_about_screen::showing_about_screen(fsm& ctx):
         (
             screen::callback_set
             {
-                .back_request = [this]{fsm_.set_state<showing_title_screen>();}
+                .back_request = [this]{fsm_.set_state<showing_title_screen>(screen_transition::left_to_right);}
             }
         )
     )
 {
-    fsm_.view.set_screen(pscreen_);
+    fsm_.view.show_screen(pscreen_, trans);
 }
 
 } //namespace

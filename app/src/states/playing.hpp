@@ -31,9 +31,10 @@ class playing final: public state
 {
     public:
         using screen = libview::screens::game;
+        using screen_transition = libview::view::screen_transition;
 
     public:
-        playing(fsm& f);
+        playing(fsm& f, screen_transition trans);
 
     //View event handlers
     private:

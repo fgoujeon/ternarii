@@ -36,7 +36,10 @@ class loading_database final: public state
 
         void handle_database_event(const libdb::events::end_of_loading&) override
         {
-            fsm_.set_state<showing_title_screen>();
+            fsm_.set_state<showing_title_screen>
+            (
+                libview::view::screen_transition::top_to_bottom
+            );
         }
 
     private:
