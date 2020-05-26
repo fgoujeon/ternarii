@@ -107,6 +107,13 @@ namespace
 
         return positions;
     }
+
+    const auto tile_move_interpolator = Magnum::Animation::ease
+    <
+        Magnum::Vector2,
+        Magnum::Math::lerp,
+        Magnum::Animation::Easing::cubicOut
+    >();
 }
 
 tile_grid::tile_grid(Object2D& parent, features::drawable_group& drawables):
@@ -171,7 +178,7 @@ void tile_grid::clear()
 
 void tile_grid::create_next_input(const data_types::input_tile_array& tiles)
 {
-    const auto animation_duration_s = 0.15f;
+    const auto animation_duration_s = 0.2f;
 
     auto anim = animation{};
 
@@ -191,7 +198,8 @@ void tile_grid::create_next_input(const data_types::input_tile_array& tiles)
                         {
                             ptile,
                             dst_position,
-                            animation_duration_s
+                            animation_duration_s,
+                            tile_move_interpolator
                         }
                     );
                     anim.add(tracks::alpha_transition{ptile, 1, animation_duration_s});
@@ -293,7 +301,7 @@ void tile_grid::drop_input_tiles(const data_types::input_tile_drop_list& drops)
             {
                 ptile,
                 dst_position,
-                24
+                22
             }
         );
 
@@ -321,7 +329,7 @@ void tile_grid::drop_board_tiles(const data_types::board_tile_drop_list& drops)
             {
                 ptile,
                 dst_position,
-                24
+                22
             }
         );
 
@@ -378,7 +386,8 @@ void tile_grid::merge_tiles(const data_types::tile_merge_list& merges)
                 {
                     psrc_tile,
                     dst_position,
-                    6
+                    4.5,
+                    tile_move_interpolator
                 }
             );
 
@@ -406,7 +415,6 @@ void tile_grid::merge_tiles(const data_types::tile_merge_list& merges)
 
     animator_.push(std::move(anim0));
     animator_.push(std::move(anim1));
-    animator_.push(tracks::pause{0.05});
 }
 
 void tile_grid::mark_tiles_for_nullification(const data_types::tile_coordinate_list& tile_coordinates)

@@ -164,6 +164,7 @@ namespace tracks
         std::shared_ptr<Object2D> pobj;
         Magnum::Vector2 finish_position;
         float speed = 0; //in distance unit per second
+        Magnum::Animation::Track<Magnum::Float, Magnum::Vector2>::Interpolator interpolator = Magnum::Math::lerp;
     };
 
     inline
@@ -192,7 +193,7 @@ namespace tracks
                     {0.0f, current_position},
                     {time, track.finish_position}
                 },
-                Magnum::Math::lerp,
+                track.interpolator,
                 Magnum::Animation::Extrapolation::Constant
             };
 
