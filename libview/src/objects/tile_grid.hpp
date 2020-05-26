@@ -39,8 +39,8 @@ namespace libview::objects
 class tile_grid: public Object2D
 {
     private:
-        using input_tile_array = libutil::matrix<std::shared_ptr<tile>, 2, 2>;
-        using board_tile_array = libutil::matrix<std::shared_ptr<tile>, 9, 6>;
+        using input_tile_array = libutil::matrix<std::shared_ptr<Object2D>, 2, 2>;
+        using board_tile_array = libutil::matrix<std::shared_ptr<Object2D>, 9, 6>;
 
     public:
         tile_grid(Object2D& parent, features::drawable_group& drawables);
@@ -70,7 +70,7 @@ class tile_grid: public Object2D
         void advance(const libutil::time_point& now);
 
     private:
-        std::shared_ptr<objects::tile> make_tile
+        std::shared_ptr<Object2D> make_tile
         (
             const data_types::tile& tile,
             const Magnum::Vector2& position

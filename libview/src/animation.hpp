@@ -212,16 +212,15 @@ namespace tracks
 
 
 
-    template<class Object>
     struct alpha_transition
     {
-        std::shared_ptr<Object> pobj;
+        std::shared_ptr<Object2D> pobj;
         float finish_alpha = 0;
         float duration_s = 0; //in seconds
     };
 
-    template<class Object>
-    player_supplier_t make_player_supplier(const alpha_transition<Object>& track)
+    inline
+    player_supplier_t make_player_supplier(const alpha_transition& track)
     {
         using track_impl_t = Magnum::Animation::Track<Magnum::Float, float>;
         return [track, track_impl = track_impl_t{}](player_t& player) mutable
@@ -246,7 +245,7 @@ namespace tracks
             player.addWithCallback
             (
                 track_impl,
-                [](Magnum::Float, const float& alpha, Object& obj)
+                [](Magnum::Float, const float& alpha, Object2D& obj)
                 {
                     obj.set_alpha(alpha);
                 },
@@ -257,15 +256,14 @@ namespace tracks
 
 
 
-    template<class Object>
     struct immediate_alpha_transition
     {
-        std::shared_ptr<Object> pobj;
+        std::shared_ptr<Object2D> pobj;
         float finish_alpha = 0;
     };
 
-    template<class Object>
-    player_supplier_t make_player_supplier(const immediate_alpha_transition<Object>& track)
+    inline
+    player_supplier_t make_player_supplier(const immediate_alpha_transition& track)
     {
         using track_impl_t = Magnum::Animation::Track<Magnum::Float, float>;
         return [track, track_impl = track_impl_t{}](player_t& player) mutable
@@ -282,7 +280,7 @@ namespace tracks
             player.addWithCallback
             (
                 track_impl,
-                [](Magnum::Float, const float& alpha, Object& obj)
+                [](Magnum::Float, const float& alpha, Object2D& obj)
                 {
                     obj.set_alpha(alpha);
                 },

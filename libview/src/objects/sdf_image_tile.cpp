@@ -27,7 +27,7 @@ namespace libview::objects
 {
 
 sdf_image_tile::sdf_image_tile(Object2D& parent, features::drawable_group& drawables, const std::filesystem::path& image_path):
-    tile{parent},
+    Object2D{&parent},
     square_color_(colors::light_gray),
     square_
     (
@@ -36,8 +36,8 @@ sdf_image_tile::sdf_image_tile(Object2D& parent, features::drawable_group& drawa
         "/res/images/rounded_square.tga",
         sdf_image::style
         {
-            .color = Magnum::Color4{square_color_, 0.0f},
-            .outline_color = Magnum::Color4{colors::black, 0},
+            .color = square_color_,
+            .outline_color = colors::black,
             .outline_range = {0.5f, 0.35f}
         }
     ),
@@ -48,25 +48,12 @@ sdf_image_tile::sdf_image_tile(Object2D& parent, features::drawable_group& drawa
         image_path,
         sdf_image::style
         {
-            .color = Magnum::Color4{colors::black, 0},
-            .outline_color = Magnum::Color4{colors::black, 0},
+            .color = colors::black,
+            .outline_color = colors::black,
             .outline_range = {0.5f, 0.4f}
         }
     )
 {
-}
-
-float sdf_image_tile::get_alpha() const
-{
-    return alpha_;
-}
-
-void sdf_image_tile::set_alpha(const float alpha)
-{
-    alpha_ = alpha;
-    square_.set_color({square_color_, alpha});
-    image_.set_color({colors::black, alpha});
-    image_.set_outline_color({colors::black, alpha});
 }
 
 } //namespace

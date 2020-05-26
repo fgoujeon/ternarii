@@ -22,7 +22,6 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "sdf_image.hpp"
 #include "label.hpp"
-#include "tile.hpp"
 #include "../common.hpp"
 #include <Magnum/Math/Color.h>
 #include <Magnum/Magnum.h>
@@ -30,17 +29,12 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libview::objects
 {
 
-class number_tile: public tile
+class number_tile: public Object2D
 {
     public:
         number_tile(Object2D& parent, features::drawable_group& drawables, const int value);
 
-        float get_alpha() const override;
-
-        void set_alpha(const float alpha) override;
-
     private:
-        float alpha_ = 0;
         Magnum::Color3 square_color_;
         sdf_image square_;
         label label_;

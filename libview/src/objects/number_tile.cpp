@@ -54,7 +54,7 @@ namespace
 }
 
 number_tile::number_tile(Object2D& parent, features::drawable_group& drawables, const int value):
-    tile(parent),
+    Object2D(&parent),
     square_color_(value_to_color(value)),
     square_
     (
@@ -63,8 +63,8 @@ number_tile::number_tile(Object2D& parent, features::drawable_group& drawables, 
         "/res/images/rounded_square.tga",
         sdf_image::style
         {
-            .color = Magnum::Color4{square_color_, 0.0f},
-            .outline_color = Magnum::Color4{colors::black, 0.0f},
+            .color = square_color_,
+            .outline_color = colors::black,
             .outline_range = {0.5f, 0.3f}
         }
     ),
@@ -76,26 +76,13 @@ number_tile::number_tile(Object2D& parent, features::drawable_group& drawables, 
         {
             .alignment = Magnum::Text::Alignment::MiddleCenter,
             .font_size = 1.2f,
-            .color = Magnum::Color4{colors::white, 0},
-            .outline_color = Magnum::Color4{colors::dark_gray, 0},
+            .color = colors::white,
+            .outline_color = colors::dark_gray,
             .outline_range = {0.45f, 0.40f}
         },
         std::to_string(value).c_str()
     )
 {
-}
-
-float number_tile::get_alpha() const
-{
-    return alpha_;
-}
-
-void number_tile::set_alpha(const float alpha)
-{
-    alpha_ = alpha;
-    square_.set_color({square_color_, alpha});
-    label_.set_color({colors::white, alpha});
-    label_.set_outline_color({colors::dark_gray, alpha});
 }
 
 } //namespace

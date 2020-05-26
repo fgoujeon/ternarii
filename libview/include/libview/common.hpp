@@ -33,8 +33,44 @@ namespace libview
 
 namespace SceneGraph = Magnum::SceneGraph;
 
-using Scene2D = SceneGraph::Scene<Magnum::SceneGraph::MatrixTransformation2D>;
-using Object2D = SceneGraph::Object<Magnum::SceneGraph::MatrixTransformation2D>;
+class Object2D: public SceneGraph::Object<Magnum::SceneGraph::MatrixTransformation2D>
+{
+    private:
+        using base_t = SceneGraph::Object<Magnum::SceneGraph::MatrixTransformation2D>;
+
+    public:
+        Object2D(Object2D* pparent = nullptr):
+            base_t(pparent)
+        {
+        }
+
+        virtual ~Object2D() = default;
+
+        float get_alpha() const
+        {
+            return alpha_;
+        }
+
+        void set_alpha(const float value)
+        {
+            alpha_ = value;
+        }
+
+    private:
+        float alpha_ = 1.0f;
+};
+
+class Scene2D: public Object2D
+{
+    public:
+        explicit Scene2D() = default;
+
+    private:
+        bool isScene() const override final
+        {
+            return true;
+        }
+};
 
 namespace features
 {
