@@ -79,7 +79,7 @@ struct game::impl
         MOVE_BUTTON_INITIALIZER("/res/images/move_button.tga",   drop),
         MOVE_BUTTON_INITIALIZER("/res/images/rotate_button.tga", clockwise_rotation)
     {
-        const auto move_button_scaling = 0.85f;
+        const auto move_button_scaling = 0.95f;
 
         background.scale({16.0f, 16.0f});
         background.translate({0.0f, -1.0f});
@@ -98,18 +98,18 @@ struct game::impl
         exit_button.translate({-2.8f, 7.0f});
 
         left_shift_button.scale({move_button_scaling, move_button_scaling});
-        left_shift_button.translate({-3.25f, -5.75f});
+        left_shift_button.translate({-3.25f, -5.85f});
 
         right_shift_button.rotate(180.0_degf);
         right_shift_button.scale({move_button_scaling, move_button_scaling});
-        right_shift_button.translate({-1.5f, -6.75f});
+        right_shift_button.translate({-1.4f, -6.75f});
 
         drop_button.rotate(90.0_degf);
         drop_button.scale({move_button_scaling, move_button_scaling});
-        drop_button.translate({1.5f, -6.75f});
+        drop_button.translate({1.4f, -6.75f});
 
         clockwise_rotation_button.scale({move_button_scaling, move_button_scaling});
-        clockwise_rotation_button.translate({3.25f, -5.75f});
+        clockwise_rotation_button.translate({3.25f, -5.85f});
     }
 
     void send_move_request(const data_types::move move)
