@@ -85,7 +85,7 @@ namespace events
 
     struct tile_nullification
     {
-        data_types::tile_coordinate_list nullified_tile_coordinates;
+        libutil::matrix_coordinate_list nullified_tile_coordinates;
     };
 
     std::ostream& operator<<(std::ostream& l, const tile_nullification& r);

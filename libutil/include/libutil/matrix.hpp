@@ -34,6 +34,14 @@ struct matrix
     std::array<T, M * N> data;
 };
 
+struct matrix_coordinate
+{
+    int i = 0;
+    int j = 0;
+};
+
+using matrix_coordinate_list = std::vector<matrix_coordinate>;
+
 template<class Matrix>
 auto begin(Matrix& mat)
 {
@@ -58,6 +66,12 @@ decltype(auto) at(Matrix& mat, const int i, const int j)
 {
     assert(i < mat.m && j < mat.n);
     return mat.data[i * mat.n + j];
+}
+
+template<class Matrix>
+decltype(auto) at(Matrix& mat, const matrix_coordinate& c)
+{
+    return at(mat, c.i, c.j);
 }
 
 template<class Matrix, class Matrix2>

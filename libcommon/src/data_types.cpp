@@ -62,10 +62,10 @@ std::ostream& operator<<(std::ostream& l, const input_layout& r)
     return l;
 }
 
-tile_coordinate get_tile_coordinate
+libutil::matrix_coordinate get_tile_coordinate
 (
     const input_layout& layout,
-    const tile_coordinate& tile_coord //coordinate of tile in input
+    const libutil::matrix_coordinate& tile_coord //coordinate of tile in input
 )
 {
     const auto hash = [](const int in_row, const int in_col, const int rot)
@@ -79,9 +79,9 @@ tile_coordinate get_tile_coordinate
 
 #define CASE(IN_ROW, IN_COL, ROT, OUT_ROW, OUT_COL) \
     case hash(IN_ROW, IN_COL, ROT): \
-        return tile_coordinate{OUT_ROW, OUT_COL + layout.col_offset};
+        return libutil::matrix_coordinate{OUT_ROW, OUT_COL + layout.col_offset};
 
-    switch(hash(tile_coord.row, tile_coord.col, layout.rotation))
+    switch(hash(tile_coord.i, tile_coord.j, layout.rotation))
     {
         //--(in_row, in_col, rot, out_row, out_col)
         CASE(0,      0,      0,   0,       0);
@@ -105,19 +105,7 @@ tile_coordinate get_tile_coordinate
 #undef CASE
 
     assert(false);
-    return tile_coordinate{0, 0};
-}
-
-
-
-std::ostream& operator<<(std::ostream& l, const tile_coordinate& r)
-{
-    l << "tile_coordinate";
-    l << "{";
-    l << "row: " << r.row << ", ";
-    l << "col: " << r.col;
-    l << "}";
-    return l;
+    return libutil::matrix_coordinate{0, 0};
 }
 
 
@@ -126,8 +114,8 @@ std::ostream& operator<<(std::ostream& l, const input_tile_drop& r)
 {
     l << "input_tile_drop";
     l << "{";
-    l << "input_coordinate: " << r.input_coordinate << ", ";
-    l << "board_coordinate: " << r.board_coordinate;
+    l << "input_coordinate: " << libutil::streamable{r.input_coordinate} << ", ";
+    l << "board_coordinate: " << libutil::streamable{r.board_coordinate};
     l << "}";
     return l;
 }
@@ -152,7 +140,7 @@ std::ostream& operator<<(std::ostream& l, const tile_merge& r)
     l << "tile_merge";
     l << "{";
     l << "src_tile_coordinates: " << libutil::streamable{r.src_tile_coordinates} << ", ";
-    l << "dst_tile_coordinate: " << r.dst_tile_coordinate << ", ";
+    l << "dst_tile_coordinate: " << libutil::streamable{r.dst_tile_coordinate} << ", ";
     l << "dst_tile_value: " << r.dst_tile_value;
     l << "}";
     return l;

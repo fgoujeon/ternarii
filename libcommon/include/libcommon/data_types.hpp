@@ -122,18 +122,6 @@ int get_tile_count
 
 
 
-struct tile_coordinate
-{
-    int row = 0;
-    int col = 0;
-};
-
-using tile_coordinate_list = std::vector<tile_coordinate>;
-
-std::ostream& operator<<(std::ostream& l, const tile_coordinate& r);
-
-
-
 struct input_layout
 {
     int col_offset = 2;
@@ -173,18 +161,18 @@ With such a layout:
 - get_tile_coordinate(layout, {0, 0}) returns {3, 1}
 - get_tile_coordinate(layout, {1, 0}) returns {3, 0}
 */
-tile_coordinate get_tile_coordinate
+libutil::matrix_coordinate get_tile_coordinate
 (
     const input_layout& layout,
-    const tile_coordinate& tile_coord //coordinate of tile in input
+    const libutil::matrix_coordinate& tile_coord //coordinate of tile in input
 );
 
 
 
 struct input_tile_drop
 {
-    tile_coordinate input_coordinate;
-    tile_coordinate board_coordinate;
+    libutil::matrix_coordinate input_coordinate;
+    libutil::matrix_coordinate board_coordinate;
 };
 
 using input_tile_drop_list = std::vector<input_tile_drop>;
@@ -208,8 +196,8 @@ std::ostream& operator<<(std::ostream& l, const board_tile_drop& r);
 
 struct tile_merge
 {
-    tile_coordinate_list src_tile_coordinates;
-    tile_coordinate dst_tile_coordinate;
+    libutil::matrix_coordinate_list src_tile_coordinates;
+    libutil::matrix_coordinate dst_tile_coordinate;
     int dst_tile_value = 0;
 };
 

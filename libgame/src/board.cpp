@@ -60,7 +60,7 @@ namespace
                     const auto coord = get_tile_coordinate(input_layout, {row, col});
 
                     //Process lower rows first, then higher ones
-                    if(coord.row != input_row)
+                    if(coord.i != input_row)
                     {
                         return;
                     }
@@ -68,7 +68,7 @@ namespace
                     const auto opt_dst_row = libcommon::data_types::get_lowest_empty_cell
                     (
                         board_tiles,
-                        coord.col
+                        coord.j
                     );
 
                     if(!opt_dst_row)
@@ -76,7 +76,7 @@ namespace
                         return;
                     }
 
-                    libutil::at(board_tiles, *opt_dst_row, coord.col) = opt_tile;
+                    libutil::at(board_tiles, *opt_dst_row, coord.j) = opt_tile;
 
                     if(pdrops)
                     {
@@ -85,7 +85,7 @@ namespace
                             data_types::input_tile_drop
                             {
                                 {row, col},
-                                {*opt_dst_row, coord.col}
+                                {*opt_dst_row, coord.j}
                             }
                         );
                     }
@@ -105,7 +105,7 @@ namespace
     data_types::board_tile_array apply_nullifiers
     (
         data_types::board_tile_array tiles,
-        data_types::tile_coordinate_list& coords //output
+        libutil::matrix_coordinate_list& coords //output
     )
     {
         libutil::for_each_ij
@@ -299,7 +299,7 @@ int board::get_free_cell_count() const
     return count;
 }
 
-void board::get_targeted_tiles(const board_input& in, data_types::tile_coordinate_list& coords) const
+void board::get_targeted_tiles(const board_input& in, libutil::matrix_coordinate_list& coords) const
 {
     const auto board_tiles = apply_gravity(in.get_tiles(), in.get_layout(), tiles_, nullptr);
     apply_nullifiers(board_tiles, coords);
@@ -328,7 +328,7 @@ void board::drop_input_tiles(const board_input& in, event_list& events)
         old_event_count = events.size();
 
         {
-            auto nullified_tiles = data_types::tile_coordinate_list{};
+            auto nullified_tiles = libutil::matrix_coordinate_list{};
             tiles_ = apply_nullifiers(tiles_, nullified_tiles);
             if(!nullified_tiles.empty())
             {
@@ -423,7 +423,7 @@ data_types::tile_merge_list board::merge_tiles()
             if(selection_size >= 3)
             {
                 //remove the selected tiles from the board
-                std::vector<data_types::tile_coordinate> removed_tile_coordinates;
+                libutil::matrix_coordinate_list removed_tile_coordinates;
                 libutil::for_each_ij
                 (
                     [&](auto& opt_tile2, const int row2, const int col2)
@@ -447,7 +447,7 @@ data_types::tile_merge_list board::merge_tiles()
                     data_types::tile_merge
                     {
                         removed_tile_coordinates,
-                        data_types::tile_coordinate{row, col},
+                        libutil::matrix_coordinate{row, col},
                         merged_tile.value
                     }
                 );

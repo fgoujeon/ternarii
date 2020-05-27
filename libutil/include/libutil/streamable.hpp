@@ -148,6 +148,12 @@ std::ostream& operator<<(std::ostream& l, const streamable<libutil::matrix<T, M,
     return l << streamable{r.value.data};
 }
 
+inline
+std::ostream& operator<<(std::ostream& l, const streamable<libutil::matrix_coordinate>& r)
+{
+    return l << "{" << r.value.i << ", " << r.value.j << "}";
+}
+
 } //namespace
 
 #endif

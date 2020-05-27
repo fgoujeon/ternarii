@@ -29,12 +29,12 @@ namespace libview::objects
 
 namespace
 {
-    Magnum::Vector2 tile_coordinate_to_position(const data_types::tile_coordinate& c)
+    Magnum::Vector2 tile_coordinate_to_position(const libutil::matrix_coordinate& c)
     {
         return
         {
-            -2.5f + c.col,
-            -5.0f + c.row
+            -2.5f + c.j,
+            -5.0f + c.i
         };
     }
 
@@ -58,8 +58,8 @@ namespace
                 //Convert to model coordinate
                 pos = Magnum::Vector2
                 {
-                    coord.col - 2.5f,
-                    coord.row - 0.5f + y_offset
+                    coord.j - 2.5f,
+                    coord.i - 0.5f + y_offset
                 };
             },
             positions
@@ -291,7 +291,7 @@ void tile_grid::drop_input_tiles(const data_types::input_tile_drop_list& drops)
 
     for(const auto& drop: drops)
     {
-        auto& ptile = libutil::at(input_tiles_, drop.input_coordinate.row, drop.input_coordinate.col);
+        auto& ptile = libutil::at(input_tiles_, drop.input_coordinate);
 
         const auto dst_position = tile_coordinate_to_position(drop.board_coordinate);
 
@@ -305,7 +305,7 @@ void tile_grid::drop_input_tiles(const data_types::input_tile_drop_list& drops)
             }
         );
 
-        libutil::at(board_tiles_, drop.board_coordinate.row, drop.board_coordinate.col) = ptile;
+        libutil::at(board_tiles_, drop.board_coordinate) = ptile;
         ptile = nullptr;
     }
 
@@ -321,7 +321,7 @@ void tile_grid::drop_board_tiles(const data_types::board_tile_drop_list& drops)
     {
         auto& ptile = libutil::at(board_tiles_, drop.src_row, drop.col);
 
-        const auto dst_position = tile_coordinate_to_position(data_types::tile_coordinate{drop.dst_row, drop.col});
+        const auto dst_position = tile_coordinate_to_position(libutil::matrix_coordinate{drop.dst_row, drop.col});
 
         anim.add
         (
@@ -341,14 +341,14 @@ void tile_grid::drop_board_tiles(const data_types::board_tile_drop_list& drops)
     animator_.push(tracks::pause{0.05});
 }
 
-void tile_grid::nullify_tiles(const data_types::tile_coordinate_list& nullified_tile_coordinates)
+void tile_grid::nullify_tiles(const libutil::matrix_coordinate_list& nullified_tile_coordinates)
 {
     auto anim0 = animation{};
     auto anim1 = animation{};
 
     for(const auto& coord: nullified_tile_coordinates)
     {
-        auto& ptile = libutil::at(board_tiles_, coord.row, coord.col);
+        auto& ptile = libutil::at(board_tiles_, coord);
 
         if(!ptile)
         {
@@ -377,7 +377,7 @@ void tile_grid::merge_tiles(const data_types::tile_merge_list& merges)
 
         for(const auto& src_tile_coordinate: merge.src_tile_coordinates) //for each source tile
         {
-            auto& psrc_tile = libutil::at(board_tiles_, src_tile_coordinate.row, src_tile_coordinate.col);
+            auto& psrc_tile = libutil::at(board_tiles_, src_tile_coordinate);
 
             //first, translate source tile toward position of destination tile
             anim0.add
@@ -407,7 +407,7 @@ void tile_grid::merge_tiles(const data_types::tile_merge_list& merges)
 
         //create destination tile
         auto pdst_tile = make_tile(data_types::tiles::number{merge.dst_tile_value}, dst_position);
-        libutil::at(board_tiles_, merge.dst_tile_coordinate.row, merge.dst_tile_coordinate.col) = pdst_tile;
+        libutil::at(board_tiles_, merge.dst_tile_coordinate) = pdst_tile;
 
         //make destination tile appear with a fade in
         anim1.add(tracks::alpha_transition{pdst_tile, 1, 0.2});
@@ -417,7 +417,7 @@ void tile_grid::merge_tiles(const data_types::tile_merge_list& merges)
     animator_.push(std::move(anim1));
 }
 
-void tile_grid::mark_tiles_for_nullification(const data_types::tile_coordinate_list& tile_coordinates)
+void tile_grid::mark_tiles_for_nullification(const libutil::matrix_coordinate_list& tile_coordinates)
 {
     auto anim = animation{};
 
@@ -433,7 +433,7 @@ void tile_grid::mark_tiles_for_nullification(const data_types::tile_coordinate_l
     //Mark given board tiles
     for(const auto& coords: tile_coordinates)
     {
-        auto& ptile = libutil::at(board_tiles_, coords.row, coords.col);
+        auto& ptile = libutil::at(board_tiles_, coords);
         if(ptile)
         {
             anim.add(tracks::immediate_alpha_transition{ptile, 0.5});

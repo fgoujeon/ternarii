@@ -50,7 +50,7 @@ struct game
 
         const data_types::board_tile_array& get_board_tiles() const;
 
-        void get_targeted_tiles(data_types::tile_coordinate_list& coords) const;
+        void get_targeted_tiles(libutil::matrix_coordinate_list& coords) const;
 
         bool is_game_over() const;
 

@@ -231,7 +231,7 @@ void game::drop_board_tiles(const data_types::board_tile_drop_list& drops)
     pimpl_->tile_grid.drop_board_tiles(drops);
 }
 
-void game::nullify_tiles(const data_types::tile_coordinate_list& nullified_tile_coordinates)
+void game::nullify_tiles(const libutil::matrix_coordinate_list& nullified_tile_coordinates)
 {
     pimpl_->tile_grid.nullify_tiles(nullified_tile_coordinates);
 }
@@ -241,7 +241,7 @@ void game::merge_tiles(const data_types::tile_merge_list& merges)
     pimpl_->tile_grid.merge_tiles(merges);
 }
 
-void game::mark_tiles_for_nullification(const data_types::tile_coordinate_list& tile_coordinates)
+void game::mark_tiles_for_nullification(const libutil::matrix_coordinate_list& tile_coordinates)
 {
     pimpl_->tile_grid.mark_tiles_for_nullification(tile_coordinates);
 }

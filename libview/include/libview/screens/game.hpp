@@ -72,11 +72,11 @@ class game: public Object2D, public features::animable, public features::key_eve
 
         void drop_board_tiles(const data_types::board_tile_drop_list& drops);
 
-        void nullify_tiles(const data_types::tile_coordinate_list& nullified_tile_coordinates);
+        void nullify_tiles(const libutil::matrix_coordinate_list& nullified_tile_coordinates);
 
         void merge_tiles(const data_types::tile_merge_list& merges);
 
-        void mark_tiles_for_nullification(const data_types::tile_coordinate_list& tile_coordinates);
+        void mark_tiles_for_nullification(const libutil::matrix_coordinate_list& tile_coordinates);
 
         void set_board_tiles(const data_types::board_tile_array& tiles);
 

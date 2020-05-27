@@ -170,7 +170,7 @@ class playing final: public state
         libgame::event_list game_events_;
 
         //used by mark_tiles_for_nullification()
-        libcommon::data_types::tile_coordinate_list targeted_tiles_;
+        libutil::matrix_coordinate_list targeted_tiles_;
 };
 
 } //namespace

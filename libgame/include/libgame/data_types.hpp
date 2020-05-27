@@ -40,8 +40,6 @@ using input_tile_array     = libcommon::data_types::input_tile_array;
 using input_tile_drop      = libcommon::data_types::input_tile_drop;
 using input_tile_drop_list = libcommon::data_types::input_tile_drop_list;
 using tile                 = libcommon::data_types::tile;
-using tile_coordinate      = libcommon::data_types::tile_coordinate;
-using tile_coordinate_list = libcommon::data_types::tile_coordinate_list;
 using tile_merge           = libcommon::data_types::tile_merge;
 using tile_merge_list      = libcommon::data_types::tile_merge_list;
 
