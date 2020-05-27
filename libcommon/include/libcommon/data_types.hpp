@@ -20,6 +20,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #ifndef LIBCOMMON_DATA_TYPES_HPP
 #define LIBCOMMON_DATA_TYPES_HPP
 
+#include "constants.hpp"
 #include <libutil/matrix.hpp>
 #include <variant>
 #include <optional>
@@ -81,8 +82,8 @@ Convention of rows and columns:
 template<size_t RowCount, size_t ColumnCount>
 using basic_opt_tile_matrix = libutil::matrix<opt_tile, RowCount, ColumnCount>;
 
-using input_tile_array = basic_opt_tile_matrix<2, 2>;
-using board_tile_array = basic_opt_tile_matrix<9, 6>;
+using input_tile_array = basic_opt_tile_matrix<constants::input_row_count, constants::input_column_count>;
+using board_tile_array = basic_opt_tile_matrix<constants::board_row_count, constants::board_column_count>;
 
 //Get the row index of the lowest empty cell on the given column.
 template<size_t RowCount, size_t ColumnCount>

@@ -26,6 +26,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include "../animation.hpp"
 #include "../common.hpp"
 #include <libview/data_types.hpp>
+#include <libcommon/constants.hpp>
 #include <libutil/matrix.hpp>
 #include <libutil/time.hpp>
 #include <Magnum/Animation/Player.h>
@@ -39,8 +40,19 @@ namespace libview::objects
 class tile_grid: public Object2D
 {
     private:
-        using input_tile_array = libutil::matrix<std::shared_ptr<Object2D>, 2, 2>;
-        using board_tile_array = libutil::matrix<std::shared_ptr<Object2D>, 9, 6>;
+        using input_tile_array = libutil::matrix
+        <
+            std::shared_ptr<Object2D>,
+            libcommon::constants::input_row_count,
+            libcommon::constants::input_column_count
+        >;
+
+        using board_tile_array = libutil::matrix
+        <
+            std::shared_ptr<Object2D>,
+            libcommon::constants::board_row_count,
+            libcommon::constants::board_column_count
+        >;
 
     public:
         tile_grid(Object2D& parent, features::drawable_group& drawables);

@@ -22,6 +22,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 
 #include <libgame/events.hpp>
 #include <libgame/data_types.hpp>
+#include <libcommon/constants.hpp>
 #include <vector>
 #include <memory>
 
@@ -33,14 +34,11 @@ class board_input;
 class board
 {
     public:
-        static constexpr int total_column_count = 6;
-        static constexpr int total_row_count = 9;
-
-        //dimensions of the zone, starting from the bottom of the board, that can
-        //take tiles without causing game over
-        static constexpr int authorized_column_count = total_column_count;
-        static constexpr int authorized_row_count = 7;
-        static constexpr int authorized_cell_count = authorized_column_count * authorized_row_count;
+        static constexpr auto total_column_count      = libcommon::constants::board_column_count;
+        static constexpr auto total_row_count         = libcommon::constants::board_row_count;
+        static constexpr auto authorized_column_count = libcommon::constants::board_authorized_column_count;
+        static constexpr auto authorized_row_count    = libcommon::constants::board_authorized_row_count;
+        static constexpr auto authorized_cell_count   = libcommon::constants::board_authorized_cell_count;
 
     public:
         board(data_types::board_tile_array& tiles);

@@ -24,7 +24,7 @@ namespace libgame
 
 namespace
 {
-    constexpr auto column_count = 6;
+    constexpr auto column_count = libcommon::constants::board_column_count;
 
     constexpr auto default_layout = data_types::input_layout
     {
