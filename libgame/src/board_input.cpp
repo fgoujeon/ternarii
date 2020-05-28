@@ -36,7 +36,7 @@ namespace
     {
         auto out = data_types::input_layout{};
 
-        const auto tile_count = libcommon::data_types::get_tile_count(tiles);
+        const auto tile_count = get_tile_count(tiles);
 
         out.rotation = in.rotation % 4;
 
@@ -101,7 +101,7 @@ void board_input::shift_right(event_list& events)
 
 void board_input::rotate(event_list& events)
 {
-    const auto tile_count = libcommon::data_types::get_tile_count(tiles_);
+    const auto tile_count = get_tile_count(tiles_);
 
     if(tile_count <= 1)
     {

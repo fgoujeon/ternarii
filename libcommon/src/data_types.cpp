@@ -23,31 +23,28 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libcommon::data_types
 {
 
-namespace tiles
+std::ostream& operator<<(std::ostream& l, const number_tile& r)
 {
-    std::ostream& operator<<(std::ostream& l, const number& r)
-    {
-        l << "number";
-        l << "{";
-        l << "value: " << r.value;
-        l << "}";
-        return l;
-    }
+    l << "number_tile";
+    l << "{";
+    l << "value: " << r.value;
+    l << "}";
+    return l;
+}
 
-    std::ostream& operator<<(std::ostream& l, const column_nullifier& r)
-    {
-        return l << "column_nullifier{}";
-    }
+std::ostream& operator<<(std::ostream& l, const column_nullifier_tile& r)
+{
+    return l << "column_nullifier_tile{}";
+}
 
-    std::ostream& operator<<(std::ostream& l, const row_nullifier& r)
-    {
-        return l << "row_nullifier{}";
-    }
+std::ostream& operator<<(std::ostream& l, const row_nullifier_tile& r)
+{
+    return l << "row_nullifier_tile{}";
+}
 
-    std::ostream& operator<<(std::ostream& l, const number_nullifier& r)
-    {
-        return l << "number_nullifier{}";
-    }
+std::ostream& operator<<(std::ostream& l, const number_nullifier_tile& r)
+{
+    return l << "number_nullifier_tile{}";
 }
 
 

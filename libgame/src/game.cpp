@@ -84,12 +84,12 @@ namespace
                     case 0:
                         return
                         {
-                            data_types::tiles::number{gen_.generate(max, standard_deviation)},
-                            data_types::tiles::number{gen_.generate(max, standard_deviation)}
+                            data_types::number_tile{gen_.generate(max, standard_deviation)},
+                            data_types::number_tile{gen_.generate(max, standard_deviation)}
                         };
-                    case 1: return {data_types::tiles::column_nullifier{}};
-                    case 2: return {data_types::tiles::row_nullifier{}};
-                    case 3: return {data_types::tiles::number_nullifier{}};
+                    case 1: return {data_types::column_nullifier_tile{}};
+                    case 2: return {data_types::row_nullifier_tile{}};
+                    case 3: return {data_types::number_nullifier_tile{}};
                 }
             }
 

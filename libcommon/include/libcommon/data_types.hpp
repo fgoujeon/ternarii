@@ -31,38 +31,37 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libcommon::data_types
 {
 
-namespace tiles
+/*
+Tile types
+*/
+
+struct number_tile
 {
-    struct number
-    {
-        int value = 0;
-    };
+    int value = 0;
+};
 
-    //Nullifies all the tiles of a column
-    struct column_nullifier{};
+//Nullifies all the tiles of a column
+struct column_nullifier_tile{};
 
-    //Nullifies all the tiles of a row
-    struct row_nullifier{};
+//Nullifies all the tiles of a row
+struct row_nullifier_tile{};
 
-    //Nullifies all the number tiles that have the same value than the one
-    //placed below
-    struct number_nullifier{};
+//Nullifies all the number tiles that have the same value than the one
+//placed below
+struct number_nullifier_tile{};
 
-    std::ostream& operator<<(std::ostream& l, const number& r);
-    std::ostream& operator<<(std::ostream& l, const column_nullifier& r);
-    std::ostream& operator<<(std::ostream& l, const row_nullifier& r);
-    std::ostream& operator<<(std::ostream& l, const number_nullifier& r);
-}
+std::ostream& operator<<(std::ostream& l, const number_tile& r);
+std::ostream& operator<<(std::ostream& l, const column_nullifier_tile& r);
+std::ostream& operator<<(std::ostream& l, const row_nullifier_tile& r);
+std::ostream& operator<<(std::ostream& l, const number_nullifier_tile& r);
 
 using tile = std::variant
 <
-    tiles::number,
-    tiles::column_nullifier,
-    tiles::row_nullifier,
-    tiles::number_nullifier
+    number_tile,
+    column_nullifier_tile,
+    row_nullifier_tile,
+    number_nullifier_tile
 >;
-
-using opt_tile = std::optional<tile>;
 
 
 
@@ -80,7 +79,7 @@ Convention of rows and columns:
     [C0][C1][C2][C3][..]
 */
 template<size_t RowCount, size_t ColumnCount>
-using basic_opt_tile_matrix = libutil::matrix<opt_tile, RowCount, ColumnCount>;
+using basic_opt_tile_matrix = libutil::matrix<std::optional<tile>, RowCount, ColumnCount>;
 
 using input_tile_array = basic_opt_tile_matrix<constants::input_row_count, constants::input_column_count>;
 using board_tile_array = basic_opt_tile_matrix<constants::board_row_count, constants::board_column_count>;

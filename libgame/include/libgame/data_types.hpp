@@ -30,18 +30,20 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libgame::data_types
 {
 
-namespace tiles = libcommon::data_types::tiles;
-
-using board_tile_array     = libcommon::data_types::board_tile_array;
-using board_tile_drop      = libcommon::data_types::board_tile_drop;
-using board_tile_drop_list = libcommon::data_types::board_tile_drop_list;
-using input_layout         = libcommon::data_types::input_layout;
-using input_tile_array     = libcommon::data_types::input_tile_array;
-using input_tile_drop      = libcommon::data_types::input_tile_drop;
-using input_tile_drop_list = libcommon::data_types::input_tile_drop_list;
-using tile                 = libcommon::data_types::tile;
-using tile_merge           = libcommon::data_types::tile_merge;
-using tile_merge_list      = libcommon::data_types::tile_merge_list;
+using board_tile_array      = libcommon::data_types::board_tile_array;
+using board_tile_drop       = libcommon::data_types::board_tile_drop;
+using board_tile_drop_list  = libcommon::data_types::board_tile_drop_list;
+using column_nullifier_tile = libcommon::data_types::column_nullifier_tile;
+using input_layout          = libcommon::data_types::input_layout;
+using input_tile_array      = libcommon::data_types::input_tile_array;
+using input_tile_drop       = libcommon::data_types::input_tile_drop;
+using input_tile_drop_list  = libcommon::data_types::input_tile_drop_list;
+using number_nullifier_tile = libcommon::data_types::number_nullifier_tile;
+using number_tile           = libcommon::data_types::number_tile;
+using row_nullifier_tile    = libcommon::data_types::row_nullifier_tile;
+using tile                  = libcommon::data_types::tile;
+using tile_merge            = libcommon::data_types::tile_merge;
+using tile_merge_list       = libcommon::data_types::tile_merge_list;
 
 
 

@@ -406,7 +406,7 @@ void tile_grid::merge_tiles(const data_types::tile_merge_list& merges)
         }
 
         //create destination tile
-        auto pdst_tile = make_tile(data_types::tiles::number{merge.dst_tile_value}, dst_position);
+        auto pdst_tile = make_tile(data_types::number_tile{merge.dst_tile_value}, dst_position);
         libutil::at(board_tiles_, merge.dst_tile_coordinate) = pdst_tile;
 
         //make destination tile appear with a fade in
@@ -481,19 +481,19 @@ std::shared_ptr<Object2D> tile_grid::make_tile
     (
         libutil::overload
         {
-            [&](const data_types::tiles::number& tile) -> result_t
+            [&](const data_types::number_tile& tile) -> result_t
             {
                 return std::make_shared<number_tile>(*this, drawables_, tile.value);
             },
-            [&](const data_types::tiles::column_nullifier&) -> result_t
+            [&](const data_types::column_nullifier_tile&) -> result_t
             {
                 return std::make_shared<sdf_image_tile>(*this, drawables_, "/res/images/column_nullifier.tga");
             },
-            [&](const data_types::tiles::row_nullifier&) -> result_t
+            [&](const data_types::row_nullifier_tile&) -> result_t
             {
                 return std::make_shared<sdf_image_tile>(*this, drawables_, "/res/images/row_nullifier.tga");
             },
-            [&](const data_types::tiles::number_nullifier&) -> result_t
+            [&](const data_types::number_nullifier_tile&) -> result_t
             {
                 return std::make_shared<sdf_image_tile>(*this, drawables_, "/res/images/number_nullifier.tga");
             }

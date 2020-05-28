@@ -65,7 +65,7 @@ namespace
                         return;
                     }
 
-                    const auto opt_dst_row = libcommon::data_types::get_lowest_empty_cell
+                    const auto opt_dst_row = get_lowest_empty_cell
                     (
                         board_tiles,
                         coord.j
@@ -122,9 +122,9 @@ namespace
                 (
                     libutil::overload
                     {
-                        [&](const data_types::tiles::number&){},
+                        [&](const data_types::number_tile&){},
 
-                        [&](const data_types::tiles::column_nullifier&)
+                        [&](const data_types::column_nullifier_tile&)
                         {
                             //Remove all tiles from current column
                             for(int nullified_row = 0; nullified_row < tiles.m; ++nullified_row)
@@ -142,7 +142,7 @@ namespace
                             }
                         },
 
-                        [&](const data_types::tiles::row_nullifier&)
+                        [&](const data_types::row_nullifier_tile&)
                         {
                             //Remove all tiles from current row
                             for(int nullified_col = 0; nullified_col < tiles.n; ++nullified_col)
@@ -160,7 +160,7 @@ namespace
                             }
                         },
 
-                        [&](const data_types::tiles::number_nullifier&)
+                        [&](const data_types::number_nullifier_tile&)
                         {
                             //Remove the nullifier tile itself
                             opt_tile = std::nullopt;
@@ -182,7 +182,7 @@ namespace
                                     return std::nullopt;
                                 }
 
-                                const auto pbelow_tile = std::get_if<data_types::tiles::number>(&*opt_below_tile);
+                                const auto pbelow_tile = std::get_if<data_types::number_tile>(&*opt_below_tile);
 
                                 if(!pbelow_tile)
                                 {
@@ -207,7 +207,7 @@ namespace
                                         return;
                                     }
 
-                                    const auto ptile = std::get_if<data_types::tiles::number>(&*opt_tile);
+                                    const auto ptile = std::get_if<data_types::number_tile>(&*opt_tile);
 
                                     if(!ptile)
                                     {
@@ -261,7 +261,7 @@ int board::get_highest_tile_value() const
     {
         if(opt_tile)
         {
-            if(const auto pnum_tile = std::get_if<data_types::tiles::number>(&*opt_tile))
+            if(const auto pnum_tile = std::get_if<data_types::number_tile>(&*opt_tile))
             {
                 value = std::max(value, pnum_tile->value);
             }
@@ -277,7 +277,7 @@ int board::get_score() const
     {
         if(opt_tile)
         {
-            if(const auto pnum_tile = std::get_if<data_types::tiles::number>(&*opt_tile))
+            if(const auto pnum_tile = std::get_if<data_types::number_tile>(&*opt_tile))
             {
                 score += std::pow(3, pnum_tile->value);
             }
@@ -406,7 +406,7 @@ data_types::tile_merge_list board::merge_tiles()
     (
         [&](const auto& opt_tile, const int row, const int col)
         {
-            const auto pnum_tile = std::get_if<data_types::tiles::number>(&*opt_tile);
+            const auto pnum_tile = std::get_if<data_types::number_tile>(&*opt_tile);
             if(!pnum_tile)
             {
                 return;
@@ -439,7 +439,7 @@ data_types::tile_merge_list board::merge_tiles()
                 );
 
                 //put the new merged tile on the layer
-                auto merged_tile = data_types::tiles::number{current_tile.value + 1};
+                auto merged_tile = data_types::number_tile{current_tile.value + 1};
                 libutil::at(tile_layer, row, col) = merged_tile;
 
                 merges.push_back
@@ -494,7 +494,7 @@ void board::select_tiles
         return;
     }
 
-    const auto pnum_tile = std::get_if<data_types::tiles::number>(&*opt_tile);
+    const auto pnum_tile = std::get_if<data_types::number_tile>(&*opt_tile);
     if(!pnum_tile)
     {
         return;
