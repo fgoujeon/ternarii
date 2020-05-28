@@ -241,64 +241,6 @@ board::board(data_types::board_tile_matrix& tiles):
 {
 }
 
-bool board::is_game_over() const
-{
-    for(int col = 0; col < tiles_.n; ++col)
-    {
-        if(libutil::at(tiles_, authorized_row_count, col))
-        {
-            return true;
-        }
-    }
-
-    return false;
-}
-
-int board::get_highest_tile_value() const
-{
-    auto value = 0;
-    for(const auto& opt_tile: tiles_)
-    {
-        if(opt_tile)
-        {
-            if(const auto pnum_tile = std::get_if<data_types::number_tile>(&*opt_tile))
-            {
-                value = std::max(value, pnum_tile->value);
-            }
-        }
-    }
-    return value;
-}
-
-int board::get_score() const
-{
-    auto score = 0;
-    for(const auto& opt_tile: tiles_)
-    {
-        if(opt_tile)
-        {
-            if(const auto pnum_tile = std::get_if<data_types::number_tile>(&*opt_tile))
-            {
-                score += std::pow(3, pnum_tile->value);
-            }
-        }
-    }
-    return score;
-}
-
-int board::get_free_cell_count() const
-{
-    auto count = authorized_cell_count;
-    for(const auto& opt_tile: tiles_)
-    {
-        if(opt_tile)
-        {
-            --count;
-        }
-    }
-    return count;
-}
-
 void board::get_targeted_tiles(const board_input& in, libutil::matrix_coordinate_list& coords) const
 {
     const auto board_tiles = apply_gravity(in.get_tiles(), in.get_layout(), tiles_, nullptr);
@@ -349,7 +291,7 @@ void board::drop_input_tiles(const board_input& in, event_list& events)
         }
     } while(old_event_count != events.size());
 
-    events.push_back(events::score_change{get_score()});
+    events.push_back(events::score_change{get_score(tiles_)});
 }
 
 data_types::board_tile_drop_list board::make_tiles_fall()

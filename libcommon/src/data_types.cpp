@@ -49,6 +49,74 @@ std::ostream& operator<<(std::ostream& l, const number_nullifier_tile& r)
 
 
 
+/*
+board_tile_matrix associated functions
+*/
+
+bool is_overflowed(const board_tile_matrix& tiles)
+{
+    for(int col = 0; col < tiles.n; ++col)
+    {
+        if(libutil::at(tiles, constants::board_authorized_row_count, col))
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+int get_highest_tile_value(const board_tile_matrix& tiles)
+{
+    auto value = 0;
+    for(const auto& opt_tile: tiles)
+    {
+        if(opt_tile)
+        {
+            if(const auto pnum_tile = std::get_if<data_types::number_tile>(&*opt_tile))
+            {
+                value = std::max(value, pnum_tile->value);
+            }
+        }
+    }
+    return value;
+}
+
+int get_score(const board_tile_matrix& tiles)
+{
+    auto score = 0;
+    for(const auto& opt_tile: tiles)
+    {
+        if(opt_tile)
+        {
+            if(const auto pnum_tile = std::get_if<data_types::number_tile>(&*opt_tile))
+            {
+                score += std::pow(3, pnum_tile->value);
+            }
+        }
+    }
+    return score;
+}
+
+int get_free_cell_count(const board_tile_matrix& tiles)
+{
+    auto count = constants::board_authorized_cell_count;
+    for(const auto& opt_tile: tiles)
+    {
+        if(opt_tile)
+        {
+            --count;
+        }
+    }
+    return count;
+}
+
+
+
+/*
+input_layout associated functions
+*/
+
 std::ostream& operator<<(std::ostream& l, const input_layout& r)
 {
     l << "input_layout";

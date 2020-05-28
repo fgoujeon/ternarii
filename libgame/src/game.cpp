@@ -118,7 +118,7 @@ struct game::impl
         beginning of a game) and 9 (we don't want the player to get too many
         "free" points from the input just by being lucky).
         */
-        const auto highest_tile_value = board_.get_highest_tile_value();
+        const auto highest_tile_value = get_highest_tile_value(state.board_tiles);
         const auto max_value = std::clamp(highest_tile_value, 2, 9);
 
         /*
@@ -138,7 +138,7 @@ struct game::impl
             Value goes from 0.0 (empty) to 1.0 (full).
             */
             const auto fill_rate =
-                static_cast<double>(board::authorized_cell_count - board_.get_free_cell_count()) /
+                static_cast<double>(board::authorized_cell_count - get_free_cell_count(state.board_tiles)) /
                 board::authorized_cell_count
             ;
 
@@ -188,11 +188,6 @@ const data_types::game_state& game::get_state() const
     return pimpl_->state;
 }
 
-int game::get_score() const
-{
-    return pimpl_->board_.get_score();
-}
-
 int game::get_hi_score() const
 {
     return pimpl_->state.hi_score;
@@ -223,9 +218,9 @@ void game::get_targeted_tiles(libutil::matrix_coordinate_list& coords) const
     return pimpl_->board_.get_targeted_tiles(pimpl_->input_, coords);
 }
 
-bool game::is_game_over() const
+bool game::is_over() const
 {
-    return pimpl_->board_.is_game_over();
+    return is_overflowed(pimpl_->state.board_tiles);
 }
 
 void game::start(event_list& events)
@@ -242,7 +237,7 @@ void game::start(event_list& events)
 
 void game::shift_input_left(event_list& events)
 {
-    if(!is_game_over())
+    if(!is_over())
     {
         pimpl_->input_.shift_left(events);
     }
@@ -250,7 +245,7 @@ void game::shift_input_left(event_list& events)
 
 void game::shift_input_right(event_list& events)
 {
-    if(!is_game_over())
+    if(!is_over())
     {
         pimpl_->input_.shift_right(events);
     }
@@ -258,7 +253,7 @@ void game::shift_input_right(event_list& events)
 
 void game::rotate_input(event_list& events)
 {
-    if(!is_game_over())
+    if(!is_over())
     {
         pimpl_->input_.rotate(events);
     }
@@ -266,7 +261,7 @@ void game::rotate_input(event_list& events)
 
 void game::drop_input_tiles(event_list& events)
 {
-    if(is_game_over())
+    if(is_over())
     {
         return;
     }
@@ -274,15 +269,16 @@ void game::drop_input_tiles(event_list& events)
     //drop the input
     pimpl_->board_.drop_input_tiles(pimpl_->input_, events);
 
-    if(is_game_over())
+    if(is_over())
     {
         events.push_back(events::end_of_game{});
 
         //Save hi-score
+        const auto score = get_score(pimpl_->state.board_tiles);
         auto& hi_score = pimpl_->state.hi_score;
-        if(hi_score < get_score())
+        if(hi_score < score)
         {
-            hi_score = get_score();
+            hi_score = score;
             events.push_back(events::hi_score_change{hi_score});
         }
     }

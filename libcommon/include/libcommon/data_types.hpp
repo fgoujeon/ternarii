@@ -27,6 +27,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include <vector>
 #include <array>
 #include <ostream>
+#include <cmath>
 
 namespace libcommon::data_types
 {
@@ -81,9 +82,6 @@ Convention of rows and columns:
 template<size_t RowCount, size_t ColumnCount>
 using basic_opt_tile_matrix = libutil::matrix<std::optional<tile>, RowCount, ColumnCount>;
 
-using input_tile_matrix = basic_opt_tile_matrix<constants::input_row_count, constants::input_column_count>;
-using board_tile_matrix = basic_opt_tile_matrix<constants::board_row_count, constants::board_column_count>;
-
 //Get the row index of the lowest empty cell on the given column.
 template<size_t RowCount, size_t ColumnCount>
 std::optional<int> get_lowest_empty_cell
@@ -119,6 +117,26 @@ int get_tile_count
     }
     return count;
 }
+
+
+
+using input_tile_matrix = basic_opt_tile_matrix<constants::input_row_count, constants::input_column_count>;
+
+
+
+/*
+board_tile_matrix type and associated functions
+*/
+
+using board_tile_matrix = basic_opt_tile_matrix<constants::board_row_count, constants::board_column_count>;
+
+bool is_overflowed(const board_tile_matrix& tiles);
+
+int get_highest_tile_value(const board_tile_matrix& tiles);
+
+int get_score(const board_tile_matrix& tiles);
+
+int get_free_cell_count(const board_tile_matrix& tiles);
 
 
 

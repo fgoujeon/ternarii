@@ -46,15 +46,17 @@ playing::playing(fsm& f, const screen_transition trans):
     {
         pgame_ = std::make_unique<libgame::game>(*opt_game_state);
 
+        const auto& board_tiles = pgame_->get_board_tiles();
+
         //initialize view
-        pscreen_->set_score(pgame_->get_score());
+        pscreen_->set_score(get_score(board_tiles));
         pscreen_->set_hi_score(pgame_->get_hi_score());
         pscreen_->create_next_input(pgame_->get_input_tiles());
         pscreen_->insert_next_input(pgame_->get_input_layout());
         pscreen_->create_next_input(pgame_->get_next_input_tiles());
-        pscreen_->set_board_tiles(pgame_->get_board_tiles());
+        pscreen_->set_board_tiles(board_tiles);
         mark_tiles_for_nullification();
-        pscreen_->set_game_over_screen_visible(pgame_->is_game_over());
+        pscreen_->set_game_over_screen_visible(is_overflowed(board_tiles));
     }
     else
     {

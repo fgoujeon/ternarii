@@ -38,8 +38,6 @@ struct game
 
         const data_types::game_state& get_state() const;
 
-        int get_score() const;
-
         int get_hi_score() const;
 
         const data_types::input_tile_matrix& get_next_input_tiles() const;
@@ -52,7 +50,7 @@ struct game
 
         void get_targeted_tiles(libutil::matrix_coordinate_list& coords) const;
 
-        bool is_game_over() const;
+        bool is_over() const;
 
         void start(event_list& events);
 

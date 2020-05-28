@@ -48,14 +48,6 @@ class board
             return tiles_;
         }
 
-        bool is_game_over() const;
-
-        int get_highest_tile_value() const;
-
-        int get_score() const;
-
-        int get_free_cell_count() const;
-
         void get_targeted_tiles(const board_input& in, libutil::matrix_coordinate_list& coords) const;
 
         void clear();
