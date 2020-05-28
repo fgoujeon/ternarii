@@ -41,9 +41,9 @@ class board
         static constexpr auto authorized_cell_count   = libcommon::constants::board_authorized_cell_count;
 
     public:
-        board(data_types::board_tile_array& tiles);
+        board(data_types::board_tile_matrix& tiles);
 
-        const data_types::board_tile_array& tile_array() const
+        const data_types::board_tile_matrix& tile_array() const
         {
             return tiles_;
         }
@@ -86,7 +86,7 @@ class board
         );
 
     private:
-        data_types::board_tile_array& tiles_;
+        data_types::board_tile_matrix& tiles_;
 };
 
 } //namespace

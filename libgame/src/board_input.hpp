@@ -32,9 +32,9 @@ namespace libgame
 class board_input
 {
     public:
-        board_input(data_types::input_tile_array& tiles);
+        board_input(data_types::input_tile_matrix& tiles);
 
-        const data_types::input_tile_array& get_tiles() const
+        const data_types::input_tile_matrix& get_tiles() const
         {
             return tiles_;
         }
@@ -44,7 +44,7 @@ class board_input
             return layout_;
         }
 
-        event set_tiles(const data_types::input_tile_array& tiles);
+        event set_tiles(const data_types::input_tile_matrix& tiles);
 
         void shift_left(event_list& events);
 
@@ -53,7 +53,7 @@ class board_input
         void rotate(event_list& events);
 
     private:
-        data_types::input_tile_array& tiles_;
+        data_types::input_tile_matrix& tiles_;
         data_types::input_layout layout_;
 };
 

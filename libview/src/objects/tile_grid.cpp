@@ -176,7 +176,7 @@ void tile_grid::clear()
     clear_matrix(board_tiles_);
 }
 
-void tile_grid::create_next_input(const data_types::input_tile_array& tiles)
+void tile_grid::create_next_input(const data_types::input_tile_matrix& tiles)
 {
     const auto animation_duration_s = 0.2f;
 
@@ -443,7 +443,7 @@ void tile_grid::mark_tiles_for_nullification(const libutil::matrix_coordinate_li
     animator_.push(std::move(anim));
 }
 
-void tile_grid::set_board_tiles(const data_types::board_tile_array& tiles)
+void tile_grid::set_board_tiles(const data_types::board_tile_matrix& tiles)
 {
     libutil::for_each_ij
     (

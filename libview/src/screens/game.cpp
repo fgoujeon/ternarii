@@ -206,7 +206,7 @@ void game::set_hi_score(const int value)
     }
 }
 
-void game::create_next_input(const data_types::input_tile_array& tiles)
+void game::create_next_input(const data_types::input_tile_matrix& tiles)
 {
     pimpl_->tile_grid.create_next_input(tiles);
 }
@@ -246,7 +246,7 @@ void game::mark_tiles_for_nullification(const libutil::matrix_coordinate_list& t
     pimpl_->tile_grid.mark_tiles_for_nullification(tile_coordinates);
 }
 
-void game::set_board_tiles(const data_types::board_tile_array& tiles)
+void game::set_board_tiles(const data_types::board_tile_matrix& tiles)
 {
     pimpl_->tile_grid.set_board_tiles(tiles);
 }

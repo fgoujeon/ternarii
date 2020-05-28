@@ -40,14 +40,14 @@ namespace libview::objects
 class tile_grid: public Object2D
 {
     private:
-        using input_tile_array = libutil::matrix
+        using input_tile_matrix = libutil::matrix
         <
             std::shared_ptr<Object2D>,
             libcommon::constants::input_row_count,
             libcommon::constants::input_column_count
         >;
 
-        using board_tile_array = libutil::matrix
+        using board_tile_matrix = libutil::matrix
         <
             std::shared_ptr<Object2D>,
             libcommon::constants::board_row_count,
@@ -61,7 +61,7 @@ class tile_grid: public Object2D
 
         void clear();
 
-        void create_next_input(const data_types::input_tile_array& tiles);
+        void create_next_input(const data_types::input_tile_matrix& tiles);
 
         void insert_next_input(const data_types::input_layout& layout);
 
@@ -77,7 +77,7 @@ class tile_grid: public Object2D
 
         void mark_tiles_for_nullification(const libutil::matrix_coordinate_list& tile_coordinates);
 
-        void set_board_tiles(const data_types::board_tile_array& tiles);
+        void set_board_tiles(const data_types::board_tile_matrix& tiles);
 
         void advance(const libutil::time_point& now);
 
@@ -94,10 +94,10 @@ class tile_grid: public Object2D
         animator animator_;
 
         std::vector<std::unique_ptr<sdf_image>> board_corners_;
-        input_tile_array next_input_tiles_ = {};
-        input_tile_array input_tiles_ = {};
+        input_tile_matrix next_input_tiles_ = {};
+        input_tile_matrix input_tiles_ = {};
         data_types::input_layout input_layout_;
-        board_tile_array board_tiles_ = {};
+        board_tile_matrix board_tiles_ = {};
 };
 
 } //namespace

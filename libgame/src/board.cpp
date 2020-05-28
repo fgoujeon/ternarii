@@ -35,11 +35,11 @@ namespace
     - board tile matrix after input tiles are dropped
     - list of tile drops
     */
-    data_types::board_tile_array apply_gravity
+    data_types::board_tile_matrix apply_gravity
     (
-        const data_types::input_tile_array& input_tiles,
+        const data_types::input_tile_matrix& input_tiles,
         const data_types::input_layout& input_layout,
-        data_types::board_tile_array board_tiles,
+        data_types::board_tile_matrix board_tiles,
         data_types::input_tile_drop_list* pdrops //output, optional
     )
     {
@@ -102,9 +102,9 @@ namespace
     - board tile matrix after application of nullifiers
     - coordinates of nullified tiles
     */
-    data_types::board_tile_array apply_nullifiers
+    data_types::board_tile_matrix apply_nullifiers
     (
-        data_types::board_tile_array tiles,
+        data_types::board_tile_matrix tiles,
         libutil::matrix_coordinate_list& coords //output
     )
     {
@@ -236,7 +236,7 @@ namespace
     }
 }
 
-board::board(data_types::board_tile_array& tiles):
+board::board(data_types::board_tile_matrix& tiles):
     tiles_(tiles)
 {
 }
@@ -398,7 +398,7 @@ data_types::tile_merge_list board::merge_tiles()
 {
     data_types::tile_merge_list merges;
 
-    data_types::board_tile_array tile_layer;
+    data_types::board_tile_matrix tile_layer;
 
     //select the identical adjacent tiles
     //scan row by row, from the bottom left corner to the top right corner

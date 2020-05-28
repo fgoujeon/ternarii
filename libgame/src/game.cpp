@@ -74,7 +74,7 @@ namespace
             using distribution = std::discrete_distribution<int>;
 
         public:
-            data_types::input_tile_array generate(const int max, const double standard_deviation)
+            data_types::input_tile_matrix generate(const int max, const double standard_deviation)
             {
                 const auto count = dis_(rng_.gen);
 
@@ -198,12 +198,12 @@ int game::get_hi_score() const
     return pimpl_->state.hi_score;
 }
 
-const data_types::input_tile_array& game::get_next_input_tiles() const
+const data_types::input_tile_matrix& game::get_next_input_tiles() const
 {
     return pimpl_->state.next_input_tiles;
 }
 
-const data_types::input_tile_array& game::get_input_tiles() const
+const data_types::input_tile_matrix& game::get_input_tiles() const
 {
     return pimpl_->state.input_tiles;
 }
@@ -213,7 +213,7 @@ const data_types::input_layout& game::get_input_layout() const
     return pimpl_->input_.get_layout();
 }
 
-const data_types::board_tile_array& game::get_board_tiles() const
+const data_types::board_tile_matrix& game::get_board_tiles() const
 {
     return pimpl_->board_.tile_array();
 }

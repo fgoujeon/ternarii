@@ -42,13 +42,13 @@ struct game
 
         int get_hi_score() const;
 
-        const data_types::input_tile_array& get_next_input_tiles() const;
+        const data_types::input_tile_matrix& get_next_input_tiles() const;
 
-        const data_types::input_tile_array& get_input_tiles() const;
+        const data_types::input_tile_matrix& get_input_tiles() const;
 
         const data_types::input_layout& get_input_layout() const;
 
-        const data_types::board_tile_array& get_board_tiles() const;
+        const data_types::board_tile_matrix& get_board_tiles() const;
 
         void get_targeted_tiles(libutil::matrix_coordinate_list& coords) const;
 

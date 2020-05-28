@@ -30,12 +30,12 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libview::data_types
 {
 
-using board_tile_array      = libcommon::data_types::board_tile_array;
+using board_tile_matrix      = libcommon::data_types::board_tile_matrix;
 using board_tile_drop       = libcommon::data_types::board_tile_drop;
 using board_tile_drop_list  = libcommon::data_types::board_tile_drop_list;
 using column_nullifier_tile = libcommon::data_types::column_nullifier_tile;
 using input_layout          = libcommon::data_types::input_layout;
-using input_tile_array      = libcommon::data_types::input_tile_array;
+using input_tile_matrix      = libcommon::data_types::input_tile_matrix;
 using input_tile_drop       = libcommon::data_types::input_tile_drop;
 using input_tile_drop_list  = libcommon::data_types::input_tile_drop_list;
 using number_nullifier_tile = libcommon::data_types::number_nullifier_tile;

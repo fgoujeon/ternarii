@@ -62,7 +62,7 @@ class game: public Object2D, public features::animable, public features::key_eve
 
         void set_hi_score(const int value);
 
-        void create_next_input(const data_types::input_tile_array& tiles);
+        void create_next_input(const data_types::input_tile_matrix& tiles);
 
         void insert_next_input(const data_types::input_layout& layout);
 
@@ -78,7 +78,7 @@ class game: public Object2D, public features::animable, public features::key_eve
 
         void mark_tiles_for_nullification(const libutil::matrix_coordinate_list& tile_coordinates);
 
-        void set_board_tiles(const data_types::board_tile_array& tiles);
+        void set_board_tiles(const data_types::board_tile_matrix& tiles);
 
         void set_game_over_screen_visible(const bool visible);
 

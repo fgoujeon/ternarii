@@ -32,7 +32,7 @@ namespace
         .rotation = 0
     };
 
-    data_types::input_layout fix(const data_types::input_layout& in, const data_types::input_tile_array& tiles)
+    data_types::input_layout fix(const data_types::input_layout& in, const data_types::input_tile_matrix& tiles)
     {
         auto out = data_types::input_layout{};
 
@@ -68,13 +68,13 @@ namespace
     }
 }
 
-board_input::board_input(data_types::input_tile_array& tiles):
+board_input::board_input(data_types::input_tile_matrix& tiles):
     tiles_(tiles),
     layout_(default_layout)
 {
 }
 
-event board_input::set_tiles(const data_types::input_tile_array& tiles)
+event board_input::set_tiles(const data_types::input_tile_matrix& tiles)
 {
     tiles_ = tiles;
     layout_ = default_layout;
