@@ -31,18 +31,21 @@ namespace libdb
 
 namespace
 {
+    constexpr int current_version = 2;
+
     std::filesystem::path get_config_dir()
     {
         static const auto dir = std::filesystem::path{std::getenv("HOME")} / ".config" / "ternarii";
         return dir;
     }
 
-    std::filesystem::path get_database_path(const int version = 1)
+    std::filesystem::path get_database_path(const int version = current_version)
     {
         switch(version)
         {
             case 0: return get_config_dir() / "database.json";
             case 1: return get_config_dir() / "database_v1.json";
+            case 2: return get_config_dir() / "database_v2.json";
             default: throw std::runtime_error{"Unsupported database version."};
         }
     }
@@ -144,6 +147,7 @@ struct database::impl
             auto json = nlohmann::json{};
             ifs >> json;
 
+            libutil::log::info("Loaded JSON:");
             libutil::log::info(json);
 
             //convert json to state
@@ -158,7 +162,11 @@ struct database::impl
         {
             try
             {
-                try_load_data(1) || try_load_data(0);
+                auto loaded = false;
+                for(auto i = current_version; i >= 0 && !loaded; --i)
+                {
+                    loaded = try_load_data(i);
+                }
             }
             catch(const std::exception& e)
             {

@@ -164,16 +164,37 @@ namespace libcommon::data_types
     void to_json(nlohmann::json&, const number_nullifier_tile&)
     {
     }
+
+    void from_json(const nlohmann::json& from, stage& to)
+    {
+        to = static_cast<stage>(from.get<int>());
+    }
+}
+
+namespace libgame::data_types
+{
+    void from_json(const nlohmann::json& from, stage_state& to)
+    {
+        from.at("hiScore").        get_to(to.hi_score);
+        from.at("nextInputTiles"). get_to(to.next_input_tiles.data);
+        from.at("inputTiles").     get_to(to.input_tiles.data);
+        from.at("boardTiles").     get_to(to.board_tiles.data);
+    }
+
+    void to_json(nlohmann::json& to, const stage_state& from)
+    {
+        to["hiScore"]        = from.hi_score;
+        to["nextInputTiles"] = from.next_input_tiles.data;
+        to["inputTiles"]     = from.input_tiles.data;
+        to["boardTiles"]     = from.board_tiles.data;
+    }
 }
 
 namespace libdb::data_types
 {
     void to_json(nlohmann::json& to, const game_state& from)
     {
-        //to["hiScore"]        = from.hi_score;
-        //to["nextInputTiles"] = from.next_input_tiles.data;
-        //to["inputTiles"]     = from.input_tiles.data;
-        //to["boardTiles"]     = from.board_tiles.data;
+        to["stageStates"] = from.stage_states;
     }
 }
 
@@ -275,12 +296,68 @@ namespace libdb
         state.board_tiles.data      = from.at("boardTiles");
     }
 
+    void from_json_v2(const nlohmann::json& from, data_types::game_state& to)
+    {
+        /*
+        Example of v2 format:
+
+        {
+            "stageStates"
+            [
+                [
+                    0,
+                    {
+                        "boardTiles":
+                        [
+                            {"type":0,"value":2},{"type":0,"value":0},null,null,null,null,
+                            null,null,null,null,null,null,
+                            null,null,null,null,null,null,
+                            null,null,null,null,null,null,
+                            null,null,null,null,null,null,
+                            null,null,null,null,null,null,
+                            null,null,null,null,null,null,
+                            null,null,null,null,null,null,
+                            null,null,null,null,null,null
+                        ],
+                        "hiScore":179575,
+                        "inputTiles":[{"type":0,"value":0},{"type":0,"value":1},null,null],
+                        "nextInputTiles":[{"type":0,"value":2},{"type":0,"value":1},null,null]
+                    }
+                ],
+                [
+                    1,
+                    {
+                        "boardTiles":
+                        [
+                            {"type":0,"value":2},{"type":0,"value":0},null,null,null,null,
+                            null,null,null,null,null,null,
+                            null,null,null,null,null,null,
+                            null,null,null,null,null,null,
+                            null,null,null,null,null,null,
+                            null,null,null,null,null,null,
+                            null,null,null,null,null,null,
+                            null,null,null,null,null,null,
+                            null,null,null,null,null,null
+                        ],
+                        "hiScore":179575,
+                        "inputTiles":[{"type":0,"value":0},{"type":0,"value":1},null,null],
+                        "nextInputTiles":[{"type":0,"value":2},{"type":0,"value":1},null,null]
+                    }
+                ]
+            ]
+        }
+        */
+
+        from.at("stageStates").get_to(to.stage_states);
+    }
+
     void from_json(const nlohmann::json& from, data_types::game_state& to, const int version)
     {
         switch(version)
         {
             case 0: from_json_v0(from, to); break;
             case 1: from_json_v1(from, to); break;
+            case 2: from_json_v2(from, to); break;
             default: throw std::runtime_error{"Unsupported database version"};
         }
     }
