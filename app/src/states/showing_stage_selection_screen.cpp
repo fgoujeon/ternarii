@@ -32,9 +32,26 @@ showing_stage_selection_screen::showing_stage_selection_screen(fsm& ctx, const s
         (
             screen::callback_set
             {
-                .purity_room_selection_request = [this]{fsm_.set_state<playing>(screen_transition::right_to_left);},
-                .nullifier_room_selection_request = [this]{fsm_.set_state<playing>(screen_transition::right_to_left);},
-                .back_request = [this]{fsm_.set_state<showing_title_screen>(screen_transition::left_to_right);}
+                .purity_room_selection_request = [this]
+                {
+                    fsm_.set_state<playing>
+                    (
+                        screen_transition::right_to_left,
+                        libcommon::data_types::stage::purity_room
+                    );
+                },
+                .nullifier_room_selection_request = [this]
+                {
+                    fsm_.set_state<playing>
+                    (
+                        screen_transition::right_to_left,
+                        libcommon::data_types::stage::nullifier_room
+                    );
+                },
+                .back_request = [this]
+                {
+                    fsm_.set_state<showing_title_screen>(screen_transition::left_to_right);
+                }
             }
         )
     )

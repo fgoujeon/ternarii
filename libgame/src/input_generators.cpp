@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#include <libgame/input_generators.hpp>
+#include "input_generators.hpp"
 #include <libutil/rng.hpp>
 #include <memory>
 
@@ -154,25 +154,43 @@ namespace
             std::vector<double> weights_;
             std::discrete_distribution<int> dis_;
     };
+
+
+
+    /*
+    Top-level generators
+    */
+
+    abstract_input_generator& get_purity_room_input_generator()
+    {
+        return get_random_number_tile_pair_generator();
+    }
+
+    abstract_input_generator& get_nullifier_room_input_generator()
+    {
+        static auto generator = random_input_generator
+        (
+            {
+                {get_random_number_tile_pair_generator(),                         300},
+                {get_simple_input_generator<data_types::column_nullifier_tile>(), 1},
+                {get_simple_input_generator<data_types::row_nullifier_tile>(),    1},
+                {get_simple_input_generator<data_types::number_nullifier_tile>(), 1},
+            }
+        );
+        return generator;
+    }
 }
 
-abstract_input_generator& get_purity_room_input_generator()
+abstract_input_generator& get_input_generator(data_types::stage stage)
 {
-    return get_random_number_tile_pair_generator();
-}
-
-abstract_input_generator& get_nullifier_room_input_generator()
-{
-    static auto generator = random_input_generator
-    (
-        {
-            {get_random_number_tile_pair_generator(),                         300},
-            {get_simple_input_generator<data_types::column_nullifier_tile>(), 1},
-            {get_simple_input_generator<data_types::row_nullifier_tile>(),    1},
-            {get_simple_input_generator<data_types::number_nullifier_tile>(), 1},
-        }
-    );
-    return generator;
+    switch(stage)
+    {
+        default:
+        case data_types::stage::purity_room:
+            return get_purity_room_input_generator();
+        case data_types::stage::nullifier_room:
+            return get_nullifier_room_input_generator();
+    }
 }
 
 } //namespace

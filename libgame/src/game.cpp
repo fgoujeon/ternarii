@@ -18,6 +18,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 #include <libgame/game.hpp>
+#include "input_generators.hpp"
 #include "board.hpp"
 #include "board_input.hpp"
 #include <algorithm>
@@ -30,13 +31,13 @@ namespace libgame
 
 struct game::impl
 {
-    impl(abstract_input_generator& input_gen):
-        input_gen(input_gen)
+    impl(const data_types::stage stage):
+        input_gen(get_input_generator(stage))
     {
     }
 
-    impl(abstract_input_generator& input_gen, const data_types::game_state& s):
-        input_gen(input_gen),
+    impl(const data_types::stage stage, const data_types::game_state& s):
+        input_gen(get_input_generator(stage)),
         state(s)
     {
     }
@@ -103,13 +104,13 @@ struct game::impl
     board_input input_{state.input_tiles};
 };
 
-game::game(abstract_input_generator& input_gen):
-    pimpl_(std::make_unique<impl>(input_gen))
+game::game(const data_types::stage stage):
+    pimpl_(std::make_unique<impl>(stage))
 {
 }
 
-game::game(abstract_input_generator& input_gen, const data_types::game_state& state):
-    pimpl_(std::make_unique<impl>(input_gen, state))
+game::game(const data_types::stage stage, const data_types::game_state& state):
+    pimpl_(std::make_unique<impl>(stage, state))
 {
 }
 

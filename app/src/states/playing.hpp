@@ -21,7 +21,6 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #define STATES_PLAYING_HPP
 
 #include "../fsm.hpp"
-#include <libgame/input_generators.hpp>
 #include <libgame/game.hpp>
 #include <libutil/log.hpp>
 
@@ -35,7 +34,7 @@ class playing final: public state
         using screen_transition = libview::view::screen_transition;
 
     public:
-        playing(fsm& f, screen_transition trans);
+        playing(fsm& f, screen_transition trans, libcommon::data_types::stage stage);
 
     //View event handlers
     private:
@@ -164,7 +163,6 @@ class playing final: public state
 
     private:
         fsm& fsm_;
-        libgame::abstract_input_generator& input_generator_ = libgame::get_nullifier_room_input_generator();
         std::shared_ptr<libview::screens::game> pscreen_;
         std::unique_ptr<libgame::game> pgame_;
 

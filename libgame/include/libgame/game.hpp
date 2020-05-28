@@ -20,7 +20,6 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #ifndef GAME_HPP
 #define GAME_HPP
 
-#include "input_generators.hpp"
 #include "events.hpp"
 #include "data_types.hpp"
 #include <memory>
@@ -31,9 +30,9 @@ namespace libgame
 struct game
 {
     public:
-        game(abstract_input_generator& input_gen);
+        game(data_types::stage stage);
 
-        game(abstract_input_generator& input_gen, const data_types::game_state& state);
+        game(data_types::stage stage, const data_types::game_state& state);
 
         ~game();
 

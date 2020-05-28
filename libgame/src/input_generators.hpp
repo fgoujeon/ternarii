@@ -20,7 +20,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #ifndef LIBGAME_INPUT_GENERATORS_HPP
 #define LIBGAME_INPUT_GENERATORS_HPP
 
-#include "data_types.hpp"
+#include <libgame/data_types.hpp>
 
 namespace libgame
 {
@@ -32,9 +32,7 @@ struct abstract_input_generator
     virtual data_types::input_tile_matrix generate(const int max, const double standard_deviation) = 0;
 };
 
-abstract_input_generator& get_purity_room_input_generator();
-
-abstract_input_generator& get_nullifier_room_input_generator();
+abstract_input_generator& get_input_generator(data_types::stage stage);
 
 } //namespace
 
