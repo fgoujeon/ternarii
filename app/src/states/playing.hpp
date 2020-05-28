@@ -85,7 +85,7 @@ class playing final: public state
         {
             pscreen_->insert_next_input(event.layout);
             mark_tiles_for_nullification();
-            fsm_.database.set_game_state(pgame_->get_state());
+            fsm_.database.set_stage_state(stage_, pgame_->get_state());
         }
 
         void handle_game_event(const libgame::events::input_layout_change& event)
@@ -117,7 +117,7 @@ class playing final: public state
         void handle_game_event(const libgame::events::end_of_game&)
         {
             pscreen_->set_game_over_screen_visible(true);
-            fsm_.database.set_game_state(pgame_->get_state());
+            fsm_.database.set_stage_state(stage_, pgame_->get_state());
         }
 
         void handle_game_events(const libgame::event_list& events)
@@ -163,6 +163,7 @@ class playing final: public state
 
     private:
         fsm& fsm_;
+        const libcommon::data_types::stage stage_;
         std::shared_ptr<libview::screens::game> pscreen_;
         std::unique_ptr<libgame::game> pgame_;
 

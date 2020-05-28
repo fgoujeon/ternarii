@@ -166,20 +166,20 @@ namespace libcommon::data_types
     }
 }
 
-namespace libgame::data_types
+namespace libdb::data_types
 {
     void to_json(nlohmann::json& to, const game_state& from)
     {
-        to["hiScore"]        = from.hi_score;
-        to["nextInputTiles"] = from.next_input_tiles.data;
-        to["inputTiles"]     = from.input_tiles.data;
-        to["boardTiles"]     = from.board_tiles.data;
+        //to["hiScore"]        = from.hi_score;
+        //to["nextInputTiles"] = from.next_input_tiles.data;
+        //to["inputTiles"]     = from.input_tiles.data;
+        //to["boardTiles"]     = from.board_tiles.data;
     }
 }
 
 namespace libdb
 {
-    void from_json_v0(const nlohmann::json& from, libgame::data_types::game_state& to)
+    void from_json_v0(const nlohmann::json& from, data_types::game_state& to)
     {
         /*
         Example of v0 format:
@@ -200,7 +200,9 @@ namespace libdb
         }
         */
 
-        to.hi_score              = from.at("hiScore").get<int>();
+        auto& state = to.stage_states[data_types::stage::purity_room];
+
+        state.hi_score = from.at("hiScore").get<int>();
 
         //next_input_tiles and input_tiles
         {
@@ -215,8 +217,8 @@ namespace libdb
                 }
             };
 
-            from_tile_array1d(from.at("nextInputTiles"), to.next_input_tiles);
-            from_tile_array1d(from.at("inputTiles"), to.input_tiles);
+            from_tile_array1d(from.at("nextInputTiles"), state.next_input_tiles);
+            from_tile_array1d(from.at("inputTiles"), state.input_tiles);
         }
 
         //board_tiles
@@ -236,12 +238,12 @@ namespace libdb
                         tile = libgame::data_types::number_tile{tile_values[col][row].value()};
                     }
                 },
-                to.board_tiles
+                state.board_tiles
             );
         }
     }
 
-    void from_json_v1(const nlohmann::json& from, libgame::data_types::game_state& to)
+    void from_json_v1(const nlohmann::json& from, data_types::game_state& to)
     {
         /*
         Example of v1 format:
@@ -265,13 +267,15 @@ namespace libdb
         }
         */
 
-        to.hi_score              = from.at("hiScore").get<int>();
-        to.next_input_tiles.data = from.at("nextInputTiles");
-        to.input_tiles.data      = from.at("inputTiles");
-        to.board_tiles.data      = from.at("boardTiles");
+        auto& state = to.stage_states[data_types::stage::purity_room];
+
+        state.hi_score              = from.at("hiScore").get<int>();
+        state.next_input_tiles.data = from.at("nextInputTiles");
+        state.input_tiles.data      = from.at("inputTiles");
+        state.board_tiles.data      = from.at("boardTiles");
     }
 
-    void from_json(const nlohmann::json& from, libgame::data_types::game_state& to, const int version)
+    void from_json(const nlohmann::json& from, data_types::game_state& to, const int version)
     {
         switch(version)
         {

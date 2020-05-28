@@ -21,12 +21,22 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #define LIBDB_DATA_TYPES_HPP
 
 #include <libgame/data_types.hpp>
+#include <map>
 
 namespace libdb::data_types
 {
 
+using stage = libcommon::data_types::stage;
+using stage_state = libgame::data_types::stage_state;
 using tile = libcommon::data_types::tile;
-using game_state = libgame::data_types::game_state;
+
+using stage_state_map = std::map<stage, stage_state>;
+
+//State of the whole game
+struct game_state
+{
+    stage_state_map stage_states;
+};
 
 } //namespace
 

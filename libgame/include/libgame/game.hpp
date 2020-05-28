@@ -32,11 +32,11 @@ struct game
     public:
         game(data_types::stage stage);
 
-        game(data_types::stage stage, const data_types::game_state& state);
+        game(data_types::stage stage, const data_types::stage_state& state);
 
         ~game();
 
-        const data_types::game_state& get_state() const;
+        const data_types::stage_state& get_state() const;
 
         int get_hi_score() const;
 

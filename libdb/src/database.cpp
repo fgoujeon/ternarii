@@ -88,9 +88,14 @@ struct database::impl
             return opt_game_state_;
         }
 
-        void set_game_state(const data_types::game_state& state)
+        void set_stage_state(const data_types::stage stage, const data_types::stage_state& state)
         {
-            opt_game_state_ = state;
+            if(!opt_game_state_)
+            {
+                opt_game_state_ = data_types::game_state{};
+            }
+
+            opt_game_state_->stage_states[stage] = state;
 
             if(current_state_ == state::ready)
             {
@@ -224,9 +229,9 @@ const std::optional<data_types::game_state>& database::get_game_state() const
     return pimpl_->get_game_state();
 }
 
-void database::set_game_state(const data_types::game_state& state)
+void database::set_stage_state(const data_types::stage stage, const data_types::stage_state& state)
 {
-    pimpl_->set_game_state(state);
+    pimpl_->set_stage_state(stage, state);
 }
 
 } //namespace

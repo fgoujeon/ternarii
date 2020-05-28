@@ -25,7 +25,6 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include <vector>
 #include <array>
 #include <memory>
-#include <ostream>
 
 namespace libgame::data_types
 {
@@ -48,7 +47,7 @@ using tile_merge_list       = libcommon::data_types::tile_merge_list;
 
 
 
-struct game_state
+struct stage_state
 {
     int hi_score = 0;
     input_tile_matrix next_input_tiles;

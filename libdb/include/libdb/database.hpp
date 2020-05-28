@@ -38,7 +38,7 @@ class database
 
         const std::optional<data_types::game_state>& get_game_state() const;
 
-        void set_game_state(const data_types::game_state& state);
+        void set_stage_state(data_types::stage stage, const data_types::stage_state& state);
 
     private:
         struct impl;

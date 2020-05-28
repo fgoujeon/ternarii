@@ -36,7 +36,7 @@ struct game::impl
     {
     }
 
-    impl(const data_types::stage stage, const data_types::game_state& s):
+    impl(const data_types::stage stage, const data_types::stage_state& s):
         input_gen(get_input_generator(stage)),
         state(s)
     {
@@ -99,7 +99,7 @@ struct game::impl
     }
 
     abstract_input_generator& input_gen;
-    data_types::game_state state;
+    data_types::stage_state state;
     board board_{state.board_tiles};
     board_input input_{state.input_tiles};
 };
@@ -109,14 +109,14 @@ game::game(const data_types::stage stage):
 {
 }
 
-game::game(const data_types::stage stage, const data_types::game_state& state):
+game::game(const data_types::stage stage, const data_types::stage_state& state):
     pimpl_(std::make_unique<impl>(stage, state))
 {
 }
 
 game::~game() = default;
 
-const data_types::game_state& game::get_state() const
+const data_types::stage_state& game::get_state() const
 {
     return pimpl_->state;
 }
