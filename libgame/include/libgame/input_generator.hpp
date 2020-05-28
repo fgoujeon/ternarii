@@ -22,30 +22,19 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "data_types.hpp"
 #include <libutil/rng.hpp>
+#include <memory>
 
 namespace libgame
 {
 
-struct abstract_input_generator
-{
-    virtual ~abstract_input_generator() = default;
-
-    virtual data_types::input_tile_matrix generate(const int max, const double standard_deviation) = 0;
-};
-
-class random_tile_generator
+class random_number_tile_generator
 {
     private:
         using distribution = std::normal_distribution<double>;
 
     public:
-        random_tile_generator(libutil::rng& rng):
-            rng_(rng)
-        {
-        }
-
         //return random value from 0 to max
-        int generate(const int max, const double standard_deviation)
+        data_types::number_tile generate(const int max, const double standard_deviation)
         {
             //generate random number with normal distribution
             const auto real_val = dis_(rng_.engine, distribution::param_type{0, standard_deviation});
@@ -57,44 +46,146 @@ class random_tile_generator
             const auto natural_val = static_cast<int>(positive_real_val);
 
             //stay inside [0, max]
-            return natural_val % (max + 1);
-        }
+            const auto final_val = natural_val % (max + 1);
 
-    private:
-        libutil::rng& rng_;
-        distribution dis_;
-};
-
-class random_input_generator: public abstract_input_generator
-{
-    private:
-        using distribution = std::discrete_distribution<int>;
-
-    public:
-        data_types::input_tile_matrix generate(const int max, const double standard_deviation)
-        {
-            const auto count = dis_(rng_.engine);
-
-            switch(count)
-            {
-                default:
-                case 0:
-                    return
-                    {
-                        data_types::number_tile{gen_.generate(max, standard_deviation)},
-                        data_types::number_tile{gen_.generate(max, standard_deviation)}
-                    };
-                case 1: return {data_types::column_nullifier_tile{}};
-                case 2: return {data_types::row_nullifier_tile{}};
-                case 3: return {data_types::number_nullifier_tile{}};
-            }
+            return data_types::number_tile{final_val};
         }
 
     private:
         libutil::rng rng_;
-        distribution dis_{300, 1, 1, 1};
-        random_tile_generator gen_{rng_};
+        distribution dis_;
 };
+
+
+
+struct abstract_input_generator
+{
+    virtual ~abstract_input_generator() = default;
+
+    virtual data_types::input_tile_matrix generate(const int max, const double standard_deviation) = 0;
+};
+
+
+
+struct weighted_input_generator_ref
+{
+    abstract_input_generator& generator;
+    double weight = 1;
+};
+
+using weighted_input_generator_ref_list = std::vector<weighted_input_generator_ref>;
+
+inline
+std::vector<double> get_weigths(const weighted_input_generator_ref_list& generators)
+{
+    auto weights = std::vector<double>{};
+    for(const auto& generator: generators)
+    {
+        weights.push_back(generator.weight);
+    }
+    return weights;
+}
+
+
+
+class simple_input_generator: public abstract_input_generator
+{
+    public:
+        simple_input_generator(const data_types::input_tile_matrix& tiles):
+            tiles_(tiles)
+        {
+        }
+
+        data_types::input_tile_matrix generate(const int /*max*/, const double /*standard_deviation*/) override
+        {
+            return tiles_;
+        }
+
+    private:
+        data_types::input_tile_matrix tiles_;
+};
+
+template<class Tile>
+abstract_input_generator& get_simple_input_generator()
+{
+    const auto input = data_types::input_tile_matrix{Tile{}};
+    static auto generator = simple_input_generator{input};
+    return generator;
+}
+
+
+
+class random_number_tile_pair_generator: public abstract_input_generator
+{
+    public:
+        data_types::input_tile_matrix generate(const int max, const double standard_deviation) override
+        {
+            return
+            {
+                gen_.generate(max, standard_deviation),
+                gen_.generate(max, standard_deviation)
+            };
+        }
+
+    private:
+        random_number_tile_generator gen_;
+};
+
+inline
+abstract_input_generator& get_random_number_tile_pair_generator()
+{
+    static auto generator = random_number_tile_pair_generator{};
+    return generator;
+}
+
+
+
+class random_input_generator: public abstract_input_generator
+{
+    public:
+        random_input_generator(const weighted_input_generator_ref_list& generators):
+            generators_(std::move(generators)),
+            weights_(get_weigths(generators_)),
+            dis_(weights_.begin(), weights_.end())
+        {
+        }
+
+        data_types::input_tile_matrix generate(const int max, const double standard_deviation) override
+        {
+            const auto r = dis_(rng_.engine);
+            return generators_[r].generator.generate(max, standard_deviation);
+        }
+
+    private:
+        libutil::rng rng_;
+        weighted_input_generator_ref_list generators_;
+        std::vector<double> weights_;
+        std::discrete_distribution<int> dis_;
+};
+
+
+
+inline
+abstract_input_generator& get_classic_mode_input_generator()
+{
+    return get_random_number_tile_pair_generator();
+}
+
+inline
+abstract_input_generator& get_blast_mode_input_generator()
+{
+    static auto generator = random_input_generator
+    (
+        weighted_input_generator_ref_list
+        {
+            weighted_input_generator_ref{get_random_number_tile_pair_generator(),                         300},
+            weighted_input_generator_ref{get_simple_input_generator<data_types::column_nullifier_tile>(), 1},
+            weighted_input_generator_ref{get_simple_input_generator<data_types::row_nullifier_tile>(),    1},
+            weighted_input_generator_ref{get_simple_input_generator<data_types::number_nullifier_tile>(), 1},
+        }
+    );
+    return generator;
+}
 
 } //namespace
 

@@ -21,6 +21,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #define STATES_PLAYING_HPP
 
 #include "../fsm.hpp"
+#include <libgame/input_generator.hpp>
 #include <libgame/game.hpp>
 #include <libutil/log.hpp>
 
@@ -163,7 +164,7 @@ class playing final: public state
 
     private:
         fsm& fsm_;
-        libgame::random_input_generator input_generator_;
+        libgame::abstract_input_generator& input_generator_ = libgame::get_blast_mode_input_generator();
         std::shared_ptr<libview::screens::game> pscreen_;
         std::unique_ptr<libgame::game> pgame_;
 
