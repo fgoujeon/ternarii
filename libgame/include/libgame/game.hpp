@@ -20,7 +20,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #ifndef GAME_HPP
 #define GAME_HPP
 
-#include "input_generator.hpp"
+#include "input_generators.hpp"
 #include "events.hpp"
 #include "data_types.hpp"
 #include <memory>

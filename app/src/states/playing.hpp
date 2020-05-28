@@ -21,7 +21,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #define STATES_PLAYING_HPP
 
 #include "../fsm.hpp"
-#include <libgame/input_generator.hpp>
+#include <libgame/input_generators.hpp>
 #include <libgame/game.hpp>
 #include <libutil/log.hpp>
 
