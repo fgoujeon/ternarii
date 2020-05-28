@@ -231,6 +231,8 @@ enum class stage
     nullifier_room
 };
 
+std::string_view get_pretty_name(stage s);
+
 } //namespace
 
 #endif
