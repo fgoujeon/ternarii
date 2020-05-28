@@ -156,12 +156,12 @@ namespace
     };
 }
 
-abstract_input_generator& get_classic_mode_input_generator()
+abstract_input_generator& get_purity_room_input_generator()
 {
     return get_random_number_tile_pair_generator();
 }
 
-abstract_input_generator& get_blast_mode_input_generator()
+abstract_input_generator& get_nullifier_room_input_generator()
 {
     static auto generator = random_input_generator
     (

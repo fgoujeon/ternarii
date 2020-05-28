@@ -164,7 +164,7 @@ class playing final: public state
 
     private:
         fsm& fsm_;
-        libgame::abstract_input_generator& input_generator_ = libgame::get_blast_mode_input_generator();
+        libgame::abstract_input_generator& input_generator_ = libgame::get_nullifier_room_input_generator();
         std::shared_ptr<libview::screens::game> pscreen_;
         std::unique_ptr<libgame::game> pgame_;
 

@@ -17,24 +17,30 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef LIBGAME_INPUT_GENERATORS_HPP
-#define LIBGAME_INPUT_GENERATORS_HPP
+#ifndef STATES_SHOWING_STAGE_SELECTION_SCREEN_HPP
+#define STATES_SHOWING_STAGE_SELECTION_SCREEN_HPP
 
-#include "data_types.hpp"
+#include "../fsm.hpp"
+#include <libview/screens/stage_selection.hpp>
 
-namespace libgame
+namespace states
 {
 
-struct abstract_input_generator
+class showing_stage_selection_screen final: public state
 {
-    virtual ~abstract_input_generator() = default;
+    public:
+        using screen_transition = libview::view::screen_transition;
 
-    virtual data_types::input_tile_matrix generate(const int max, const double standard_deviation) = 0;
+    private:
+        using screen = libview::screens::stage_selection;
+
+    public:
+        showing_stage_selection_screen(fsm& ctx, screen_transition trans);
+
+    private:
+        fsm& fsm_;
+        std::shared_ptr<screen> pscreen_;
 };
-
-abstract_input_generator& get_purity_room_input_generator();
-
-abstract_input_generator& get_nullifier_room_input_generator();
 
 } //namespace
 

@@ -18,7 +18,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 #include "playing.hpp"
-#include "showing_title_screen.hpp"
+#include "showing_stage_selection_screen.hpp"
 
 namespace states
 {
@@ -33,7 +33,7 @@ playing::playing(fsm& f, const screen_transition trans):
             {
                 .handle_move_request  = [this](const libview::data_types::move m){handle_view_move_request(m);},
                 .handle_clear_request = [this]{modify_game(&libgame::game::start);},
-                .handle_exit_request  = [this]{fsm_.set_state<states::showing_title_screen>(screen_transition::left_to_right);}
+                .handle_exit_request  = [this]{fsm_.set_state<states::showing_stage_selection_screen>(screen_transition::left_to_right);}
             }
         )
     )
