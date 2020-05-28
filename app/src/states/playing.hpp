@@ -163,6 +163,7 @@ class playing final: public state
 
     private:
         fsm& fsm_;
+        libgame::random_input_generator input_generator_;
         std::shared_ptr<libview::screens::game> pscreen_;
         std::unique_ptr<libgame::game> pgame_;
 

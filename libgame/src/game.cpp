@@ -28,83 +28,15 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libgame
 {
 
-namespace
-{
-    struct random_number_generator
-    {
-        std::random_device rd;
-        std::mt19937 gen{rd()};
-    };
-
-    class random_tile_generator
-    {
-        private:
-            using distribution = std::normal_distribution<double>;
-
-        public:
-            random_tile_generator(random_number_generator& rng):
-                rng_(rng)
-            {
-            }
-
-            //return random value from 0 to max
-            int generate(const int max, const double standard_deviation)
-            {
-                //generate random number with normal distribution
-                const auto real_val = dis_(rng_.gen, distribution::param_type{0, standard_deviation});
-
-                //remove negative values
-                const auto positive_real_val = std::abs(real_val);
-
-                //discretize
-                const auto natural_val = static_cast<int>(positive_real_val);
-
-                //stay inside [0, max]
-                return natural_val % (max + 1);
-            }
-
-        private:
-            random_number_generator& rng_;
-            distribution dis_;
-    };
-
-    class random_tile_matrix_generator
-    {
-        private:
-            using distribution = std::discrete_distribution<int>;
-
-        public:
-            data_types::input_tile_matrix generate(const int max, const double standard_deviation)
-            {
-                const auto count = dis_(rng_.gen);
-
-                switch(count)
-                {
-                    default:
-                    case 0:
-                        return
-                        {
-                            data_types::number_tile{gen_.generate(max, standard_deviation)},
-                            data_types::number_tile{gen_.generate(max, standard_deviation)}
-                        };
-                    case 1: return {data_types::column_nullifier_tile{}};
-                    case 2: return {data_types::row_nullifier_tile{}};
-                    case 3: return {data_types::number_nullifier_tile{}};
-                }
-            }
-
-        private:
-            random_number_generator rng_;
-            distribution dis_{300, 1, 1, 1};
-            random_tile_generator gen_{rng_};
-    };
-}
-
 struct game::impl
 {
-    impl() = default;
+    impl(abstract_input_generator& input_gen):
+        input_gen(input_gen)
+    {
+    }
 
-    impl(const data_types::game_state& s):
+    impl(abstract_input_generator& input_gen, const data_types::game_state& s):
+        input_gen(input_gen),
         state(s)
     {
     }
@@ -157,7 +89,7 @@ struct game::impl
         }();
 
         //Generate a new input
-        state.next_input_tiles = rand.generate(max_value, sd);
+        state.next_input_tiles = input_gen.generate(max_value, sd);
 
         return events::next_input_creation
         {
@@ -165,19 +97,19 @@ struct game::impl
         };
     }
 
-    random_tile_matrix_generator rand;
+    abstract_input_generator& input_gen;
     data_types::game_state state;
     board board_{state.board_tiles};
     board_input input_{state.input_tiles};
 };
 
-game::game():
-    pimpl_(std::make_unique<impl>())
+game::game(abstract_input_generator& input_gen):
+    pimpl_(std::make_unique<impl>(input_gen))
 {
 }
 
-game::game(const data_types::game_state& state):
-    pimpl_(std::make_unique<impl>(state))
+game::game(abstract_input_generator& input_gen, const data_types::game_state& state):
+    pimpl_(std::make_unique<impl>(input_gen, state))
 {
 }
 

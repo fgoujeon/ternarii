@@ -44,7 +44,7 @@ playing::playing(fsm& f, const screen_transition trans):
     //create game
     if(opt_game_state)
     {
-        pgame_ = std::make_unique<libgame::game>(*opt_game_state);
+        pgame_ = std::make_unique<libgame::game>(input_generator_, *opt_game_state);
 
         const auto& board_tiles = pgame_->get_board_tiles();
 
@@ -60,7 +60,7 @@ playing::playing(fsm& f, const screen_transition trans):
     }
     else
     {
-        pgame_ = std::make_unique<libgame::game>();
+        pgame_ = std::make_unique<libgame::game>(input_generator_);
 
         modify_game(&libgame::game::start);
     }
