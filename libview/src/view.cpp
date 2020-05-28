@@ -136,6 +136,8 @@ struct view::impl final
                 {
                     clickable.handle_mouse_press();
                 }
+
+                return !is_inside;
             }
         );
     }
@@ -157,6 +159,8 @@ struct view::impl final
                 {
                     clickable.handle_mouse_release();
                 }
+
+                return !is_inside;
             }
         );
     }
@@ -169,6 +173,7 @@ struct view::impl final
             [](features::clickable& clickable, const bool is_inside)
             {
                 clickable.handle_mouse_move(is_inside);
+                return true;
             }
         );
     }
@@ -186,7 +191,8 @@ struct view::impl final
             * camera.projectionSize()
         ;
 
-        for(std::size_t i = 0; i < feature_groups.clickables.size(); ++i)
+        auto keep_iterating = true;
+        for(std::size_t i = 0; i < feature_groups.clickables.size() && keep_iterating; ++i)
         {
             auto& clickable = feature_groups.clickables[i];
 
@@ -196,7 +202,7 @@ struct view::impl final
             //Check if click position is inside clickable
             const auto is_inside = clickable.is_inside(clickable_space_position);
 
-            f(clickable, is_inside);
+            keep_iterating = f(clickable, is_inside);
         }
     }
 
