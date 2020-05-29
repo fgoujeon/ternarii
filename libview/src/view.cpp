@@ -115,6 +115,11 @@ struct view::impl final
 
     void handle_key_press(key_event& event)
     {
+        if(screen_transition_animator.is_animating())
+        {
+            return;
+        }
+
         for(std::size_t i = 0; i < feature_groups.key_event_handlers.size(); ++i)
         {
             feature_groups.key_event_handlers[i].handle_key_press(event);
@@ -125,6 +130,11 @@ struct view::impl final
     {
         //Only manage left button
         if(event.button() != mouse_event::Button::Left)
+        {
+            return;
+        }
+
+        if(screen_transition_animator.is_animating())
         {
             return;
         }
@@ -152,6 +162,11 @@ struct view::impl final
             return;
         }
 
+        if(screen_transition_animator.is_animating())
+        {
+            return;
+        }
+
         handle_mouse_event
         (
             event,
@@ -169,6 +184,11 @@ struct view::impl final
 
     void handle_mouse_move(mouse_move_event& event)
     {
+        if(screen_transition_animator.is_animating())
+        {
+            return;
+        }
+
         handle_mouse_event
         (
             event,
