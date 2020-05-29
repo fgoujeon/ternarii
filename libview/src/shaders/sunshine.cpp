@@ -55,25 +55,23 @@ sunshine::sunshine()
 
     CORRADE_INTERNAL_ASSERT_OUTPUT(link());
 
-    transformationProjectionMatrixUniform_ = uniformLocation("u_transformation_projection_matrix");
-    colorUniform_ = uniformLocation("u_color");
-    timeUniform_ = uniformLocation("u_now_s");
+    transformation_projection_matrix_uniform_ = uniformLocation("u_transformation_projection_matrix");
+    color_uniform_ = uniformLocation("u_color");
+    angle_uniform_ = uniformLocation("u_angle");
 
     setTransformationProjectionMatrix({});
     setColor(Magnum::Color4{1.0f});
 }
 
-void sunshine::set_time(const libutil::time_point& now)
+void sunshine::set_angle_rad(const float angle_rad)
 {
-    const auto now_ms = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count();
+    //Make it positive, [0,2*pi]
+    const auto angle_rad_pos = angle_rad >= 0 ? angle_rad : angle_rad + 2 * M_PI;
 
-    //This time value will be added to a normalized angle, so we can modulo it
-    //before casting it to float, so that we don't lose precision.
-    const auto slowness_spr = 128; //in seconds per rotation
-    const auto now_ms2 = now_ms % (1000 * slowness_spr);
-    const auto now_s = now_ms2 / 1000.0f;
+    //Normalize it, [0,1]
+    const auto angle = angle_rad_pos / (2 * M_PI);
 
-    setUniform(timeUniform_, now_s);
+    setUniform(angle_uniform_, static_cast<float>(angle));
 }
 
 } //namespace

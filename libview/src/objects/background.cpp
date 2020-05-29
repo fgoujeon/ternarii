@@ -23,6 +23,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include <Magnum/MeshTools/Compile.h>
 #include <Magnum/Primitives/Square.h>
 #include <Magnum/Trade/MeshData2D.h>
+#include <cmath>
 
 namespace libview::objects
 {
@@ -53,9 +54,11 @@ void background::set_color(const Magnum::Color4& color)
     color_ = color;
 }
 
-void background::advance(const libutil::time_point& now, const float /*elapsed_s*/)
+void background::advance(const libutil::time_point& /*now*/, const float elapsed_s)
 {
-    get_shader().set_time(now);
+    const auto speed_radps = 0.05f; //in radians per second
+    angle_rad_ = std::fmodf(angle_rad_ + elapsed_s * speed_radps, 2 * M_PI);
+    get_shader().set_angle_rad(angle_rad_);
 }
 
 void background::draw(const Magnum::Matrix3& transformation_matrix, Magnum::SceneGraph::Camera2D& camera)

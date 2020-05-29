@@ -22,14 +22,13 @@ R"^(
 #define PI2 6.28318530718
 #define RAY_COUNT 16.0
 #define RAY_WIDTH 0.55 //[0,1]
-#define SLOWNESS_SPR 128.0 //in seconds per rotation
 
 #ifdef GL_ES
 precision mediump float;
 #endif
 
 uniform lowp vec4 u_color;
-uniform float u_now_s; //current time, in seconds
+uniform float u_angle; //[0,1]
 
 varying highp vec2 v_position;
 
@@ -42,8 +41,8 @@ void main()
     //normalize angle
     angle = angle / PI2 + 0.5; //[0,1]
 
-    //shift angle according to time, for animation
-    angle = mod(angle + u_now_s / SLOWNESS_SPR, 1.0); //[0,1]
+    //shift angle (typically for animation)
+    angle = mod(angle + u_angle, 1.0); //[0,1]
 
     //make saw wave function with angle
     angle = mod(angle, 1.0 / RAY_COUNT) * RAY_COUNT; //[0,1]

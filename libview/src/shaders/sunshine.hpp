@@ -46,20 +46,22 @@ class sunshine: public Magnum::GL::AbstractShaderProgram
 
         sunshine& setTransformationProjectionMatrix(const Magnum::Matrix3& matrix)
         {
-            setUniform(transformationProjectionMatrixUniform_, matrix);
+            setUniform(transformation_projection_matrix_uniform_, matrix);
             return *this;
         }
 
         sunshine& setColor(const Magnum::Color4& color)
         {
-            setUniform(colorUniform_, color);
+            setUniform(color_uniform_, color);
             return *this;
         }
 
-        void set_time(const libutil::time_point& now);
+        void set_angle_rad(float angle_rad);
 
     private:
-        Magnum::Int transformationProjectionMatrixUniform_{0}, colorUniform_{1}, timeUniform_{2};
+        Magnum::Int transformation_projection_matrix_uniform_ = 0;
+        Magnum::Int color_uniform_ = 1;
+        Magnum::Int angle_uniform_ = 2;
 };
 
 } //namespace

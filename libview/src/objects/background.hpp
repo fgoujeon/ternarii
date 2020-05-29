@@ -42,6 +42,7 @@ class background: public Object2D, public features::drawable
 
     private:
         Magnum::Color4 color_;
+        float angle_rad_ = 0;
 };
 
 } //namespace
