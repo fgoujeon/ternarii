@@ -48,6 +48,7 @@ function(add_svg_to_sdf_command FILENAME OUTPUT_SIZE)
     set(SVG_FILE "${CMAKE_CURRENT_SOURCE_DIR}/src/images/${FILENAME}.svg")
     set(PNG_FILE ${FILENAME}.png)
     set(BORDERED_PNG_FILE ${FILENAME}-bordered.png)
+    set(SHIFTED_SDF_TGA_FILE "${FILENAME}.tga")
     set(SDF_TGA_FILE "${CMAKE_CURRENT_BINARY_DIR}/out/images/${FILENAME}.tga")
 
     #Convert SVG to PNG
@@ -72,13 +73,22 @@ function(add_svg_to_sdf_command FILENAME OUTPUT_SIZE)
     #Generate distance field
     add_custom_command(
         DEPENDS ${BORDERED_PNG_FILE}
-        OUTPUT ${SDF_TGA_FILE}
+        OUTPUT ${SHIFTED_SDF_TGA_FILE}
         COMMAND ${CMAKE_COMMAND} ARGS -E make_directory "${CMAKE_CURRENT_BINARY_DIR}/out/images"
         COMMAND ${MAGNUM_DISTANCEFIELDCONVERTER_PROGRAM} ARGS
             --output-size "${OUTPUT_SIZE} ${OUTPUT_SIZE}"
             --radius ${TERNARII_SDF_IMAGE_RADIUS}
             --converter TgaImageConverter
-            ${BORDERED_PNG_FILE} ${SDF_TGA_FILE}
+            ${BORDERED_PNG_FILE} ${SHIFTED_SDF_TGA_FILE}
+    )
+
+    #We need to add 1 row to the top and 1 column to the right because
+    #the output of magnum-distancefieldconverter is slightly shifted for some
+    #reason.
+    add_custom_command(
+        DEPENDS ${SHIFTED_SDF_TGA_FILE}
+        OUTPUT ${SDF_TGA_FILE}
+        COMMAND ${CONVERT_PROGRAM} ARGS ${SHIFTED_SDF_TGA_FILE} -gravity southeast -background black -splice 1x1 ${SDF_TGA_FILE}
     )
 endfunction()
 
