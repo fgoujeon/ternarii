@@ -96,20 +96,42 @@ add_svg_to_sdf_command(rounded_rectangle 64)
 add_svg_to_sdf_command(rounded_square    64)
 add_svg_to_sdf_command(row_nullifier     64)
 
-add_custom_target(
-    res ALL
-    SOURCES
-        "${CMAKE_CURRENT_BINARY_DIR}/out/fonts/DejaVuSans.conf"
-        "${CMAKE_CURRENT_BINARY_DIR}/out/fonts/DejaVuSans.tga"
-        "${CMAKE_CURRENT_BINARY_DIR}/out/images/exit.tga"
-        "${CMAKE_CURRENT_BINARY_DIR}/out/images/board_corner.tga"
-        "${CMAKE_CURRENT_BINARY_DIR}/out/images/column_nullifier.tga"
-        "${CMAKE_CURRENT_BINARY_DIR}/out/images/logo.tga"
-        "${CMAKE_CURRENT_BINARY_DIR}/out/images/logo_text.tga"
-        "${CMAKE_CURRENT_BINARY_DIR}/out/images/move_button.tga"
-        "${CMAKE_CURRENT_BINARY_DIR}/out/images/number_nullifier.tga"
-        "${CMAKE_CURRENT_BINARY_DIR}/out/images/rotate_button.tga"
-        "${CMAKE_CURRENT_BINARY_DIR}/out/images/rounded_rectangle.tga"
-        "${CMAKE_CURRENT_BINARY_DIR}/out/images/rounded_square.tga"
-        "${CMAKE_CURRENT_BINARY_DIR}/out/images/row_nullifier.tga"
+#Generate images.hpp
+file(GLOB SRC_SVG_FILES src/images/*.svg)
+unset(TGA_IMAGE_PATH_DEFINITIONS)
+foreach(SRC_SVG_FILE ${SRC_SVG_FILES})
+    get_filename_component(FILE_NAME "${SRC_SVG_FILE}" NAME_WE)
+    set(DEF "constexpr auto ${FILE_NAME} = std::string_view{\"/res/images/${FILE_NAME}.tga\"};")
+    set(TGA_IMAGE_PATH_DEFINITIONS "${TGA_IMAGE_PATH_DEFINITIONS}${DEF}\n")
+endforeach()
+configure_file(src/libres.hpp.in include/libres.hpp)
+
+add_library(
+    libres
+    "src/dummy.cpp"
+    "${CMAKE_CURRENT_BINARY_DIR}/out/fonts/DejaVuSans.conf"
+    "${CMAKE_CURRENT_BINARY_DIR}/out/fonts/DejaVuSans.tga"
+    "${CMAKE_CURRENT_BINARY_DIR}/out/images/exit.tga"
+    "${CMAKE_CURRENT_BINARY_DIR}/out/images/board_corner.tga"
+    "${CMAKE_CURRENT_BINARY_DIR}/out/images/column_nullifier.tga"
+    "${CMAKE_CURRENT_BINARY_DIR}/out/images/logo.tga"
+    "${CMAKE_CURRENT_BINARY_DIR}/out/images/logo_text.tga"
+    "${CMAKE_CURRENT_BINARY_DIR}/out/images/move_button.tga"
+    "${CMAKE_CURRENT_BINARY_DIR}/out/images/number_nullifier.tga"
+    "${CMAKE_CURRENT_BINARY_DIR}/out/images/rotate_button.tga"
+    "${CMAKE_CURRENT_BINARY_DIR}/out/images/rounded_rectangle.tga"
+    "${CMAKE_CURRENT_BINARY_DIR}/out/images/rounded_square.tga"
+    "${CMAKE_CURRENT_BINARY_DIR}/out/images/row_nullifier.tga"
+)
+
+target_include_directories(
+    libres
+    PUBLIC
+        ${CMAKE_CURRENT_BINARY_DIR}/include
+)
+
+target_link_options(
+    libres
+    PUBLIC
+        --preload-file ${CMAKE_CURRENT_BINARY_DIR}/out@/res
 )

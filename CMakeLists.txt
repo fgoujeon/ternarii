@@ -22,7 +22,6 @@ find_program(GIT_PROGRAM git)
 
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/modules/" ${CMAKE_MODULE_PATH})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --preload-file ${CMAKE_BINARY_DIR}/res/out@/res")
 
 execute_process(
     COMMAND ${GIT_PROGRAM} "describe" "--dirty"
@@ -61,12 +60,11 @@ find_package(
 )
 find_package(nlohmann_json 3.2.0 REQUIRED)
 
-add_subdirectory(res)
-
 add_subdirectory(app)
 add_subdirectory(libcommon)
 add_subdirectory(libdb)
 add_subdirectory(libgame)
+add_subdirectory(libres)
 add_subdirectory(libutil)
 add_subdirectory(libview)
 add_subdirectory(www)

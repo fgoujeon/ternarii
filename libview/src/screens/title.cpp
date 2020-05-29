@@ -23,6 +23,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include "../colors.hpp"
 #include "../styles.hpp"
 #include "../common.hpp"
+#include <libres.hpp>
 #include <libutil/time.hpp>
 #include <Magnum/Math/Color.h>
 #include <Magnum/Platform/Sdl2Application.h>
@@ -43,7 +44,7 @@ struct title::impl
         (
             self,
             feature_groups.drawables,
-            "/res/images/logo.tga",
+            libres::images::logo,
             objects::sdf_image::style
             {
                 .color = colors::light_gray,
@@ -55,7 +56,7 @@ struct title::impl
         (
             self,
             feature_groups.drawables,
-            "/res/images/logo_text.tga",
+            libres::images::logo_text,
             objects::sdf_image::style
             {
                 .color = colors::light_gray,

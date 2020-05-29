@@ -26,6 +26,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include "../objects/score_display.hpp"
 #include "../colors.hpp"
 #include "../common.hpp"
+#include <libres.hpp>
 #include <libutil/time.hpp>
 #include <Magnum/Math/Color.h>
 #include <Magnum/Platform/Sdl2Application.h>
@@ -83,16 +84,16 @@ struct game::impl
             self,
             feature_groups.drawables,
             feature_groups.clickables,
-            "/res/images/exit.tga",
+            libres::images::exit,
             objects::sdf_image_button::callback_set
             {
                 .handle_mouse_release = [this]{this->callbacks.handle_exit_request();}
             }
         ),
-        MOVE_BUTTON_INITIALIZER("/res/images/move_button.tga",   left_shift),
-        MOVE_BUTTON_INITIALIZER("/res/images/move_button.tga",   right_shift),
-        MOVE_BUTTON_INITIALIZER("/res/images/move_button.tga",   drop),
-        MOVE_BUTTON_INITIALIZER("/res/images/rotate_button.tga", clockwise_rotation)
+        MOVE_BUTTON_INITIALIZER(libres::images::move_button,   left_shift),
+        MOVE_BUTTON_INITIALIZER(libres::images::move_button,   right_shift),
+        MOVE_BUTTON_INITIALIZER(libres::images::move_button,   drop),
+        MOVE_BUTTON_INITIALIZER(libres::images::rotate_button, clockwise_rotation)
     {
         const auto move_button_scaling = 0.95f;
 

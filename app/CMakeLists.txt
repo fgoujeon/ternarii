@@ -36,5 +36,3 @@ target_link_libraries(
         libgame
         libview
 )
-
-add_dependencies(app res)

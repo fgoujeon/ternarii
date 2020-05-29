@@ -20,6 +20,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include "label_button.hpp"
 #include "../text.hpp"
 #include "../colors.hpp"
+#include <libres.hpp>
 #include <Magnum/Text/AbstractFont.h>
 
 namespace libview::objects
@@ -42,7 +43,7 @@ label_button::label_button
     (
         *this,
         drawables,
-        "/res/images/rounded_rectangle.tga",
+        libres::images::rounded_rectangle,
         sdf_image::style
         {
             .color = style_.color,
