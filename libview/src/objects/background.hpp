@@ -28,17 +28,22 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libview::objects
 {
 
-class background: public Object2D, public features::drawable
+class background: public Object2D, public features::drawable, public features::animable
 {
     public:
-        background(Object2D& parent, features::drawable_group& drawables);
+        background
+        (
+            Object2D& parent,
+            features::drawable_group& drawables,
+            features::animable_group& animables
+        );
 
         void set_color(const Magnum::Color4& color);
 
-        void advance(const libutil::time_point& now, float elapsed_s);
-
     private:
         void draw(const Magnum::Matrix3& transformation_matrix, Magnum::SceneGraph::Camera2D& camera) override;
+
+        void advance(const libutil::time_point& now, float elapsed_s) override;
 
     private:
         Magnum::Color4 color_;

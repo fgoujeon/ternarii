@@ -37,7 +37,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libview::objects
 {
 
-class tile_grid: public Object2D
+class tile_grid: public Object2D, public features::animable
 {
     private:
         using input_tile_matrix = libutil::matrix
@@ -55,7 +55,12 @@ class tile_grid: public Object2D
         >;
 
     public:
-        tile_grid(Object2D& parent, features::drawable_group& drawables);
+        tile_grid
+        (
+            Object2D& parent,
+            features::drawable_group& drawables,
+            features::animable_group& animables
+        );
 
         bool is_animating() const;
 

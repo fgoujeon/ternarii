@@ -116,8 +116,14 @@ namespace
     >();
 }
 
-tile_grid::tile_grid(Object2D& parent, features::drawable_group& drawables):
+tile_grid::tile_grid
+(
+    Object2D& parent,
+    features::drawable_group& drawables,
+    features::animable_group& animables
+):
     Object2D{&parent},
+    features::animable(*this, &animables),
     drawables_(drawables)
 {
     //board corners

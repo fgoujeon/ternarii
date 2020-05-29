@@ -60,8 +60,8 @@ struct game::impl
     ):
         feature_groups(feature_groups),
         callbacks(callbacks),
-        background(self, feature_groups.drawables),
-        tile_grid(self, feature_groups.drawables),
+        background(self, feature_groups.drawables, feature_groups.animables),
+        tile_grid(self, feature_groups.drawables, feature_groups.animables),
         score_display(self, feature_groups.drawables),
         hi_score_display(self, feature_groups.drawables),
         stage_name_label
@@ -169,19 +169,12 @@ game::game
     const std::string_view& stage_name
 ):
     Object2D{&parent},
-    features::animable{*this, &feature_groups.animables},
     features::key_event_handler{*this, &feature_groups.key_event_handlers},
     pimpl_(std::make_unique<impl>(*this, feature_groups, callbacks, stage_name))
 {
 }
 
 game::~game() = default;
-
-void game::advance(const libutil::time_point& now, const float elapsed_s)
-{
-    pimpl_->background.advance(now, elapsed_s);
-    pimpl_->tile_grid.advance(now, elapsed_s);
-}
 
 void game::handle_key_press(key_event& event)
 {

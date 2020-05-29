@@ -43,22 +43,21 @@ namespace
     }
 }
 
-background::background(Object2D& parent, features::drawable_group& drawables):
+background::background
+(
+    Object2D& parent,
+    features::drawable_group& drawables,
+    features::animable_group& animables
+):
     Object2D{&parent},
-    features::drawable{*this, &drawables}
+    features::drawable{*this, &drawables},
+    features::animable{*this, &animables}
 {
 }
 
 void background::set_color(const Magnum::Color4& color)
 {
     color_ = color;
-}
-
-void background::advance(const libutil::time_point& /*now*/, const float elapsed_s)
-{
-    const auto speed_radps = 0.05f; //in radians per second
-    angle_rad_ = std::fmodf(angle_rad_ + elapsed_s * speed_radps, 2 * M_PI);
-    get_shader().set_angle_rad(angle_rad_);
 }
 
 void background::draw(const Magnum::Matrix3& transformation_matrix, Magnum::SceneGraph::Camera2D& camera)
@@ -70,6 +69,13 @@ void background::draw(const Magnum::Matrix3& transformation_matrix, Magnum::Scen
         transformation_matrix
     );
     get_mesh().draw(get_shader());
+}
+
+void background::advance(const libutil::time_point& /*now*/, const float elapsed_s)
+{
+    const auto speed_radps = 0.05f; //in radians per second
+    angle_rad_ = std::fmodf(angle_rad_ + elapsed_s * speed_radps, 2 * M_PI);
+    get_shader().set_angle_rad(angle_rad_);
 }
 
 } //namespace
