@@ -46,7 +46,8 @@ class game: public Object2D, public features::animable, public features::key_eve
         (
             Object2D& parent,
             feature_group_set& feature_groups,
-            const callback_set& callbacks
+            const callback_set& callbacks,
+            const std::string_view& stage_name
         );
 
         ~game();

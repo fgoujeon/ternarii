@@ -18,13 +18,39 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 #include "playing.hpp"
-#include "showing_title_screen.hpp"
+#include "showing_stage_selection_screen.hpp"
 
 namespace states
 {
 
-playing::playing(fsm& f, const screen_transition trans):
+namespace
+{
+    std::optional<libgame::data_types::stage_state> find_stage_state
+    (
+        const std::optional<libdb::data_types::game_state>& opt_game_state,
+        const libcommon::data_types::stage stage
+    )
+    {
+        if(!opt_game_state)
+        {
+            return std::nullopt;
+        }
+
+        const auto& game_state = *opt_game_state;
+
+        const auto stage_state_it = game_state.stage_states.find(stage);
+        if(stage_state_it == game_state.stage_states.end())
+        {
+            return std::nullopt;
+        }
+
+        return stage_state_it->second;
+    }
+}
+
+playing::playing(fsm& f, const screen_transition trans, const libcommon::data_types::stage stage):
     fsm_(f),
+    stage_(stage),
     pscreen_
     (
         fsm_.view.make_screen<screen>
@@ -33,18 +59,22 @@ playing::playing(fsm& f, const screen_transition trans):
             {
                 .handle_move_request  = [this](const libview::data_types::move m){handle_view_move_request(m);},
                 .handle_clear_request = [this]{modify_game(&libgame::game::start);},
-                .handle_exit_request  = [this]{fsm_.set_state<states::showing_title_screen>(screen_transition::left_to_right);}
-            }
+                .handle_exit_request  = [this]{fsm_.set_state<states::showing_stage_selection_screen>(screen_transition::left_to_right);}
+            },
+            get_pretty_name(stage)
         )
     )
 {
-    //load game state from database
+    //Load game state from database
     const auto& opt_game_state = fsm_.database.get_game_state();
 
+    //Find stage state
+    const auto opt_stage_state = find_stage_state(opt_game_state, stage);
+
     //create game
-    if(opt_game_state)
+    if(opt_stage_state)
     {
-        pgame_ = std::make_unique<libgame::game>(*opt_game_state);
+        pgame_ = std::make_unique<libgame::game>(stage, *opt_stage_state);
 
         const auto& board_tiles = pgame_->get_board_tiles();
 
@@ -60,8 +90,7 @@ playing::playing(fsm& f, const screen_transition trans):
     }
     else
     {
-        pgame_ = std::make_unique<libgame::game>();
-
+        pgame_ = std::make_unique<libgame::game>(stage);
         modify_game(&libgame::game::start);
     }
 

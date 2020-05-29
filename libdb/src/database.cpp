@@ -31,18 +31,21 @@ namespace libdb
 
 namespace
 {
+    constexpr int current_version = 2;
+
     std::filesystem::path get_config_dir()
     {
         static const auto dir = std::filesystem::path{std::getenv("HOME")} / ".config" / "ternarii";
         return dir;
     }
 
-    std::filesystem::path get_database_path(const int version = 1)
+    std::filesystem::path get_database_path(const int version = current_version)
     {
         switch(version)
         {
             case 0: return get_config_dir() / "database.json";
             case 1: return get_config_dir() / "database_v1.json";
+            case 2: return get_config_dir() / "database_v2.json";
             default: throw std::runtime_error{"Unsupported database version."};
         }
     }
@@ -88,9 +91,14 @@ struct database::impl
             return opt_game_state_;
         }
 
-        void set_game_state(const data_types::game_state& state)
+        void set_stage_state(const data_types::stage stage, const data_types::stage_state& state)
         {
-            opt_game_state_ = state;
+            if(!opt_game_state_)
+            {
+                opt_game_state_ = data_types::game_state{};
+            }
+
+            opt_game_state_->stage_states[stage] = state;
 
             if(current_state_ == state::ready)
             {
@@ -139,6 +147,7 @@ struct database::impl
             auto json = nlohmann::json{};
             ifs >> json;
 
+            libutil::log::info("Loaded JSON:");
             libutil::log::info(json);
 
             //convert json to state
@@ -153,7 +162,11 @@ struct database::impl
         {
             try
             {
-                try_load_data(1) || try_load_data(0);
+                auto loaded = false;
+                for(auto i = current_version; i >= 0 && !loaded; --i)
+                {
+                    loaded = try_load_data(i);
+                }
             }
             catch(const std::exception& e)
             {
@@ -224,9 +237,9 @@ const std::optional<data_types::game_state>& database::get_game_state() const
     return pimpl_->get_game_state();
 }
 
-void database::set_game_state(const data_types::game_state& state)
+void database::set_stage_state(const data_types::stage stage, const data_types::stage_state& state)
 {
-    pimpl_->set_game_state(state);
+    pimpl_->set_stage_state(stage, state);
 }
 
 } //namespace

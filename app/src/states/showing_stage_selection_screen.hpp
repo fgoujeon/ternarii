@@ -17,32 +17,29 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef LIBDB_DATABASE_HPP
-#define LIBDB_DATABASE_HPP
+#ifndef STATES_SHOWING_STAGE_SELECTION_SCREEN_HPP
+#define STATES_SHOWING_STAGE_SELECTION_SCREEN_HPP
 
-#include "events.hpp"
-#include "data_types.hpp"
-#include <memory>
+#include "../fsm.hpp"
+#include <libview/screens/stage_selection.hpp>
 
-namespace libdb
+namespace states
 {
 
-class database
+class showing_stage_selection_screen final: public state
 {
     public:
-        database(const event_handler& evt_handler);
-
-        ~database();
-
-        void iterate();
-
-        const std::optional<data_types::game_state>& get_game_state() const;
-
-        void set_stage_state(data_types::stage stage, const data_types::stage_state& state);
+        using screen_transition = libview::view::screen_transition;
 
     private:
-        struct impl;
-        std::unique_ptr<impl> pimpl_;
+        using screen = libview::screens::stage_selection;
+
+    public:
+        showing_stage_selection_screen(fsm& ctx, screen_transition trans);
+
+    private:
+        fsm& fsm_;
+        std::shared_ptr<screen> pscreen_;
 };
 
 } //namespace

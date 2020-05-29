@@ -17,28 +17,36 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef LIBDB_DATABASE_HPP
-#define LIBDB_DATABASE_HPP
+#ifndef LIBVIEW_SCREENS_STAGE_SELECTION_HPP
+#define LIBVIEW_SCREENS_STAGE_SELECTION_HPP
 
-#include "events.hpp"
-#include "data_types.hpp"
-#include <memory>
+#include "../common.hpp"
+#include <libview/data_types.hpp>
+#include <libutil/time.hpp>
+#include <libutil/void_function.hpp>
 
-namespace libdb
+namespace libview::screens
 {
 
-class database
+class stage_selection: public Object2D
 {
     public:
-        database(const event_handler& evt_handler);
+        struct callback_set
+        {
+            libutil::void_function<> purity_room_selection_request;
+            libutil::void_function<> nullifier_room_selection_request;
+            libutil::void_function<> back_request;
+        };
 
-        ~database();
+    public:
+        stage_selection
+        (
+            Object2D& parent,
+            feature_group_set& feature_groups,
+            const callback_set& callbacks
+        );
 
-        void iterate();
-
-        const std::optional<data_types::game_state>& get_game_state() const;
-
-        void set_stage_state(data_types::stage stage, const data_types::stage_state& state);
+        ~stage_selection();
 
     private:
         struct impl;

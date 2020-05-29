@@ -164,11 +164,24 @@ namespace libcommon::data_types
     void to_json(nlohmann::json&, const number_nullifier_tile&)
     {
     }
+
+    void from_json(const nlohmann::json& from, stage& to)
+    {
+        to = static_cast<stage>(from.get<int>());
+    }
 }
 
 namespace libgame::data_types
 {
-    void to_json(nlohmann::json& to, const game_state& from)
+    void from_json(const nlohmann::json& from, stage_state& to)
+    {
+        from.at("hiScore").        get_to(to.hi_score);
+        from.at("nextInputTiles"). get_to(to.next_input_tiles.data);
+        from.at("inputTiles").     get_to(to.input_tiles.data);
+        from.at("boardTiles").     get_to(to.board_tiles.data);
+    }
+
+    void to_json(nlohmann::json& to, const stage_state& from)
     {
         to["hiScore"]        = from.hi_score;
         to["nextInputTiles"] = from.next_input_tiles.data;
@@ -177,9 +190,17 @@ namespace libgame::data_types
     }
 }
 
+namespace libdb::data_types
+{
+    void to_json(nlohmann::json& to, const game_state& from)
+    {
+        to["stageStates"] = from.stage_states;
+    }
+}
+
 namespace libdb
 {
-    void from_json_v0(const nlohmann::json& from, libgame::data_types::game_state& to)
+    void from_json_v0(const nlohmann::json& from, data_types::game_state& to)
     {
         /*
         Example of v0 format:
@@ -200,7 +221,9 @@ namespace libdb
         }
         */
 
-        to.hi_score              = from.at("hiScore").get<int>();
+        auto& state = to.stage_states[data_types::stage::purity_room];
+
+        state.hi_score = from.at("hiScore").get<int>();
 
         //next_input_tiles and input_tiles
         {
@@ -215,8 +238,8 @@ namespace libdb
                 }
             };
 
-            from_tile_array1d(from.at("nextInputTiles"), to.next_input_tiles);
-            from_tile_array1d(from.at("inputTiles"), to.input_tiles);
+            from_tile_array1d(from.at("nextInputTiles"), state.next_input_tiles);
+            from_tile_array1d(from.at("inputTiles"), state.input_tiles);
         }
 
         //board_tiles
@@ -236,12 +259,12 @@ namespace libdb
                         tile = libgame::data_types::number_tile{tile_values[col][row].value()};
                     }
                 },
-                to.board_tiles
+                state.board_tiles
             );
         }
     }
 
-    void from_json_v1(const nlohmann::json& from, libgame::data_types::game_state& to)
+    void from_json_v1(const nlohmann::json& from, data_types::game_state& to)
     {
         /*
         Example of v1 format:
@@ -265,18 +288,76 @@ namespace libdb
         }
         */
 
-        to.hi_score              = from.at("hiScore").get<int>();
-        to.next_input_tiles.data = from.at("nextInputTiles");
-        to.input_tiles.data      = from.at("inputTiles");
-        to.board_tiles.data      = from.at("boardTiles");
+        auto& state = to.stage_states[data_types::stage::purity_room];
+
+        state.hi_score              = from.at("hiScore").get<int>();
+        state.next_input_tiles.data = from.at("nextInputTiles");
+        state.input_tiles.data      = from.at("inputTiles");
+        state.board_tiles.data      = from.at("boardTiles");
     }
 
-    void from_json(const nlohmann::json& from, libgame::data_types::game_state& to, const int version)
+    void from_json_v2(const nlohmann::json& from, data_types::game_state& to)
+    {
+        /*
+        Example of v2 format:
+
+        {
+            "stageStates"
+            [
+                [
+                    0,
+                    {
+                        "boardTiles":
+                        [
+                            {"type":0,"value":2},{"type":0,"value":0},null,null,null,null,
+                            null,null,null,null,null,null,
+                            null,null,null,null,null,null,
+                            null,null,null,null,null,null,
+                            null,null,null,null,null,null,
+                            null,null,null,null,null,null,
+                            null,null,null,null,null,null,
+                            null,null,null,null,null,null,
+                            null,null,null,null,null,null
+                        ],
+                        "hiScore":179575,
+                        "inputTiles":[{"type":0,"value":0},{"type":0,"value":1},null,null],
+                        "nextInputTiles":[{"type":0,"value":2},{"type":0,"value":1},null,null]
+                    }
+                ],
+                [
+                    1,
+                    {
+                        "boardTiles":
+                        [
+                            {"type":0,"value":2},{"type":0,"value":0},null,null,null,null,
+                            null,null,null,null,null,null,
+                            null,null,null,null,null,null,
+                            null,null,null,null,null,null,
+                            null,null,null,null,null,null,
+                            null,null,null,null,null,null,
+                            null,null,null,null,null,null,
+                            null,null,null,null,null,null,
+                            null,null,null,null,null,null
+                        ],
+                        "hiScore":179575,
+                        "inputTiles":[{"type":0,"value":0},{"type":0,"value":1},null,null],
+                        "nextInputTiles":[{"type":0,"value":2},{"type":0,"value":1},null,null]
+                    }
+                ]
+            ]
+        }
+        */
+
+        from.at("stageStates").get_to(to.stage_states);
+    }
+
+    void from_json(const nlohmann::json& from, data_types::game_state& to, const int version)
     {
         switch(version)
         {
             case 0: from_json_v0(from, to); break;
             case 1: from_json_v1(from, to); break;
+            case 2: from_json_v2(from, to); break;
             default: throw std::runtime_error{"Unsupported database version"};
         }
     }

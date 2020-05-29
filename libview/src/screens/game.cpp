@@ -55,7 +55,8 @@ struct game::impl
     (
         game& self,
         feature_group_set& feature_groups,
-        const callback_set& callbacks
+        const callback_set& callbacks,
+        const std::string_view& stage_name
     ):
         feature_groups(feature_groups),
         callbacks(callbacks),
@@ -63,6 +64,20 @@ struct game::impl
         tile_grid(self, feature_groups.drawables),
         score_display(self, feature_groups.drawables),
         hi_score_display(self, feature_groups.drawables),
+        stage_name_label
+        (
+            self,
+            feature_groups.drawables,
+            objects::label::style
+            {
+                .alignment = Magnum::Text::Alignment::MiddleCenter,
+                .font_size = 0.28f,
+                .color = colors::light_gray,
+                .outline_color = colors::dark_gray,
+                .outline_range = {0.47f, 0.40f}
+            },
+            stage_name
+        ),
         exit_button
         (
             self,
@@ -93,6 +108,8 @@ struct game::impl
         hi_score_display.translate({3.3f, 6.8f});
 
         tile_grid.translate({0.0f, 1.0f});
+
+        stage_name_label.translate({0.0f, -4.68f});
 
         exit_button.scale({0.5f, 0.5f});
         exit_button.translate({-2.8f, 7.0f});
@@ -134,6 +151,7 @@ struct game::impl
     objects::tile_grid tile_grid;
     objects::score_display score_display;
     objects::score_display hi_score_display;
+    objects::label stage_name_label;
     objects::sdf_image_button exit_button;
     objects::sdf_image_button left_shift_button;
     objects::sdf_image_button right_shift_button;
@@ -147,12 +165,13 @@ game::game
 (
     Object2D& parent,
     feature_group_set& feature_groups,
-    const callback_set& callbacks
+    const callback_set& callbacks,
+    const std::string_view& stage_name
 ):
     Object2D{&parent},
     features::animable{*this, &feature_groups.animables},
     features::key_event_handler{*this, &feature_groups.key_event_handlers},
-    pimpl_(std::make_unique<impl>(*this, feature_groups, callbacks))
+    pimpl_(std::make_unique<impl>(*this, feature_groups, callbacks, stage_name))
 {
 }
 

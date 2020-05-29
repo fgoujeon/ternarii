@@ -17,32 +17,18 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef LIBDB_DATABASE_HPP
-#define LIBDB_DATABASE_HPP
+#ifndef LIBUTIL_RNG_HPP
+#define LIBUTIL_RNG_HPP
 
-#include "events.hpp"
-#include "data_types.hpp"
-#include <memory>
+#include <random>
 
-namespace libdb
+namespace libutil
 {
 
-class database
+struct rng
 {
-    public:
-        database(const event_handler& evt_handler);
-
-        ~database();
-
-        void iterate();
-
-        const std::optional<data_types::game_state>& get_game_state() const;
-
-        void set_stage_state(data_types::stage stage, const data_types::stage_state& state);
-
-    private:
-        struct impl;
-        std::unique_ptr<impl> pimpl_;
+    std::random_device device;
+    std::mt19937 engine{device()};
 };
 
 } //namespace

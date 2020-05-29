@@ -17,33 +17,22 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef LIBDB_DATABASE_HPP
-#define LIBDB_DATABASE_HPP
+#ifndef LIBGAME_INPUT_GENERATORS_HPP
+#define LIBGAME_INPUT_GENERATORS_HPP
 
-#include "events.hpp"
-#include "data_types.hpp"
-#include <memory>
+#include <libgame/data_types.hpp>
 
-namespace libdb
+namespace libgame
 {
 
-class database
+struct abstract_input_generator
 {
-    public:
-        database(const event_handler& evt_handler);
+    virtual ~abstract_input_generator() = default;
 
-        ~database();
-
-        void iterate();
-
-        const std::optional<data_types::game_state>& get_game_state() const;
-
-        void set_stage_state(data_types::stage stage, const data_types::stage_state& state);
-
-    private:
-        struct impl;
-        std::unique_ptr<impl> pimpl_;
+    virtual data_types::input_tile_matrix generate(const int max, const double standard_deviation) = 0;
 };
+
+abstract_input_generator& get_input_generator(data_types::stage stage);
 
 } //namespace
 

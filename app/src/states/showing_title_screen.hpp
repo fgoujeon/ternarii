@@ -20,7 +20,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #ifndef STATES_SHOWING_TITLE_SCREEN_HPP
 #define STATES_SHOWING_TITLE_SCREEN_HPP
 
-#include "playing.hpp"
+#include "showing_stage_selection_screen.hpp"
 #include "showing_about_screen.hpp"
 #include "../fsm.hpp"
 #include <libview/screens/title.hpp>
@@ -43,7 +43,7 @@ class showing_title_screen final: public state
                 (
                     screen::callback_set
                     {
-                        .play_request  = [this]{fsm_.set_state<playing>(screen_transition::right_to_left);},
+                        .play_request  = [this]{fsm_.set_state<showing_stage_selection_screen>(screen_transition::right_to_left);},
                         .about_request = [this]{fsm_.set_state<showing_about_screen>(screen_transition::right_to_left);}
                     }
                 )
