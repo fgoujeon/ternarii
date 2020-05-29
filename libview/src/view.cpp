@@ -76,12 +76,14 @@ struct view::impl final
     void draw()
     {
         const auto now = libutil::clock::now();
+        const auto elapsed_s = std::chrono::duration<double>{now - previous_frame_time}.count();
+        previous_frame_time = now;
 
         //advance animations
         screen_transition_animator.advance(now);
         for(std::size_t i = 0; i < feature_groups.animables.size(); ++i)
         {
-            feature_groups.animables[i].advance(now);
+            feature_groups.animables[i].advance(now, elapsed_s);
         }
 
         //Update FPS counter
@@ -113,6 +115,11 @@ struct view::impl final
 
     void handle_key_press(key_event& event)
     {
+        if(screen_transition_animator.is_animating())
+        {
+            return;
+        }
+
         for(std::size_t i = 0; i < feature_groups.key_event_handlers.size(); ++i)
         {
             feature_groups.key_event_handlers[i].handle_key_press(event);
@@ -123,6 +130,11 @@ struct view::impl final
     {
         //Only manage left button
         if(event.button() != mouse_event::Button::Left)
+        {
+            return;
+        }
+
+        if(screen_transition_animator.is_animating())
         {
             return;
         }
@@ -150,6 +162,11 @@ struct view::impl final
             return;
         }
 
+        if(screen_transition_animator.is_animating())
+        {
+            return;
+        }
+
         handle_mouse_event
         (
             event,
@@ -167,6 +184,11 @@ struct view::impl final
 
     void handle_mouse_move(mouse_move_event& event)
     {
+        if(screen_transition_animator.is_animating())
+        {
+            return;
+        }
+
         handle_mouse_event
         (
             event,
@@ -211,6 +233,8 @@ struct view::impl final
     Scene2D scene;
     Object2D camera_object;
     Magnum::SceneGraph::Camera2D camera;
+
+    libutil::time_point previous_frame_time = libutil::clock::now();
 
     feature_group_set feature_groups;
 

@@ -116,8 +116,14 @@ namespace
     >();
 }
 
-tile_grid::tile_grid(Object2D& parent, features::drawable_group& drawables):
+tile_grid::tile_grid
+(
+    Object2D& parent,
+    features::drawable_group& drawables,
+    features::animable_group& animables
+):
     Object2D{&parent},
+    features::animable(*this, &animables),
     drawables_(drawables)
 {
     //board corners
@@ -464,7 +470,7 @@ void tile_grid::set_board_tiles(const data_types::board_tile_matrix& tiles)
     );
 }
 
-void tile_grid::advance(const libutil::time_point& now)
+void tile_grid::advance(const libutil::time_point& now, const float /*elapsed_s*/)
 {
     animator_.advance(now);
 }
