@@ -34,7 +34,6 @@ target_link_libraries(
     PRIVATE
         libdb
         libgame
+        libres
         libview
 )
-
-add_dependencies(app res)

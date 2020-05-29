@@ -96,20 +96,26 @@ add_svg_to_sdf_command(rounded_rectangle 64)
 add_svg_to_sdf_command(rounded_square    64)
 add_svg_to_sdf_command(row_nullifier     64)
 
-add_custom_target(
-    res ALL
-    SOURCES
-        "${CMAKE_CURRENT_BINARY_DIR}/out/fonts/DejaVuSans.conf"
-        "${CMAKE_CURRENT_BINARY_DIR}/out/fonts/DejaVuSans.tga"
-        "${CMAKE_CURRENT_BINARY_DIR}/out/images/exit.tga"
-        "${CMAKE_CURRENT_BINARY_DIR}/out/images/board_corner.tga"
-        "${CMAKE_CURRENT_BINARY_DIR}/out/images/column_nullifier.tga"
-        "${CMAKE_CURRENT_BINARY_DIR}/out/images/logo.tga"
-        "${CMAKE_CURRENT_BINARY_DIR}/out/images/logo_text.tga"
-        "${CMAKE_CURRENT_BINARY_DIR}/out/images/move_button.tga"
-        "${CMAKE_CURRENT_BINARY_DIR}/out/images/number_nullifier.tga"
-        "${CMAKE_CURRENT_BINARY_DIR}/out/images/rotate_button.tga"
-        "${CMAKE_CURRENT_BINARY_DIR}/out/images/rounded_rectangle.tga"
-        "${CMAKE_CURRENT_BINARY_DIR}/out/images/rounded_square.tga"
-        "${CMAKE_CURRENT_BINARY_DIR}/out/images/row_nullifier.tga"
+add_library(
+    libres
+    "src/dummy.cpp"
+    "${CMAKE_CURRENT_BINARY_DIR}/out/fonts/DejaVuSans.conf"
+    "${CMAKE_CURRENT_BINARY_DIR}/out/fonts/DejaVuSans.tga"
+    "${CMAKE_CURRENT_BINARY_DIR}/out/images/exit.tga"
+    "${CMAKE_CURRENT_BINARY_DIR}/out/images/board_corner.tga"
+    "${CMAKE_CURRENT_BINARY_DIR}/out/images/column_nullifier.tga"
+    "${CMAKE_CURRENT_BINARY_DIR}/out/images/logo.tga"
+    "${CMAKE_CURRENT_BINARY_DIR}/out/images/logo_text.tga"
+    "${CMAKE_CURRENT_BINARY_DIR}/out/images/move_button.tga"
+    "${CMAKE_CURRENT_BINARY_DIR}/out/images/number_nullifier.tga"
+    "${CMAKE_CURRENT_BINARY_DIR}/out/images/rotate_button.tga"
+    "${CMAKE_CURRENT_BINARY_DIR}/out/images/rounded_rectangle.tga"
+    "${CMAKE_CURRENT_BINARY_DIR}/out/images/rounded_square.tga"
+    "${CMAKE_CURRENT_BINARY_DIR}/out/images/row_nullifier.tga"
+)
+
+target_link_options(
+    libres
+    PUBLIC
+        --preload-file ${CMAKE_CURRENT_BINARY_DIR}/out@/res
 )
