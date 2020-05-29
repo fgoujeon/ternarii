@@ -96,6 +96,16 @@ add_svg_to_sdf_command(rounded_rectangle 64)
 add_svg_to_sdf_command(rounded_square    64)
 add_svg_to_sdf_command(row_nullifier     64)
 
+#Generate images.hpp
+file(GLOB SRC_SVG_FILES src/images/*.svg)
+unset(TGA_IMAGE_PATH_DEFINITIONS)
+foreach(SRC_SVG_FILE ${SRC_SVG_FILES})
+    get_filename_component(FILE_NAME "${SRC_SVG_FILE}" NAME_WE)
+    set(DEF "constexpr auto ${FILE_NAME} = std::string_view{\"/res/images/${FILE_NAME}.tga\"};")
+    set(TGA_IMAGE_PATH_DEFINITIONS "${TGA_IMAGE_PATH_DEFINITIONS}${DEF}\n")
+endforeach()
+configure_file(src/libres.hpp.in include/libres.hpp)
+
 add_library(
     libres
     "src/dummy.cpp"
@@ -112,6 +122,12 @@ add_library(
     "${CMAKE_CURRENT_BINARY_DIR}/out/images/rounded_rectangle.tga"
     "${CMAKE_CURRENT_BINARY_DIR}/out/images/rounded_square.tga"
     "${CMAKE_CURRENT_BINARY_DIR}/out/images/row_nullifier.tga"
+)
+
+target_include_directories(
+    libres
+    PUBLIC
+        ${CMAKE_CURRENT_BINARY_DIR}/include
 )
 
 target_link_options(

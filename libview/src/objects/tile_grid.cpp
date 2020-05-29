@@ -21,6 +21,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include "number_tile.hpp"
 #include "sdf_image.hpp"
 #include "../colors.hpp"
+#include <libres.hpp>
 #include <libutil/matrix.hpp>
 #include <libutil/overload.hpp>
 
@@ -134,7 +135,7 @@ tile_grid::tile_grid
             (
                 *this,
                 drawables,
-                "/res/images/board_corner.tga",
+                libres::images::board_corner,
                 sdf_image::style
                 {
                     .color = colors::light_gray,
@@ -493,15 +494,15 @@ std::shared_ptr<Object2D> tile_grid::make_tile
             },
             [&](const data_types::column_nullifier_tile&) -> result_t
             {
-                return std::make_shared<sdf_image_tile>(*this, drawables_, "/res/images/column_nullifier.tga");
+                return std::make_shared<sdf_image_tile>(*this, drawables_, libres::images::column_nullifier);
             },
             [&](const data_types::row_nullifier_tile&) -> result_t
             {
-                return std::make_shared<sdf_image_tile>(*this, drawables_, "/res/images/row_nullifier.tga");
+                return std::make_shared<sdf_image_tile>(*this, drawables_, libres::images::row_nullifier);
             },
             [&](const data_types::number_nullifier_tile&) -> result_t
             {
-                return std::make_shared<sdf_image_tile>(*this, drawables_, "/res/images/number_nullifier.tga");
+                return std::make_shared<sdf_image_tile>(*this, drawables_, libres::images::number_nullifier);
             }
         },
         tile

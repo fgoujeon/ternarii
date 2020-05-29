@@ -23,6 +23,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include "../colors.hpp"
 #include "../styles.hpp"
 #include "../common.hpp"
+#include <libres.hpp>
 
 namespace libview::screens
 {
@@ -92,19 +93,19 @@ struct stage_selection::impl
         (
             self,
             feature_groups.drawables,
-            "/res/images/row_nullifier.tga"
+            libres::images::row_nullifier
         ),
         nullifier_room_special_tile_1
         (
             self,
             feature_groups.drawables,
-            "/res/images/column_nullifier.tga"
+            libres::images::column_nullifier
         ),
         nullifier_room_special_tile_2
         (
             self,
             feature_groups.drawables,
-            "/res/images/number_nullifier.tga"
+            libres::images::number_nullifier
         ),
         back_button
         (

@@ -20,6 +20,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include "sdf_image_tile.hpp"
 #include "../text.hpp"
 #include "../colors.hpp"
+#include <libres.hpp>
 #include <Magnum/GL/Mesh.h>
 #include <Magnum/Shaders/Flat.h>
 
@@ -33,7 +34,7 @@ sdf_image_tile::sdf_image_tile(Object2D& parent, features::drawable_group& drawa
     (
         *this,
         drawables,
-        "/res/images/rounded_square.tga",
+        libres::images::rounded_square,
         sdf_image::style
         {
             .color = square_color_,

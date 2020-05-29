@@ -44,6 +44,7 @@ target_link_libraries(
     libview
     PUBLIC
         libcommon
+        libres
         libutil
     PRIVATE
         Magnum::Application

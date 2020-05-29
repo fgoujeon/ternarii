@@ -34,6 +34,5 @@ target_link_libraries(
     PRIVATE
         libdb
         libgame
-        libres
         libview
 )
