@@ -35,7 +35,7 @@ class background: public Object2D, public features::drawable
 
         void set_color(const Magnum::Color4& color);
 
-        void advance(const libutil::time_point& now);
+        void advance(const libutil::time_point& now, float elapsed_s);
 
     private:
         void draw(const Magnum::Matrix3& transformation_matrix, Magnum::SceneGraph::Camera2D& camera) override;

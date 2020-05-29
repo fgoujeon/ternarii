@@ -177,10 +177,10 @@ game::game
 
 game::~game() = default;
 
-void game::advance(const libutil::time_point& now)
+void game::advance(const libutil::time_point& now, const float elapsed_s)
 {
-    pimpl_->background.advance(now);
-    pimpl_->tile_grid.advance(now);
+    pimpl_->background.advance(now, elapsed_s);
+    pimpl_->tile_grid.advance(now, elapsed_s);
 }
 
 void game::handle_key_press(key_event& event)

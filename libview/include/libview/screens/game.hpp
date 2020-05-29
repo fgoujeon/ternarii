@@ -52,7 +52,7 @@ class game: public Object2D, public features::animable, public features::key_eve
 
         ~game();
 
-        void advance(const libutil::time_point& now) override;
+        void advance(const libutil::time_point& now, float elapsed_s) override;
 
         void handle_key_press(key_event& event) override;
 

@@ -79,7 +79,7 @@ class tile_grid: public Object2D
 
         void set_board_tiles(const data_types::board_tile_matrix& tiles);
 
-        void advance(const libutil::time_point& now);
+        void advance(const libutil::time_point& now, float elapsed_s);
 
     private:
         std::shared_ptr<Object2D> make_tile

@@ -464,7 +464,7 @@ void tile_grid::set_board_tiles(const data_types::board_tile_matrix& tiles)
     );
 }
 
-void tile_grid::advance(const libutil::time_point& now)
+void tile_grid::advance(const libutil::time_point& now, const float /*elapsed_s*/)
 {
     animator_.advance(now);
 }
