@@ -1,4 +1,4 @@
-/*
+R"^(/*
 Copyright 2018 - 2020 Florian Goujeon
 
 This file is part of Ternarii.
@@ -16,8 +16,6 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
-
-R"^(
 
 #define PI2 6.28318530718
 #define RAY_COUNT 16.0
@@ -56,5 +54,4 @@ void main()
 
     gl_FragColor = vec4(u_color.xyz, u_color.w * alpha);
 }
-
 )^"

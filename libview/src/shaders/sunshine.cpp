@@ -28,14 +28,12 @@ namespace libview::shaders
 
 namespace
 {
-    enum: Magnum::Int { TextureLayer = 0 };
-
     constexpr auto vert_src =
-       #include "sunshine/vert.inc"
+       #include "common.vert"
     ;
 
     constexpr auto frag_src =
-       #include "sunshine/frag.inc"
+       #include "sunshine.frag"
     ;
 }
 

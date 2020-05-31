@@ -1,4 +1,4 @@
-/*
+R"^(/*
 Copyright 2018 - 2020 Florian Goujeon
 
 This file is part of Ternarii.
@@ -17,13 +17,10 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-R"^(
-
 #define POSITION_ATTRIBUTE_LOCATION 0
 
-attribute highp vec2 position;
-
 uniform highp mat3 u_transformation_projection_matrix;
+attribute highp vec2 position;
 
 varying highp vec2 v_position;
 
@@ -32,5 +29,4 @@ void main()
     v_position = position;
     gl_Position.xywz = vec4(u_transformation_projection_matrix * vec3(position, 1.0), 0.0);
 }
-
 )^"
