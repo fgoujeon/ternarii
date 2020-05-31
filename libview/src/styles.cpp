@@ -34,7 +34,8 @@ objects::label_button::style white_label_button
     },
     .color = colors::light_gray,
     .highlight_color = colors::white,
-    .outline_color = colors::black
+    .outline_color = colors::black,
+    .radius = 0.16f
 };
 
 } //namespace

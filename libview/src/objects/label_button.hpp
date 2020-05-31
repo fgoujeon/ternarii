@@ -21,7 +21,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #define LIBVIEW_OBJECTS_LABEL_BUTTON_HPP
 
 #include "label.hpp"
-#include "sdf_image.hpp"
+#include "rounded_rectangle.hpp"
 #include "../common.hpp"
 #include <libutil/void_function.hpp>
 
@@ -43,6 +43,7 @@ class label_button: public Object2D, public features::clickable
             Magnum::Color4 color;
             Magnum::Color4 highlight_color;
             Magnum::Color4 outline_color;
+            float radius = 0;
         };
 
     public:
@@ -73,7 +74,7 @@ class label_button: public Object2D, public features::clickable
     private:
         style style_;
         const callback_set callbacks_;
-        sdf_image background_rectangle_;
+        rounded_rectangle background_rectangle_;
         label label_;
         bool enabled_ = true;
 };

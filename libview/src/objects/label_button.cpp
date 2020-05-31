@@ -43,12 +43,10 @@ label_button::label_button
     (
         *this,
         drawables,
-        libres::images::rounded_rectangle,
-        sdf_image::style
+        rounded_rectangle::style
         {
             .color = style_.color,
-            .outline_color = style_.outline_color,
-            .outline_range = {0.5f, 0.47f}
+            .radius = style_.radius
         }
     ),
     label_
@@ -59,8 +57,7 @@ label_button::label_button
         text
     )
 {
-    background_rectangle_.set_color(style_.color);
-    background_rectangle_.set_outline_color(style_.outline_color);
+    background_rectangle_.scale({1.0f, 0.2f});
 }
 
 void label_button::set_enabled(const bool enabled)
