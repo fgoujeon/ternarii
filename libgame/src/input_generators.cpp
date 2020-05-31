@@ -92,7 +92,9 @@ namespace
                 return
                 {
                     gen_.generate(max, standard_deviation),
-                    gen_.generate(max, standard_deviation)
+                    std::nullopt,
+                    gen_.generate(max, standard_deviation),
+                    std::nullopt
                 };
             }
 

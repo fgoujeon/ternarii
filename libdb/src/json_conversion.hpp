@@ -231,11 +231,8 @@ namespace libdb
             {
                 auto tile_values = std::array<int, 2>{};
                 from.get_to(tile_values);
-
-                for(auto i = 0; i < 2; ++i)
-                {
-                    to.data[i] = libgame::data_types::number_tile{tile_values[i]};
-                }
+                to.data[0] = libgame::data_types::number_tile{from[0]};
+                to.data[2] = libgame::data_types::number_tile{from[1]};
             };
 
             from_tile_array1d(from.at("nextInputTiles"), state.next_input_tiles);
@@ -250,9 +247,9 @@ namespace libdb
             auto tile_values = tile_value_array{};
             from.at("boardTiles").get_to(tile_values);
 
-            libutil::for_each_ij
+            libutil::for_each_colrow
             (
-                [&](auto& tile, const int row, const int col)
+                [&](auto& tile, const int col, const int row)
                 {
                     if(tile_values[col][row].has_value())
                     {
@@ -288,12 +285,28 @@ namespace libdb
         }
         */
 
+        auto fill_matrix = [](const auto& src, auto& dst)
+        {
+            libutil::for_each_colrow
+            (
+                [&](auto& dst_tile, const int col, const int row)
+                {
+                    const auto& src_tile = src[row * 6 + col];
+                    if(src_tile.is_object())
+                    {
+                        dst_tile = src_tile;
+                    }
+                },
+                dst
+            );
+        };
+
         auto& state = to.stage_states[data_types::stage::purity_room];
 
-        state.hi_score              = from.at("hiScore").get<int>();
-        state.next_input_tiles.data = from.at("nextInputTiles");
-        state.input_tiles.data      = from.at("inputTiles");
-        state.board_tiles.data      = from.at("boardTiles");
+        state.hi_score = from.at("hiScore").get<int>();
+        fill_matrix(from.at("nextInputTiles"), state.next_input_tiles);
+        fill_matrix(from.at("inputTiles"),     state.input_tiles);
+        fill_matrix(from.at("boardTiles"),     state.board_tiles);
     }
 
     void from_json_v2(const nlohmann::json& from, data_types::game_state& to)
@@ -309,15 +322,12 @@ namespace libdb
                     {
                         "boardTiles":
                         [
-                            {"type":0,"value":2},{"type":0,"value":0},null,null,null,null,
-                            null,null,null,null,null,null,
-                            null,null,null,null,null,null,
-                            null,null,null,null,null,null,
-                            null,null,null,null,null,null,
-                            null,null,null,null,null,null,
-                            null,null,null,null,null,null,
-                            null,null,null,null,null,null,
-                            null,null,null,null,null,null
+                            {"type":0,"value":2},null,null,null,null,null,
+                            {"type":0,"value":0},null,null,null,null,null,
+                            null,null,null,null,null,null,null,null,null,
+                            null,null,null,null,null,null,null,null,null,
+                            null,null,null,null,null,null,null,null,null,
+                            null,null,null,null,null,null,null,null,null
                         ],
                         "hiScore":179575,
                         "inputTiles":[{"type":0,"value":0},{"type":0,"value":1},null,null],
@@ -329,15 +339,12 @@ namespace libdb
                     {
                         "boardTiles":
                         [
-                            {"type":0,"value":2},{"type":0,"value":0},null,null,null,null,
-                            null,null,null,null,null,null,
-                            null,null,null,null,null,null,
-                            null,null,null,null,null,null,
-                            null,null,null,null,null,null,
-                            null,null,null,null,null,null,
-                            null,null,null,null,null,null,
-                            null,null,null,null,null,null,
-                            null,null,null,null,null,null
+                            {"type":0,"value":2},null,null,null,null,null,
+                            {"type":0,"value":0},null,null,null,null,null,
+                            null,null,null,null,null,null,null,null,null,
+                            null,null,null,null,null,null,null,null,null,
+                            null,null,null,null,null,null,null,null,null,
+                            null,null,null,null,null,null,null,null,null
                         ],
                         "hiScore":179575,
                         "inputTiles":[{"type":0,"value":0},{"type":0,"value":1},null,null],

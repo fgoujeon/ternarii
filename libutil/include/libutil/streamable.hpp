@@ -142,8 +142,8 @@ std::ostream& operator<<(std::ostream& l, const streamable<std::vector<T>>& r)
 libutil types
 */
 
-template<class T, size_t M, size_t N>
-std::ostream& operator<<(std::ostream& l, const streamable<libutil::matrix<T, M, N>>& r)
+template<class T, int Cols, int Rows>
+std::ostream& operator<<(std::ostream& l, const streamable<libutil::matrix<T, Cols, Rows>>& r)
 {
     return l << streamable{r.value.data};
 }
@@ -151,7 +151,7 @@ std::ostream& operator<<(std::ostream& l, const streamable<libutil::matrix<T, M,
 inline
 std::ostream& operator<<(std::ostream& l, const streamable<libutil::matrix_coordinate>& r)
 {
-    return l << "{" << r.value.i << ", " << r.value.j << "}";
+    return l << "{" << r.value.col << ", " << r.value.row << "}";
 }
 
 } //namespace

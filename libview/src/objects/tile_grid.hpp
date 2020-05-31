@@ -43,15 +43,15 @@ class tile_grid: public Object2D, public features::animable
         using input_tile_matrix = libutil::matrix
         <
             std::shared_ptr<Object2D>,
-            libcommon::constants::input_row_count,
-            libcommon::constants::input_column_count
+            libcommon::constants::input_column_count,
+            libcommon::constants::input_row_count
         >;
 
         using board_tile_matrix = libutil::matrix
         <
             std::shared_ptr<Object2D>,
-            libcommon::constants::board_row_count,
-            libcommon::constants::board_column_count
+            libcommon::constants::board_column_count,
+            libcommon::constants::board_row_count
         >;
 
     public:

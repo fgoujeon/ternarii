@@ -55,9 +55,9 @@ board_tile_matrix associated functions
 
 bool is_overflowed(const board_tile_matrix& tiles)
 {
-    for(int col = 0; col < tiles.n; ++col)
+    for(int col = 0; col < tiles.cols; ++col)
     {
-        if(libutil::at(tiles, constants::board_authorized_row_count, col))
+        if(at(tiles, col, constants::board_authorized_row_count))
         {
             return true;
         }
@@ -133,38 +133,38 @@ libutil::matrix_coordinate get_tile_coordinate
     const libutil::matrix_coordinate& tile_coord //coordinate of tile in input
 )
 {
-    const auto hash = [](const int in_row, const int in_col, const int rot)
+    const auto hash = [](const int in_col, const int in_row, const int rot)
     {
         return
-            ((in_row & 1) << 3) |
-            ((in_col & 1) << 2) |
+            ((in_col & 1) << 3) |
+            ((in_row & 1) << 2) |
             (rot & 3)
         ;
     };
 
-#define CASE(IN_ROW, IN_COL, ROT, OUT_ROW, OUT_COL) \
-    case hash(IN_ROW, IN_COL, ROT): \
-        return libutil::matrix_coordinate{OUT_ROW, OUT_COL + layout.col_offset};
+#define CASE(IN_COL, IN_ROW, ROT, OUT_COL, OUT_ROW) \
+    case hash(IN_COL, IN_ROW, ROT): \
+        return libutil::matrix_coordinate{OUT_COL + layout.col_offset, OUT_ROW};
 
-    switch(hash(tile_coord.i, tile_coord.j, layout.rotation))
+    switch(hash(tile_coord.col, tile_coord.row, layout.rotation))
     {
-        //--(in_row, in_col, rot, out_row, out_col)
-        CASE(0,      0,      0,   0,       0);
-        CASE(0,      0,      1,   1,       0);
-        CASE(0,      0,      2,   1,       1);
-        CASE(0,      0,      3,   0,       1);
-        CASE(0,      1,      0,   0,       1);
-        CASE(0,      1,      1,   0,       0);
-        CASE(0,      1,      2,   1,       0);
-        CASE(0,      1,      3,   1,       1);
-        CASE(1,      0,      0,   1,       0);
-        CASE(1,      0,      1,   1,       1);
-        CASE(1,      0,      2,   0,       1);
-        CASE(1,      0,      3,   0,       0);
-        CASE(1,      1,      0,   1,       1);
-        CASE(1,      1,      1,   0,       1);
-        CASE(1,      1,      2,   0,       0);
-        CASE(1,      1,      3,   1,       0);
+        //--(in_col, in_row, rot, out_col, out_row )
+        CASE(0,      0,      0,   0,       0       );
+        CASE(0,      0,      1,   0,       1       );
+        CASE(0,      0,      2,   1,       1       );
+        CASE(0,      0,      3,   1,       0       );
+        CASE(0,      1,      0,   0,       1       );
+        CASE(0,      1,      1,   1,       1       );
+        CASE(0,      1,      2,   1,       0       );
+        CASE(0,      1,      3,   0,       0       );
+        CASE(1,      0,      0,   1,       0       );
+        CASE(1,      0,      1,   0,       0       );
+        CASE(1,      0,      2,   0,       1       );
+        CASE(1,      0,      3,   1,       1       );
+        CASE(1,      1,      0,   1,       1       );
+        CASE(1,      1,      1,   1,       0       );
+        CASE(1,      1,      2,   0,       0       );
+        CASE(1,      1,      3,   0,       1       );
     }
 
 #undef CASE

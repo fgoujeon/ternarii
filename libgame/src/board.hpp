@@ -66,13 +66,13 @@ class board
             selected
         };
 
-        using selection_t = libutil::matrix<selection_state, total_row_count, total_column_count>;
+        using selection_t = libutil::matrix<selection_state, total_column_count, total_row_count>;
 
         void select_tiles
         (
             const int tile_value,
-            const int row,
             const int col,
+            const int row,
             selection_t& selection,
             int& selection_size
         );

@@ -26,18 +26,23 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libutil
 {
 
-template<typename T, size_t M, size_t N>
+template<typename T, int Cols, int Rows>
 struct matrix
 {
-    static constexpr int m = M;
-    static constexpr int n = N;
-    std::array<T, M * N> data;
+    static_assert(Cols > 0);
+    static_assert(Rows > 0);
+
+    static constexpr auto cols = Cols;
+    static constexpr auto rows = Rows;
+    static constexpr auto size = Cols * Rows;
+
+    std::array<T, size> data;
 };
 
 struct matrix_coordinate
 {
-    int i = 0;
-    int j = 0;
+    int col = 0;
+    int row = 0;
 };
 
 using matrix_coordinate_list = std::vector<matrix_coordinate>;
@@ -55,59 +60,59 @@ auto end(Matrix& mat)
 }
 
 template<class Matrix>
-decltype(auto) at(Matrix& mat, const int ij)
+decltype(auto) at(Matrix& mat, const int i)
 {
-    assert(ij < mat.m * mat.n);
-    return mat.data[ij];
+    assert(i < mat.size);
+    return mat.data[i];
 }
 
 template<class Matrix>
-decltype(auto) at(Matrix& mat, const int i, const int j)
+decltype(auto) at(Matrix& mat, const int col, const int row)
 {
-    assert(i < mat.m && j < mat.n);
-    return mat.data[i * mat.n + j];
+    assert(col < mat.cols && row < mat.rows);
+    return mat.data[col * mat.rows + row];
 }
 
 template<class Matrix>
 decltype(auto) at(Matrix& mat, const matrix_coordinate& c)
 {
-    return at(mat, c.i, c.j);
+    return at(mat, c.col, c.row);
 }
 
 template<class Matrix, class Matrix2>
 constexpr bool have_same_size()
 {
-    return Matrix::m == Matrix2::m && Matrix::n == Matrix2::n;
+    return Matrix::size == Matrix2::size;
 }
 
-//For each element matN_ij of each given matrix,
-//call f(mat0_ij, mat1_ij, ..., matN_ij).
+//For each element matN_ji of each given matrix,
+//call f(mat0_ji, mat1_ji, ..., matN_ji).
 template<typename F, class Matrix, class... Matrices>
 void for_each(F&& f, Matrix& mat, Matrices&... mats)
 {
     static_assert((have_same_size<Matrix, Matrices>() && ...));
 
-    for(auto ij = 0; ij < mat.m * mat.n; ++ij)
+    for(auto i = 0; i < mat.size; ++i)
     {
-        f(at(mat, ij), at(mats, ij)...);
+        f(at(mat, i), at(mats, i)...);
     }
 }
 
-//For each element matN_ij of each given matrix,
-//call f(mat0_ij, mat1_ij, ..., matN_ij, i, j).
+//For each element matN_colrow of each given matrix,
+//call f(mat0_colrow, mat1_colrow, ..., matN_colrow, col, row).
 template<typename F, class Matrix, class... Matrices>
-void for_each_ij(F&& f, Matrix& mat, Matrices&... mats)
+void for_each_colrow(F&& f, Matrix& mat, Matrices&... mats)
 {
-    for(auto i = 0; i < mat.m; ++i)
+    for(auto col = 0; col < mat.cols; ++col)
     {
-        for(auto j = 0; j < mat.n; ++j)
+        for(auto row = 0; row < mat.rows; ++row)
         {
             f
             (
-                at(mat, i, j),
-                at(mats, i, j)...,
-                i,
-                j
+                at(mat, col, row),
+                at(mats, col, row)...,
+                col,
+                row
             );
         }
     }

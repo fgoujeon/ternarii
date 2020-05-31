@@ -68,7 +68,7 @@ using tile = std::variant
 
 /*
 Convention for accessing the tiles:
-libutil::at(tiles, row, col)
+at(tiles, col, row)
 
 Convention of rows and columns:
 [..]
@@ -79,20 +79,20 @@ Convention of rows and columns:
 [R0]
     [C0][C1][C2][C3][..]
 */
-template<size_t RowCount, size_t ColumnCount>
-using basic_opt_tile_matrix = libutil::matrix<std::optional<tile>, RowCount, ColumnCount>;
+template<int Cols, int Rows>
+using basic_opt_tile_matrix = libutil::matrix<std::optional<tile>, Cols, Rows>;
 
 //Get the row index of the lowest empty cell on the given column.
-template<size_t RowCount, size_t ColumnCount>
+template<int Cols, int Rows>
 std::optional<int> get_lowest_empty_cell
 (
-    const basic_opt_tile_matrix<RowCount, ColumnCount>& mat,
+    const basic_opt_tile_matrix<Cols, Rows>& mat,
     const int col
 )
 {
-    for(auto row = 0; row < RowCount; ++row)
+    for(auto row = 0; row < Rows; ++row)
     {
-        if(!libutil::at(mat, row, col))
+        if(!at(mat, col, row))
         {
             return row;
         }
@@ -101,10 +101,10 @@ std::optional<int> get_lowest_empty_cell
     return std::nullopt;
 }
 
-template<size_t RowCount, size_t ColumnCount>
+template<int Cols, int Rows>
 int get_tile_count
 (
-    const basic_opt_tile_matrix<RowCount, ColumnCount>& mat
+    const basic_opt_tile_matrix<Cols, Rows>& mat
 )
 {
     auto count = 0;
@@ -120,7 +120,7 @@ int get_tile_count
 
 
 
-using input_tile_matrix = basic_opt_tile_matrix<constants::input_row_count, constants::input_column_count>;
+using input_tile_matrix = basic_opt_tile_matrix<constants::input_column_count, constants::input_row_count>;
 
 
 
@@ -128,7 +128,7 @@ using input_tile_matrix = basic_opt_tile_matrix<constants::input_row_count, cons
 board_tile_matrix type and associated functions
 */
 
-using board_tile_matrix = basic_opt_tile_matrix<constants::board_row_count, constants::board_column_count>;
+using board_tile_matrix = basic_opt_tile_matrix<constants::board_column_count, constants::board_row_count>;
 
 bool is_overflowed(const board_tile_matrix& tiles);
 
