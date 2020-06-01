@@ -60,8 +60,8 @@ struct view::impl final
                 objects::label::style
                 {
                     .alignment = Magnum::Text::Alignment::MiddleLeft,
-                    .font_size = 0.3f,
-                    .color = colors::white
+                    .color = colors::white,
+                    .font_size = 0.3f
                 }
             );
             pfps_counter->translate({-4.0f, -7.0f});
@@ -261,100 +261,205 @@ void view::show_screen
     screen_transition trans
 )
 {
-    const auto duration_s =
-        trans == screen_transition::top_to_bottom ?
-        1.0f :
-        0.7f
-    ;
-
-    const auto new_screen_start_position = [&]
-    {
-        switch(trans)
-        {
-            default:
-            case screen_transition::top_to_bottom:
-                return Magnum::Vector2{0.0f, 4.0f};
-            case screen_transition::right_to_left:
-                return Magnum::Vector2{12.0f, 0.0f};
-            case screen_transition::left_to_right:
-                return Magnum::Vector2{-12.0f, 0.0f};
-        }
-    }();
-
-    const auto old_screen_finish_position = Magnum::Vector2
-    {
-        -new_screen_start_position.x(),
-        -new_screen_start_position.y()
-    };
-
-    const auto interpolator = Magnum::Animation::ease
+    const auto vector_interpolator = Magnum::Animation::ease
     <
         Magnum::Vector2,
         Magnum::Math::lerp,
         Magnum::Animation::Easing::exponentialOut
     >();
 
-    pimpl_->screen_transition_animator.push
-    (
-        tracks::immediate_translation
-        {
-            pscreen,
-            new_screen_start_position
-        }
-    );
+    const auto float_interpolator = Magnum::Animation::ease
+    <
+        Magnum::Float,
+        Magnum::Math::lerp,
+        Magnum::Animation::Easing::exponentialOut
+    >();
 
-    auto anim = animation{};
-
-    //Hide old screen, if any
-    if(pimpl_->pscreen)
+    switch(trans)
     {
-        anim.add
-        (
-            tracks::fixed_duration_translation
+        case screen_transition::top_to_bottom:
+        case screen_transition::right_to_left:
+        case screen_transition::left_to_right:
             {
-                .pobj = pimpl_->pscreen,
-                .finish_position = old_screen_finish_position,
-                .duration_s = duration_s,
-                .interpolator = interpolator
-            }
-        );
+                const auto duration_s =
+                    trans == screen_transition::top_to_bottom ?
+                    1.0f :
+                    0.7f
+                ;
 
-        anim.add
-        (
-            tracks::alpha_transition
-            {
-                .pobj = pimpl_->pscreen,
-                .finish_alpha = 0.0f,
-                .duration_s = duration_s
+                const auto new_screen_start_position = [&]
+                {
+                    switch(trans)
+                    {
+                        default:
+                        case screen_transition::top_to_bottom:
+                            return Magnum::Vector2{0.0f, 4.0f};
+                        case screen_transition::right_to_left:
+                            return Magnum::Vector2{12.0f, 0.0f};
+                        case screen_transition::left_to_right:
+                            return Magnum::Vector2{-12.0f, 0.0f};
+                    }
+                }();
+
+                const auto old_screen_finish_position = Magnum::Vector2
+                {
+                    -new_screen_start_position.x(),
+                    -new_screen_start_position.y()
+                };
+
+                pimpl_->screen_transition_animator.push
+                (
+                    tracks::immediate_translation
+                    {
+                        pscreen,
+                        new_screen_start_position
+                    }
+                );
+
+                auto anim = animation{};
+
+                //Hide old screen, if any
+                if(pimpl_->pscreen)
+                {
+                    anim.add
+                    (
+                        tracks::fixed_duration_translation
+                        {
+                            .pobj = pimpl_->pscreen,
+                            .finish_position = old_screen_finish_position,
+                            .duration_s = duration_s,
+                            .interpolator = vector_interpolator
+                        }
+                    );
+
+                    anim.add
+                    (
+                        tracks::alpha_transition
+                        {
+                            .pobj = pimpl_->pscreen,
+                            .finish_alpha = 0.0f,
+                            .duration_s = duration_s
+                        }
+                    );
+                }
+
+                //Show new screen
+                {
+                    anim.add
+                    (
+                        tracks::fixed_duration_translation
+                        {
+                            .pobj = pscreen,
+                            .finish_position = {0.0f, 0.0f},
+                            .duration_s = duration_s,
+                            .interpolator = vector_interpolator
+                        }
+                    );
+
+                    anim.add
+                    (
+                        tracks::alpha_transition
+                        {
+                            .pobj = pscreen,
+                            .finish_alpha = 1.0f,
+                            .duration_s = duration_s
+                        }
+                    );
+                }
+
+                pimpl_->screen_transition_animator.push(std::move(anim));
             }
-        );
+            break;
+        case screen_transition::zoom_in:
+        case screen_transition::zoom_out:
+            {
+                const auto duration_s = 1.0f;
+
+                const auto new_screen_start_scaling = [&]
+                {
+                    switch(trans)
+                    {
+                        default:
+                        case screen_transition::zoom_in:
+                            return Magnum::Vector2{0.2f, 0.2f};
+                        case screen_transition::zoom_out:
+                            return Magnum::Vector2{5.0f, 5.0f};
+                    }
+                }();
+
+                const auto old_screen_finish_scaling = Magnum::Vector2
+                {
+                    1.0f / new_screen_start_scaling.x(),
+                    1.0f / new_screen_start_scaling.y()
+                };
+
+                pimpl_->screen_transition_animator.push
+                (
+                    tracks::scaling_transition
+                    {
+                        .pobj = pscreen,
+                        .finish_scaling = new_screen_start_scaling,
+                        .duration_s = 0
+                    }
+                );
+
+                auto anim = animation{};
+
+                //Hide old screen, if any
+                if(pimpl_->pscreen)
+                {
+                    anim.add
+                    (
+                        tracks::scaling_transition
+                        {
+                            .pobj = pimpl_->pscreen,
+                            .finish_scaling = old_screen_finish_scaling,
+                            .duration_s = duration_s,
+                            .interpolator = vector_interpolator
+                        }
+                    );
+
+                    anim.add
+                    (
+                        tracks::alpha_transition
+                        {
+                            .pobj = pimpl_->pscreen,
+                            .finish_alpha = 0.0f,
+                            .duration_s = duration_s,
+                            .interpolator = float_interpolator
+                        }
+                    );
+                }
+
+                //Show new screen
+                {
+                    anim.add
+                    (
+                        tracks::scaling_transition
+                        {
+                            .pobj = pscreen,
+                            .finish_scaling = Magnum::Vector2{1.0f, 1.0f},
+                            .duration_s = duration_s,
+                            .interpolator = vector_interpolator
+                        }
+                    );
+
+                    anim.add
+                    (
+                        tracks::alpha_transition
+                        {
+                            .pobj = pscreen,
+                            .finish_alpha = 1.0f,
+                            .duration_s = duration_s,
+                            .interpolator = float_interpolator
+                        }
+                    );
+                }
+
+                pimpl_->screen_transition_animator.push(std::move(anim));
+            }
+            break;
     }
-
-    //Show new screen
-    {
-        anim.add
-        (
-            tracks::fixed_duration_translation
-            {
-                .pobj = pscreen,
-                .finish_position = {0.0f, 0.0f},
-                .duration_s = duration_s,
-                .interpolator = interpolator
-            }
-        );
-
-        anim.add
-        (
-            tracks::alpha_transition
-            {
-                .pobj = pscreen,
-                .finish_alpha = 1.0f,
-                .duration_s = duration_s
-            }
-        );
-    }
-
-    pimpl_->screen_transition_animator.push(std::move(anim));
 
     //Save new screen for future transition
     pimpl_->pscreen = pscreen;

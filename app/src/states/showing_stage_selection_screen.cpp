@@ -36,7 +36,7 @@ showing_stage_selection_screen::showing_stage_selection_screen(fsm& ctx, const s
                 {
                     fsm_.set_state<playing>
                     (
-                        screen_transition::right_to_left,
+                        screen_transition::zoom_in,
                         libgame::data_types::stage::purity_room
                     );
                 },
@@ -44,7 +44,7 @@ showing_stage_selection_screen::showing_stage_selection_screen(fsm& ctx, const s
                 {
                     fsm_.set_state<playing>
                     (
-                        screen_transition::right_to_left,
+                        screen_transition::zoom_in,
                         libgame::data_types::stage::nullifier_room
                     );
                 },

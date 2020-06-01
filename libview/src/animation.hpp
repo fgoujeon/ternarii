@@ -218,6 +218,7 @@ namespace tracks
         std::shared_ptr<Object2D> pobj;
         float finish_alpha = 0;
         float duration_s = 0; //in seconds
+        Magnum::Animation::Track<Magnum::Float, float>::Interpolator interpolator = Magnum::Math::lerp;
     };
 
     inline
@@ -239,7 +240,7 @@ namespace tracks
                     {0.0f, current_alpha},
                     {track.duration_s, track.finish_alpha}
                 },
-                Magnum::Math::lerp,
+                track.interpolator,
                 Magnum::Animation::Extrapolation::Constant
             };
 
@@ -284,6 +285,68 @@ namespace tracks
                 [](Magnum::Float, const float& alpha, Object2D& obj)
                 {
                     obj.set_alpha(alpha);
+                },
+                *track.pobj
+            );
+        };
+    }
+
+
+
+    struct scaling_transition
+    {
+        std::shared_ptr<Object2D> pobj;
+        Magnum::Vector2 finish_scaling;
+        float duration_s = 0; //in seconds
+        Magnum::Animation::Track<Magnum::Float, Magnum::Vector2>::Interpolator interpolator = Magnum::Math::lerp;
+    };
+
+    inline
+    player_supplier_t make_player_supplier(const scaling_transition& track)
+    {
+        using track_impl_t = Magnum::Animation::Track<Magnum::Float, Magnum::Vector2>;
+
+        return [track, track_impl = track_impl_t{}](player_t& player) mutable
+        {
+            const auto current_scaling = track.pobj->transformation().scaling();
+
+            if(current_scaling == track.finish_scaling)
+            {
+                return;
+            }
+
+            if(track.duration_s == 0)
+            {
+                track_impl = track_impl_t
+                {
+                    {
+                        {0.0f, track.finish_scaling}
+                    },
+                    Magnum::Math::lerp,
+                    Magnum::Animation::Extrapolation::Constant
+                };
+            }
+            else
+            {
+                track_impl = track_impl_t
+                {
+                    {
+                        {0.0f, current_scaling},
+                        {track.duration_s, track.finish_scaling}
+                    },
+                    track.interpolator,
+                    Magnum::Animation::Extrapolation::Constant
+                };
+            }
+
+            player.addWithCallback
+            (
+                track_impl,
+                [](Magnum::Float, const Magnum::Vector2& scaling, Object2D& obj)
+                {
+                    const auto current_scaling = obj.transformation().scaling();
+                    const auto scaling_factor = scaling / current_scaling;
+                    obj.scale(scaling_factor);
                 },
                 *track.pobj
             );

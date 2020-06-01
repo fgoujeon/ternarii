@@ -69,7 +69,7 @@ playing::playing(fsm& f, const screen_transition trans, const libgame::data_type
             {
                 .handle_move_request  = [this](const libview::data_types::move m){handle_view_move_request(m);},
                 .handle_clear_request = [this]{modify_game(&libgame::game::start);},
-                .handle_exit_request  = [this]{fsm_.set_state<states::showing_stage_selection_screen>(screen_transition::left_to_right);}
+                .handle_exit_request  = [this]{fsm_.set_state<states::showing_stage_selection_screen>(screen_transition::zoom_out);}
             },
             get_pretty_name(stage)
         )
