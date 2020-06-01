@@ -18,7 +18,8 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 #include <libview/screens/stage_selection.hpp>
-#include "../objects/label_button.hpp"
+#include "../objects/blank_button.hpp"
+#include "../objects/label.hpp"
 #include "../objects/sdf_image_tile.hpp"
 #include "../colors.hpp"
 #include "../styles.hpp"
@@ -27,6 +28,34 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 
 namespace libview::screens
 {
+
+namespace
+{
+    const auto stage_button_style = objects::blank_button::style
+    {
+        .color = colors::light_gray,
+        .highlight_color = colors::white,
+        .outline_color = colors::black,
+        .scaling = {1.0f, 0.6f},
+        .radius = 0.16f
+    };
+
+    const auto stage_name_label_style = objects::label::style
+    {
+        .alignment = Magnum::Text::Alignment::MiddleCenter,
+        .font_size = 0.4f,
+        .color = colors::dark_gray,
+        .outline_range = {0.5f, 0.5f}
+    };
+
+    const auto stage_description_label_style = objects::label::style
+    {
+        .alignment = Magnum::Text::Alignment::MiddleCenter,
+        .font_size = 0.3f,
+        .color = colors::dark_gray,
+        .outline_range = {0.5f, 0.5f}
+    };
+}
 
 struct stage_selection::impl
 {
@@ -56,38 +85,43 @@ struct stage_selection::impl
             self,
             feature_groups.drawables,
             feature_groups.clickables,
-            styles::white_label_button,
-            "PURITY ROOM",
+            stage_button_style,
             objects::label_button::callback_set
             {
                 .mouse_release_callback = [this]{this->callbacks.purity_room_selection_request();}
             }
         ),
-        purity_room_label
+        purity_room_name_label
         (
             self,
             feature_groups.drawables,
-            objects::label::style
-            {
-                .alignment = Magnum::Text::Alignment::MiddleCenter,
-                .font_size = 0.3f,
-                .color = colors::light_gray,
-                .outline_color = colors::dark_gray,
-                .outline_range = {0.47f, 0.40f}
-            },
-            "No special tiles."
+            stage_name_label_style,
+            "PURITY ROOM"
+        ),
+        purity_room_description_label
+        (
+            self,
+            feature_groups.drawables,
+            stage_description_label_style,
+            "(no special tiles)"
         ),
         nullifier_room_button
         (
             self,
             feature_groups.drawables,
             feature_groups.clickables,
-            styles::white_label_button,
-            "NULLIFIER ROOM",
+            stage_button_style,
             objects::label_button::callback_set
             {
                 .mouse_release_callback = [this]{this->callbacks.nullifier_room_selection_request();}
             }
+        ),
+        nullifier_room_name_label
+        (
+            self,
+            feature_groups.drawables,
+            stage_name_label_style,
+            "NULLIFIER ROOM"
         ),
         nullifier_room_special_tile_0
         (
@@ -122,22 +156,30 @@ struct stage_selection::impl
     {
         title_label.translate({0.0f, 7.0f});
 
-        purity_room_button.scale({2.0f, 2.0f});
-        purity_room_button.translate({0.0f, 2.5f});
+        {
+            purity_room_button.scale({2.0f, 2.0f});
+            purity_room_button.translate({0.0f, 2.5f});
 
-        purity_room_label.translate({0.0f, 1.5f});
+            purity_room_name_label.translate({0.0f, 3.0f});
 
-        nullifier_room_button.scale({2.0f, 2.0f});
-        nullifier_room_button.translate({0.0f, -1.5f});
+            purity_room_description_label.translate({0.0f, 2.0f});
+        }
 
-        nullifier_room_special_tile_0.scale({0.3f, 0.3f});
-        nullifier_room_special_tile_0.translate({-1.0f, -2.5f});
+        {
+            nullifier_room_button.scale({2.0f, 2.0f});
+            nullifier_room_button.translate({0.0f, -1.5f});
 
-        nullifier_room_special_tile_1.scale({0.3f, 0.3f});
-        nullifier_room_special_tile_1.translate({-0.0f, -2.5f});
+            nullifier_room_name_label.translate({0.0f, -1.0f});
 
-        nullifier_room_special_tile_2.scale({0.3f, 0.3f});
-        nullifier_room_special_tile_2.translate({1.0f, -2.5f});
+            nullifier_room_special_tile_0.scale({0.3f, 0.3f});
+            nullifier_room_special_tile_0.translate({-1.0f, -2.0f});
+
+            nullifier_room_special_tile_1.scale({0.3f, 0.3f});
+            nullifier_room_special_tile_1.translate({-0.0f, -2.0f});
+
+            nullifier_room_special_tile_2.scale({0.3f, 0.3f});
+            nullifier_room_special_tile_2.translate({1.0f, -2.0f});
+        }
 
         back_button.scale({2.0f, 2.0f});
         back_button.translate({0.0f, -7.0f});
@@ -147,10 +189,12 @@ struct stage_selection::impl
 
     objects::label title_label;
 
-    objects::label_button purity_room_button;
-    objects::label purity_room_label;
+    objects::blank_button purity_room_button;
+    objects::label purity_room_name_label;
+    objects::label purity_room_description_label;
 
-    objects::label_button nullifier_room_button;
+    objects::blank_button nullifier_room_button;
+    objects::label nullifier_room_name_label;
     objects::sdf_image_tile nullifier_room_special_tile_0;
     objects::sdf_image_tile nullifier_room_special_tile_1;
     objects::sdf_image_tile nullifier_room_special_tile_2;
