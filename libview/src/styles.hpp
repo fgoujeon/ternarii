@@ -26,6 +26,8 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libview::styles
 {
 
+extern objects::label::style title_label;
+extern objects::label::style body_label;
 extern objects::label_button::style white_label_button;
 
 } //namespace

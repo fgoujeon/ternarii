@@ -35,24 +35,23 @@ namespace
     {
         .color = colors::light_gray,
         .highlight_color = colors::white,
-        .outline_color = colors::black,
-        .scaling = {1.0f, 0.6f},
-        .radius = 0.16f
+        .radius = 0.16f,
+        .scaling = {1.0f, 0.6f}
     };
 
     const auto stage_name_label_style = objects::label::style
     {
         .alignment = Magnum::Text::Alignment::MiddleCenter,
-        .font_size = 0.4f,
         .color = colors::dark_gray,
+        .font_size = 0.4f,
         .outline_range = {0.5f, 0.5f}
     };
 
     const auto stage_description_label_style = objects::label::style
     {
         .alignment = Magnum::Text::Alignment::MiddleCenter,
-        .font_size = 0.3f,
         .color = colors::dark_gray,
+        .font_size = 0.3f,
         .outline_range = {0.5f, 0.5f}
     };
 }
@@ -70,14 +69,7 @@ struct stage_selection::impl
         (
             self,
             feature_groups.drawables,
-            objects::label::style
-            {
-                .alignment = Magnum::Text::Alignment::MiddleCenter,
-                .font_size = 0.6f,
-                .color = colors::light_gray,
-                .outline_color = colors::dark_gray,
-                .outline_range = {0.47f, 0.40f}
-            },
+            styles::title_label,
             "SELECT STAGE"
         ),
         purity_room_button

@@ -51,7 +51,7 @@ sdf_image_tile::sdf_image_tile(Object2D& parent, features::drawable_group& drawa
         {
             .color = colors::black,
             .outline_color = colors::black,
-            .outline_range = {0.5f, 0.4f}
+            .outline_range = {0.5f, 0.5f}
         }
     )
 {

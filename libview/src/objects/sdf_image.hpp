@@ -37,7 +37,7 @@ class sdf_image: public Object2D, public features::drawable
         {
             Magnum::Color4 color;
             Magnum::Color4 outline_color;
-            Magnum::Vector2 outline_range;
+            Magnum::Vector2 outline_range = Magnum::Vector2{0.5, 0.5};
         };
 
     public:

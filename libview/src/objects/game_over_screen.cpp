@@ -41,8 +41,8 @@ game_over_screen::game_over_screen
         label::style
         {
             .alignment = Magnum::Text::Alignment::MiddleCenter,
-            .font_size = 1.0f,
             .color = colors::dark_gray,
+            .font_size = 1.0f,
             .outline_color = colors::dark_gray,
             .outline_range = {0.48f, 0.5f}
         },

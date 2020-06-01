@@ -72,8 +72,8 @@ struct game::impl
             objects::label::style
             {
                 .alignment = Magnum::Text::Alignment::MiddleCenter,
-                .font_size = 0.28f,
                 .color = colors::light_gray,
+                .font_size = 0.28f,
                 .outline_color = colors::dark_gray,
                 .outline_range = {0.47f, 0.40f}
             },

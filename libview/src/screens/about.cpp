@@ -78,28 +78,14 @@ struct about::impl
         (
             self,
             feature_groups.drawables,
-            objects::label::style
-            {
-                .alignment = Magnum::Text::Alignment::MiddleCenter,
-                .font_size = 0.6f,
-                .color = colors::light_gray,
-                .outline_color = colors::dark_gray,
-                .outline_range = {0.47f, 0.40f}
-            },
+            styles::title_label,
             "ABOUT"
         ),
         body_label
         (
             self,
             feature_groups.drawables,
-            objects::label::style
-            {
-                .alignment = Magnum::Text::Alignment::MiddleCenter,
-                .font_size = 0.3f,
-                .color = colors::light_gray,
-                .outline_color = colors::dark_gray,
-                .outline_range = {0.47f, 0.40f}
-            },
+            styles::body_label,
             body_label_str
         ),
         back_button

@@ -76,8 +76,8 @@ number_tile::number_tile(Object2D& parent, features::drawable_group& drawables, 
         label::style
         {
             .alignment = Magnum::Text::Alignment::MiddleCenter,
-            .font_size = 1.2f,
             .color = colors::white,
+            .font_size = 1.2f,
             .outline_color = colors::dark_gray,
             .outline_range = {0.45f, 0.40f}
         },

@@ -35,8 +35,8 @@ class label: public Object2D, public features::drawable
         struct style
         {
             Magnum::Text::Alignment alignment = Magnum::Text::Alignment::MiddleCenter;
-            const float font_size = 1.0f;
             Magnum::Color4 color;
+            const float font_size = 1.0f;
             Magnum::Color4 outline_color;
             Magnum::Vector2 outline_range = {0.5f, 0.5f};
         };
