@@ -73,12 +73,26 @@ class rounded_rectangle: public Magnum::GL::AbstractShaderProgram
             return *this;
         }
 
+        rounded_rectangle& set_outline_thickness(const Magnum::Float value)
+        {
+            setUniform(outline_thickness_uniform_, value);
+            return *this;
+        }
+
+        rounded_rectangle& set_outline_color(const Magnum::Color4& value)
+        {
+            setUniform(outline_color_uniform_, value);
+            return *this;
+        }
+
     private:
         Magnum::Int transformation_projection_matrix_uniform_ = 0;
         Magnum::Int color_uniform_ = 1;
         Magnum::Int dimension_uniform_ = 2;
         Magnum::Int radius_uniform_ = 3;
         Magnum::Int smoothness_uniform_ = 4;
+        Magnum::Int outline_thickness_uniform_ = 5;
+        Magnum::Int outline_color_uniform_ = 6;
 };
 
 } //namespace

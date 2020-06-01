@@ -70,8 +70,10 @@ void rounded_rectangle::draw(const Magnum::Matrix3& transformation_matrix, Magnu
         transformation_matrix
     );
     get_shader().set_dimension(style_.dimension);
-    get_shader().set_radius(0.16f);
+    get_shader().set_radius(style_.radius);
     get_shader().set_smoothness(0.03f / transformation_matrix.scaling().x());
+    get_shader().set_outline_color(color_transformation_matrix * style_.outline_color);
+    get_shader().set_outline_thickness(style_.outline_thickness);
     get_mesh().draw(get_shader());
 }
 

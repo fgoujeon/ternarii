@@ -53,6 +53,8 @@ auto white_label_button = objects::label_button::style
         .color = colors::light_gray,
         .dimension = {1.0f, 0.2f},
         .highlight_color = colors::white,
+        .outline_color = colors::dark_gray,
+        .outline_thickness = 0.01f,
         .radius = 0.16f
     }
 };

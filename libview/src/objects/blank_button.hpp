@@ -42,6 +42,8 @@ class blank_button: public Object2D, public features::clickable
             Magnum::Color4 color;
             Magnum::Vector2 dimension;
             Magnum::Color4 highlight_color;
+            Magnum::Color4 outline_color;
+            float outline_thickness = 0;
             float radius = 0;
         };
 

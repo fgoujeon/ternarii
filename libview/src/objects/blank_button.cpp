@@ -44,6 +44,8 @@ blank_button::blank_button
         {
             .color = style_.color,
             .dimension = style_.dimension,
+            .outline_color = style_.outline_color,
+            .outline_thickness = style_.outline_thickness,
             .radius = style_.radius
         }
     )

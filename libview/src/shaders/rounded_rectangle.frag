@@ -25,6 +25,8 @@ uniform lowp vec2 u_dimension; //normalized dimension of rectangle
 uniform lowp vec4 u_color;
 uniform mediump float u_radius;
 uniform mediump float u_smoothness;
+uniform mediump float u_outline_thickness;
+uniform mediump vec4 u_outline_color;
 
 varying highp vec2 v_position;
 
@@ -62,15 +64,12 @@ void main()
         dist = 0.0;
     }
 
-    float u_outline_thickness = u_radius / 2.0;
-    vec4 u_outline_color = vec4(0.0, 0.0, 0.0, 1.0);
-
-    if(dist < u_radius - u_outline_thickness)
+    if(dist < u_radius - u_outline_thickness) //fill
     {
         float weight = 1.0 - smoothstep(u_radius - u_outline_thickness - u_smoothness, u_radius - u_outline_thickness, dist);
         gl_FragColor = mix(u_outline_color, u_color, weight);
     }
-    else
+    else //outline
     {
         float alpha = 1.0 - smoothstep(u_radius - u_smoothness, u_radius, dist);
         gl_FragColor = vec4(u_outline_color.xyz, alpha * u_outline_color.w);
