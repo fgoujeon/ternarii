@@ -21,29 +21,21 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #define LIBVIEW_OBJECTS_LABEL_BUTTON_HPP
 
 #include "label.hpp"
-#include "rounded_rectangle.hpp"
+#include "blank_button.hpp"
 #include "../common.hpp"
-#include <libutil/void_function.hpp>
 
 namespace libview::objects
 {
 
-class label_button: public Object2D, public features::clickable
+class label_button: public Object2D
 {
     public:
-        struct callback_set
-        {
-            libutil::void_function<> mouse_press_callback;
-            libutil::void_function<> mouse_release_callback;
-        };
+        using callback_set = blank_button::callback_set;
 
         struct style
         {
             label::style label;
-            Magnum::Color4 color;
-            Magnum::Color4 highlight_color;
-            Magnum::Color4 outline_color;
-            float radius = 0;
+            blank_button::style button;
         };
 
     public:
@@ -59,24 +51,9 @@ class label_button: public Object2D, public features::clickable
 
         void set_enabled(const bool enabled);
 
-    //features::clickable virtual functions
     private:
-        bool is_inside(const Magnum::Vector2& model_space_position) const override;
-
-        void handle_mouse_press() override;
-
-        void handle_mouse_release() override;
-
-        void handle_mouse_enter() override;
-
-        void handle_mouse_leave() override;
-
-    private:
-        style style_;
-        const callback_set callbacks_;
-        rounded_rectangle background_rectangle_;
+        blank_button button_;
         label label_;
-        bool enabled_ = true;
 };
 
 } //namespace

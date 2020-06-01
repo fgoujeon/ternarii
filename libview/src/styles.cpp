@@ -24,7 +24,7 @@ namespace libview::styles
 
 objects::label_button::style white_label_button
 {
-    .label = objects::label::style
+    .label =
     {
         .alignment = Magnum::Text::Alignment::MiddleCenter,
         .font_size = 0.2f,
@@ -32,10 +32,14 @@ objects::label_button::style white_label_button
         .outline_color = colors::dark_gray,
         .outline_range = {0.6f, 0.5f}
     },
-    .color = colors::light_gray,
-    .highlight_color = colors::white,
-    .outline_color = colors::black,
-    .radius = 0.16f
+    .button =
+    {
+        .color = colors::light_gray,
+        .highlight_color = colors::white,
+        .outline_color = colors::black,
+        .scaling = {1.0f, 0.2f},
+        .radius = 0.16f
+    }
 };
 
 } //namespace

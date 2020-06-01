@@ -47,7 +47,7 @@ blank_button::blank_button
         }
     )
 {
-    background_rectangle_.scale({1.0f, 0.2f});
+    background_rectangle_.scale(style_.scaling);
 }
 
 void blank_button::set_enabled(const bool enabled)
@@ -64,7 +64,9 @@ bool blank_button::is_inside(const Magnum::Vector2& model_space_position) const
 
     const auto x = model_space_position.x();
     const auto y = model_space_position.y();
-    return -1 <= x && x <= 1 && -0.2 <= y && y <= 0.2;
+    const auto xs = style_.scaling.x();
+    const auto ys = style_.scaling.y();
+    return -xs <= x && x <= xs && -ys <= y && y <= ys;
 }
 
 void blank_button::handle_mouse_press()
