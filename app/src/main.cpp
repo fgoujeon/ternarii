@@ -46,14 +46,20 @@ namespace
         args.addBooleanOption("debug-grid").setHelp("debug-grid", "show debug grid");
         args.addBooleanOption("log").setHelp("log", "enable log");
         args.addBooleanOption("fps").setHelp("log", "show FPS counter");
-        args.parse(argc, argv);
 
-        return configuration
+        if(args.tryParse(argc, argv))
         {
-            .show_debug_grid = args.isSet("debug-grid"),
-            .enable_log = args.isSet("log"),
-            .show_fps_counter = args.isSet("fps")
-        };
+            return configuration
+            {
+                .show_debug_grid = args.isSet("debug-grid"),
+                .enable_log = args.isSet("log"),
+                .show_fps_counter = args.isSet("fps")
+            };
+        }
+        else
+        {
+            return configuration{};
+        }
     }
 }
 
