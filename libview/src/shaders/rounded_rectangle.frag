@@ -38,18 +38,33 @@ void main()
         discard;
     }
 
-    float alpha = 1.0;
+    bool on_x_edge = abs_pos.x > u_dimension.x - u_radius;
+    bool on_y_edge = abs_pos.y > u_dimension.y - u_radius;
 
-    if(abs_pos.x > u_dimension.x - u_radius && abs_pos.y > u_dimension.y - u_radius) //corner
+    //Compute the distance to the inner rectangle whose vertices are the centers
+    //of the circles that make the corners.
+    float dist;
+    if(on_x_edge && on_y_edge) //corner
     {
         vec2 circle_center = vec2(u_dimension.x - u_radius, u_dimension.y - u_radius);
-        float dist = distance(circle_center, abs_pos);
-        if(dist > u_radius)
-        {
-            discard;
-        }
+        dist = distance(circle_center, abs_pos);
+    }
+    else if(on_x_edge) //left or right edge
+    {
+        dist = abs_pos.x - (u_dimension.x - u_radius);
+    }
+    else if(on_y_edge) //top or bottom edge
+    {
+        dist = abs_pos.y - (u_dimension.y - u_radius);
+    }
+    else
+    {
+        dist = 0.0;
     }
 
-    gl_FragColor = vec4(u_color.xyz, alpha * u_color.w);
+    //Normalize that distance.
+    dist = dist / u_radius;
+
+    gl_FragColor = vec4(u_color.xyz, (1.0 - dist) * u_color.w);
 }
 )^"
