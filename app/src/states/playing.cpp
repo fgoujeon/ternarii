@@ -56,6 +56,11 @@ namespace
         }
         return "";
     }
+
+    bool must_show_background(const libgame::data_types::stage s)
+    {
+        return s == libgame::data_types::stage::nullifier_room;
+    }
 }
 
 playing::playing(fsm& f, const screen_transition trans, const libgame::data_types::stage stage):
@@ -71,7 +76,8 @@ playing::playing(fsm& f, const screen_transition trans, const libgame::data_type
                 .handle_clear_request = [this]{modify_game(&libgame::game::start);},
                 .handle_exit_request  = [this]{fsm_.set_state<states::showing_stage_selection_screen>(screen_transition::zoom_out);}
             },
-            get_pretty_name(stage)
+            get_pretty_name(stage),
+            must_show_background(stage)
         )
     )
 {

@@ -47,7 +47,8 @@ class game: public Object2D, public features::key_event_handler
             Object2D& parent,
             feature_group_set& feature_groups,
             const callback_set& callbacks,
-            const std::string_view& stage_name
+            const std::string_view& stage_name,
+            bool show_background
         );
 
         ~game();

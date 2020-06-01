@@ -34,6 +34,35 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libview::screens
 {
 
+namespace
+{
+    std::unique_ptr<objects::background> make_background
+    (
+        game& self,
+        feature_group_set& feature_groups,
+        const bool make
+    )
+    {
+        if(!make)
+        {
+            return nullptr;
+        }
+
+        auto pbackground = std::make_unique<objects::background>
+        (
+            self,
+            feature_groups.drawables,
+            feature_groups.animables
+        );
+
+        pbackground->scale({16.0f, 16.0f});
+        pbackground->translate({0.0f, -1.0f});
+        pbackground->set_color(Magnum::Color4{1.0, 1.0, 1.0, 0.02});
+
+        return pbackground;
+    }
+}
+
 #define MOVE_BUTTON_INITIALIZER(IMAGE, MOVE) \
     MOVE##_button \
     ( \
@@ -57,11 +86,12 @@ struct game::impl
         game& self,
         feature_group_set& feature_groups,
         const callback_set& callbacks,
-        const std::string_view& stage_name
+        const std::string_view& stage_name,
+        const bool show_background
     ):
         feature_groups(feature_groups),
         callbacks(callbacks),
-        background(self, feature_groups.drawables, feature_groups.animables),
+        pbackground(make_background(self, feature_groups, show_background)),
         tile_grid(self, feature_groups.drawables, feature_groups.animables),
         score_display(self, feature_groups.drawables),
         hi_score_display(self, feature_groups.drawables),
@@ -96,10 +126,6 @@ struct game::impl
         MOVE_BUTTON_INITIALIZER(libres::images::rotate_button, clockwise_rotation)
     {
         const auto move_button_scaling = 0.95f;
-
-        background.scale({16.0f, 16.0f});
-        background.translate({0.0f, -1.0f});
-        background.set_color(Magnum::Color4{1.0, 1.0, 1.0, 0.02});
 
         score_display.set_visible(true);
         score_display.scale({0.7f, 0.7f});
@@ -148,7 +174,7 @@ struct game::impl
 
     callback_set callbacks;
 
-    objects::background background;
+    std::unique_ptr<objects::background> pbackground;
     objects::tile_grid tile_grid;
     objects::score_display score_display;
     objects::score_display hi_score_display;
@@ -167,11 +193,12 @@ game::game
     Object2D& parent,
     feature_group_set& feature_groups,
     const callback_set& callbacks,
-    const std::string_view& stage_name
+    const std::string_view& stage_name,
+    const bool show_background
 ):
     Object2D{&parent},
     features::key_event_handler{*this, &feature_groups.key_event_handlers},
-    pimpl_(std::make_unique<impl>(*this, feature_groups, callbacks, stage_name))
+    pimpl_(std::make_unique<impl>(*this, feature_groups, callbacks, stage_name, show_background))
 {
 }
 
