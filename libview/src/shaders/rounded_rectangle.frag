@@ -62,8 +62,18 @@ void main()
         dist = 0.0;
     }
 
-    float alpha = 1.0 - smoothstep(u_radius - u_smoothness, u_radius, dist);
+    float u_outline_thickness = u_radius / 2.0;
+    vec4 u_outline_color = vec4(0.0, 0.0, 0.0, 1.0);
 
-    gl_FragColor = vec4(u_color.xyz, alpha * u_color.w);
+    if(dist < u_radius - u_outline_thickness)
+    {
+        float weight = 1.0 - smoothstep(u_radius - u_outline_thickness - u_smoothness, u_radius - u_outline_thickness, dist);
+        gl_FragColor = mix(u_outline_color, u_color, weight);
+    }
+    else
+    {
+        float alpha = 1.0 - smoothstep(u_radius - u_smoothness, u_radius, dist);
+        gl_FragColor = vec4(u_outline_color.xyz, alpha * u_outline_color.w);
+    }
 }
 )^"
