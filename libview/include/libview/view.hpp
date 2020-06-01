@@ -41,7 +41,8 @@ class view
             top_to_bottom,
             left_to_right,
             right_to_left,
-            zoom_in
+            zoom_in,
+            zoom_out
         };
 
         struct configuration

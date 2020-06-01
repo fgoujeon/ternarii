@@ -371,15 +371,34 @@ void view::show_screen
             }
             break;
         case screen_transition::zoom_in:
+        case screen_transition::zoom_out:
             {
-                const auto duration_s = 1.2f;
+                const auto duration_s = 1.0f;
+
+                const auto new_screen_start_scaling = [&]
+                {
+                    switch(trans)
+                    {
+                        default:
+                        case screen_transition::zoom_in:
+                            return Magnum::Vector2{0.2f, 0.2f};
+                        case screen_transition::zoom_out:
+                            return Magnum::Vector2{5.0f, 5.0f};
+                    }
+                }();
+
+                const auto old_screen_finish_scaling = Magnum::Vector2
+                {
+                    1.0f / new_screen_start_scaling.x(),
+                    1.0f / new_screen_start_scaling.y()
+                };
 
                 pimpl_->screen_transition_animator.push
                 (
                     tracks::scaling_transition
                     {
                         .pobj = pscreen,
-                        .finish_scaling = Magnum::Vector2{0.2f, 0.2f},
+                        .finish_scaling = new_screen_start_scaling,
                         .duration_s = 0
                     }
                 );
@@ -394,7 +413,7 @@ void view::show_screen
                         tracks::scaling_transition
                         {
                             .pobj = pimpl_->pscreen,
-                            .finish_scaling = Magnum::Vector2{5.0f, 5.0f},
+                            .finish_scaling = old_screen_finish_scaling,
                             .duration_s = duration_s,
                             .interpolator = vector_interpolator
                         }
