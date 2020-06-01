@@ -51,9 +51,9 @@ auto white_label_button = objects::label_button::style
     .button =
     {
         .color = colors::light_gray,
+        .dimension = {1.0f, 0.2f},
         .highlight_color = colors::white,
-        .radius = 0.16f,
-        .scaling = {1.0f, 0.2f}
+        .radius = 0.16f
     }
 };
 

@@ -43,12 +43,6 @@ class rounded_rectangle: public Magnum::GL::AbstractShaderProgram
 
         rounded_rectangle& operator=(rounded_rectangle&&) noexcept = default;
 
-        rounded_rectangle& set_transformation_matrix(const Magnum::Matrix3& matrix)
-        {
-            setUniform(transformation_matrix_uniform_, matrix);
-            return *this;
-        }
-
         rounded_rectangle& setTransformationProjectionMatrix(const Magnum::Matrix3& matrix)
         {
             setUniform(transformation_projection_matrix_uniform_, matrix);
@@ -58,6 +52,12 @@ class rounded_rectangle: public Magnum::GL::AbstractShaderProgram
         rounded_rectangle& setColor(const Magnum::Color4& color)
         {
             setUniform(color_uniform_, color);
+            return *this;
+        }
+
+        rounded_rectangle& set_dimension(const Magnum::Vector2& value)
+        {
+            setUniform(dimension_uniform_, value);
             return *this;
         }
 
@@ -74,9 +74,9 @@ class rounded_rectangle: public Magnum::GL::AbstractShaderProgram
         }
 
     private:
-        Magnum::Int transformation_matrix_uniform_ = 0;
-        Magnum::Int transformation_projection_matrix_uniform_ = 1;
-        Magnum::Int color_uniform_ = 2;
+        Magnum::Int transformation_projection_matrix_uniform_ = 0;
+        Magnum::Int color_uniform_ = 1;
+        Magnum::Int dimension_uniform_ = 2;
         Magnum::Int radius_uniform_ = 3;
         Magnum::Int smoothness_uniform_ = 4;
 };

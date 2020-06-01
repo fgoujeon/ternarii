@@ -63,13 +63,13 @@ void rounded_rectangle::draw(const Magnum::Matrix3& transformation_matrix, Magnu
 {
     const auto color_transformation_matrix = get_color_transformation_matrix();
 
-    get_shader().set_transformation_matrix(transformationMatrix());
     get_shader().setColor(color_transformation_matrix * style_.color);
     get_shader().setTransformationProjectionMatrix
     (
         camera.projectionMatrix() *
         transformation_matrix
     );
+    get_shader().set_dimension(style_.dimension);
     get_shader().set_radius(0.16f);
     get_shader().set_smoothness(0.03f / transformation_matrix.scaling().x());
     get_mesh().draw(get_shader());

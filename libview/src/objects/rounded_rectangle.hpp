@@ -33,6 +33,7 @@ class rounded_rectangle: public Object2D, public features::drawable
         struct style
         {
             Magnum::Color4 color;
+            Magnum::Vector2 dimension; //normalized rectangle dimension wrt unit square
             float radius = 0;
         };
 

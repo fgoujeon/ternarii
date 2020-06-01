@@ -53,15 +53,15 @@ rounded_rectangle::rounded_rectangle()
 
     CORRADE_INTERNAL_ASSERT_OUTPUT(link());
 
-    transformation_matrix_uniform_ = uniformLocation("u_transformation_matrix");
     transformation_projection_matrix_uniform_ = uniformLocation("u_transformation_projection_matrix");
     color_uniform_ = uniformLocation("u_color");
+    dimension_uniform_ = uniformLocation("u_dimension");
     radius_uniform_ = uniformLocation("u_radius");
     smoothness_uniform_ = uniformLocation("u_smoothness");
 
-    set_transformation_matrix({});
     setTransformationProjectionMatrix({});
     setColor(Magnum::Color4{1.0f});
+    set_dimension({1.0f, 1.0f});
     set_radius(0.0f);
     set_smoothness(0.0f);
 }
