@@ -43,11 +43,13 @@ blank_button::blank_button
         rounded_rectangle::style
         {
             .color = style_.color,
+            .dimension = style_.dimension,
+            .outline_color = style_.outline_color,
+            .outline_thickness = style_.outline_thickness,
             .radius = style_.radius
         }
     )
 {
-    background_rectangle_.scale(style_.scaling);
 }
 
 void blank_button::set_enabled(const bool enabled)
@@ -64,8 +66,8 @@ bool blank_button::is_inside(const Magnum::Vector2& model_space_position) const
 
     const auto x = model_space_position.x();
     const auto y = model_space_position.y();
-    const auto xs = style_.scaling.x();
-    const auto ys = style_.scaling.y();
+    const auto xs = style_.dimension.x();
+    const auto ys = style_.dimension.y();
     return -xs <= x && x <= xs && -ys <= y && y <= ys;
 }
 

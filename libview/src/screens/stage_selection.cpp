@@ -34,9 +34,9 @@ namespace
     const auto stage_button_style = objects::blank_button::style
     {
         .color = colors::light_gray,
+        .dimension = {1.0f, 0.6f},
         .highlight_color = colors::white,
-        .radius = 0.16f,
-        .scaling = {1.0f, 0.6f}
+        .radius = 0.16f
     };
 
     const auto stage_name_label_style = objects::label::style

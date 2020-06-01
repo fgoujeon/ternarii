@@ -21,58 +21,58 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 precision mediump float;
 #endif
 
-uniform highp mat3 u_transformation_matrix;
+uniform lowp vec2 u_dimension; //normalized dimension of rectangle
 uniform lowp vec4 u_color;
 uniform mediump float u_radius;
 uniform mediump float u_smoothness;
+uniform mediump float u_outline_thickness;
+uniform mediump vec4 u_outline_color;
 
 varying highp vec2 v_position;
 
 void main()
 {
-    float xscaling = distance(u_transformation_matrix[0].x, u_transformation_matrix[0].y);
-    float yscaling = distance(u_transformation_matrix[1].x, u_transformation_matrix[1].y);
+    vec2 abs_pos = abs(v_position);
 
-    float xradius = u_radius / xscaling;
-    float yradius = u_radius / yscaling;
+    //Are we inside the rectangle?
+    if(abs_pos.x > u_dimension.x || abs_pos.y > u_dimension.y)
+    {
+        discard;
+    }
 
-    vec2 v_position_abs = abs(v_position);
+    bool on_x_edge = abs_pos.x > u_dimension.x - u_radius;
+    bool on_y_edge = abs_pos.y > u_dimension.y - u_radius;
 
-    float alpha;
-
-    bool on_x_edge = v_position_abs.x > 1.0 - xradius;
-    bool on_y_edge = v_position_abs.y > 1.0 - yradius;
-
+    //Compute the distance to the inner rectangle whose vertices are the centers
+    //of the circles that make the corners.
+    float dist;
     if(on_x_edge && on_y_edge) //corner
     {
-        float x = v_position_abs.x;
-        float y = v_position_abs.y;
-        float x0 = 1.0 - xradius;
-        float y0 = 1.0 - yradius;
-
-        float ellipse =
-            (x - x0) * (x - x0) / (xradius * xradius) +
-            (y - y0) * (y - y0) / (yradius * yradius)
-        ;
-
-        float s = u_smoothness / u_radius / 0.5;
-        alpha = 1.0 - smoothstep(1.0 - s, 1.0, ellipse);
+        vec2 circle_center = vec2(u_dimension.x - u_radius, u_dimension.y - u_radius);
+        dist = distance(circle_center, abs_pos);
     }
     else if(on_x_edge) //left or right edge
     {
-        float s = u_smoothness / xscaling;
-        alpha = 1.0 - smoothstep(1.0 - s, 1.0, v_position_abs.x);
+        dist = abs_pos.x - (u_dimension.x - u_radius);
     }
     else if(on_y_edge) //top or bottom edge
     {
-        float s = u_smoothness / yscaling;
-        alpha = 1.0 - smoothstep(1.0 - s, 1.0, v_position_abs.y);
+        dist = abs_pos.y - (u_dimension.y - u_radius);
     }
     else
     {
-        alpha = 1.0;
+        dist = 0.0;
     }
 
-    gl_FragColor = vec4(u_color.xyz, alpha * u_color.w);
+    if(dist < u_radius - u_outline_thickness) //fill
+    {
+        float weight = 1.0 - smoothstep(u_radius - u_outline_thickness - u_smoothness, u_radius - u_outline_thickness, dist);
+        gl_FragColor = mix(u_outline_color, u_color, weight);
+    }
+    else //outline
+    {
+        float alpha = 1.0 - smoothstep(u_radius - u_smoothness, u_radius, dist);
+        gl_FragColor = vec4(u_outline_color.xyz, alpha * u_outline_color.w);
+    }
 }
 )^"
