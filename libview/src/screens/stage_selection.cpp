@@ -171,13 +171,13 @@ struct stage_selection::impl
 
             nullifier_room_name_label.translate({0.0f, -1.0f});
 
-            nullifier_room_special_tile_0.scale({0.3f, 0.3f});
+            nullifier_room_special_tile_0.scale({0.4f, 0.4f});
             nullifier_room_special_tile_0.translate({-1.0f, -2.0f});
 
-            nullifier_room_special_tile_1.scale({0.3f, 0.3f});
+            nullifier_room_special_tile_1.scale({0.4f, 0.4f});
             nullifier_room_special_tile_1.translate({-0.0f, -2.0f});
 
-            nullifier_room_special_tile_2.scale({0.3f, 0.3f});
+            nullifier_room_special_tile_2.scale({0.4f, 0.4f});
             nullifier_room_special_tile_2.translate({1.0f, -2.0f});
         }
 
