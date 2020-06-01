@@ -17,43 +17,40 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef LIBVIEW_OBJECTS_LABEL_BUTTON_HPP
-#define LIBVIEW_OBJECTS_LABEL_BUTTON_HPP
+#ifndef LIBVIEW_OBJECTS_ROUNDED_SQUARE_HPP
+#define LIBVIEW_OBJECTS_ROUNDED_SQUARE_HPP
 
-#include "label.hpp"
-#include "blank_button.hpp"
 #include "../common.hpp"
+#include <Magnum/Math/Color.h>
+#include <Magnum/Magnum.h>
 
 namespace libview::objects
 {
 
-class label_button: public Object2D
+class rounded_rectangle: public Object2D, public features::drawable
 {
     public:
-        using callback_set = blank_button::callback_set;
-
         struct style
         {
-            label::style label;
-            blank_button::style button;
+            Magnum::Color4 color;
+            float radius = 0;
         };
 
     public:
-        label_button
+        rounded_rectangle
         (
             Object2D& parent,
             features::drawable_group& drawables,
-            features::clickable_group& clickables,
-            const style& stl,
-            const char* const text,
-            const callback_set& callbacks
+            const style& stl
         );
 
-        void set_enabled(const bool enabled);
+        void set_color(const Magnum::Color4& color);
 
     private:
-        blank_button button_;
-        label label_;
+        void draw(const Magnum::Matrix3& transformation_matrix, Magnum::SceneGraph::Camera2D& camera) override;
+
+    private:
+        style style_;
 };
 
 } //namespace

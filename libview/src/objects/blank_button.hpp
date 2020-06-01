@@ -17,43 +17,64 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef LIBVIEW_OBJECTS_LABEL_BUTTON_HPP
-#define LIBVIEW_OBJECTS_LABEL_BUTTON_HPP
+#ifndef LIBVIEW_OBJECTS_BLANK_BUTTON_HPP
+#define LIBVIEW_OBJECTS_BLANK_BUTTON_HPP
 
 #include "label.hpp"
-#include "blank_button.hpp"
+#include "rounded_rectangle.hpp"
 #include "../common.hpp"
+#include <libutil/void_function.hpp>
 
 namespace libview::objects
 {
 
-class label_button: public Object2D
+class blank_button: public Object2D, public features::clickable
 {
     public:
-        using callback_set = blank_button::callback_set;
+        struct callback_set
+        {
+            libutil::void_function<> mouse_press_callback;
+            libutil::void_function<> mouse_release_callback;
+        };
 
         struct style
         {
-            label::style label;
-            blank_button::style button;
+            Magnum::Color4 color;
+            Magnum::Color4 highlight_color;
+            Magnum::Color4 outline_color;
+            Magnum::Vector2 scaling;
+            float radius = 0;
         };
 
     public:
-        label_button
+        blank_button
         (
             Object2D& parent,
             features::drawable_group& drawables,
             features::clickable_group& clickables,
             const style& stl,
-            const char* const text,
             const callback_set& callbacks
         );
 
         void set_enabled(const bool enabled);
 
+    //features::clickable virtual functions
     private:
-        blank_button button_;
-        label label_;
+        bool is_inside(const Magnum::Vector2& model_space_position) const override;
+
+        void handle_mouse_press() override;
+
+        void handle_mouse_release() override;
+
+        void handle_mouse_enter() override;
+
+        void handle_mouse_leave() override;
+
+    private:
+        style style_;
+        const callback_set callbacks_;
+        rounded_rectangle background_rectangle_;
+        bool enabled_ = true;
 };
 
 } //namespace
