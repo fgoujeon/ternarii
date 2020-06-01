@@ -34,7 +34,7 @@ class playing final: public state
         using screen_transition = libview::view::screen_transition;
 
     public:
-        playing(fsm& f, screen_transition trans, libcommon::data_types::stage stage);
+        playing(fsm& f, screen_transition trans, libgame::data_types::stage stage);
 
     //View event handlers
     private:
@@ -163,7 +163,7 @@ class playing final: public state
 
     private:
         fsm& fsm_;
-        const libcommon::data_types::stage stage_;
+        const libgame::data_types::stage stage_;
         std::shared_ptr<libview::screens::game> pscreen_;
         std::unique_ptr<libgame::game> pgame_;
 

@@ -37,7 +37,7 @@ showing_stage_selection_screen::showing_stage_selection_screen(fsm& ctx, const s
                     fsm_.set_state<playing>
                     (
                         screen_transition::right_to_left,
-                        libcommon::data_types::stage::purity_room
+                        libgame::data_types::stage::purity_room
                     );
                 },
                 .nullifier_room_selection_request = [this]
@@ -45,7 +45,7 @@ showing_stage_selection_screen::showing_stage_selection_screen(fsm& ctx, const s
                     fsm_.set_state<playing>
                     (
                         screen_transition::right_to_left,
-                        libcommon::data_types::stage::nullifier_room
+                        libgame::data_types::stage::nullifier_room
                     );
                 },
                 .back_request = [this]

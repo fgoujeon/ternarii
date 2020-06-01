@@ -223,16 +223,6 @@ using tile_merge_list = std::vector<tile_merge>;
 
 std::ostream& operator<<(std::ostream& l, const tile_merge& r);
 
-
-
-enum class stage
-{
-    purity_room,
-    nullifier_room
-};
-
-std::string_view get_pretty_name(stage s);
-
 } //namespace
 
 #endif

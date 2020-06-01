@@ -26,9 +26,9 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libdb::data_types
 {
 
-using stage = libcommon::data_types::stage;
+using stage       = libgame::data_types::stage;
 using stage_state = libgame::data_types::stage_state;
-using tile = libcommon::data_types::tile;
+using tile        = libgame::data_types::tile;
 
 using stage_state_map = std::map<stage, stage_state>;
 

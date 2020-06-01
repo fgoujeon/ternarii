@@ -28,7 +28,7 @@ namespace
     std::optional<libgame::data_types::stage_state> find_stage_state
     (
         const std::optional<libdb::data_types::game_state>& opt_game_state,
-        const libcommon::data_types::stage stage
+        const libgame::data_types::stage stage
     )
     {
         if(!opt_game_state)
@@ -46,9 +46,19 @@ namespace
 
         return stage_state_it->second;
     }
+
+    std::string_view get_pretty_name(const libgame::data_types::stage s)
+    {
+        switch(s)
+        {
+            case libgame::data_types::stage::purity_room:    return "PURITY ROOM";
+            case libgame::data_types::stage::nullifier_room: return "NULLIFIER ROOM";
+        }
+        return "";
+    }
 }
 
-playing::playing(fsm& f, const screen_transition trans, const libcommon::data_types::stage stage):
+playing::playing(fsm& f, const screen_transition trans, const libgame::data_types::stage stage):
     fsm_(f),
     stage_(stage),
     pscreen_

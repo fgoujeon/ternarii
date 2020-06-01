@@ -211,16 +211,4 @@ std::ostream& operator<<(std::ostream& l, const tile_merge& r)
     return l;
 }
 
-
-
-std::string_view get_pretty_name(const stage s)
-{
-    switch(s)
-    {
-        case stage::purity_room:    return "PURITY ROOM";
-        case stage::nullifier_room: return "NULLIFIER ROOM";
-    }
-    return "";
-}
-
 } //namespace

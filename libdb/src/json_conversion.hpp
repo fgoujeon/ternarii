@@ -164,15 +164,15 @@ namespace libcommon::data_types
     void to_json(nlohmann::json&, const number_nullifier_tile&)
     {
     }
-
-    void from_json(const nlohmann::json& from, stage& to)
-    {
-        to = static_cast<stage>(from.get<int>());
-    }
 }
 
 namespace libgame::data_types
 {
+    void from_json(const nlohmann::json& from, stage& to)
+    {
+        to = static_cast<stage>(from.get<int>());
+    }
+
     void from_json(const nlohmann::json& from, stage_state& to)
     {
         from.at("hiScore").        get_to(to.hi_score);
