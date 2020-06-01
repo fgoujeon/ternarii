@@ -62,9 +62,8 @@ void main()
         dist = 0.0;
     }
 
-    //Normalize that distance.
-    dist = dist / u_radius;
+    float alpha = 1.0 - smoothstep(u_radius - u_smoothness, u_radius, dist);
 
-    gl_FragColor = vec4(u_color.xyz, (1.0 - dist) * u_color.w);
+    gl_FragColor = vec4(u_color.xyz, alpha * u_color.w);
 }
 )^"
