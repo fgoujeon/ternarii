@@ -111,15 +111,18 @@ void input::advance(const libutil::time_point& /*now*/, float elapsed_s)
 {
     const auto step = speed_ups * elapsed_s;
 
-    {
-        auto& tile = *at(tiles_, 0, 0);
-        move_toward(tile, target_pos_0_, step);
-    }
-
-    {
-        auto& tile = *at(tiles_, 1, 0);
-        move_toward(tile, target_pos_1_, step);
-    }
+    libutil::for_each
+    (
+        [&](auto& ptile, auto& target_pos)
+        {
+            if(ptile)
+            {
+                move_toward(*ptile, target_pos, step);
+            }
+        },
+        tiles_,
+        target_positions_
+    );
 }
 
 void input::handle_key_press(key_event& event)
@@ -162,31 +165,34 @@ void input::update()
 
     if(!opt_pressed_key.has_value())
     {
-        {
-            auto& tile = *at(tiles_, 0, 0);
-            const auto current_pos = tile.translation().x();
-            const auto nearest_column = get_nearest_column(current_pos, target_pos_0_.x());
-            target_pos_0_ = {get_column_position(nearest_column), ymid};
-        }
+        libutil::for_each
+        (
+            [&](auto& ptile, auto& target_pos)
+            {
+                if(!ptile)
+                {
+                    return;
+                }
 
-        {
-            auto& tile = *at(tiles_, 1, 0);
-            const auto current_pos = tile.translation().x();
-            const auto nearest_column = get_nearest_column(current_pos, target_pos_1_.x());
-            target_pos_1_ = {get_column_position(nearest_column), ymid};
-        }
+                const auto current_pos = ptile->translation().x();
+                const auto nearest_column = get_nearest_column(current_pos, target_pos.x());
+                target_pos = {get_column_position(nearest_column), ymid};
+            },
+            tiles_,
+            target_positions_
+        );
     }
     else
     {
         switch(*opt_pressed_key)
         {
             case key_event::Key::Left:
-                target_pos_0_ = {xmin, ymid};
-                target_pos_1_ = {xmin + 1, ymid};
+                at(target_positions_, 0, 0) = {xmin, ymid};
+                at(target_positions_, 1, 0) = {xmin + 1, ymid};
                 break;
             case key_event::Key::Right:
-                target_pos_0_ = {xmax - 1, ymid};
-                target_pos_1_ = {xmax, ymid};
+                at(target_positions_, 0, 0) = {xmax - 1, ymid};
+                at(target_positions_, 1, 0) = {xmax, ymid};
                 break;
             default:
                 break;

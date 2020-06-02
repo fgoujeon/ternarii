@@ -43,6 +43,13 @@ class input: public Object2D, public features::animable, public features::key_ev
             libcommon::constants::input_row_count
         >;
 
+        using position_matrix = libutil::matrix
+        <
+            Magnum::Vector2,
+            libcommon::constants::input_column_count,
+            libcommon::constants::input_row_count
+        >;
+
         struct keyboard_state
         {
             bool left_pressed = false;
@@ -72,8 +79,7 @@ class input: public Object2D, public features::animable, public features::key_ev
         tile_matrix tiles_ = {};
 
         keyboard_state keyboard_state_;
-        Magnum::Vector2 target_pos_0_;
-        Magnum::Vector2 target_pos_1_;
+        position_matrix target_positions_;
 };
 
 } //namespace
