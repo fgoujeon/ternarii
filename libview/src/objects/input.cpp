@@ -26,7 +26,10 @@ namespace libview::objects
 namespace
 {
     const auto xmin = -2.5f;
-    const auto xmax = xmin + 5.0f;
+    const auto xmax = 2.5f;
+
+    const auto ymid = 0.0f;
+
     const auto speed_ups = 7.0f; //in units per second
     const auto tolerance_u = 0.1f; //in units
 
@@ -60,6 +63,26 @@ namespace
     {
         return xmin + col;
     }
+
+    void move_toward(Object2D& tile, const Magnum::Vector2& target_pos, const float step)
+    {
+        const auto x_pos = tile.translation().x();
+        if(std::abs(x_pos - target_pos.x()) > tolerance_u)
+        {
+            if(x_pos < target_pos.x())
+            {
+                tile.translate({step, 0});
+            }
+            else
+            {
+                tile.translate({-step, 0});
+            }
+        }
+        else
+        {
+            tile.setTranslation(target_pos);
+        }
+    }
 }
 
 input::input
@@ -74,31 +97,28 @@ input::input
     features::key_event_handler{*this, &key_event_handlers},
     drawables_(drawables)
 {
-    tiles_.data[0] = std::make_shared<number_tile>(*this, drawables_, 5);
-    tiles_.data[0]->scale({0.46f, 0.46f});
+    at(tiles_, 0, 0) = std::make_shared<number_tile>(*this, drawables_, 5);
+    at(tiles_, 0, 0)->scale({0.46f, 0.46f});
+
+    at(tiles_, 1, 0) = std::make_shared<number_tile>(*this, drawables_, 6);
+    at(tiles_, 1, 0)->scale({0.46f, 0.46f});
+    at(tiles_, 1, 0)->translate({1.0f, 0.0f});
 
     update();
 }
 
 void input::advance(const libutil::time_point& /*now*/, float elapsed_s)
 {
-    auto& tile = *tiles_.data[0];
+    const auto step = speed_ups * elapsed_s;
 
-    const auto x_pos = tile.translation().x();
-    if(std::abs(x_pos - target_pos_.x()) > tolerance_u)
     {
-        if(x_pos < target_pos_.x())
-        {
-            tile.translate({speed_ups * elapsed_s, 0});
-        }
-        else
-        {
-            tile.translate({-speed_ups * elapsed_s, 0});
-        }
+        auto& tile = *at(tiles_, 0, 0);
+        move_toward(tile, target_pos_0_, step);
     }
-    else
+
     {
-        tile.setTranslation(target_pos_);
+        auto& tile = *at(tiles_, 1, 0);
+        move_toward(tile, target_pos_1_, step);
     }
 }
 
@@ -140,23 +160,33 @@ void input::update()
 {
     const auto opt_pressed_key = get_pressed_key(keyboard_state_);
 
-    auto& tile = *tiles_.data[0];
-
     if(!opt_pressed_key.has_value())
     {
-        const auto current_pos = tile.translation().x();
-        const auto nearest_column = get_nearest_column(current_pos, target_pos_.x());
-        target_pos_ = {get_column_position(nearest_column), 0};
+        {
+            auto& tile = *at(tiles_, 0, 0);
+            const auto current_pos = tile.translation().x();
+            const auto nearest_column = get_nearest_column(current_pos, target_pos_0_.x());
+            target_pos_0_ = {get_column_position(nearest_column), ymid};
+        }
+
+        {
+            auto& tile = *at(tiles_, 1, 0);
+            const auto current_pos = tile.translation().x();
+            const auto nearest_column = get_nearest_column(current_pos, target_pos_1_.x());
+            target_pos_1_ = {get_column_position(nearest_column), ymid};
+        }
     }
     else
     {
         switch(*opt_pressed_key)
         {
             case key_event::Key::Left:
-                target_pos_ = {xmin, 0};
+                target_pos_0_ = {xmin, ymid};
+                target_pos_1_ = {xmin + 1, ymid};
                 break;
             case key_event::Key::Right:
-                target_pos_ = {xmax, 0};
+                target_pos_0_ = {xmax - 1, ymid};
+                target_pos_1_ = {xmax, ymid};
                 break;
             default:
                 break;
