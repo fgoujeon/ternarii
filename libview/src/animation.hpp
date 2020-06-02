@@ -68,48 +68,6 @@ namespace tracks
 
 
 
-    struct immediate_translation
-    {
-        std::shared_ptr<Object2D> pobj;
-        Magnum::Vector2 finish_position;
-    };
-
-    inline
-    player_supplier_t make_player_supplier(const immediate_translation& track)
-    {
-        using track_impl_t = Magnum::Animation::Track<Magnum::Float, Magnum::Vector2>;
-        return [track, track_impl = track_impl_t{}](player_t& player) mutable
-        {
-            const auto& current_position = track.pobj->transformation().translation();
-
-            if(current_position == track.finish_position)
-            {
-                return;
-            }
-
-            track_impl = track_impl_t
-            {
-                {
-                    {0.0f, track.finish_position},
-                },
-                Magnum::Math::lerp,
-                Magnum::Animation::Extrapolation::Constant
-            };
-
-            player.addWithCallback
-            (
-                track_impl,
-                [](Magnum::Float, const Magnum::Vector2& translation, Object2D& obj)
-                {
-                    obj.setTranslation(translation);
-                },
-                *track.pobj
-            );
-        };
-    }
-
-
-
     struct fixed_duration_translation
     {
         std::shared_ptr<Object2D> pobj;
@@ -131,15 +89,29 @@ namespace tracks
                 return;
             }
 
-            track_impl = track_impl_t
+            if(track.duration_s == 0)
             {
+                track_impl = track_impl_t
                 {
-                    {0.0f, current_position},
-                    {track.duration_s, track.finish_position}
-                },
-                track.interpolator,
-                Magnum::Animation::Extrapolation::Constant
-            };
+                    {
+                        {0.0f, track.finish_position},
+                    },
+                    Magnum::Math::lerp,
+                    Magnum::Animation::Extrapolation::Constant
+                };
+            }
+            else
+            {
+                track_impl = track_impl_t
+                {
+                    {
+                        {0.0f, current_position},
+                        {track.duration_s, track.finish_position}
+                    },
+                    track.interpolator,
+                    Magnum::Animation::Extrapolation::Constant
+                };
+            }
 
             player.addWithCallback
             (
@@ -228,50 +200,29 @@ namespace tracks
                 return;
             }
 
-            track_impl = track_impl_t
+            if(track.duration_s == 0)
             {
+                track_impl = track_impl_t
                 {
-                    {0.0f, current_alpha},
-                    {track.duration_s, track.finish_alpha}
-                },
-                track.interpolator,
-                Magnum::Animation::Extrapolation::Constant
-            };
-
-            player.addWithCallback
-            (
-                track_impl,
-                [](Magnum::Float, const float& alpha, Object2D& obj)
-                {
-                    obj.set_alpha(alpha);
-                },
-                *track.pobj
-            );
-        };
-    }
-
-
-
-    struct immediate_alpha_transition
-    {
-        std::shared_ptr<Object2D> pobj;
-        float finish_alpha = 0;
-    };
-
-    inline
-    player_supplier_t make_player_supplier(const immediate_alpha_transition& track)
-    {
-        using track_impl_t = Magnum::Animation::Track<Magnum::Float, float>;
-        return [track, track_impl = track_impl_t{}](player_t& player) mutable
-        {
-            track_impl = track_impl_t
+                    {
+                        {0.0f, track.finish_alpha},
+                    },
+                    Magnum::Math::lerp,
+                    Magnum::Animation::Extrapolation::Constant
+                };
+            }
+            else
             {
+                track_impl = track_impl_t
                 {
-                    {0.0f, track.finish_alpha},
-                },
-                Magnum::Math::lerp,
-                Magnum::Animation::Extrapolation::Constant
-            };
+                    {
+                        {0.0f, current_alpha},
+                        {track.duration_s, track.finish_alpha}
+                    },
+                    track.interpolator,
+                    Magnum::Animation::Extrapolation::Constant
+                };
+            }
 
             player.addWithCallback
             (

@@ -309,10 +309,11 @@ void view::show_screen
 
                 pimpl_->screen_transition_animator.push
                 (
-                    tracks::immediate_translation
+                    tracks::fixed_duration_translation
                     {
                         pscreen,
-                        new_screen_start_position
+                        new_screen_start_position,
+                        0
                     }
                 );
 

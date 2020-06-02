@@ -362,7 +362,7 @@ void tile_grid::nullify_tiles(const libutil::matrix_coordinate_list& nullified_t
             continue;
         }
 
-        anim0.add(tracks::immediate_alpha_transition{ptile, 1});
+        anim0.add(tracks::alpha_transition{ptile, 1, 0});
         anim1.add(tracks::alpha_transition{ptile, 0, 0.4});
 
         ptile = nullptr;
@@ -433,7 +433,7 @@ void tile_grid::mark_tiles_for_nullification(const libutil::matrix_coordinate_li
     {
         if(ptile)
         {
-            anim.add(tracks::immediate_alpha_transition{ptile, 1});
+            anim.add(tracks::alpha_transition{ptile, 1, 0});
         }
     }
 
@@ -443,7 +443,7 @@ void tile_grid::mark_tiles_for_nullification(const libutil::matrix_coordinate_li
         auto& ptile = at(board_tiles_, coords);
         if(ptile)
         {
-            anim.add(tracks::immediate_alpha_transition{ptile, 0.5});
+            anim.add(tracks::alpha_transition{ptile, 0.5, 0});
         }
     }
 
