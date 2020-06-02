@@ -25,6 +25,11 @@ namespace libview::objects
 
 namespace
 {
+    const auto xmin = -2.5f;
+    const auto xmax = xmin + 5.0f;
+    const auto speed_ups = 7.0f; //in units per second
+    const auto tolerance_u = 0.1f; //in units
+
     std::optional<input::key_event::Key> get_pressed_key(const input::keyboard_state& state)
     {
         if(state.left_pressed && !state.right_pressed)
@@ -48,16 +53,13 @@ namespace
         const auto inclination = target_x > 0 ? 0.4f : -0.4f;
 
         const auto x = current_x + inclination;
-        return static_cast<int>(std::round(x + 2.5f));
+        return static_cast<int>(std::round(x - xmin));
     }
 
     float get_column_position(const int col)
     {
-        return -2.5f + col;
+        return xmin + col;
     }
-
-    const auto speed_ups = 7.0f; //in unit per second
-    const auto tolerance_u = 0.1f; //in unit
 }
 
 input::input
@@ -151,10 +153,10 @@ void input::update()
         switch(*opt_pressed_key)
         {
             case key_event::Key::Left:
-                target_pos_ = {-2.5, 0};
+                target_pos_ = {xmin, 0};
                 break;
             case key_event::Key::Right:
-                target_pos_ = {2.5, 0};
+                target_pos_ = {xmax, 0};
                 break;
             default:
                 break;
