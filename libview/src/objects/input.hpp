@@ -72,7 +72,7 @@ class input: public Object2D, public features::animable, public features::key_ev
         tile_matrix tiles_ = {};
 
         keyboard_state keyboard_state_;
-        Magnum::Vector2 dst_pos_;
+        Magnum::Vector2 target_pos_;
 };
 
 } //namespace
