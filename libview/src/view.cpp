@@ -126,6 +126,19 @@ struct view::impl final
         }
     }
 
+    void handle_key_release(key_event& event)
+    {
+        if(screen_transition_animator.is_animating())
+        {
+            return;
+        }
+
+        for(std::size_t i = 0; i < feature_groups.key_event_handlers.size(); ++i)
+        {
+            feature_groups.key_event_handlers[i].handle_key_release(event);
+        }
+    }
+
     void handle_mouse_press(mouse_event& event)
     {
         //Only manage left button
@@ -479,6 +492,11 @@ void view::set_viewport(const Magnum::Vector2i& size)
 void view::handle_key_press(key_event& event)
 {
     pimpl_->handle_key_press(event);
+}
+
+void view::handle_key_release(key_event& event)
+{
+    pimpl_->handle_key_release(event);
 }
 
 void view::handle_mouse_press(mouse_event& event)

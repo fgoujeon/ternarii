@@ -33,7 +33,9 @@ class key_event_handler: public Magnum::SceneGraph::AbstractGroupedFeature2D<key
 
         using Magnum::SceneGraph::AbstractGroupedFeature2D<key_event_handler>::AbstractGroupedFeature2D;
 
-        virtual void handle_key_press(key_event& event) = 0;
+        virtual void handle_key_press(key_event&){};
+
+        virtual void handle_key_release(key_event&){};
 };
 
 using key_event_handler_group = Magnum::SceneGraph::FeatureGroup2D<key_event_handler>;

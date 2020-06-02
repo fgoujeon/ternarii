@@ -112,6 +112,11 @@ class app: public Magnum::Platform::Sdl2Application
             view_.handle_key_press(event);
         }
 
+        void keyReleaseEvent(KeyEvent& event) override
+        {
+            view_.handle_key_release(event);
+        }
+
         void mousePressEvent(MouseEvent& event) override
         {
             view_.handle_mouse_press(event);

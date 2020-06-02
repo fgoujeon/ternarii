@@ -18,6 +18,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 #include <libview/screens/game.hpp>
+#include "../objects/input.hpp"
 #include "../objects/background.hpp"
 #include "../objects/game_over_screen.hpp"
 #include "../objects/sdf_image_button.hpp"
@@ -123,7 +124,8 @@ struct game::impl
         MOVE_BUTTON_INITIALIZER(libres::images::move_button,   left_shift),
         MOVE_BUTTON_INITIALIZER(libres::images::move_button,   right_shift),
         MOVE_BUTTON_INITIALIZER(libres::images::move_button,   drop),
-        MOVE_BUTTON_INITIALIZER(libres::images::rotate_button, clockwise_rotation)
+        MOVE_BUTTON_INITIALIZER(libres::images::rotate_button, clockwise_rotation),
+        input(self, feature_groups.drawables, feature_groups.animables, feature_groups.key_event_handlers)
     {
         const auto move_button_scaling = 0.95f;
 
@@ -184,6 +186,8 @@ struct game::impl
     objects::sdf_image_button right_shift_button;
     objects::sdf_image_button drop_button;
     objects::sdf_image_button clockwise_rotation_button;
+
+    objects::input input;
 
     std::unique_ptr<objects::game_over_screen> pgame_over_screen;
 };

@@ -84,6 +84,8 @@ class view
 
         void handle_key_press(key_event& event);
 
+        void handle_key_release(key_event& event);
+
         void handle_mouse_press(mouse_event& event);
 
         void handle_mouse_release(mouse_event& event);
