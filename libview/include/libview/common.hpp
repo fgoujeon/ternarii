@@ -23,7 +23,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include "features/animable.hpp"
 #include "features/clickable.hpp"
 #include "features/key_event_handler.hpp"
-#include <Magnum/SceneGraph/MatrixTransformation2D.h>
+#include <Magnum/SceneGraph/TranslationRotationScalingTransformation2D.h>
 #include <Magnum/SceneGraph/Object.h>
 #include <Magnum/SceneGraph/Drawable.h>
 #include <Magnum/SceneGraph/Scene.h>
@@ -33,14 +33,13 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libview
 {
 
-class Object2D: public Magnum::SceneGraph::Object<Magnum::SceneGraph::MatrixTransformation2D>
-{
-    private:
-        using base_t = Magnum::SceneGraph::Object<Magnum::SceneGraph::MatrixTransformation2D>;
+using transformation_t = Magnum::SceneGraph::TranslationRotationScalingTransformation2D;
 
+class Object2D: public Magnum::SceneGraph::Object<transformation_t>
+{
     public:
         Object2D(Object2D* pparent = nullptr):
-            base_t(pparent),
+            Magnum::SceneGraph::Object<transformation_t>(pparent),
             pparent_(pparent)
         {
         }

@@ -101,9 +101,7 @@ namespace tracks
                 track_impl,
                 [](Magnum::Float, const Magnum::Vector2& translation, Object2D& obj)
                 {
-                    const auto current_translation = obj.transformation().translation();
-                    const auto translation_delta = translation - current_translation;
-                    obj.translate(translation_delta);
+                    obj.setTranslation(translation);
                 },
                 *track.pobj
             );
@@ -148,9 +146,7 @@ namespace tracks
                 track_impl,
                 [](Magnum::Float, const Magnum::Vector2& translation, Object2D& obj)
                 {
-                    const auto current_translation = obj.transformation().translation();
-                    const auto translation_delta = translation - current_translation;
-                    obj.translate(translation_delta);
+                    obj.setTranslation(translation);
                 },
                 *track.pobj
             );
@@ -202,9 +198,7 @@ namespace tracks
                 track_impl,
                 [](Magnum::Float, const Magnum::Vector2& translation, Object2D& obj)
                 {
-                    const auto current_translation = obj.transformation().translation();
-                    const auto translation_delta = translation - current_translation;
-                    obj.translate(translation_delta);
+                    obj.setTranslation(translation);
                 },
                 *track.pobj
             );
@@ -344,9 +338,7 @@ namespace tracks
                 track_impl,
                 [](Magnum::Float, const Magnum::Vector2& scaling, Object2D& obj)
                 {
-                    const auto current_scaling = obj.transformation().scaling();
-                    const auto scaling_factor = scaling / current_scaling;
-                    obj.scale(scaling_factor);
+                    obj.setScaling(scaling);
                 },
                 *track.pobj
             );
