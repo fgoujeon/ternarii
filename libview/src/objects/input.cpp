@@ -40,8 +40,14 @@ namespace
         return std::nullopt;
     }
 
-    int get_nearest_column(const float x)
+    //Get index of nearest column.
+    int get_nearest_column(const float current_x, const float target_x)
     {
+        //We need this inclination, otherwise the tiles might not move if the
+        //user presses and releases a move button a little too quickly.
+        const auto inclination = target_x > 0 ? 0.4f : -0.4f;
+
+        const auto x = current_x + inclination;
         return static_cast<int>(std::round(x + 2.5f));
     }
 
@@ -137,7 +143,7 @@ void input::update()
     if(!opt_pressed_key.has_value())
     {
         const auto current_pos = tile.translation().x();
-        const auto nearest_column = get_nearest_column(current_pos);
+        const auto nearest_column = get_nearest_column(current_pos, target_pos_.x());
         target_pos_ = {get_column_position(nearest_column), 0};
     }
     else
