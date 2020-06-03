@@ -93,9 +93,9 @@ class input: public Object2D, public features::animable, public features::key_ev
         float cog_target_x_ = 0;
 
         int cog_target_rotation_ = 0; //in number of 90 deg clockwise rotations
+        float cog_current_rotation_rad_ = 0; //in radians
 
         tile_matrix tiles_ = {};
-        position_matrix target_positions_;
 
         order last_received_order_ = order::shift_left;
 };

@@ -18,16 +18,13 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 #include "input.hpp"
+#include <cmath>
 
 namespace libview::objects
 {
 
 namespace
 {
-    const auto ybot = -0.5f;
-    const auto ymid = 0.0f;
-    const auto ytop = 0.5f;
-
     enum class direction
     {
         neutral,
@@ -149,50 +146,33 @@ void input::advance(const libutil::time_point& /*now*/, float elapsed_s)
 
     //First, define current position of COG.
     cog_current_x_ = move_toward(cog_current_x_, cog_target_x_, step);
+    cog_current_rotation_rad_ = -cog_target_rotation_ * M_PI / 2.0f;
 
-    //Then, define the target positions of the other tiles relatively to the
-    //COG.
+    //Then, move the tiles relatively to the COG current position and rotation.
     {
-        const auto set = [this](const int col, const int row, const float x, const float y)
-        {
-            at(target_positions_, col, row) = {x, y};
-        };
-        switch(cog_target_rotation_)
-        {
-            case 0:
-                set(0, 0, cog_current_x_ - 0.5f, ymid);
-                set(1, 0, cog_current_x_ + 0.5f, ymid);
-                break;
-            case 1:
-                set(0, 0, cog_current_x_, ytop);
-                set(1, 0, cog_current_x_, ybot);
-                break;
-            case 2:
-                set(0, 0, cog_current_x_ + 0.5f, ymid);
-                set(1, 0, cog_current_x_ - 0.5f, ymid);
-                break;
-            case 3:
-                set(0, 0, cog_current_x_, ybot);
-                set(1, 0, cog_current_x_, ytop);
-                break;
-        }
-    }
+        const auto x_shift = std::cosf(cog_current_rotation_rad_) / 2.0f;
+        const auto y_shift = std::sinf(cog_current_rotation_rad_) / 2.0f;
 
-    libutil::for_each
-    (
-        [&](auto& ptile, auto& target_pos)
-        {
-            if(ptile)
+        at(tiles_, 0, 0)->setTranslation
+        (
             {
-                const auto pos = ptile->translation();
-                const auto x = move_toward(pos.x(), target_pos.x(), step);
-                const auto y = move_toward(pos.y(), target_pos.y(), step);
-                ptile->setTranslation({x, y});
+                cog_current_x_ + x_shift,
+                y_shift
             }
-        },
-        tiles_,
-        target_positions_
-    );
+        );
+    }
+    {
+        const auto x_shift = std::cosf(cog_current_rotation_rad_ + M_PI) / 2.0f;
+        const auto y_shift = std::sinf(cog_current_rotation_rad_ + M_PI) / 2.0f;
+
+        at(tiles_, 1, 0)->setTranslation
+        (
+            {
+                cog_current_x_ + x_shift,
+                y_shift
+            }
+        );
+    }
 }
 
 void input::handle_key_press(key_event& event)
