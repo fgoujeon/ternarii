@@ -80,7 +80,7 @@ class input: public Object2D, public features::animable, public features::key_ev
         void handle_key_release(key_event& event) override;
 
     private:
-        void update_target_positions();
+        void update_cog_target_position();
 
     private:
         features::drawable_group& drawables_;
@@ -89,13 +89,14 @@ class input: public Object2D, public features::animable, public features::key_ev
 
         //Current/target X position of center of gravity (COG)
         //Note: Y position of COG is always 0.
-        float current_x_cog_ = 0;
-        float target_x_cog_ = 0;
+        float cog_current_x_ = 0;
+        float cog_target_x_ = 0;
+
+        int cog_target_rotation_ = 0; //in number of 90 deg clockwise rotations
 
         tile_matrix tiles_ = {};
         position_matrix target_positions_;
 
-        int rotation_ = 0;
         order last_received_order_ = order::shift_left;
 };
 

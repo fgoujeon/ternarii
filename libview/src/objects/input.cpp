@@ -18,7 +18,6 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 #include "input.hpp"
-#include <libutil/log.hpp>
 
 namespace libview::objects
 {
@@ -54,7 +53,7 @@ namespace
     //Get valid X position that is nearest to the given X center of gravity.
     //List of valid X positions depend on whether the input is laid out
     //vertically or horizontally.
-    float get_nearest_valid_x_cog
+    float get_nearest_valid_cog_x
     (
         const float x,
         const bool vertical,
@@ -75,8 +74,6 @@ namespace
                     return 0.0f;
             }
         }();
-
-        libutil::log::info("inclination = ", inclination);
 
         const auto x2 = x + inclination;
 
@@ -142,7 +139,7 @@ input::input
     at(tiles_, 1, 0) = std::make_shared<number_tile>(*this, drawables_, 6);
     at(tiles_, 1, 0)->scale({0.46f, 0.46f});
 
-    update_target_positions();
+    update_cog_target_position();
 }
 
 void input::advance(const libutil::time_point& /*now*/, float elapsed_s)
@@ -150,7 +147,36 @@ void input::advance(const libutil::time_point& /*now*/, float elapsed_s)
     const auto speed = 7.0f; //in units per second
     const auto step = speed * elapsed_s;
 
-    current_x_cog_ = move_toward(current_x_cog_, target_x_cog_, step);
+    //First, define current position of COG.
+    cog_current_x_ = move_toward(cog_current_x_, cog_target_x_, step);
+
+    //Then, define the target positions of the other tiles relatively to the
+    //COG.
+    {
+        const auto set = [this](const int col, const int row, const float x, const float y)
+        {
+            at(target_positions_, col, row) = {x, y};
+        };
+        switch(cog_target_rotation_)
+        {
+            case 0:
+                set(0, 0, cog_current_x_ - 0.5f, ymid);
+                set(1, 0, cog_current_x_ + 0.5f, ymid);
+                break;
+            case 1:
+                set(0, 0, cog_current_x_, ytop);
+                set(1, 0, cog_current_x_, ybot);
+                break;
+            case 2:
+                set(0, 0, cog_current_x_ + 0.5f, ymid);
+                set(1, 0, cog_current_x_ - 0.5f, ymid);
+                break;
+            case 3:
+                set(0, 0, cog_current_x_, ybot);
+                set(1, 0, cog_current_x_, ytop);
+                break;
+        }
+    }
 
     libutil::for_each
     (
@@ -176,30 +202,27 @@ void input::handle_key_press(key_event& event)
         case key_event::Key::Left:
             if(!keyboard_state_.left_shift_button_pressed)
             {
-                libutil::log::info("Left shift button pressed");
                 keyboard_state_.left_shift_button_pressed = true;
                 last_received_order_ = order::shift_left;
-                update_target_positions();
+                update_cog_target_position();
             }
             break;
         case key_event::Key::Right:
             if(!keyboard_state_.right_shift_button_pressed)
             {
-                libutil::log::info("Right shift button pressed");
                 keyboard_state_.right_shift_button_pressed = true;
                 last_received_order_ = order::shift_right;
-                update_target_positions();
+                update_cog_target_position();
             }
             break;
         case key_event::Key::Up:
         case key_event::Key::Space:
             if(!keyboard_state_.rotate_button_pressed)
             {
-                libutil::log::info("Rotate button pressed");
                 keyboard_state_.rotate_button_pressed = true;
-                rotation_ = (rotation_ + 1) % 4;
+                cog_target_rotation_ = (cog_target_rotation_ + 1) % 4;
                 last_received_order_ = order::rotate;
-                update_target_positions();
+                update_cog_target_position();
             }
             break;
         default:
@@ -212,18 +235,15 @@ void input::handle_key_release(key_event& event)
     switch(event.key())
     {
         case key_event::Key::Left:
-            libutil::log::info("Left shift button released");
             keyboard_state_.left_shift_button_pressed = false;
-            update_target_positions();
+            update_cog_target_position();
             break;
         case key_event::Key::Right:
-            libutil::log::info("Right shift button released");
             keyboard_state_.right_shift_button_pressed = false;
-            update_target_positions();
+            update_cog_target_position();
             break;
         case key_event::Key::Up:
         case key_event::Key::Space:
-            libutil::log::info("Rotate button released");
             keyboard_state_.rotate_button_pressed = false;
             break;
         default:
@@ -231,21 +251,14 @@ void input::handle_key_release(key_event& event)
     }
 }
 
-void input::update_target_positions()
+void input::update_cog_target_position()
 {
-    libutil::log::info("***** Enter update_target_positions()");
-
     const auto dir = get_direction(keyboard_state_);
 
-    libutil::log::info("dir = ", static_cast<int>(dir));
-    libutil::log::info("rotation_ = ", rotation_);
-    libutil::log::info("current_x_cog_ = ", current_x_cog_);
-    libutil::log::info("target_x_cog_ = ", target_x_cog_);
-
     //First of all, compute the target position of the center of gravity (COG).
-    target_x_cog_ = [&]() -> float
+    cog_target_x_ = [&]() -> float
     {
-        const auto vertical = (rotation_ % 2 == 1);
+        const auto vertical = (cog_target_rotation_ % 2 == 1);
 
         switch(dir)
         {
@@ -269,46 +282,14 @@ void input::update_target_positions()
                 }
             case direction::neutral:
             default:
-                return get_nearest_valid_x_cog
+                return get_nearest_valid_cog_x
                 (
-                    current_x_cog_,
+                    cog_current_x_,
                     vertical,
                     last_received_order_
                 );
         }
     }();
-
-    libutil::log::info("new target_x_cog_ = ", target_x_cog_);
-
-    //Then, define the target positions of the other tiles relatively to the
-    //COG.
-    {
-        const auto set = [this](const int col, const int row, const float x, const float y)
-        {
-            at(target_positions_, col, row) = {x, y};
-        };
-        switch(rotation_)
-        {
-            case 0:
-                set(0, 0, target_x_cog_ - 0.5f, ymid);
-                set(1, 0, target_x_cog_ + 0.5f, ymid);
-                break;
-            case 1:
-                set(0, 0, target_x_cog_, ytop);
-                set(1, 0, target_x_cog_, ybot);
-                break;
-            case 2:
-                set(0, 0, target_x_cog_ + 0.5f, ymid);
-                set(1, 0, target_x_cog_ - 0.5f, ymid);
-                break;
-            case 3:
-                set(0, 0, target_x_cog_, ybot);
-                set(1, 0, target_x_cog_, ytop);
-                break;
-        }
-    }
-
-    libutil::log::info("***** Leave update_target_positions()");
 }
 
 } //namespace
