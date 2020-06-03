@@ -116,6 +116,25 @@ namespace
             return current - step;
         }
     }
+
+    float move_toward_clockwise(const float current_rad, const float target_rad, const float step_rad)
+    {
+        const auto tolerance = static_cast<float>(M_PI) / 8.0f;
+
+        if(std::abs(current_rad - target_rad) < tolerance || step_rad > 2 * M_PI)
+        {
+            return target_rad;
+        }
+
+        if(target_rad < current_rad)
+        {
+            return current_rad - step_rad;
+        }
+        else
+        {
+            return current_rad - step_rad + 2 * M_PI;
+        }
+    }
 }
 
 input::input
@@ -141,12 +160,25 @@ input::input
 
 void input::advance(const libutil::time_point& /*now*/, float elapsed_s)
 {
-    const auto speed = 7.0f; //in units per second
-    const auto step = speed * elapsed_s;
+    const auto translation_speed = 7.0f; //in units per second
+    const auto translation_step = translation_speed * elapsed_s;
+
+    const auto rotation_speed_radps = 4 * M_PI; //in radians per second
+    const auto rotation_step_rad = rotation_speed_radps * elapsed_s;
 
     //First, define current position of COG.
-    cog_current_x_ = move_toward(cog_current_x_, cog_target_x_, step);
-    cog_current_rotation_rad_ = -cog_target_rotation_ * M_PI / 2.0f;
+    cog_current_x_ = move_toward
+    (
+        cog_current_x_,
+        cog_target_x_,
+        translation_step
+    );
+    cog_current_rotation_rad_ = move_toward_clockwise
+    (
+        cog_current_rotation_rad_,
+        -cog_target_rotation_ * M_PI / 2.0f,
+        rotation_step_rad
+    );
 
     //Then, move the tiles relatively to the COG current position and rotation.
     {
