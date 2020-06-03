@@ -18,69 +18,64 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 #include "input.hpp"
-#include <iostream>
+#include <libutil/log.hpp>
 
 namespace libview::objects
 {
 
 namespace
 {
-    const auto xmin = -2.5f;
-    const auto xmax = 2.5f;
-
     const auto ymid = 0.0f;
 
-    const auto speed_ups = 7.0f; //in units per second
-    const auto tolerance_u = 0.1f; //in units
+    enum class direction
+    {
+        neutral,
+        left,
+        right
+    };
 
-    std::optional<input::key_event::Key> get_pressed_key(const input::keyboard_state& state)
+    direction get_direction(const input::keyboard_state& state)
     {
         if(state.left_pressed && !state.right_pressed)
         {
-            return input::key_event::Key::Left;
+            return direction::left;
         }
 
         if(!state.left_pressed && state.right_pressed)
         {
-            return input::key_event::Key::Right;
+            return direction::right;
         }
 
-        return std::nullopt;
+        return direction::neutral;
     }
 
-    //Get index of nearest column.
-    int get_nearest_column(const float current_x, const float target_x)
+    //Get nearest valid X position for the center of gravity.
+    float get_nearest_valid_x_cog(const float current_x, const float target_x)
     {
         //We need this inclination, otherwise the tiles might not move if the
         //user presses and releases a move button a little too quickly.
         const auto inclination = target_x > 0 ? 0.4f : -0.4f;
 
         const auto x = current_x + inclination;
-        return static_cast<int>(std::round(x - xmin));
+        return std::round(x);
     }
 
-    float get_column_position(const int col)
+    float move_toward(const float current, const float target, const float step)
     {
-        return xmin + col;
-    }
+        const auto tolerance = 0.1f;
 
-    void move_toward(Object2D& tile, const Magnum::Vector2& target_pos, const float step)
-    {
-        const auto x_pos = tile.translation().x();
-        if(std::abs(x_pos - target_pos.x()) > tolerance_u)
+        if(std::abs(current - target) < tolerance)
         {
-            if(x_pos < target_pos.x())
-            {
-                tile.translate({step, 0});
-            }
-            else
-            {
-                tile.translate({-step, 0});
-            }
+            return target;
+        }
+
+        if(current < target)
+        {
+            return current + step;
         }
         else
         {
-            tile.setTranslation(target_pos);
+            return current - step;
         }
     }
 }
@@ -104,12 +99,15 @@ input::input
     at(tiles_, 1, 0)->scale({0.46f, 0.46f});
     at(tiles_, 1, 0)->translate({1.0f, 0.0f});
 
-    update();
+    update_target_positions();
 }
 
 void input::advance(const libutil::time_point& /*now*/, float elapsed_s)
 {
-    const auto step = speed_ups * elapsed_s;
+    const auto speed = 7.0f; //in units per second
+    const auto step = speed * elapsed_s;
+
+    current_x_cog_ = move_toward(current_x_cog_, target_x_cog_, step);
 
     libutil::for_each
     (
@@ -117,7 +115,10 @@ void input::advance(const libutil::time_point& /*now*/, float elapsed_s)
         {
             if(ptile)
             {
-                move_toward(*ptile, target_pos, step);
+                const auto pos = ptile->translation();
+                const auto x = move_toward(pos.x(), target_pos.x(), step);
+                const auto y = move_toward(pos.y(), target_pos.y(), step);
+                ptile->setTranslation({x, y});
             }
         },
         tiles_,
@@ -139,7 +140,7 @@ void input::handle_key_press(key_event& event)
             break;
     }
 
-    update();
+    update_target_positions();
 }
 
 void input::handle_key_release(key_event& event)
@@ -156,48 +157,34 @@ void input::handle_key_release(key_event& event)
             break;
     }
 
-    update();
+    update_target_positions();
 }
 
-void input::update()
+void input::update_target_positions()
 {
-    const auto opt_pressed_key = get_pressed_key(keyboard_state_);
-
-    if(!opt_pressed_key.has_value())
+    //First of all, compute the target position of the center of gravity (COG).
+    target_x_cog_ = [&]() -> float
     {
-        libutil::for_each
-        (
-            [&](auto& ptile, auto& target_pos)
-            {
-                if(!ptile)
-                {
-                    return;
-                }
-
-                const auto current_pos = ptile->translation().x();
-                const auto nearest_column = get_nearest_column(current_pos, target_pos.x());
-                target_pos = {get_column_position(nearest_column), ymid};
-            },
-            tiles_,
-            target_positions_
-        );
-    }
-    else
-    {
-        switch(*opt_pressed_key)
+        switch(get_direction(keyboard_state_))
         {
-            case key_event::Key::Left:
-                at(target_positions_, 0, 0) = {xmin, ymid};
-                at(target_positions_, 1, 0) = {xmin + 1, ymid};
-                break;
-            case key_event::Key::Right:
-                at(target_positions_, 0, 0) = {xmax - 1, ymid};
-                at(target_positions_, 1, 0) = {xmax, ymid};
-                break;
+            case direction::left:
+                return -2;
+            case direction::right:
+                return 2;
+            case direction::neutral:
             default:
-                break;
+                return get_nearest_valid_x_cog
+                (
+                    current_x_cog_,
+                    target_x_cog_
+                );
         }
-    }
+    }();
+
+    //Then, define the target positions of the other tiles relatively to the
+    //COG.
+    at(target_positions_, 0, 0) = {target_x_cog_ - 0.5f, ymid};
+    at(target_positions_, 1, 0) = {target_x_cog_ + 0.5f, ymid};
 }
 
 } //namespace

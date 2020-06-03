@@ -72,13 +72,19 @@ class input: public Object2D, public features::animable, public features::key_ev
         void handle_key_release(key_event& event) override;
 
     private:
-        void update();
+        void update_target_positions();
 
     private:
         features::drawable_group& drawables_;
         tile_matrix tiles_ = {};
 
         keyboard_state keyboard_state_;
+
+        //Current/target X position of center of gravity (COG)
+        //Note: Y position of COG is always 0.
+        float current_x_cog_ = 0;
+        float target_x_cog_ = 0;
+
         position_matrix target_positions_;
 };
 
