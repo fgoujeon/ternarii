@@ -38,25 +38,25 @@ class playing final: public state
 
     //View event handlers
     private:
-        void handle_view_move_request(const libview::data_types::move m)
+        void handle_view_move_request(const libview::data_types::move /*m*/)
         {
-            using move = libview::data_types::move;
+            //using move = libview::data_types::move;
 
-            switch(m)
-            {
-                case move::left_shift:
-                    modify_game(&libgame::game::shift_input_left);
-                    break;
-                case move::right_shift:
-                    modify_game(&libgame::game::shift_input_right);
-                    break;
-                case move::clockwise_rotation:
-                    modify_game(&libgame::game::rotate_input);
-                    break;
-                case move::drop:
-                    modify_game(&libgame::game::drop_input_tiles);
-                    break;
-            }
+            //switch(m)
+            //{
+            //    case move::left_shift:
+            //        modify_game(&libgame::game::shift_input_left);
+            //        break;
+            //    case move::right_shift:
+            //        modify_game(&libgame::game::shift_input_right);
+            //        break;
+            //    case move::clockwise_rotation:
+            //        modify_game(&libgame::game::rotate_input);
+            //        break;
+            //    case move::drop:
+            //        modify_game(&libgame::game::drop_input_tiles);
+            //        break;
+            //}
         }
 
     //Game event handlers

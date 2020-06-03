@@ -25,7 +25,9 @@ namespace libview::objects
 
 namespace
 {
+    const auto ybot = -0.5f;
     const auto ymid = 0.0f;
+    const auto ytop = 0.5f;
 
     enum class direction
     {
@@ -36,12 +38,12 @@ namespace
 
     direction get_direction(const input::keyboard_state& state)
     {
-        if(state.left_pressed && !state.right_pressed)
+        if(state.left_shift_button_pressed && !state.right_shift_button_pressed)
         {
             return direction::left;
         }
 
-        if(!state.left_pressed && state.right_pressed)
+        if(!state.left_shift_button_pressed && state.right_shift_button_pressed)
         {
             return direction::right;
         }
@@ -49,15 +51,57 @@ namespace
         return direction::neutral;
     }
 
-    //Get nearest valid X position for the center of gravity.
-    float get_nearest_valid_x_cog(const float current_x, const float target_x)
+    //Get valid X position that is nearest to the given X center of gravity.
+    //List of valid X positions depend on whether the input is laid out
+    //vertically or horizontally.
+    float get_nearest_valid_x_cog
+    (
+        const float x,
+        const bool vertical,
+        const input::order last_received_order
+    )
     {
-        //We need this inclination, otherwise the tiles might not move if the
-        //user presses and releases a move button a little too quickly.
-        const auto inclination = target_x > 0 ? 0.4f : -0.4f;
+        //We need this inclination, otherwise the tiles might not shift if the
+        //user presses and releases the shift button a little too quickly.
+        const auto inclination = [&]
+        {
+            switch(last_received_order)
+            {
+                case input::order::shift_left:
+                    return -0.4f;
+                case input::order::shift_right:
+                    return 0.4f;
+                default:
+                    return 0.0f;
+            }
+        }();
 
-        const auto x = current_x + inclination;
-        return std::round(x);
+        libutil::log::info("inclination = ", inclination);
+
+        const auto x2 = x + inclination;
+
+        if(vertical)
+        {
+            return std::clamp
+            (
+                std::ceil(x2) - 0.5f,
+                -2.5f,
+                2.5f
+            );
+        }
+        else
+        {
+            //Influence rounding so that when rotating from a vertical
+            //position, we preferably shift to the right.
+            const auto epsilon = 0.01f;
+
+            return std::clamp
+            (
+                std::round(x2 + epsilon),
+                -2.0f,
+                2.0f
+            );
+        }
     }
 
     float move_toward(const float current, const float target, const float step)
@@ -97,7 +141,6 @@ input::input
 
     at(tiles_, 1, 0) = std::make_shared<number_tile>(*this, drawables_, 6);
     at(tiles_, 1, 0)->scale({0.46f, 0.46f});
-    at(tiles_, 1, 0)->translate({1.0f, 0.0f});
 
     update_target_positions();
 }
@@ -131,16 +174,37 @@ void input::handle_key_press(key_event& event)
     switch(event.key())
     {
         case key_event::Key::Left:
-            keyboard_state_.left_pressed = true;
+            if(!keyboard_state_.left_shift_button_pressed)
+            {
+                libutil::log::info("Left shift button pressed");
+                keyboard_state_.left_shift_button_pressed = true;
+                last_received_order_ = order::shift_left;
+                update_target_positions();
+            }
             break;
         case key_event::Key::Right:
-            keyboard_state_.right_pressed = true;
+            if(!keyboard_state_.right_shift_button_pressed)
+            {
+                libutil::log::info("Right shift button pressed");
+                keyboard_state_.right_shift_button_pressed = true;
+                last_received_order_ = order::shift_right;
+                update_target_positions();
+            }
+            break;
+        case key_event::Key::Up:
+        case key_event::Key::Space:
+            if(!keyboard_state_.rotate_button_pressed)
+            {
+                libutil::log::info("Rotate button pressed");
+                keyboard_state_.rotate_button_pressed = true;
+                rotation_ = (rotation_ + 1) % 4;
+                last_received_order_ = order::rotate;
+                update_target_positions();
+            }
             break;
         default:
             break;
     }
-
-    update_target_positions();
 }
 
 void input::handle_key_release(key_event& event)
@@ -148,43 +212,103 @@ void input::handle_key_release(key_event& event)
     switch(event.key())
     {
         case key_event::Key::Left:
-            keyboard_state_.left_pressed = false;
+            libutil::log::info("Left shift button released");
+            keyboard_state_.left_shift_button_pressed = false;
+            update_target_positions();
             break;
         case key_event::Key::Right:
-            keyboard_state_.right_pressed = false;
+            libutil::log::info("Right shift button released");
+            keyboard_state_.right_shift_button_pressed = false;
+            update_target_positions();
+            break;
+        case key_event::Key::Up:
+        case key_event::Key::Space:
+            libutil::log::info("Rotate button released");
+            keyboard_state_.rotate_button_pressed = false;
             break;
         default:
             break;
     }
-
-    update_target_positions();
 }
 
 void input::update_target_positions()
 {
+    libutil::log::info("***** Enter update_target_positions()");
+
+    const auto dir = get_direction(keyboard_state_);
+
+    libutil::log::info("dir = ", static_cast<int>(dir));
+    libutil::log::info("rotation_ = ", rotation_);
+    libutil::log::info("current_x_cog_ = ", current_x_cog_);
+    libutil::log::info("target_x_cog_ = ", target_x_cog_);
+
     //First of all, compute the target position of the center of gravity (COG).
     target_x_cog_ = [&]() -> float
     {
-        switch(get_direction(keyboard_state_))
+        const auto vertical = (rotation_ % 2 == 1);
+
+        switch(dir)
         {
             case direction::left:
-                return -2;
+                if(vertical)
+                {
+                    return -2.5f;
+                }
+                else
+                {
+                    return -2;
+                }
             case direction::right:
-                return 2;
+                if(vertical)
+                {
+                    return 2.5f;
+                }
+                else
+                {
+                    return 2;
+                }
             case direction::neutral:
             default:
                 return get_nearest_valid_x_cog
                 (
                     current_x_cog_,
-                    target_x_cog_
+                    vertical,
+                    last_received_order_
                 );
         }
     }();
 
+    libutil::log::info("new target_x_cog_ = ", target_x_cog_);
+
     //Then, define the target positions of the other tiles relatively to the
     //COG.
-    at(target_positions_, 0, 0) = {target_x_cog_ - 0.5f, ymid};
-    at(target_positions_, 1, 0) = {target_x_cog_ + 0.5f, ymid};
+    {
+        const auto set = [this](const int col, const int row, const float x, const float y)
+        {
+            at(target_positions_, col, row) = {x, y};
+        };
+        switch(rotation_)
+        {
+            case 0:
+                set(0, 0, target_x_cog_ - 0.5f, ymid);
+                set(1, 0, target_x_cog_ + 0.5f, ymid);
+                break;
+            case 1:
+                set(0, 0, target_x_cog_, ytop);
+                set(1, 0, target_x_cog_, ybot);
+                break;
+            case 2:
+                set(0, 0, target_x_cog_ + 0.5f, ymid);
+                set(1, 0, target_x_cog_ - 0.5f, ymid);
+                break;
+            case 3:
+                set(0, 0, target_x_cog_, ybot);
+                set(1, 0, target_x_cog_, ytop);
+                break;
+        }
+    }
+
+    libutil::log::info("***** Leave update_target_positions()");
 }
 
 } //namespace

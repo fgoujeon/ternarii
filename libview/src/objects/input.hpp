@@ -50,10 +50,18 @@ class input: public Object2D, public features::animable, public features::key_ev
             libcommon::constants::input_row_count
         >;
 
+        enum class order
+        {
+            rotate,
+            shift_left,
+            shift_right
+        };
+
         struct keyboard_state
         {
-            bool left_pressed = false;
-            bool right_pressed = false;
+            bool left_shift_button_pressed = false;
+            bool right_shift_button_pressed = false;
+            bool rotate_button_pressed = false;
         };
 
     public:
@@ -76,7 +84,6 @@ class input: public Object2D, public features::animable, public features::key_ev
 
     private:
         features::drawable_group& drawables_;
-        tile_matrix tiles_ = {};
 
         keyboard_state keyboard_state_;
 
@@ -85,7 +92,11 @@ class input: public Object2D, public features::animable, public features::key_ev
         float current_x_cog_ = 0;
         float target_x_cog_ = 0;
 
+        tile_matrix tiles_ = {};
         position_matrix target_positions_;
+
+        int rotation_ = 0;
+        order last_received_order_ = order::shift_left;
 };
 
 } //namespace
