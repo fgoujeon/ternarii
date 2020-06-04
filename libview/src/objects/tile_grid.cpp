@@ -94,6 +94,8 @@ tile_grid::tile_grid
         add_corner(left,  bottom,   0.0_degf);
         add_corner(left,  top,    -90.0_degf);
     }
+
+    input_.setTranslation({0.0f, 3.0f});
 }
 
 bool tile_grid::is_animating() const
@@ -131,7 +133,15 @@ void tile_grid::drop_input_tiles(const data_types::input_tile_drop_list& drops)
 {
     auto anim = animation{};
 
+    //Retrieve tile objects
     const auto input_tile_objects = input_.release_tile_objects();
+    for(auto& ptile: input_tile_objects)
+    {
+        if(ptile)
+        {
+            ptile->setParentKeepTransformation(this);
+        }
+    }
 
     for(const auto& drop: drops)
     {

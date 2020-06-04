@@ -34,8 +34,7 @@ namespace
     libutil::matrix<Magnum::Vector2, 2, 2> get_input_tile_positions
     (
         const TileMatrix& tiles,
-        const data_types::input_layout& layout,
-        const float y_offset
+        const data_types::input_layout& layout
     )
     {
         auto positions = libutil::matrix<Magnum::Vector2, 2, 2>{};
@@ -51,7 +50,7 @@ namespace
                 pos = Magnum::Vector2
                 {
                     coord.col - 2.5f,
-                    coord.row - 0.5f + y_offset
+                    coord.row - 0.5f
                 };
             },
             positions
@@ -93,7 +92,7 @@ namespace
         {
             for(auto& pos: positions)
             {
-                pos.y() = y_offset;
+                pos.y() = 0;
             }
         }
 
@@ -125,6 +124,14 @@ void input::insert_next_input
 )
 {
     tile_objects_ = next_input_tile_objects;
+    for(auto& ptile_object: tile_objects_)
+    {
+        if(ptile_object)
+        {
+            ptile_object->setParentKeepTransformation(this);
+        }
+    }
+
     layout_ = layout;
 
     const auto animation_duration_s = 0.2f;
@@ -133,7 +140,7 @@ void input::insert_next_input
 
     //Animate insertion of current next input into input.
     {
-        const auto dst_positions = get_input_tile_positions(tile_objects_, data_types::input_layout{}, 3.0f);
+        const auto dst_positions = get_input_tile_positions(tile_objects_, data_types::input_layout{});
 
         libutil::for_each
         (
@@ -171,7 +178,7 @@ void input::set_input_layout(const data_types::input_layout& layout)
 
     layout_ = layout;
 
-    const auto dst_positions = get_input_tile_positions(tile_objects_, layout, 3.0f);
+    const auto dst_positions = get_input_tile_positions(tile_objects_, layout);
 
     auto anim = animation{};
 
