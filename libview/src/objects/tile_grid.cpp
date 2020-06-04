@@ -122,7 +122,7 @@ void tile_grid::create_next_input(const data_types::input_tile_matrix& tiles)
     next_input_.create_tiles(tiles);
 }
 
-void tile_grid::insert_next_input(const data_types::input_layout& /*layout*/)
+void tile_grid::insert_next_input()
 {
     input_.set_tiles(next_input_.release_tile_objects());
 }

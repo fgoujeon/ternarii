@@ -79,10 +79,7 @@ event board_input::set_tiles(const data_types::input_tile_matrix& tiles)
     tiles_ = tiles;
     layout_ = default_layout;
 
-    return
-    {
-        events::next_input_insertion{layout_}
-    };
+    return events::next_input_insertion{};
 }
 
 void board_input::shift_left(event_list& events)

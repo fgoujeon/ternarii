@@ -271,9 +271,9 @@ void game::create_next_input(const data_types::input_tile_matrix& tiles)
     pimpl_->tile_grid.create_next_input(tiles);
 }
 
-void game::insert_next_input(const data_types::input_layout& layout)
+void game::insert_next_input()
 {
-    pimpl_->tile_grid.insert_next_input(layout);
+    pimpl_->tile_grid.insert_next_input();
 }
 
 void game::drop_input_tiles(const data_types::input_tile_drop_list& drops)

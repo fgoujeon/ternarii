@@ -99,7 +99,7 @@ playing::playing(fsm& f, const screen_transition trans, const libgame::data_type
         pscreen_->set_score(get_score(board_tiles));
         pscreen_->set_hi_score(pgame_->get_hi_score());
         pscreen_->create_next_input(pgame_->get_input_tiles());
-        pscreen_->insert_next_input(pgame_->get_input_layout());
+        pscreen_->insert_next_input();
         pscreen_->create_next_input(pgame_->get_next_input_tiles());
         pscreen_->set_board_tiles(board_tiles);
         mark_tiles_for_nullification();

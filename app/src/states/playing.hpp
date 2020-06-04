@@ -70,9 +70,9 @@ class playing final: public state
             pscreen_->create_next_input(event.tiles);
         }
 
-        void handle_game_event(const libgame::events::next_input_insertion& event)
+        void handle_game_event(const libgame::events::next_input_insertion&)
         {
-            pscreen_->insert_next_input(event.layout);
+            pscreen_->insert_next_input();
             mark_tiles_for_nullification();
             fsm_.database.set_stage_state(stage_, pgame_->get_state());
         }

@@ -47,10 +47,7 @@ namespace events
 
 
 
-    struct next_input_insertion
-    {
-        data_types::input_layout layout;
-    };
+    struct next_input_insertion{};
 
     std::ostream& operator<<(std::ostream& l, const next_input_insertion& r);
 
