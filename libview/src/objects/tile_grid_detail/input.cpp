@@ -23,86 +23,6 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libview::objects::tile_grid_detail
 {
 
-//Insertion animation
-namespace
-{
-    template<class TileMatrix>
-    libutil::matrix<Magnum::Vector2, 2, 2> get_input_tile_positions
-    (
-        const TileMatrix& tiles,
-        const data_types::input_layout& layout
-    )
-    {
-        auto positions = libutil::matrix<Magnum::Vector2, 2, 2>{};
-
-        libutil::for_each_colrow
-        (
-            [&](auto& pos, const int col, const int row)
-            {
-                //Get coordinate as indices
-                const auto coord = get_tile_coordinate(layout, {col, row});
-
-                //Convert to model coordinate
-                pos = Magnum::Vector2
-                {
-                    coord.col - 2.5f,
-                    coord.row - 0.5f
-                };
-            },
-            positions
-        );
-
-        //Center the tiles vertically if they are on the same line
-        const auto on_same_line = [&]
-        {
-            auto on_same_line = true;
-            auto opt_y = std::optional<float>{};
-            libutil::for_each
-            (
-                [&](const auto& pos, const auto& ptile)
-                {
-                    if(!ptile)
-                    {
-                        return;
-                    }
-
-                    if(!opt_y)
-                    {
-                        opt_y = pos.y();
-                        return;
-                    }
-
-                    if(pos.y() != opt_y)
-                    {
-                        on_same_line = false;
-                    }
-                },
-                positions,
-                tiles
-            );
-
-            return on_same_line;
-        }();
-
-        if(on_same_line)
-        {
-            for(auto& pos: positions)
-            {
-                pos.y() = 0;
-            }
-        }
-
-        return positions;
-    }
-
-    const auto tile_move_interpolator = Magnum::Animation::ease
-    <
-        Magnum::Vector2,
-        Magnum::Math::lerp,
-        Magnum::Animation::Easing::cubicOut
-    >();
-}
-
 namespace
 {
     enum class direction
@@ -125,6 +45,40 @@ namespace
         }
 
         return direction::neutral;
+    }
+
+    libutil::matrix<Magnum::Vector2, 2, 2> compute_tile_positions
+    (
+        const input_tile_object_matrix& tiles,
+        const float cog_current_x,
+        const float cog_current_rotation_rad
+    )
+    {
+        auto positions = libutil::matrix<Magnum::Vector2, 2, 2>{};
+
+        {
+            const auto x_shift = std::cosf(cog_current_rotation_rad + M_PI) / 2.0f;
+            const auto y_shift = std::sinf(cog_current_rotation_rad + M_PI) / 2.0f;
+
+            at(positions, 0, 0) =
+            {
+                cog_current_x + x_shift,
+                y_shift
+            };
+        }
+
+        {
+            const auto x_shift = std::cosf(cog_current_rotation_rad) / 2.0f;
+            const auto y_shift = std::sinf(cog_current_rotation_rad) / 2.0f;
+
+            at(positions, 1, 0) =
+            {
+                cog_current_x + x_shift,
+                y_shift
+            };
+        }
+
+        return positions;
     }
 
     //Get valid X position that is nearest to the given X center of gravity.
@@ -215,6 +169,13 @@ namespace
             return current_rad - step_rad + 2 * M_PI;
         }
     }
+
+    const auto tile_move_interpolator = Magnum::Animation::ease
+    <
+        Magnum::Vector2,
+        Magnum::Math::lerp,
+        Magnum::Animation::Easing::cubicOut
+    >();
 }
 
 input::input
@@ -246,9 +207,9 @@ void input::set_tiles(const input_tile_object_matrix& tiles)
 
     //Reset center of gravity.
     cog_current_x_ = 0;
+    cog_current_rotation_rad_ = 0;
     cog_target_x_ = 0;
     cog_target_rotation_ = 0;
-    cog_current_rotation_rad_ = 0;
 
     //Animate insertion of tiles.
     {
@@ -256,7 +217,12 @@ void input::set_tiles(const input_tile_object_matrix& tiles)
 
         auto anim = animation{};
 
-        const auto dst_positions = get_input_tile_positions(tiles_, data_types::input_layout{});
+        const auto dst_positions = compute_tile_positions
+        (
+            tiles_,
+            cog_current_x_,
+            cog_current_rotation_rad_
+        );
 
         libutil::for_each
         (
@@ -340,30 +306,24 @@ void input::advance(const libutil::time_point& now, float elapsed_s)
     );
 
     //Then, move the tiles relatively to the COG current position and rotation.
-    {
-        const auto x_shift = std::cosf(cog_current_rotation_rad_ + M_PI) / 2.0f;
-        const auto y_shift = std::sinf(cog_current_rotation_rad_ + M_PI) / 2.0f;
-
-        at(tiles_, 0, 0)->setTranslation
-        (
+    const auto positions = compute_tile_positions
+    (
+        tiles_,
+        cog_current_x_,
+        cog_current_rotation_rad_
+    );
+    libutil::for_each
+    (
+        [&](auto& ptile, const auto& position)
+        {
+            if(ptile)
             {
-                cog_current_x_ + x_shift,
-                y_shift
+                ptile->setTranslation(position);
             }
-        );
-    }
-    {
-        const auto x_shift = std::cosf(cog_current_rotation_rad_) / 2.0f;
-        const auto y_shift = std::sinf(cog_current_rotation_rad_) / 2.0f;
-
-        at(tiles_, 1, 0)->setTranslation
-        (
-            {
-                cog_current_x_ + x_shift,
-                y_shift
-            }
-        );
-    }
+        },
+        tiles_,
+        positions
+    );
 }
 
 void input::handle_key_press(key_event& event)
