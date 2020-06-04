@@ -125,7 +125,8 @@ tile_grid::tile_grid
 ):
     Object2D{&parent},
     features::animable(*this, &animables),
-    drawables_(drawables)
+    drawables_(drawables),
+    next_input_(*this, drawables, animator_, next_input_tiles_, input_tiles_)
 {
     //board corners
     {
@@ -185,59 +186,7 @@ void tile_grid::clear()
 
 void tile_grid::create_next_input(const data_types::input_tile_matrix& tiles)
 {
-    const auto animation_duration_s = 0.2f;
-
-    auto anim = animation{};
-
-    //Animate insertion of current next input into input.
-    {
-        const auto dst_positions = get_input_tile_positions(input_tiles_, input_layout_, 3.0f);
-
-        libutil::for_each
-        (
-            [&](const auto& ptile, const auto& dst_position)
-            {
-                if(ptile)
-                {
-                    anim.add
-                    (
-                        tracks::fixed_duration_translation
-                        {
-                            ptile,
-                            dst_position,
-                            animation_duration_s,
-                            tile_move_interpolator
-                        }
-                    );
-                    anim.add(tracks::alpha_transition{ptile, 1, animation_duration_s});
-                }
-            },
-            input_tiles_,
-            dst_positions
-        );
-    }
-
-    //Create new next input and animate its creation.
-    {
-        const auto positions = get_input_tile_positions(tiles, input_layout_, 5.0f);
-
-        libutil::for_each
-        (
-            [&](const auto& opt_tile, const auto& position, auto& pnext_input_tile)
-            {
-                if(opt_tile.has_value())
-                {
-                    pnext_input_tile = make_tile(opt_tile.value(), position);
-                    anim.add(tracks::alpha_transition{pnext_input_tile, 0.4, animation_duration_s});
-                }
-            },
-            tiles,
-            positions,
-            next_input_tiles_
-        );
-    }
-
-    animator_.push(std::move(anim));
+    next_input_.create_next_input(tiles);
 }
 
 void tile_grid::insert_next_input(const data_types::input_layout& layout)

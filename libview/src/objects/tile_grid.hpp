@@ -20,6 +20,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #ifndef LIBVIEW_OBJECTS_TILE_GRID_HPP
 #define LIBVIEW_OBJECTS_TILE_GRID_HPP
 
+#include "next_input.hpp"
 #include "number_tile.hpp"
 #include "sdf_image_tile.hpp"
 #include "sdf_image.hpp"
@@ -103,6 +104,8 @@ class tile_grid: public Object2D, public features::animable
         input_tile_matrix input_tiles_ = {};
         data_types::input_layout input_layout_;
         board_tile_matrix board_tiles_ = {};
+
+        next_input next_input_;
 };
 
 } //namespace

@@ -22,6 +22,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 
 #include <libutil/unique_function.hpp>
 #include <libutil/time.hpp>
+#include "common.hpp"
 #include <Magnum/Animation/Easing.h>
 #include <Magnum/Animation/Player.h>
 #include <chrono>
