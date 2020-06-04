@@ -85,6 +85,8 @@ class input: public Object2D, public features::animable, public features::key_ev
         void update_cog_target_position();
 
     private:
+        animator insertion_animator_;
+
         drop_request_callback drop_request_callback_;
 
         keyboard_state keyboard_state_;

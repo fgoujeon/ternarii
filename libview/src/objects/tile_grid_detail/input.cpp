@@ -23,6 +23,86 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libview::objects::tile_grid_detail
 {
 
+//Insertion animation
+namespace
+{
+    template<class TileMatrix>
+    libutil::matrix<Magnum::Vector2, 2, 2> get_input_tile_positions
+    (
+        const TileMatrix& tiles,
+        const data_types::input_layout& layout
+    )
+    {
+        auto positions = libutil::matrix<Magnum::Vector2, 2, 2>{};
+
+        libutil::for_each_colrow
+        (
+            [&](auto& pos, const int col, const int row)
+            {
+                //Get coordinate as indices
+                const auto coord = get_tile_coordinate(layout, {col, row});
+
+                //Convert to model coordinate
+                pos = Magnum::Vector2
+                {
+                    coord.col - 2.5f,
+                    coord.row - 0.5f
+                };
+            },
+            positions
+        );
+
+        //Center the tiles vertically if they are on the same line
+        const auto on_same_line = [&]
+        {
+            auto on_same_line = true;
+            auto opt_y = std::optional<float>{};
+            libutil::for_each
+            (
+                [&](const auto& pos, const auto& ptile)
+                {
+                    if(!ptile)
+                    {
+                        return;
+                    }
+
+                    if(!opt_y)
+                    {
+                        opt_y = pos.y();
+                        return;
+                    }
+
+                    if(pos.y() != opt_y)
+                    {
+                        on_same_line = false;
+                    }
+                },
+                positions,
+                tiles
+            );
+
+            return on_same_line;
+        }();
+
+        if(on_same_line)
+        {
+            for(auto& pos: positions)
+            {
+                pos.y() = 0;
+            }
+        }
+
+        return positions;
+    }
+
+    const auto tile_move_interpolator = Magnum::Animation::ease
+    <
+        Magnum::Vector2,
+        Magnum::Math::lerp,
+        Magnum::Animation::Easing::cubicOut
+    >();
+}
+
 namespace
 {
     enum class direction
@@ -154,6 +234,7 @@ input::input
 
 void input::set_tiles(const input_tile_object_matrix& tiles)
 {
+    //Init tiles.
     tiles_ = tiles;
     for(auto& ptile: tiles)
     {
@@ -163,10 +244,45 @@ void input::set_tiles(const input_tile_object_matrix& tiles)
         }
     }
 
+    //Reset center of gravity.
     cog_current_x_ = 0;
     cog_target_x_ = 0;
     cog_target_rotation_ = 0;
     cog_current_rotation_rad_ = 0;
+
+    //Animate insertion of tiles.
+    {
+        const auto animation_duration_s = 0.2f;
+
+        auto anim = animation{};
+
+        const auto dst_positions = get_input_tile_positions(tiles_, data_types::input_layout{});
+
+        libutil::for_each
+        (
+            [&](const auto& ptile, const auto& dst_position)
+            {
+                if(ptile)
+                {
+                    anim.add
+                    (
+                        tracks::fixed_duration_translation
+                        {
+                            ptile,
+                            dst_position,
+                            animation_duration_s,
+                            tile_move_interpolator
+                        }
+                    );
+                    anim.add(tracks::alpha_transition{ptile, 1, animation_duration_s});
+                }
+            },
+            tiles_,
+            dst_positions
+        );
+
+        insertion_animator_.push(std::move(anim));
+    }
 }
 
 input_tile_object_matrix input::release_tile_objects()
@@ -189,8 +305,20 @@ void input::resume()
     suspended_ = false;
 }
 
-void input::advance(const libutil::time_point& /*now*/, float elapsed_s)
+void input::advance(const libutil::time_point& now, float elapsed_s)
 {
+    if(suspended_)
+    {
+        return;
+    }
+
+    //Finish insertion animation before doing anything else.
+    if(insertion_animator_.is_animating())
+    {
+        insertion_animator_.advance(now);
+        return;
+    }
+
     const auto translation_speed = 7.0f; //in units per second
     const auto translation_step = translation_speed * elapsed_s;
 
