@@ -95,6 +95,7 @@ tile_grid::tile_grid
         add_corner(left,  top,    -90.0_degf);
     }
 
+    next_input_.setTranslation({0.0f, 5.0f});
     input_.setTranslation({0.0f, 3.0f});
 }
 

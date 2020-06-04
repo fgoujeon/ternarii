@@ -35,8 +35,7 @@ namespace
     libutil::matrix<Magnum::Vector2, 2, 2> get_input_tile_positions
     (
         const TileMatrix& tiles,
-        const data_types::input_layout& layout,
-        const float y_offset
+        const data_types::input_layout& layout
     )
     {
         auto positions = libutil::matrix<Magnum::Vector2, 2, 2>{};
@@ -52,7 +51,7 @@ namespace
                 pos = Magnum::Vector2
                 {
                     coord.col - 2.5f,
-                    coord.row - 0.5f + y_offset
+                    coord.row - 0.5f
                 };
             },
             positions
@@ -94,7 +93,7 @@ namespace
         {
             for(auto& pos: positions)
             {
-                pos.y() = y_offset;
+                pos.y() = 0;
             }
         }
 
@@ -122,7 +121,7 @@ void next_input::create_tiles(const data_types::input_tile_matrix& tiles)
 
     //Make tiles
     {
-        const auto positions = get_input_tile_positions(tiles, data_types::input_layout{}, 5.0f);
+        const auto positions = get_input_tile_positions(tiles, data_types::input_layout{});
 
         libutil::for_each
         (
