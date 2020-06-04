@@ -126,7 +126,7 @@ tile_grid::tile_grid
     Object2D{&parent},
     features::animable(*this, &animables),
     drawables_(drawables),
-    next_input_(*this, animator_, next_input_tiles_, input_tiles_),
+    next_input_(*this, animator_, input_tiles_),
     input_(*this, animator_, input_tiles_)
 {
     //board corners
@@ -180,7 +180,7 @@ void tile_grid::clear()
         }
     };
 
-    clear_matrix(next_input_tiles_);
+    clear_matrix(next_input_.get_tile_objects());
     clear_matrix(input_tiles_);
     clear_matrix(board_tiles_);
 }
@@ -202,7 +202,7 @@ void tile_grid::create_next_input(const data_types::input_tile_matrix& tiles)
             },
             tiles,
             positions,
-            next_input_tiles_
+            next_input_.get_tile_objects()
         );
     }
 
@@ -211,7 +211,7 @@ void tile_grid::create_next_input(const data_types::input_tile_matrix& tiles)
 
 void tile_grid::insert_next_input(const data_types::input_layout& layout)
 {
-    input_.insert_next_input(next_input_tiles_, layout);
+    input_.insert_next_input(next_input_.get_tile_objects(), layout);
 }
 
 void tile_grid::set_input_layout(const data_types::input_layout& layout)

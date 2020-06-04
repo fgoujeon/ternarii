@@ -112,12 +112,10 @@ next_input::next_input
 (
     Object2D& parent,
     animator& animator,
-    tile_object_matrix& tile_objects,
     tile_object_matrix& input_tile_objects
 ):
     Object2D(&parent),
     animator_(animator),
-    tile_objects_(tile_objects),
     input_tile_objects_(input_tile_objects)
 {
 }

@@ -42,16 +42,20 @@ class next_input: public Object2D
         (
             Object2D& parent,
             animator& animator,
-            tile_object_matrix& tile_objects,
             tile_object_matrix& input_tile_objects
         );
+
+        tile_object_matrix& get_tile_objects()
+        {
+            return tile_objects_;
+        }
 
         void animate_creation();
 
     private:
         animator& animator_;
-        tile_object_matrix& tile_objects_;
         tile_object_matrix& input_tile_objects_;
+        tile_object_matrix tile_objects_;
 };
 
 } //namespace
