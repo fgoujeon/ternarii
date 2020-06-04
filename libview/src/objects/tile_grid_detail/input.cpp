@@ -49,7 +49,7 @@ namespace
 
     libutil::matrix<Magnum::Vector2, 2, 2> compute_tile_positions
     (
-        const input_tile_object_matrix& tiles,
+        const input_tile_object_matrix& /*tiles*/,
         const float cog_current_x,
         const float cog_current_rotation_rad
     )
@@ -357,14 +357,38 @@ void input::handle_key_press(key_event& event)
             }
             break;
         case key_event::Key::Down:
-            drop_request_callback_
+            if
             (
-                data_types::input_layout
-                {
-                    .col_offset = static_cast<int>(cog_target_x_ + 2.0f),
-                    .rotation = cog_target_rotation_
-                }
-            );
+                !keyboard_state_.left_shift_button_pressed &&
+                !keyboard_state_.right_shift_button_pressed &&
+                !keyboard_state_.rotate_button_pressed &&
+                !insertion_animator_.is_animating()
+            )
+            {
+                const auto special_case_offset =
+                    cog_target_rotation_ == 3 ?
+                    -1 :
+                    0
+                ;
+
+                const auto col_offset = static_cast<int>
+                (
+                    std::round
+                    (
+                        cog_target_x_ +
+                        2.4f //not 2.5, to make sure we don't round integers up
+                    )
+                ) + special_case_offset;
+
+                drop_request_callback_
+                (
+                    data_types::input_layout
+                    {
+                        .col_offset = col_offset,
+                        .rotation = cog_target_rotation_
+                    }
+                );
+            }
         default:
             break;
     }
