@@ -111,20 +111,18 @@ namespace
 next_input::next_input
 (
     Object2D& parent,
-    features::drawable_group& drawables,
     animator& animator,
     tile_object_matrix& tile_objects,
     tile_object_matrix& input_tile_objects
 ):
     Object2D(&parent),
-    drawables_(drawables),
     animator_(animator),
     tile_objects_(tile_objects),
     input_tile_objects_(input_tile_objects)
 {
 }
 
-void next_input::create_next_input(const data_types::input_tile_matrix& tiles)
+void next_input::animate_creation()
 {
     const auto animation_duration_s = 0.2f;
 
@@ -158,66 +156,16 @@ void next_input::create_next_input(const data_types::input_tile_matrix& tiles)
         );
     }
 
-    //Create new next input and animate its creation.
+    //Animate next input creation.
+    for(auto& ptile_object: tile_objects_)
     {
-        const auto positions = get_input_tile_positions(tiles, data_types::input_layout{}, 5.0f);
-
-        libutil::for_each
-        (
-            [&](const auto& opt_tile, const auto& position, auto& pnext_input_tile)
-            {
-                if(opt_tile.has_value())
-                {
-                    pnext_input_tile = make_tile(opt_tile.value(), position);
-                    anim.add(tracks::alpha_transition{pnext_input_tile, 0.4, animation_duration_s});
-                }
-            },
-            tiles,
-            positions,
-            tile_objects_
-        );
+        if(ptile_object)
+        {
+            anim.add(tracks::alpha_transition{ptile_object, 0.4, animation_duration_s});
+        }
     }
 
     animator_.push(std::move(anim));
-}
-
-std::shared_ptr<Object2D> next_input::make_tile
-(
-    const data_types::tile& tile,
-    const Magnum::Vector2& position
-)
-{
-    using result_t = std::shared_ptr<Object2D>;
-
-    auto ptile = std::visit
-    (
-        libutil::overload
-        {
-            [&](const data_types::number_tile& tile) -> result_t
-            {
-                return std::make_shared<number_tile>(*this, drawables_, tile.value);
-            },
-            [&](const data_types::column_nullifier_tile&) -> result_t
-            {
-                return std::make_shared<sdf_image_tile>(*this, drawables_, libres::images::column_nullifier);
-            },
-            [&](const data_types::row_nullifier_tile&) -> result_t
-            {
-                return std::make_shared<sdf_image_tile>(*this, drawables_, libres::images::row_nullifier);
-            },
-            [&](const data_types::number_nullifier_tile&) -> result_t
-            {
-                return std::make_shared<sdf_image_tile>(*this, drawables_, libres::images::number_nullifier);
-            }
-        },
-        tile
-    );
-
-    ptile->set_alpha(0.0f);
-    ptile->scale({0.46f, 0.46f});
-    ptile->translate(position);
-
-    return ptile;
 }
 
 } //namespace

@@ -126,7 +126,7 @@ tile_grid::tile_grid
     Object2D{&parent},
     features::animable(*this, &animables),
     drawables_(drawables),
-    next_input_(*this, drawables, animator_, next_input_tiles_, input_tiles_)
+    next_input_(*this, animator_, next_input_tiles_, input_tiles_)
 {
     //board corners
     {
@@ -186,7 +186,26 @@ void tile_grid::clear()
 
 void tile_grid::create_next_input(const data_types::input_tile_matrix& tiles)
 {
-    next_input_.create_next_input(tiles);
+    //Make tiles
+    {
+        const auto positions = get_input_tile_positions(tiles, data_types::input_layout{}, 5.0f);
+
+        libutil::for_each
+        (
+            [&](const auto& opt_tile, const auto& position, auto& pnext_input_tile)
+            {
+                if(opt_tile.has_value())
+                {
+                    pnext_input_tile = make_tile(opt_tile.value(), position);
+                }
+            },
+            tiles,
+            positions,
+            next_input_tiles_
+        );
+    }
+
+    next_input_.animate_creation();
 }
 
 void tile_grid::insert_next_input(const data_types::input_layout& layout)

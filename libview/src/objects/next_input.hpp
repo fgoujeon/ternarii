@@ -41,23 +41,14 @@ class next_input: public Object2D
         next_input
         (
             Object2D& parent,
-            features::drawable_group& drawables,
             animator& animator,
             tile_object_matrix& tile_objects,
             tile_object_matrix& input_tile_objects
         );
 
-        void create_next_input(const data_types::input_tile_matrix& tiles);
+        void animate_creation();
 
     private:
-        std::shared_ptr<Object2D> make_tile
-        (
-            const data_types::tile& tile,
-            const Magnum::Vector2& position
-        );
-
-    private:
-        features::drawable_group& drawables_;
         animator& animator_;
         tile_object_matrix& tile_objects_;
         tile_object_matrix& input_tile_objects_;
