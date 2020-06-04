@@ -40,23 +40,11 @@ class playing final: public state
     private:
         void handle_view_move_request(const libview::data_types::move /*m*/)
         {
-            //using move = libview::data_types::move;
+        }
 
-            //switch(m)
-            //{
-            //    case move::left_shift:
-            //        modify_game(&libgame::game::shift_input_left);
-            //        break;
-            //    case move::right_shift:
-            //        modify_game(&libgame::game::shift_input_right);
-            //        break;
-            //    case move::clockwise_rotation:
-            //        modify_game(&libgame::game::rotate_input);
-            //        break;
-            //    case move::drop:
-            //        modify_game(&libgame::game::drop_input_tiles);
-            //        break;
-            //}
+        void handle_view_drop_request(const libview::data_types::input_layout& input_layout)
+        {
+            modify_game(&libgame::game::drop_input_tiles_with_layout, input_layout);
         }
 
     //Game event handlers
@@ -141,8 +129,8 @@ class playing final: public state
         Call given libgame::game's modifier function and handle the returned
         events.
         */
-        template<class Fn>
-        void modify_game(Fn&& fn)
+        template<class Fn, class... Args>
+        void modify_game(Fn&& fn, Args&&... args)
         {
             if(!pgame_)
             {
@@ -150,7 +138,7 @@ class playing final: public state
             }
 
             game_events_.clear();
-            std::invoke(fn, *pgame_, game_events_);
+            std::invoke(fn, *pgame_, std::forward<Args>(args)..., game_events_);
             handle_game_events(game_events_);
         }
 

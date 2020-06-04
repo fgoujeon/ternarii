@@ -37,6 +37,7 @@ class game: public Object2D, public features::key_event_handler
         struct callback_set
         {
             libutil::void_function<data_types::move> handle_move_request;
+            libutil::void_function<const data_types::input_layout&> handle_drop_request;
             libutil::void_function<> handle_clear_request;
             libutil::void_function<> handle_exit_request;
         };

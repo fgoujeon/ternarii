@@ -140,21 +140,15 @@ namespace
 input::input
 (
     Object2D& parent,
-    features::drawable_group& drawables,
     features::animable_group& animables,
-    features::key_event_handler_group& key_event_handlers
+    features::key_event_handler_group& key_event_handlers,
+    const drop_request_callback& drop_cb
 ):
     Object2D(&parent),
     features::animable{*this, &animables},
     features::key_event_handler{*this, &key_event_handlers},
-    drawables_(drawables)
+    drop_request_callback_(drop_cb)
 {
-    at(tiles_, 0, 0) = std::make_shared<number_tile>(*this, drawables_, 5);
-    at(tiles_, 0, 0)->scale({0.46f, 0.46f});
-
-    at(tiles_, 1, 0) = std::make_shared<number_tile>(*this, drawables_, 6);
-    at(tiles_, 1, 0)->scale({0.46f, 0.46f});
-
     update_cog_target_position();
 }
 

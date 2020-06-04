@@ -53,13 +53,14 @@ tile_grid::tile_grid
     Object2D& parent,
     features::drawable_group& drawables,
     features::animable_group& animables,
-    features::key_event_handler_group& key_event_handlers
+    features::key_event_handler_group& key_event_handlers,
+    const drop_request_callback& drop_cb
 ):
     Object2D{&parent},
     features::animable(*this, &animables),
     drawables_(drawables),
     next_input_(*this, drawables, animables),
-    input_(*this, drawables, animables, key_event_handlers)
+    input_(*this, animables, key_event_handlers, drop_cb)
 {
     //board corners
     {

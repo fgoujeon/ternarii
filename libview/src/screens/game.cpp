@@ -92,7 +92,14 @@ struct game::impl
         feature_groups(feature_groups),
         callbacks(callbacks),
         pbackground(make_background(self, feature_groups, show_background)),
-        tile_grid(self, feature_groups.drawables, feature_groups.animables, feature_groups.key_event_handlers),
+        tile_grid
+        (
+            self,
+            feature_groups.drawables,
+            feature_groups.animables,
+            feature_groups.key_event_handlers,
+            callbacks.handle_drop_request
+        ),
         score_display(self, feature_groups.drawables),
         hi_score_display(self, feature_groups.drawables),
         stage_name_label
@@ -122,7 +129,20 @@ struct game::impl
         ),
         MOVE_BUTTON_INITIALIZER(libres::images::move_button,   left_shift),
         MOVE_BUTTON_INITIALIZER(libres::images::move_button,   right_shift),
-        MOVE_BUTTON_INITIALIZER(libres::images::move_button,   drop),
+        drop_button
+        (
+            self,
+            feature_groups.drawables,
+            feature_groups.clickables,
+            libres::images::move_button,
+            objects::sdf_image_button::callback_set
+            {
+                .handle_mouse_press = [/*this*/]
+                {
+                    //send_move_request(data_types::move::drop);
+                }
+            }
+        ),
         MOVE_BUTTON_INITIALIZER(libres::images::rotate_button, clockwise_rotation)
     {
         const auto move_button_scaling = 0.95f;
@@ -219,7 +239,7 @@ void game::handle_key_press(key_event& event)
             pimpl_->send_move_request(data_types::move::clockwise_rotation);
             break;
         case key_event::Key::Down:
-            pimpl_->send_move_request(data_types::move::drop);
+            //pimpl_->send_move_request(data_types::move::drop);
             break;
         default:
             break;

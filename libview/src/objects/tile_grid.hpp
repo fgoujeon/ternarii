@@ -41,6 +41,9 @@ namespace libview::objects
 
 class tile_grid: public Object2D, public features::animable
 {
+    public:
+        using drop_request_callback = libutil::void_function<const data_types::input_layout&>;
+
     private:
         using input_tile_matrix = libutil::matrix
         <
@@ -62,7 +65,8 @@ class tile_grid: public Object2D, public features::animable
             Object2D& parent,
             features::drawable_group& drawables,
             features::animable_group& animables,
-            features::key_event_handler_group& key_event_handlers
+            features::key_event_handler_group& key_event_handlers,
+            const drop_request_callback& drop_cb
         );
 
         bool is_animating() const;

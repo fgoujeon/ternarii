@@ -28,6 +28,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include <libcommon/constants.hpp>
 #include <libutil/matrix.hpp>
 #include <libutil/time.hpp>
+#include <libutil/void_function.hpp>
 #include <Magnum/Animation/Player.h>
 #include <memory>
 
@@ -51,13 +52,15 @@ class input: public Object2D, public features::animable, public features::key_ev
             bool rotate_button_pressed = false;
         };
 
+        using drop_request_callback = libutil::void_function<const data_types::input_layout&>;
+
     public:
         input
         (
             Object2D& parent,
-            features::drawable_group& drawables,
             features::animable_group& animables,
-            features::key_event_handler_group& key_event_handlers
+            features::key_event_handler_group& key_event_handlers,
+            const drop_request_callback& drop_cb
         );
 
         void set_tiles(const input_tile_object_matrix& tiles);
@@ -82,7 +85,7 @@ class input: public Object2D, public features::animable, public features::key_ev
         void update_cog_target_position();
 
     private:
-        features::drawable_group& drawables_;
+        drop_request_callback drop_request_callback_;
 
         keyboard_state keyboard_state_;
 

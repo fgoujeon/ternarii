@@ -48,7 +48,6 @@ using tile_merge_list       = libcommon::data_types::tile_merge_list;
 enum class move
 {
     clockwise_rotation,
-    drop,
     left_shift,
     right_shift
 };
