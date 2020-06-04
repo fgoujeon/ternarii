@@ -18,6 +18,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 #include "tile_grid.hpp"
+#include "tile_grid_detail/common.hpp"
 #include "number_tile.hpp"
 #include "sdf_image.hpp"
 #include "../colors.hpp"
@@ -39,76 +40,6 @@ namespace
         };
     }
 
-    template<class TileMatrix>
-    libutil::matrix<Magnum::Vector2, 2, 2> get_input_tile_positions
-    (
-        const TileMatrix& tiles,
-        const data_types::input_layout& layout,
-        const float y_offset
-    )
-    {
-        auto positions = libutil::matrix<Magnum::Vector2, 2, 2>{};
-
-        libutil::for_each_colrow
-        (
-            [&](auto& pos, const int col, const int row)
-            {
-                //Get coordinate as indices
-                const auto coord = get_tile_coordinate(layout, {col, row});
-
-                //Convert to model coordinate
-                pos = Magnum::Vector2
-                {
-                    coord.col - 2.5f,
-                    coord.row - 0.5f + y_offset
-                };
-            },
-            positions
-        );
-
-        //Center the tiles vertically if they are on the same line
-        const auto on_same_line = [&]
-        {
-            auto on_same_line = true;
-            auto opt_y = std::optional<float>{};
-            libutil::for_each
-            (
-                [&](const auto& pos, const auto& ptile)
-                {
-                    if(!ptile)
-                    {
-                        return;
-                    }
-
-                    if(!opt_y)
-                    {
-                        opt_y = pos.y();
-                        return;
-                    }
-
-                    if(pos.y() != opt_y)
-                    {
-                        on_same_line = false;
-                    }
-                },
-                positions,
-                tiles
-            );
-
-            return on_same_line;
-        }();
-
-        if(on_same_line)
-        {
-            for(auto& pos: positions)
-            {
-                pos.y() = y_offset;
-            }
-        }
-
-        return positions;
-    }
-
     const auto tile_move_interpolator = Magnum::Animation::ease
     <
         Magnum::Vector2,
@@ -125,7 +56,9 @@ tile_grid::tile_grid
 ):
     Object2D{&parent},
     features::animable(*this, &animables),
-    drawables_(drawables)
+    drawables_(drawables),
+    next_input_(*this, drawables, animables),
+    input_(*this, animables)
 {
     //board corners
     {
@@ -161,6 +94,9 @@ tile_grid::tile_grid
         add_corner(left,  bottom,   0.0_degf);
         add_corner(left,  top,    -90.0_degf);
     }
+
+    next_input_.setTranslation({0.0f, 5.0f});
+    input_.setTranslation({0.0f, 3.0f});
 }
 
 bool tile_grid::is_animating() const
@@ -170,135 +106,47 @@ bool tile_grid::is_animating() const
 
 void tile_grid::clear()
 {
-    const auto clear_matrix = [](auto& matrix)
-    {
-        for(auto& ptile: matrix)
-        {
-            ptile.reset();
-        }
-    };
+    next_input_.release_tile_objects();
+    input_.release_tile_objects();
 
-    clear_matrix(next_input_tiles_);
-    clear_matrix(input_tiles_);
-    clear_matrix(board_tiles_);
+    for(auto& ptile: board_tiles_)
+    {
+        ptile.reset();
+    }
 }
 
 void tile_grid::create_next_input(const data_types::input_tile_matrix& tiles)
 {
-    const auto animation_duration_s = 0.2f;
-
-    auto anim = animation{};
-
-    //Animate insertion of current next input into input.
-    {
-        const auto dst_positions = get_input_tile_positions(input_tiles_, input_layout_, 3.0f);
-
-        libutil::for_each
-        (
-            [&](const auto& ptile, const auto& dst_position)
-            {
-                if(ptile)
-                {
-                    anim.add
-                    (
-                        tracks::fixed_duration_translation
-                        {
-                            ptile,
-                            dst_position,
-                            animation_duration_s,
-                            tile_move_interpolator
-                        }
-                    );
-                    anim.add(tracks::alpha_transition{ptile, 1, animation_duration_s});
-                }
-            },
-            input_tiles_,
-            dst_positions
-        );
-    }
-
-    //Create new next input and animate its creation.
-    {
-        const auto positions = get_input_tile_positions(tiles, input_layout_, 5.0f);
-
-        libutil::for_each
-        (
-            [&](const auto& opt_tile, const auto& position, auto& pnext_input_tile)
-            {
-                if(opt_tile.has_value())
-                {
-                    pnext_input_tile = make_tile(opt_tile.value(), position);
-                    anim.add(tracks::alpha_transition{pnext_input_tile, 0.4, animation_duration_s});
-                }
-            },
-            tiles,
-            positions,
-            next_input_tiles_
-        );
-    }
-
-    animator_.push(std::move(anim));
+    next_input_.create_tiles(tiles);
 }
 
 void tile_grid::insert_next_input(const data_types::input_layout& layout)
 {
-    input_layout_ = layout;
-    input_tiles_ = next_input_tiles_;
-
-    for(auto& ptile: next_input_tiles_)
-    {
-        ptile = nullptr;
-    }
-
-    //Note: Animation is done in create_next_input().
+    input_.insert_next_input(next_input_.release_tile_objects(), layout);
 }
 
 void tile_grid::set_input_layout(const data_types::input_layout& layout)
 {
-    if(input_layout_ == layout)
-    {
-        return;
-    }
-
-    input_layout_ = layout;
-
-    const auto dst_positions = get_input_tile_positions(input_tiles_, layout, 3.0f);
-
-    auto anim = animation{};
-
-    libutil::for_each
-    (
-        [&](const auto ptile, const auto& dst_position)
-        {
-            if(!ptile)
-            {
-                return;
-            }
-
-            anim.add
-            (
-                tracks::fixed_speed_translation
-                {
-                    ptile,
-                    dst_position,
-                    20
-                }
-            );
-        },
-        input_tiles_,
-        dst_positions
-    );
-
-    animator_.push(std::move(anim));
+    input_.set_input_layout(layout);
 }
 
 void tile_grid::drop_input_tiles(const data_types::input_tile_drop_list& drops)
 {
     auto anim = animation{};
 
+    //Retrieve tile objects
+    const auto input_tile_objects = input_.release_tile_objects();
+    for(auto& ptile: input_tile_objects)
+    {
+        if(ptile)
+        {
+            ptile->setParentKeepTransformation(this);
+        }
+    }
+
     for(const auto& drop: drops)
     {
-        auto& ptile = at(input_tiles_, drop.input_coordinate);
+        const auto& ptile = at(input_tile_objects, drop.input_coordinate);
 
         const auto dst_position = tile_coordinate_to_position(drop.board_coordinate);
 
@@ -313,11 +161,14 @@ void tile_grid::drop_input_tiles(const data_types::input_tile_drop_list& drops)
         );
 
         at(board_tiles_, drop.board_coordinate) = ptile;
-        ptile = nullptr;
     }
 
+    animator_.push(tracks::closure{[this]{next_input_.suspend();}});
+    animator_.push(tracks::closure{[this]{input_.suspend();}});
     animator_.push(std::move(anim));
     animator_.push(tracks::pause{0.05});
+    animator_.push(tracks::closure{[this]{input_.resume();}});
+    animator_.push(tracks::closure{[this]{next_input_.resume();}});
 }
 
 void tile_grid::drop_board_tiles(const data_types::board_tile_drop_list& drops)
@@ -344,8 +195,12 @@ void tile_grid::drop_board_tiles(const data_types::board_tile_drop_list& drops)
         ptile = nullptr;
     }
 
+    animator_.push(tracks::closure{[this]{next_input_.suspend();}});
+    animator_.push(tracks::closure{[this]{input_.suspend();}});
     animator_.push(std::move(anim));
     animator_.push(tracks::pause{0.05});
+    animator_.push(tracks::closure{[this]{input_.resume();}});
+    animator_.push(tracks::closure{[this]{next_input_.resume();}});
 }
 
 void tile_grid::nullify_tiles(const libutil::matrix_coordinate_list& nullified_tile_coordinates)
@@ -420,8 +275,12 @@ void tile_grid::merge_tiles(const data_types::tile_merge_list& merges)
         anim1.add(tracks::alpha_transition{pdst_tile, 1, 0.2});
     }
 
+    animator_.push(tracks::closure{[this]{next_input_.suspend();}});
+    animator_.push(tracks::closure{[this]{input_.suspend();}});
     animator_.push(std::move(anim0));
     animator_.push(std::move(anim1));
+    animator_.push(tracks::closure{[this]{input_.resume();}});
+    animator_.push(tracks::closure{[this]{next_input_.resume();}});
 }
 
 void tile_grid::mark_tiles_for_nullification(const libutil::matrix_coordinate_list& tile_coordinates)
@@ -482,36 +341,8 @@ std::shared_ptr<Object2D> tile_grid::make_tile
     const Magnum::Vector2& position
 )
 {
-    using result_t = std::shared_ptr<Object2D>;
-
-    auto ptile = std::visit
-    (
-        libutil::overload
-        {
-            [&](const data_types::number_tile& tile) -> result_t
-            {
-                return std::make_shared<number_tile>(*this, drawables_, tile.value);
-            },
-            [&](const data_types::column_nullifier_tile&) -> result_t
-            {
-                return std::make_shared<sdf_image_tile>(*this, drawables_, libres::images::column_nullifier);
-            },
-            [&](const data_types::row_nullifier_tile&) -> result_t
-            {
-                return std::make_shared<sdf_image_tile>(*this, drawables_, libres::images::row_nullifier);
-            },
-            [&](const data_types::number_nullifier_tile&) -> result_t
-            {
-                return std::make_shared<sdf_image_tile>(*this, drawables_, libres::images::number_nullifier);
-            }
-        },
-        tile
-    );
-
-    ptile->set_alpha(0.0f);
-    ptile->scale({0.46f, 0.46f});
+    auto ptile = tile_grid_detail::make_tile_object(*this, drawables_, tile);
     ptile->translate(position);
-
     return ptile;
 }
 
