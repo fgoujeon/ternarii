@@ -42,8 +42,7 @@ class next_input: public Object2D, public features::animable
         (
             Object2D& parent,
             features::drawable_group& drawables,
-            features::animable_group& animables,
-            tile_object_matrix& input_tile_objects
+            features::animable_group& animables
         );
 
         tile_object_matrix& get_tile_objects()
@@ -63,7 +62,6 @@ class next_input: public Object2D, public features::animable
 
     private:
         features::drawable_group& drawables_;
-        tile_object_matrix& input_tile_objects_;
 
         animator animator_;
         bool suspended_ = false;

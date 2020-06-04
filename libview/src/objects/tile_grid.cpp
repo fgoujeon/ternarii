@@ -40,76 +40,6 @@ namespace
         };
     }
 
-    template<class TileMatrix>
-    libutil::matrix<Magnum::Vector2, 2, 2> get_input_tile_positions
-    (
-        const TileMatrix& tiles,
-        const data_types::input_layout& layout,
-        const float y_offset
-    )
-    {
-        auto positions = libutil::matrix<Magnum::Vector2, 2, 2>{};
-
-        libutil::for_each_colrow
-        (
-            [&](auto& pos, const int col, const int row)
-            {
-                //Get coordinate as indices
-                const auto coord = get_tile_coordinate(layout, {col, row});
-
-                //Convert to model coordinate
-                pos = Magnum::Vector2
-                {
-                    coord.col - 2.5f,
-                    coord.row - 0.5f + y_offset
-                };
-            },
-            positions
-        );
-
-        //Center the tiles vertically if they are on the same line
-        const auto on_same_line = [&]
-        {
-            auto on_same_line = true;
-            auto opt_y = std::optional<float>{};
-            libutil::for_each
-            (
-                [&](const auto& pos, const auto& ptile)
-                {
-                    if(!ptile)
-                    {
-                        return;
-                    }
-
-                    if(!opt_y)
-                    {
-                        opt_y = pos.y();
-                        return;
-                    }
-
-                    if(pos.y() != opt_y)
-                    {
-                        on_same_line = false;
-                    }
-                },
-                positions,
-                tiles
-            );
-
-            return on_same_line;
-        }();
-
-        if(on_same_line)
-        {
-            for(auto& pos: positions)
-            {
-                pos.y() = y_offset;
-            }
-        }
-
-        return positions;
-    }
-
     const auto tile_move_interpolator = Magnum::Animation::ease
     <
         Magnum::Vector2,
@@ -127,7 +57,7 @@ tile_grid::tile_grid
     Object2D{&parent},
     features::animable(*this, &animables),
     drawables_(drawables),
-    next_input_(*this, drawables, animables, input_tiles_),
+    next_input_(*this, drawables, animables),
     input_(*this, animables, input_tiles_)
 {
     //board corners

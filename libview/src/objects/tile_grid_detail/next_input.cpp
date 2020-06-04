@@ -100,26 +100,17 @@ namespace
 
         return positions;
     }
-
-    const auto tile_move_interpolator = Magnum::Animation::ease
-    <
-        Magnum::Vector2,
-        Magnum::Math::lerp,
-        Magnum::Animation::Easing::cubicOut
-    >();
 }
 
 next_input::next_input
 (
     Object2D& parent,
     features::drawable_group& drawables,
-    features::animable_group& animables,
-    tile_object_matrix& input_tile_objects
+    features::animable_group& animables
 ):
     Object2D(&parent),
     features::animable(*this, &animables),
-    drawables_(drawables),
-    input_tile_objects_(input_tile_objects)
+    drawables_(drawables)
 {
 }
 
