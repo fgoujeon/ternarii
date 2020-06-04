@@ -58,7 +58,7 @@ tile_grid::tile_grid
     features::animable(*this, &animables),
     drawables_(drawables),
     next_input_(*this, drawables, animables),
-    input_(*this, animables, input_tiles_)
+    input_(*this, animables)
 {
     //board corners
     {
@@ -111,8 +111,8 @@ void tile_grid::clear()
         }
     };
 
-    clear_matrix(next_input_.get_tile_objects());
-    clear_matrix(input_tiles_);
+    next_input_.release_tiles();
+    clear_matrix(input_.get_tile_objects());
     clear_matrix(board_tiles_);
 }
 
@@ -123,7 +123,7 @@ void tile_grid::create_next_input(const data_types::input_tile_matrix& tiles)
 
 void tile_grid::insert_next_input(const data_types::input_layout& layout)
 {
-    input_.insert_next_input(next_input_.get_tile_objects(), layout);
+    input_.insert_next_input(next_input_.release_tiles(), layout);
 }
 
 void tile_grid::set_input_layout(const data_types::input_layout& layout)
@@ -137,7 +137,7 @@ void tile_grid::drop_input_tiles(const data_types::input_tile_drop_list& drops)
 
     for(const auto& drop: drops)
     {
-        auto& ptile = at(input_tiles_, drop.input_coordinate);
+        auto& ptile = at(input_.get_tile_objects(), drop.input_coordinate);
 
         const auto dst_position = tile_coordinate_to_position(drop.board_coordinate);
 

@@ -20,6 +20,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #ifndef LIBVIEW_OBJECTS_TILE_GRID_DETAIL_NEXT_INPUT_HPP
 #define LIBVIEW_OBJECTS_TILE_GRID_DETAIL_NEXT_INPUT_HPP
 
+#include "common.hpp"
 #include "../../animation.hpp"
 #include "../../common.hpp"
 #include <libview/data_types.hpp>
@@ -30,14 +31,6 @@ namespace libview::objects::tile_grid_detail
 class next_input: public Object2D, public features::animable
 {
     public:
-        using tile_object_matrix = libutil::matrix
-        <
-            std::shared_ptr<Object2D>,
-            libcommon::constants::input_column_count,
-            libcommon::constants::input_row_count
-        >;
-
-    public:
         next_input
         (
             Object2D& parent,
@@ -45,12 +38,9 @@ class next_input: public Object2D, public features::animable
             features::animable_group& animables
         );
 
-        tile_object_matrix& get_tile_objects()
-        {
-            return tile_objects_;
-        }
-
         void create_tiles(const data_types::input_tile_matrix& tiles);
+
+        input_tile_object_matrix release_tiles();
 
     //Animation
     public:
@@ -65,7 +55,7 @@ class next_input: public Object2D, public features::animable
 
         animator animator_;
         bool suspended_ = false;
-        tile_object_matrix tile_objects_;
+        input_tile_object_matrix tile_objects_;
 };
 
 } //namespace

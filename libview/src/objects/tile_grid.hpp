@@ -101,7 +101,6 @@ class tile_grid: public Object2D, public features::animable
         animator animator_;
 
         std::vector<std::unique_ptr<sdf_image>> board_corners_;
-        input_tile_matrix input_tiles_ = {};
         data_types::input_layout input_layout_;
         board_tile_matrix board_tiles_ = {};
 

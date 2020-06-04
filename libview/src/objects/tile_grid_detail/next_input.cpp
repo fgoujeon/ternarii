@@ -152,6 +152,16 @@ void next_input::create_tiles(const data_types::input_tile_matrix& tiles)
     animator_.push(std::move(anim));
 }
 
+input_tile_object_matrix next_input::release_tiles()
+{
+    auto out = tile_objects_;
+    for(auto& ptile_object: tile_objects_)
+    {
+        ptile_object.reset();
+    }
+    return out;
+}
+
 void next_input::suspend()
 {
     suspended_ = true;

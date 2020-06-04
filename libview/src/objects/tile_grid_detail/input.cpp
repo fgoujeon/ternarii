@@ -111,30 +111,21 @@ namespace
 input::input
 (
     Object2D& parent,
-    features::animable_group& animables,
-    tile_object_matrix& input_tile_objects
+    features::animable_group& animables
 ):
     Object2D(&parent),
-    features::animable(*this, &animables),
-    input_tile_objects_(input_tile_objects)
+    features::animable(*this, &animables)
 {
 }
 
 void input::insert_next_input
 (
-    tile_object_matrix& next_input_tile_objects,
+    const input_tile_object_matrix& next_input_tile_objects,
     const data_types::input_layout& layout
 )
 {
-    layout_ = layout;
     input_tile_objects_ = next_input_tile_objects;
-
-    for(auto& ptile: next_input_tile_objects)
-    {
-        ptile = nullptr;
-    }
-
-
+    layout_ = layout;
 
     const auto animation_duration_s = 0.2f;
 

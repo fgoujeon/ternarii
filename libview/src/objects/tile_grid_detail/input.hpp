@@ -20,6 +20,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #ifndef LIBVIEW_OBJECTS_TILE_GRID_DETAIL_INPUT_HPP
 #define LIBVIEW_OBJECTS_TILE_GRID_DETAIL_INPUT_HPP
 
+#include "common.hpp"
 #include "../../animation.hpp"
 #include "../../common.hpp"
 #include <libview/data_types.hpp>
@@ -30,28 +31,24 @@ namespace libview::objects::tile_grid_detail
 class input: public Object2D, public features::animable
 {
     public:
-        using tile_object_matrix = libutil::matrix
-        <
-            std::shared_ptr<Object2D>,
-            libcommon::constants::input_column_count,
-            libcommon::constants::input_row_count
-        >;
-
-    public:
         input
         (
             Object2D& parent,
-            features::animable_group& animables,
-            tile_object_matrix& input_tile_objects
+            features::animable_group& animables
         );
 
         void insert_next_input
         (
-            tile_object_matrix& next_input_tile_objects,
+            const input_tile_object_matrix& next_input_tile_objects,
             const data_types::input_layout& layout
         );
 
         void set_input_layout(const data_types::input_layout& layout);
+
+        input_tile_object_matrix& get_tile_objects()
+        {
+            return input_tile_objects_;
+        }
 
     //Animation
     public:
@@ -62,10 +59,9 @@ class input: public Object2D, public features::animable
         void advance(const libutil::time_point& now, float elapsed_s) override;
 
     private:
-        tile_object_matrix& input_tile_objects_;
-
         animator animator_;
         bool suspended_ = false;
+        input_tile_object_matrix input_tile_objects_;
         data_types::input_layout layout_;
 };
 
