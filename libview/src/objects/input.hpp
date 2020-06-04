@@ -42,17 +42,19 @@ class input: public Object2D
         (
             Object2D& parent,
             animator& animator,
-            tile_object_matrix& next_input_tile_objects,
             tile_object_matrix& input_tile_objects
         );
 
-        void insert_next_input(const data_types::input_layout& layout);
+        void insert_next_input
+        (
+            tile_object_matrix& next_input_tile_objects,
+            const data_types::input_layout& layout
+        );
 
         void set_input_layout(const data_types::input_layout& layout);
 
     private:
         animator& animator_;
-        tile_object_matrix& next_input_tile_objects_;
         tile_object_matrix& input_tile_objects_;
         data_types::input_layout layout_;
 };

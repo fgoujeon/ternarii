@@ -105,22 +105,24 @@ input::input
 (
     Object2D& parent,
     animator& animator,
-    tile_object_matrix& next_input_tile_objects,
     tile_object_matrix& input_tile_objects
 ):
     Object2D(&parent),
     animator_(animator),
-    next_input_tile_objects_(next_input_tile_objects),
     input_tile_objects_(input_tile_objects)
 {
 }
 
-void input::insert_next_input(const data_types::input_layout& layout)
+void input::insert_next_input
+(
+    tile_object_matrix& next_input_tile_objects,
+    const data_types::input_layout& layout
+)
 {
     layout_ = layout;
-    input_tile_objects_ = next_input_tile_objects_;
+    input_tile_objects_ = next_input_tile_objects;
 
-    for(auto& ptile: next_input_tile_objects_)
+    for(auto& ptile: next_input_tile_objects)
     {
         ptile = nullptr;
     }
