@@ -126,7 +126,8 @@ tile_grid::tile_grid
     Object2D{&parent},
     features::animable(*this, &animables),
     drawables_(drawables),
-    next_input_(*this, animator_, next_input_tiles_, input_tiles_)
+    next_input_(*this, animator_, next_input_tiles_, input_tiles_),
+    input_(*this, animator_, next_input_tiles_, input_tiles_)
 {
     //board corners
     {
@@ -210,54 +211,12 @@ void tile_grid::create_next_input(const data_types::input_tile_matrix& tiles)
 
 void tile_grid::insert_next_input(const data_types::input_layout& layout)
 {
-    input_layout_ = layout;
-    input_tiles_ = next_input_tiles_;
-
-    for(auto& ptile: next_input_tiles_)
-    {
-        ptile = nullptr;
-    }
-
-    //Note: Animation is done in create_next_input().
+    input_.insert_next_input(layout);
 }
 
 void tile_grid::set_input_layout(const data_types::input_layout& layout)
 {
-    if(input_layout_ == layout)
-    {
-        return;
-    }
-
-    input_layout_ = layout;
-
-    const auto dst_positions = get_input_tile_positions(input_tiles_, layout, 3.0f);
-
-    auto anim = animation{};
-
-    libutil::for_each
-    (
-        [&](const auto ptile, const auto& dst_position)
-        {
-            if(!ptile)
-            {
-                return;
-            }
-
-            anim.add
-            (
-                tracks::fixed_speed_translation
-                {
-                    ptile,
-                    dst_position,
-                    20
-                }
-            );
-        },
-        input_tiles_,
-        dst_positions
-    );
-
-    animator_.push(std::move(anim));
+    input_.set_input_layout(layout);
 }
 
 void tile_grid::drop_input_tiles(const data_types::input_tile_drop_list& drops)
