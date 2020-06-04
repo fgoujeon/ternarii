@@ -162,6 +162,11 @@ void input::set_tiles(const input_tile_object_matrix& tiles)
             ptile->setParentKeepTransformation(this);
         }
     }
+
+    cog_current_x_ = 0;
+    cog_target_x_ = 0;
+    cog_target_rotation_ = 0;
+    cog_current_rotation_rad_ = 0;
 }
 
 input_tile_object_matrix input::release_tile_objects()
