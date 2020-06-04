@@ -52,13 +52,14 @@ tile_grid::tile_grid
 (
     Object2D& parent,
     features::drawable_group& drawables,
-    features::animable_group& animables
+    features::animable_group& animables,
+    features::key_event_handler_group& key_event_handlers
 ):
     Object2D{&parent},
     features::animable(*this, &animables),
     drawables_(drawables),
     next_input_(*this, drawables, animables),
-    input_(*this, animables)
+    input_(*this, drawables, animables, key_event_handlers)
 {
     //board corners
     {
@@ -120,14 +121,14 @@ void tile_grid::create_next_input(const data_types::input_tile_matrix& tiles)
     next_input_.create_tiles(tiles);
 }
 
-void tile_grid::insert_next_input(const data_types::input_layout& layout)
+void tile_grid::insert_next_input(const data_types::input_layout& /*layout*/)
 {
-    input_.insert_next_input(next_input_.release_tile_objects(), layout);
+    input_.set_tiles(next_input_.release_tile_objects());
 }
 
-void tile_grid::set_input_layout(const data_types::input_layout& layout)
+void tile_grid::set_input_layout(const data_types::input_layout& /*layout*/)
 {
-    input_.set_input_layout(layout);
+    //input_.set_input_layout(layout);
 }
 
 void tile_grid::drop_input_tiles(const data_types::input_tile_drop_list& drops)

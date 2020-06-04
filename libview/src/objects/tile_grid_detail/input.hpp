@@ -21,29 +21,46 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #define LIBVIEW_OBJECTS_TILE_GRID_DETAIL_INPUT_HPP
 
 #include "common.hpp"
+#include "../number_tile.hpp"
 #include "../../animation.hpp"
 #include "../../common.hpp"
 #include <libview/data_types.hpp>
+#include <libcommon/constants.hpp>
+#include <libutil/matrix.hpp>
+#include <libutil/time.hpp>
+#include <Magnum/Animation/Player.h>
+#include <memory>
 
 namespace libview::objects::tile_grid_detail
 {
 
-class input: public Object2D, public features::animable
+class input: public Object2D, public features::animable, public features::key_event_handler
 {
+    public:
+        enum class order
+        {
+            rotate,
+            shift_left,
+            shift_right
+        };
+
+        struct keyboard_state
+        {
+            bool left_shift_button_pressed = false;
+            bool right_shift_button_pressed = false;
+            bool rotate_button_pressed = false;
+        };
+
     public:
         input
         (
             Object2D& parent,
-            features::animable_group& animables
+            features::drawable_group& drawables,
+            features::animable_group& animables,
+            features::key_event_handler_group& key_event_handlers
         );
 
-        void insert_next_input
-        (
-            const input_tile_object_matrix& next_input_tile_objects,
-            const data_types::input_layout& layout
-        );
-
-        void set_input_layout(const data_types::input_layout& layout);
+        void set_tiles(const input_tile_object_matrix& tiles);
 
         input_tile_object_matrix release_tile_objects();
 
@@ -55,11 +72,33 @@ class input: public Object2D, public features::animable
 
         void advance(const libutil::time_point& now, float elapsed_s) override;
 
+    //Keyboard event handling
+    public:
+        void handle_key_press(key_event& event) override;
+
+        void handle_key_release(key_event& event) override;
+
     private:
-        animator animator_;
+        void update_cog_target_position();
+
+    private:
+        features::drawable_group& drawables_;
+
+        keyboard_state keyboard_state_;
+
+        //Current/target X position of center of gravity (COG)
+        //Note: Y position of COG is always 0.
+        float cog_current_x_ = 0;
+        float cog_target_x_ = 0;
+
+        int cog_target_rotation_ = 0; //in number of 90 deg clockwise rotations
+        float cog_current_rotation_rad_ = 0; //in radians
+
+        input_tile_object_matrix tiles_;
+
+        order last_received_order_ = order::shift_left;
+
         bool suspended_ = false;
-        input_tile_object_matrix tile_objects_;
-        data_types::input_layout layout_;
 };
 
 } //namespace

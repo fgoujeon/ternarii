@@ -18,204 +18,166 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 #include "input.hpp"
-#include "../number_tile.hpp"
-#include "../sdf_image_tile.hpp"
-#include "../../animation.hpp"
-#include "../../common.hpp"
-#include <libres.hpp>
-#include <libutil/overload.hpp>
+#include <cmath>
 
 namespace libview::objects::tile_grid_detail
 {
 
 namespace
 {
-    template<class TileMatrix>
-    libutil::matrix<Magnum::Vector2, 2, 2> get_input_tile_positions
-    (
-        const TileMatrix& tiles,
-        const data_types::input_layout& layout
-    )
+    enum class direction
     {
-        auto positions = libutil::matrix<Magnum::Vector2, 2, 2>{};
+        neutral,
+        left,
+        right
+    };
 
-        libutil::for_each_colrow
-        (
-            [&](auto& pos, const int col, const int row)
-            {
-                //Get coordinate as indices
-                const auto coord = get_tile_coordinate(layout, {col, row});
-
-                //Convert to model coordinate
-                pos = Magnum::Vector2
-                {
-                    coord.col - 2.5f,
-                    coord.row - 0.5f
-                };
-            },
-            positions
-        );
-
-        //Center the tiles vertically if they are on the same line
-        const auto on_same_line = [&]
+    direction get_direction(const input::keyboard_state& state)
+    {
+        if(state.left_shift_button_pressed && !state.right_shift_button_pressed)
         {
-            auto on_same_line = true;
-            auto opt_y = std::optional<float>{};
-            libutil::for_each
-            (
-                [&](const auto& pos, const auto& ptile)
-                {
-                    if(!ptile)
-                    {
-                        return;
-                    }
-
-                    if(!opt_y)
-                    {
-                        opt_y = pos.y();
-                        return;
-                    }
-
-                    if(pos.y() != opt_y)
-                    {
-                        on_same_line = false;
-                    }
-                },
-                positions,
-                tiles
-            );
-
-            return on_same_line;
-        }();
-
-        if(on_same_line)
-        {
-            for(auto& pos: positions)
-            {
-                pos.y() = 0;
-            }
+            return direction::left;
         }
 
-        return positions;
+        if(!state.left_shift_button_pressed && state.right_shift_button_pressed)
+        {
+            return direction::right;
+        }
+
+        return direction::neutral;
     }
 
-    const auto tile_move_interpolator = Magnum::Animation::ease
-    <
-        Magnum::Vector2,
-        Magnum::Math::lerp,
-        Magnum::Animation::Easing::cubicOut
-    >();
+    //Get valid X position that is nearest to the given X center of gravity.
+    //List of valid X positions depend on whether the input is laid out
+    //vertically or horizontally.
+    float get_nearest_valid_cog_x
+    (
+        const float x,
+        const bool vertical,
+        const input::order last_received_order
+    )
+    {
+        //We need this inclination, otherwise the tiles might not shift if the
+        //user presses and releases the shift button a little too quickly.
+        const auto inclination = [&]
+        {
+            switch(last_received_order)
+            {
+                case input::order::shift_left:
+                    return -0.4f;
+                case input::order::shift_right:
+                    return 0.4f;
+                default:
+                    return 0.0f;
+            }
+        }();
+
+        const auto x2 = x + inclination;
+
+        if(vertical)
+        {
+            return std::clamp
+            (
+                std::ceil(x2) - 0.5f,
+                -2.5f,
+                2.5f
+            );
+        }
+        else
+        {
+            //Influence rounding so that when rotating from a vertical
+            //position, we preferably shift to the right.
+            const auto epsilon = 0.01f;
+
+            return std::clamp
+            (
+                std::round(x2 + epsilon),
+                -2.0f,
+                2.0f
+            );
+        }
+    }
+
+    float move_toward(const float current, const float target, const float step)
+    {
+        const auto tolerance = 0.1f;
+
+        if(std::abs(current - target) < tolerance)
+        {
+            return target;
+        }
+
+        if(current < target)
+        {
+            return current + step;
+        }
+        else
+        {
+            return current - step;
+        }
+    }
+
+    float move_toward_clockwise(const float current_rad, const float target_rad, const float step_rad)
+    {
+        const auto tolerance = static_cast<float>(M_PI) / 8.0f;
+
+        if(std::abs(current_rad - target_rad) < tolerance || step_rad > 2 * M_PI)
+        {
+            return target_rad;
+        }
+
+        if(target_rad < current_rad)
+        {
+            return current_rad - step_rad;
+        }
+        else
+        {
+            return current_rad - step_rad + 2 * M_PI;
+        }
+    }
 }
 
 input::input
 (
     Object2D& parent,
-    features::animable_group& animables
+    features::drawable_group& drawables,
+    features::animable_group& animables,
+    features::key_event_handler_group& key_event_handlers
 ):
     Object2D(&parent),
-    features::animable(*this, &animables)
+    features::animable{*this, &animables},
+    features::key_event_handler{*this, &key_event_handlers},
+    drawables_(drawables)
 {
+    at(tiles_, 0, 0) = std::make_shared<number_tile>(*this, drawables_, 5);
+    at(tiles_, 0, 0)->scale({0.46f, 0.46f});
+
+    at(tiles_, 1, 0) = std::make_shared<number_tile>(*this, drawables_, 6);
+    at(tiles_, 1, 0)->scale({0.46f, 0.46f});
+
+    update_cog_target_position();
 }
 
-void input::insert_next_input
-(
-    const input_tile_object_matrix& next_input_tile_objects,
-    const data_types::input_layout& layout
-)
+void input::set_tiles(const input_tile_object_matrix& tiles)
 {
-    tile_objects_ = next_input_tile_objects;
-    for(auto& ptile_object: tile_objects_)
+    tiles_ = tiles;
+    for(auto& ptile: tiles)
     {
-        if(ptile_object)
+        if(ptile)
         {
-            ptile_object->setParentKeepTransformation(this);
+            ptile->setParentKeepTransformation(this);
         }
     }
-
-    layout_ = layout;
-
-    const auto animation_duration_s = 0.2f;
-
-    auto anim = animation{};
-
-    //Animate insertion of current next input into input.
-    {
-        const auto dst_positions = get_input_tile_positions(tile_objects_, data_types::input_layout{});
-
-        libutil::for_each
-        (
-            [&](const auto& ptile, const auto& dst_position)
-            {
-                if(ptile)
-                {
-                    anim.add
-                    (
-                        tracks::fixed_duration_translation
-                        {
-                            ptile,
-                            dst_position,
-                            animation_duration_s,
-                            tile_move_interpolator
-                        }
-                    );
-                    anim.add(tracks::alpha_transition{ptile, 1, animation_duration_s});
-                }
-            },
-            tile_objects_,
-            dst_positions
-        );
-    }
-
-    animator_.push(std::move(anim));
-}
-
-void input::set_input_layout(const data_types::input_layout& layout)
-{
-    if(layout_ == layout)
-    {
-        return;
-    }
-
-    layout_ = layout;
-
-    const auto dst_positions = get_input_tile_positions(tile_objects_, layout);
-
-    auto anim = animation{};
-
-    libutil::for_each
-    (
-        [&](const auto ptile, const auto& dst_position)
-        {
-            if(!ptile)
-            {
-                return;
-            }
-
-            anim.add
-            (
-                tracks::fixed_speed_translation
-                {
-                    ptile,
-                    dst_position,
-                    20
-                }
-            );
-        },
-        tile_objects_,
-        dst_positions
-    );
-
-    animator_.push(std::move(anim));
 }
 
 input_tile_object_matrix input::release_tile_objects()
 {
-    auto out = tile_objects_;
-    for(auto& ptile_object: tile_objects_)
+    auto tiles = tiles_;
+    for(auto& ptile: tiles_)
     {
-        ptile_object.reset();
+        ptile.reset();
     }
-    return out;
+    return tiles;
 }
 
 void input::suspend()
@@ -228,12 +190,150 @@ void input::resume()
     suspended_ = false;
 }
 
-void input::advance(const libutil::time_point& now, float /*elapsed_s*/)
+void input::advance(const libutil::time_point& /*now*/, float elapsed_s)
 {
-    if(!suspended_)
+    const auto translation_speed = 7.0f; //in units per second
+    const auto translation_step = translation_speed * elapsed_s;
+
+    const auto rotation_speed_radps = 4 * M_PI; //in radians per second
+    const auto rotation_step_rad = rotation_speed_radps * elapsed_s;
+
+    //First, define current position of COG.
+    cog_current_x_ = move_toward
+    (
+        cog_current_x_,
+        cog_target_x_,
+        translation_step
+    );
+    cog_current_rotation_rad_ = move_toward_clockwise
+    (
+        cog_current_rotation_rad_,
+        -cog_target_rotation_ * M_PI / 2.0f,
+        rotation_step_rad
+    );
+
+    //Then, move the tiles relatively to the COG current position and rotation.
     {
-        animator_.advance(now);
+        const auto x_shift = std::cosf(cog_current_rotation_rad_) / 2.0f;
+        const auto y_shift = std::sinf(cog_current_rotation_rad_) / 2.0f;
+
+        at(tiles_, 0, 0)->setTranslation
+        (
+            {
+                cog_current_x_ + x_shift,
+                y_shift
+            }
+        );
     }
+    {
+        const auto x_shift = std::cosf(cog_current_rotation_rad_ + M_PI) / 2.0f;
+        const auto y_shift = std::sinf(cog_current_rotation_rad_ + M_PI) / 2.0f;
+
+        at(tiles_, 1, 0)->setTranslation
+        (
+            {
+                cog_current_x_ + x_shift,
+                y_shift
+            }
+        );
+    }
+}
+
+void input::handle_key_press(key_event& event)
+{
+    switch(event.key())
+    {
+        case key_event::Key::Left:
+            if(!keyboard_state_.left_shift_button_pressed)
+            {
+                keyboard_state_.left_shift_button_pressed = true;
+                last_received_order_ = order::shift_left;
+                update_cog_target_position();
+            }
+            break;
+        case key_event::Key::Right:
+            if(!keyboard_state_.right_shift_button_pressed)
+            {
+                keyboard_state_.right_shift_button_pressed = true;
+                last_received_order_ = order::shift_right;
+                update_cog_target_position();
+            }
+            break;
+        case key_event::Key::Up:
+        case key_event::Key::Space:
+            if(!keyboard_state_.rotate_button_pressed)
+            {
+                keyboard_state_.rotate_button_pressed = true;
+                cog_target_rotation_ = (cog_target_rotation_ + 1) % 4;
+                last_received_order_ = order::rotate;
+                update_cog_target_position();
+            }
+            break;
+        default:
+            break;
+    }
+}
+
+void input::handle_key_release(key_event& event)
+{
+    switch(event.key())
+    {
+        case key_event::Key::Left:
+            keyboard_state_.left_shift_button_pressed = false;
+            update_cog_target_position();
+            break;
+        case key_event::Key::Right:
+            keyboard_state_.right_shift_button_pressed = false;
+            update_cog_target_position();
+            break;
+        case key_event::Key::Up:
+        case key_event::Key::Space:
+            keyboard_state_.rotate_button_pressed = false;
+            break;
+        default:
+            break;
+    }
+}
+
+void input::update_cog_target_position()
+{
+    const auto dir = get_direction(keyboard_state_);
+
+    //First of all, compute the target position of the center of gravity (COG).
+    cog_target_x_ = [&]() -> float
+    {
+        const auto vertical = (cog_target_rotation_ % 2 == 1);
+
+        switch(dir)
+        {
+            case direction::left:
+                if(vertical)
+                {
+                    return -2.5f;
+                }
+                else
+                {
+                    return -2;
+                }
+            case direction::right:
+                if(vertical)
+                {
+                    return 2.5f;
+                }
+                else
+                {
+                    return 2;
+                }
+            case direction::neutral:
+            default:
+                return get_nearest_valid_cog_x
+                (
+                    cog_current_x_,
+                    vertical,
+                    last_received_order_
+                );
+        }
+    }();
 }
 
 } //namespace

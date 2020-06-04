@@ -61,7 +61,8 @@ class tile_grid: public Object2D, public features::animable
         (
             Object2D& parent,
             features::drawable_group& drawables,
-            features::animable_group& animables
+            features::animable_group& animables,
+            features::key_event_handler_group& key_event_handlers
         );
 
         bool is_animating() const;
