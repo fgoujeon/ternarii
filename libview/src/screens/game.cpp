@@ -276,11 +276,6 @@ void game::insert_next_input(const data_types::input_layout& layout)
     pimpl_->tile_grid.insert_next_input(layout);
 }
 
-void game::set_input_layout(const data_types::input_layout& layout)
-{
-    pimpl_->tile_grid.set_input_layout(layout);
-}
-
 void game::drop_input_tiles(const data_types::input_tile_drop_list& drops)
 {
     pimpl_->tile_grid.drop_input_tiles(drops);

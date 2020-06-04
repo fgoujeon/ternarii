@@ -127,11 +127,6 @@ void tile_grid::insert_next_input(const data_types::input_layout& /*layout*/)
     input_.set_tiles(next_input_.release_tile_objects());
 }
 
-void tile_grid::set_input_layout(const data_types::input_layout& /*layout*/)
-{
-    //input_.set_input_layout(layout);
-}
-
 void tile_grid::drop_input_tiles(const data_types::input_tile_drop_list& drops)
 {
     auto anim = animation{};

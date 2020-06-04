@@ -77,8 +77,6 @@ class tile_grid: public Object2D, public features::animable
 
         void insert_next_input(const data_types::input_layout& layout);
 
-        void set_input_layout(const data_types::input_layout& layout);
-
         void drop_input_tiles(const data_types::input_tile_drop_list& drops);
 
         void drop_board_tiles(const data_types::board_tile_drop_list& drops);
