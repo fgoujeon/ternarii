@@ -149,34 +149,6 @@ void next_input::create_tiles(const data_types::input_tile_matrix& tiles)
         );
     }
 
-    //Animate insertion of current next input into input.
-    {
-        const auto dst_positions = get_input_tile_positions(input_tile_objects_, data_types::input_layout{}, 3.0f);
-
-        libutil::for_each
-        (
-            [&](const auto& ptile, const auto& dst_position)
-            {
-                if(ptile)
-                {
-                    anim.add
-                    (
-                        tracks::fixed_duration_translation
-                        {
-                            ptile,
-                            dst_position,
-                            animation_duration_s,
-                            tile_move_interpolator
-                        }
-                    );
-                    anim.add(tracks::alpha_transition{ptile, 1, animation_duration_s});
-                }
-            },
-            input_tile_objects_,
-            dst_positions
-        );
-    }
-
     //Animate next input creation.
     for(auto& ptile_object: tile_objects_)
     {

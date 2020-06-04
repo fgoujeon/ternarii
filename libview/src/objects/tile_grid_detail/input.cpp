@@ -99,16 +99,23 @@ namespace
 
         return positions;
     }
+
+    const auto tile_move_interpolator = Magnum::Animation::ease
+    <
+        Magnum::Vector2,
+        Magnum::Math::lerp,
+        Magnum::Animation::Easing::cubicOut
+    >();
 }
 
 input::input
 (
     Object2D& parent,
-    animator& animator,
+    features::animable_group& animables,
     tile_object_matrix& input_tile_objects
 ):
     Object2D(&parent),
-    animator_(animator),
+    features::animable(*this, &animables),
     input_tile_objects_(input_tile_objects)
 {
 }
@@ -127,7 +134,41 @@ void input::insert_next_input
         ptile = nullptr;
     }
 
-    //Note: Animation is done in create_next_input().
+
+
+    const auto animation_duration_s = 0.2f;
+
+    auto anim = animation{};
+
+    //Animate insertion of current next input into input.
+    {
+        const auto dst_positions = get_input_tile_positions(input_tile_objects_, data_types::input_layout{}, 3.0f);
+
+        libutil::for_each
+        (
+            [&](const auto& ptile, const auto& dst_position)
+            {
+                if(ptile)
+                {
+                    anim.add
+                    (
+                        tracks::fixed_duration_translation
+                        {
+                            ptile,
+                            dst_position,
+                            animation_duration_s,
+                            tile_move_interpolator
+                        }
+                    );
+                    anim.add(tracks::alpha_transition{ptile, 1, animation_duration_s});
+                }
+            },
+            input_tile_objects_,
+            dst_positions
+        );
+    }
+
+    animator_.push(std::move(anim));
 }
 
 void input::set_input_layout(const data_types::input_layout& layout)
@@ -167,6 +208,24 @@ void input::set_input_layout(const data_types::input_layout& layout)
     );
 
     animator_.push(std::move(anim));
+}
+
+void input::suspend()
+{
+    suspended_ = true;
+}
+
+void input::resume()
+{
+    suspended_ = false;
+}
+
+void input::advance(const libutil::time_point& now, float /*elapsed_s*/)
+{
+    if(!suspended_)
+    {
+        animator_.advance(now);
+    }
 }
 
 } //namespace

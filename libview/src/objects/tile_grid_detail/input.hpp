@@ -27,7 +27,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libview::objects::tile_grid_detail
 {
 
-class input: public Object2D
+class input: public Object2D, public features::animable
 {
     public:
         using tile_object_matrix = libutil::matrix
@@ -41,7 +41,7 @@ class input: public Object2D
         input
         (
             Object2D& parent,
-            animator& animator,
+            features::animable_group& animables,
             tile_object_matrix& input_tile_objects
         );
 
@@ -53,9 +53,19 @@ class input: public Object2D
 
         void set_input_layout(const data_types::input_layout& layout);
 
+    //Animation
+    public:
+        void suspend();
+
+        void resume();
+
+        void advance(const libutil::time_point& now, float elapsed_s) override;
+
     private:
-        animator& animator_;
         tile_object_matrix& input_tile_objects_;
+
+        animator animator_;
+        bool suspended_ = false;
         data_types::input_layout layout_;
 };
 
