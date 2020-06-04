@@ -208,8 +208,8 @@ void input::advance(const libutil::time_point& /*now*/, float elapsed_s)
 
     //Then, move the tiles relatively to the COG current position and rotation.
     {
-        const auto x_shift = std::cosf(cog_current_rotation_rad_) / 2.0f;
-        const auto y_shift = std::sinf(cog_current_rotation_rad_) / 2.0f;
+        const auto x_shift = std::cosf(cog_current_rotation_rad_ + M_PI) / 2.0f;
+        const auto y_shift = std::sinf(cog_current_rotation_rad_ + M_PI) / 2.0f;
 
         at(tiles_, 0, 0)->setTranslation
         (
@@ -220,8 +220,8 @@ void input::advance(const libutil::time_point& /*now*/, float elapsed_s)
         );
     }
     {
-        const auto x_shift = std::cosf(cog_current_rotation_rad_ + M_PI) / 2.0f;
-        const auto y_shift = std::sinf(cog_current_rotation_rad_ + M_PI) / 2.0f;
+        const auto x_shift = std::cosf(cog_current_rotation_rad_) / 2.0f;
+        const auto y_shift = std::sinf(cog_current_rotation_rad_) / 2.0f;
 
         at(tiles_, 1, 0)->setTranslation
         (
@@ -263,6 +263,15 @@ void input::handle_key_press(key_event& event)
                 update_cog_target_position();
             }
             break;
+        case key_event::Key::Down:
+            drop_request_callback_
+            (
+                data_types::input_layout
+                {
+                    .col_offset = static_cast<int>(cog_target_x_ + 2.0f),
+                    .rotation = cog_target_rotation_
+                }
+            );
         default:
             break;
     }

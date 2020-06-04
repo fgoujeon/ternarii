@@ -44,6 +44,7 @@ class playing final: public state
 
         void handle_view_drop_request(const libview::data_types::input_layout& input_layout)
         {
+            libutil::log::info("Drop request with layout: ", input_layout);
             modify_game(&libgame::game::drop_input_tiles_with_layout, input_layout);
         }
 
