@@ -62,6 +62,12 @@ struct game
 
         void drop_input_tiles(event_list& events);
 
+        void drop_input_tiles_with_layout
+        (
+            const data_types::input_layout& layout,
+            event_list& events
+        );
+
     private:
         struct impl;
         std::unique_ptr<impl> pimpl_;

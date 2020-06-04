@@ -52,7 +52,12 @@ class board
 
         void clear();
 
-        void drop_input_tiles(const board_input& in, event_list& events);
+        void drop_input_tiles
+        (
+            const data_types::input_tile_matrix& input_tiles,
+            const data_types::input_layout& input_layout,
+            event_list& events
+        );
 
     private:
         data_types::board_tile_drop_list make_tiles_fall();

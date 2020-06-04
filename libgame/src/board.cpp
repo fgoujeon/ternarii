@@ -255,12 +255,17 @@ void board::clear()
     }
 }
 
-void board::drop_input_tiles(const board_input& in, event_list& events)
+void board::drop_input_tiles
+(
+    const data_types::input_tile_matrix& input_tiles,
+    const data_types::input_layout& input_layout,
+    event_list& events
+)
 {
     //Apply gravity on input tiles
     {
         auto drops = data_types::input_tile_drop_list{};
-        tiles_ = apply_gravity(in.get_tiles(), in.get_layout(), tiles_, &drops);
+        tiles_ = apply_gravity(input_tiles, input_layout, tiles_, &drops);
         events.push_back(events::input_tile_drop{std::move(drops)});
     }
 

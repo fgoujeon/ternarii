@@ -194,13 +194,26 @@ void game::rotate_input(event_list& events)
 
 void game::drop_input_tiles(event_list& events)
 {
+    drop_input_tiles_with_layout
+    (
+        pimpl_->input_.get_layout(),
+        events
+    );
+}
+
+void game::drop_input_tiles_with_layout
+(
+    const data_types::input_layout& layout,
+    event_list& events
+)
+{
     if(is_over())
     {
         return;
     }
 
     //drop the input
-    pimpl_->board_.drop_input_tiles(pimpl_->input_, events);
+    pimpl_->board_.drop_input_tiles(pimpl_->state.input_tiles, layout, events);
 
     if(is_over())
     {
