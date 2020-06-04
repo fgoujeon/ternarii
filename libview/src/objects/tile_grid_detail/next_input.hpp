@@ -41,6 +41,7 @@ class next_input: public Object2D
         next_input
         (
             Object2D& parent,
+            features::drawable_group& drawables,
             animator& animator,
             tile_object_matrix& input_tile_objects
         );
@@ -50,9 +51,10 @@ class next_input: public Object2D
             return tile_objects_;
         }
 
-        void animate_creation();
+        void create_tiles(const data_types::input_tile_matrix& tiles);
 
     private:
+        features::drawable_group& drawables_;
         animator& animator_;
         tile_object_matrix& input_tile_objects_;
         tile_object_matrix tile_objects_;

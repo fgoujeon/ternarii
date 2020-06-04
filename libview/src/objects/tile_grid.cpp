@@ -18,6 +18,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 #include "tile_grid.hpp"
+#include "tile_grid_detail/common.hpp"
 #include "number_tile.hpp"
 #include "sdf_image.hpp"
 #include "../colors.hpp"
@@ -126,7 +127,7 @@ tile_grid::tile_grid
     Object2D{&parent},
     features::animable(*this, &animables),
     drawables_(drawables),
-    next_input_(*this, animator_, input_tiles_),
+    next_input_(*this, drawables, animator_, input_tiles_),
     input_(*this, animator_, input_tiles_)
 {
     //board corners
@@ -187,26 +188,7 @@ void tile_grid::clear()
 
 void tile_grid::create_next_input(const data_types::input_tile_matrix& tiles)
 {
-    //Make tiles
-    {
-        const auto positions = get_input_tile_positions(tiles, data_types::input_layout{}, 5.0f);
-
-        libutil::for_each
-        (
-            [&](const auto& opt_tile, const auto& position, auto& pnext_input_tile)
-            {
-                if(opt_tile.has_value())
-                {
-                    pnext_input_tile = make_tile(opt_tile.value(), position);
-                }
-            },
-            tiles,
-            positions,
-            next_input_.get_tile_objects()
-        );
-    }
-
-    next_input_.animate_creation();
+    next_input_.create_tiles(tiles);
 }
 
 void tile_grid::insert_next_input(const data_types::input_layout& layout)
@@ -409,36 +391,8 @@ std::shared_ptr<Object2D> tile_grid::make_tile
     const Magnum::Vector2& position
 )
 {
-    using result_t = std::shared_ptr<Object2D>;
-
-    auto ptile = std::visit
-    (
-        libutil::overload
-        {
-            [&](const data_types::number_tile& tile) -> result_t
-            {
-                return std::make_shared<number_tile>(*this, drawables_, tile.value);
-            },
-            [&](const data_types::column_nullifier_tile&) -> result_t
-            {
-                return std::make_shared<sdf_image_tile>(*this, drawables_, libres::images::column_nullifier);
-            },
-            [&](const data_types::row_nullifier_tile&) -> result_t
-            {
-                return std::make_shared<sdf_image_tile>(*this, drawables_, libres::images::row_nullifier);
-            },
-            [&](const data_types::number_nullifier_tile&) -> result_t
-            {
-                return std::make_shared<sdf_image_tile>(*this, drawables_, libres::images::number_nullifier);
-            }
-        },
-        tile
-    );
-
-    ptile->set_alpha(0.0f);
-    ptile->scale({0.46f, 0.46f});
+    auto ptile = tile_grid_detail::make_tile_object(*this, drawables_, tile);
     ptile->translate(position);
-
     return ptile;
 }
 

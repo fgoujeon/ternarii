@@ -18,6 +18,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 #include "next_input.hpp"
+#include "common.hpp"
 #include "../number_tile.hpp"
 #include "../sdf_image_tile.hpp"
 #include "../../animation.hpp"
@@ -111,20 +112,42 @@ namespace
 next_input::next_input
 (
     Object2D& parent,
+    features::drawable_group& drawables,
     animator& animator,
     tile_object_matrix& input_tile_objects
 ):
     Object2D(&parent),
+    drawables_(drawables),
     animator_(animator),
     input_tile_objects_(input_tile_objects)
 {
 }
 
-void next_input::animate_creation()
+void next_input::create_tiles(const data_types::input_tile_matrix& tiles)
 {
     const auto animation_duration_s = 0.2f;
 
     auto anim = animation{};
+
+    //Make tiles
+    {
+        const auto positions = get_input_tile_positions(tiles, data_types::input_layout{}, 5.0f);
+
+        libutil::for_each
+        (
+            [&](const auto& opt_tile, const auto& position, auto& pnext_input_tile)
+            {
+                if(opt_tile.has_value())
+                {
+                    pnext_input_tile = make_tile_object(*this, drawables_, opt_tile.value());
+                    pnext_input_tile->setTranslation(position);
+                }
+            },
+            tiles,
+            positions,
+            tile_objects_
+        );
+    }
 
     //Animate insertion of current next input into input.
     {
