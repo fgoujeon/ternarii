@@ -43,13 +43,6 @@ class input: public Object2D, public features::animable, public features::key_ev
             libcommon::constants::input_row_count
         >;
 
-        using position_matrix = libutil::matrix
-        <
-            Magnum::Vector2,
-            libcommon::constants::input_column_count,
-            libcommon::constants::input_row_count
-        >;
-
         enum class order
         {
             rotate,
