@@ -45,10 +45,7 @@ class input: public Object2D, public features::animable
 
         void set_input_layout(const data_types::input_layout& layout);
 
-        input_tile_object_matrix& get_tile_objects()
-        {
-            return input_tile_objects_;
-        }
+        input_tile_object_matrix release_tile_objects();
 
     //Animation
     public:
@@ -61,7 +58,7 @@ class input: public Object2D, public features::animable
     private:
         animator animator_;
         bool suspended_ = false;
-        input_tile_object_matrix input_tile_objects_;
+        input_tile_object_matrix tile_objects_;
         data_types::input_layout layout_;
 };
 

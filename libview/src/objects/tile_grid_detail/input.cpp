@@ -124,7 +124,7 @@ void input::insert_next_input
     const data_types::input_layout& layout
 )
 {
-    input_tile_objects_ = next_input_tile_objects;
+    tile_objects_ = next_input_tile_objects;
     layout_ = layout;
 
     const auto animation_duration_s = 0.2f;
@@ -133,7 +133,7 @@ void input::insert_next_input
 
     //Animate insertion of current next input into input.
     {
-        const auto dst_positions = get_input_tile_positions(input_tile_objects_, data_types::input_layout{}, 3.0f);
+        const auto dst_positions = get_input_tile_positions(tile_objects_, data_types::input_layout{}, 3.0f);
 
         libutil::for_each
         (
@@ -154,7 +154,7 @@ void input::insert_next_input
                     anim.add(tracks::alpha_transition{ptile, 1, animation_duration_s});
                 }
             },
-            input_tile_objects_,
+            tile_objects_,
             dst_positions
         );
     }
@@ -171,7 +171,7 @@ void input::set_input_layout(const data_types::input_layout& layout)
 
     layout_ = layout;
 
-    const auto dst_positions = get_input_tile_positions(input_tile_objects_, layout, 3.0f);
+    const auto dst_positions = get_input_tile_positions(tile_objects_, layout, 3.0f);
 
     auto anim = animation{};
 
@@ -194,11 +194,21 @@ void input::set_input_layout(const data_types::input_layout& layout)
                 }
             );
         },
-        input_tile_objects_,
+        tile_objects_,
         dst_positions
     );
 
     animator_.push(std::move(anim));
+}
+
+input_tile_object_matrix input::release_tile_objects()
+{
+    auto out = tile_objects_;
+    for(auto& ptile_object: tile_objects_)
+    {
+        ptile_object.reset();
+    }
+    return out;
 }
 
 void input::suspend()

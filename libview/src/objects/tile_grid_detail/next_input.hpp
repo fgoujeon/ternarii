@@ -40,7 +40,7 @@ class next_input: public Object2D, public features::animable
 
         void create_tiles(const data_types::input_tile_matrix& tiles);
 
-        input_tile_object_matrix release_tiles();
+        input_tile_object_matrix release_tile_objects();
 
     //Animation
     public:

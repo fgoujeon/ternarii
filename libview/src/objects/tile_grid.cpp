@@ -103,17 +103,13 @@ bool tile_grid::is_animating() const
 
 void tile_grid::clear()
 {
-    const auto clear_matrix = [](auto& matrix)
-    {
-        for(auto& ptile: matrix)
-        {
-            ptile.reset();
-        }
-    };
+    next_input_.release_tile_objects();
+    input_.release_tile_objects();
 
-    next_input_.release_tiles();
-    clear_matrix(input_.get_tile_objects());
-    clear_matrix(board_tiles_);
+    for(auto& ptile: board_tiles_)
+    {
+        ptile.reset();
+    }
 }
 
 void tile_grid::create_next_input(const data_types::input_tile_matrix& tiles)
@@ -123,7 +119,7 @@ void tile_grid::create_next_input(const data_types::input_tile_matrix& tiles)
 
 void tile_grid::insert_next_input(const data_types::input_layout& layout)
 {
-    input_.insert_next_input(next_input_.release_tiles(), layout);
+    input_.insert_next_input(next_input_.release_tile_objects(), layout);
 }
 
 void tile_grid::set_input_layout(const data_types::input_layout& layout)
@@ -135,9 +131,11 @@ void tile_grid::drop_input_tiles(const data_types::input_tile_drop_list& drops)
 {
     auto anim = animation{};
 
+    const auto input_tile_objects = input_.release_tile_objects();
+
     for(const auto& drop: drops)
     {
-        auto& ptile = at(input_.get_tile_objects(), drop.input_coordinate);
+        const auto& ptile = at(input_tile_objects, drop.input_coordinate);
 
         const auto dst_position = tile_coordinate_to_position(drop.board_coordinate);
 
@@ -152,7 +150,6 @@ void tile_grid::drop_input_tiles(const data_types::input_tile_drop_list& drops)
         );
 
         at(board_tiles_, drop.board_coordinate) = ptile;
-        ptile = nullptr;
     }
 
     animator_.push(tracks::closure{[this]{next_input_.suspend();}});
