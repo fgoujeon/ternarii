@@ -127,7 +127,7 @@ tile_grid::tile_grid
     Object2D{&parent},
     features::animable(*this, &animables),
     drawables_(drawables),
-    next_input_(*this, drawables, animator_, input_tiles_),
+    next_input_(*this, drawables, animables, input_tiles_),
     input_(*this, animator_, input_tiles_)
 {
     //board corners
@@ -225,8 +225,10 @@ void tile_grid::drop_input_tiles(const data_types::input_tile_drop_list& drops)
         ptile = nullptr;
     }
 
+    animator_.push(tracks::closure{[this]{next_input_.suspend();}});
     animator_.push(std::move(anim));
     animator_.push(tracks::pause{0.05});
+    animator_.push(tracks::closure{[this]{next_input_.resume();}});
 }
 
 void tile_grid::drop_board_tiles(const data_types::board_tile_drop_list& drops)
@@ -253,8 +255,10 @@ void tile_grid::drop_board_tiles(const data_types::board_tile_drop_list& drops)
         ptile = nullptr;
     }
 
+    animator_.push(tracks::closure{[this]{next_input_.suspend();}});
     animator_.push(std::move(anim));
     animator_.push(tracks::pause{0.05});
+    animator_.push(tracks::closure{[this]{next_input_.resume();}});
 }
 
 void tile_grid::nullify_tiles(const libutil::matrix_coordinate_list& nullified_tile_coordinates)
@@ -329,8 +333,10 @@ void tile_grid::merge_tiles(const data_types::tile_merge_list& merges)
         anim1.add(tracks::alpha_transition{pdst_tile, 1, 0.2});
     }
 
+    animator_.push(tracks::closure{[this]{next_input_.suspend();}});
     animator_.push(std::move(anim0));
     animator_.push(std::move(anim1));
+    animator_.push(tracks::closure{[this]{next_input_.resume();}});
 }
 
 void tile_grid::mark_tiles_for_nullification(const libutil::matrix_coordinate_list& tile_coordinates)

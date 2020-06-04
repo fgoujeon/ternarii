@@ -113,12 +113,12 @@ next_input::next_input
 (
     Object2D& parent,
     features::drawable_group& drawables,
-    animator& animator,
+    features::animable_group& animables,
     tile_object_matrix& input_tile_objects
 ):
     Object2D(&parent),
+    features::animable(*this, &animables),
     drawables_(drawables),
-    animator_(animator),
     input_tile_objects_(input_tile_objects)
 {
 }
@@ -187,6 +187,24 @@ void next_input::create_tiles(const data_types::input_tile_matrix& tiles)
     }
 
     animator_.push(std::move(anim));
+}
+
+void next_input::suspend()
+{
+    suspended_ = true;
+}
+
+void next_input::resume()
+{
+    suspended_ = false;
+}
+
+void next_input::advance(const libutil::time_point& now, float /*elapsed_s*/)
+{
+    if(!suspended_)
+    {
+        animator_.advance(now);
+    }
 }
 
 } //namespace
