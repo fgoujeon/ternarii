@@ -17,14 +17,14 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef LIBVIEW_OBJECTS_INPUT_HPP
-#define LIBVIEW_OBJECTS_INPUT_HPP
+#ifndef LIBVIEW_OBJECTS_TILE_GRID_DETAIL_INPUT_HPP
+#define LIBVIEW_OBJECTS_TILE_GRID_DETAIL_INPUT_HPP
 
-#include "../animation.hpp"
-#include "../common.hpp"
+#include "../../animation.hpp"
+#include "../../common.hpp"
 #include <libview/data_types.hpp>
 
-namespace libview::objects
+namespace libview::objects::tile_grid_detail
 {
 
 class input: public Object2D

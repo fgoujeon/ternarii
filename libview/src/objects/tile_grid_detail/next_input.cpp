@@ -18,14 +18,14 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 #include "next_input.hpp"
-#include "number_tile.hpp"
-#include "sdf_image_tile.hpp"
-#include "../animation.hpp"
-#include "../common.hpp"
+#include "../number_tile.hpp"
+#include "../sdf_image_tile.hpp"
+#include "../../animation.hpp"
+#include "../../common.hpp"
 #include <libres.hpp>
 #include <libutil/overload.hpp>
 
-namespace libview::objects
+namespace libview::objects::tile_grid_detail
 {
 
 namespace
