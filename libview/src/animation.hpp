@@ -37,6 +37,41 @@ using player_supplier_t = libutil::unique_function<void(player_t&)>;
 
 namespace tracks
 {
+    //Arbitrary code
+    struct closure
+    {
+        libutil::unique_function<void()> f;
+    };
+
+    inline
+    player_supplier_t make_player_supplier(closure&& track)
+    {
+        using track_impl_t = Magnum::Animation::Track<Magnum::Float, int>;
+        return [track = std::move(track), track_impl = track_impl_t{}](player_t& player) mutable
+        {
+            track_impl = track_impl_t
+            (
+                {
+                    {0.0f, 0},
+                },
+                Magnum::Math::lerp,
+                Magnum::Animation::Extrapolation::Constant
+            );
+
+            player.addWithCallback
+            (
+                track_impl,
+                [](Magnum::Float, const int&, closure& t)
+                {
+                    t.f();
+                },
+                track
+            );
+        };
+    }
+
+
+
     struct pause
     {
         float duration_s = 0;
@@ -315,15 +350,15 @@ class animation
             some_animator.push(some_track{...});
         */
         template<class Track>
-        animation(const Track& track)
+        animation(Track&& track)
         {
-            add(track);
+            add(std::forward<Track>(track));
         }
 
         template<class Track>
-        void add(const Track& track)
+        void add(Track&& track)
         {
-            player_suppliers_.push_back(make_player_supplier(track));
+            player_suppliers_.push_back(make_player_supplier(std::forward<Track>(track)));
         }
 
         void advance(const libutil::time_point& now)
