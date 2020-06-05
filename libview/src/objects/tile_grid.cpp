@@ -225,9 +225,13 @@ void tile_grid::nullify_tiles(const libutil::matrix_coordinate_list& nullified_t
         ptile = nullptr;
     }
 
+    animator_.push(tracks::closure{[this]{next_input_.suspend();}});
+    animator_.push(tracks::closure{[this]{input_.suspend();}});
     animator_.push(std::move(anim0));
     animator_.push(std::move(anim1));
     animator_.push(tracks::pause{0.05});
+    animator_.push(tracks::closure{[this]{input_.resume();}});
+    animator_.push(tracks::closure{[this]{next_input_.resume();}});
 }
 
 void tile_grid::merge_tiles(const data_types::tile_merge_list& merges)
