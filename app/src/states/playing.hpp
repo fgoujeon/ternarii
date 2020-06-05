@@ -38,10 +38,6 @@ class playing final: public state
 
     //View event handlers
     private:
-        void handle_view_move_request(const libview::data_types::move /*m*/)
-        {
-        }
-
         void handle_view_drop_request(const libview::data_types::input_layout& input_layout)
         {
             libutil::log::info("Drop request with layout: ", input_layout);

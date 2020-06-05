@@ -72,9 +72,8 @@ namespace
         IMAGE, \
         objects::sdf_image_button::callback_set \
         { \
-            .handle_mouse_press = [this] \
+            .handle_mouse_press = [] \
             { \
-                send_move_request(data_types::move::MOVE); \
             } \
         } \
     )
@@ -129,20 +128,7 @@ struct game::impl
         ),
         MOVE_BUTTON_INITIALIZER(libres::images::move_button,   left_shift),
         MOVE_BUTTON_INITIALIZER(libres::images::move_button,   right_shift),
-        drop_button
-        (
-            self,
-            feature_groups.drawables,
-            feature_groups.clickables,
-            libres::images::move_button,
-            objects::sdf_image_button::callback_set
-            {
-                .handle_mouse_press = [/*this*/]
-                {
-                    //send_move_request(data_types::move::drop);
-                }
-            }
-        ),
+        MOVE_BUTTON_INITIALIZER(libres::images::move_button,   drop),
         MOVE_BUTTON_INITIALIZER(libres::images::rotate_button, clockwise_rotation)
     {
         const auto move_button_scaling = 0.95f;
@@ -174,20 +160,6 @@ struct game::impl
 
         clockwise_rotation_button.scale({move_button_scaling, move_button_scaling});
         clockwise_rotation_button.translate({3.25f, -5.85f});
-    }
-
-    void send_move_request(const data_types::move move)
-    {
-        /*
-        Note: We want to ignore user inputs when we're animating, so that:
-        - we don't queue too many animations;
-        - user moves only when they knows what they're moving.
-        */
-
-        if(!tile_grid.is_animating())
-        {
-            callbacks.handle_move_request(move);
-        }
     }
 
     feature_group_set& feature_groups;
@@ -229,17 +201,13 @@ void game::handle_key_press(key_event& event)
     switch(event.key())
     {
         case key_event::Key::Left:
-            pimpl_->send_move_request(data_types::move::left_shift);
             break;
         case key_event::Key::Right:
-            pimpl_->send_move_request(data_types::move::right_shift);
             break;
         case key_event::Key::Up:
         case key_event::Key::Space:
-            pimpl_->send_move_request(data_types::move::clockwise_rotation);
             break;
         case key_event::Key::Down:
-            //pimpl_->send_move_request(data_types::move::drop);
             break;
         default:
             break;

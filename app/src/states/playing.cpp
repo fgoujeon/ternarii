@@ -72,7 +72,6 @@ playing::playing(fsm& f, const screen_transition trans, const libgame::data_type
         (
             screen::callback_set
             {
-                .handle_move_request  = [this](const libview::data_types::move m){handle_view_move_request(m);},
                 .handle_drop_request  = [this](const libview::data_types::input_layout input_layout){handle_view_drop_request(input_layout);},
                 .handle_clear_request = [this]{modify_game(&libgame::game::start);},
                 .handle_exit_request  = [this]{fsm_.set_state<states::showing_stage_selection_screen>(screen_transition::zoom_out);}

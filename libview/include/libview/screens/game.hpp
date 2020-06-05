@@ -36,7 +36,6 @@ class game: public Object2D, public features::key_event_handler
     public:
         struct callback_set
         {
-            libutil::void_function<data_types::move> handle_move_request;
             libutil::void_function<const data_types::input_layout&> handle_drop_request;
             libutil::void_function<> handle_clear_request;
             libutil::void_function<> handle_exit_request;
@@ -80,9 +79,6 @@ class game: public Object2D, public features::key_event_handler
         void set_board_tiles(const data_types::board_tile_matrix& tiles);
 
         void set_game_over_screen_visible(const bool visible);
-
-    private:
-        void send_move_request(const data_types::move move);
 
     private:
         struct impl;

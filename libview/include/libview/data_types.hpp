@@ -45,13 +45,6 @@ using tile                  = libcommon::data_types::tile;
 using tile_merge            = libcommon::data_types::tile_merge;
 using tile_merge_list       = libcommon::data_types::tile_merge_list;
 
-enum class move
-{
-    clockwise_rotation,
-    left_shift,
-    right_shift
-};
-
 } //namespace
 
 #endif
