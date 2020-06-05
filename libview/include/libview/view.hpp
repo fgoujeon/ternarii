@@ -32,6 +32,7 @@ class view
 {
     public:
         using application = Magnum::Platform::Sdl2Application;
+        using key              = application::KeyEvent::Key;
         using key_event        = application::KeyEvent;
         using mouse_event      = application::MouseEvent;
         using mouse_move_event = application::MouseMoveEvent;
@@ -83,6 +84,8 @@ class view
         void set_viewport(const Magnum::Vector2i& size);
 
         void handle_key_press(key_event& event);
+
+        void handle_key_release(key_event& event);
 
         void handle_mouse_press(mouse_event& event);
 

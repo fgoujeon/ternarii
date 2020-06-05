@@ -36,29 +36,6 @@ class playing final: public state
     public:
         playing(fsm& f, screen_transition trans, libgame::data_types::stage stage);
 
-    //View event handlers
-    private:
-        void handle_view_move_request(const libview::data_types::move m)
-        {
-            using move = libview::data_types::move;
-
-            switch(m)
-            {
-                case move::left_shift:
-                    modify_game(&libgame::game::shift_input_left);
-                    break;
-                case move::right_shift:
-                    modify_game(&libgame::game::shift_input_right);
-                    break;
-                case move::clockwise_rotation:
-                    modify_game(&libgame::game::rotate_input);
-                    break;
-                case move::drop:
-                    modify_game(&libgame::game::drop_input_tiles);
-                    break;
-            }
-        }
-
     //Game event handlers
     private:
         void handle_game_event(const libgame::events::start&)
@@ -81,17 +58,11 @@ class playing final: public state
             pscreen_->create_next_input(event.tiles);
         }
 
-        void handle_game_event(const libgame::events::next_input_insertion& event)
+        void handle_game_event(const libgame::events::next_input_insertion&)
         {
-            pscreen_->insert_next_input(event.layout);
+            pscreen_->insert_next_input();
             mark_tiles_for_nullification();
             fsm_.database.set_stage_state(stage_, pgame_->get_state());
-        }
-
-        void handle_game_event(const libgame::events::input_layout_change& event)
-        {
-            pscreen_->set_input_layout(event.layout);
-            mark_tiles_for_nullification();
         }
 
         void handle_game_event(const libgame::events::input_tile_drop& event)
@@ -128,7 +99,7 @@ class playing final: public state
                 (
                     [this](const auto& event)
                     {
-                        libutil::log::info(event);
+                        libutil::log::info("[fsm <- game] ", event);
                         handle_game_event(event);
                     },
                     event
@@ -141,8 +112,8 @@ class playing final: public state
         Call given libgame::game's modifier function and handle the returned
         events.
         */
-        template<class Fn>
-        void modify_game(Fn&& fn)
+        template<class Fn, class... Args>
+        void modify_game(Fn&& fn, Args&&... args)
         {
             if(!pgame_)
             {
@@ -150,14 +121,14 @@ class playing final: public state
             }
 
             game_events_.clear();
-            std::invoke(fn, *pgame_, game_events_);
+            std::invoke(fn, *pgame_, std::forward<Args>(args)..., game_events_);
             handle_game_events(game_events_);
         }
 
         void mark_tiles_for_nullification()
         {
             targeted_tiles_.clear();
-            pgame_->get_targeted_tiles(targeted_tiles_);
+            pgame_->get_targeted_tiles(pscreen_->get_input_layout(), targeted_tiles_);
             pscreen_->mark_tiles_for_nullification(targeted_tiles_);
         }
 

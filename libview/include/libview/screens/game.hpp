@@ -36,9 +36,10 @@ class game: public Object2D, public features::key_event_handler
     public:
         struct callback_set
         {
-            libutil::void_function<data_types::move> handle_move_request;
             libutil::void_function<> handle_clear_request;
+            libutil::void_function<const data_types::input_layout&> handle_drop_request;
             libutil::void_function<> handle_exit_request;
+            libutil::void_function<const data_types::input_layout&> handle_input_layout_change;
         };
 
     public:
@@ -55,7 +56,11 @@ class game: public Object2D, public features::key_event_handler
 
         void handle_key_press(key_event& event) override;
 
+        void handle_key_release(key_event& event) override;
+
     public:
+        const data_types::input_layout& get_input_layout() const;
+
         void clear();
 
         void set_score(const int value);
@@ -64,9 +69,7 @@ class game: public Object2D, public features::key_event_handler
 
         void create_next_input(const data_types::input_tile_matrix& tiles);
 
-        void insert_next_input(const data_types::input_layout& layout);
-
-        void set_input_layout(const data_types::input_layout& layout);
+        void insert_next_input();
 
         void drop_input_tiles(const data_types::input_tile_drop_list& drops);
 
@@ -81,9 +84,6 @@ class game: public Object2D, public features::key_event_handler
         void set_board_tiles(const data_types::board_tile_matrix& tiles);
 
         void set_game_over_screen_visible(const bool visible);
-
-    private:
-        void send_move_request(const data_types::move move);
 
     private:
         struct impl;

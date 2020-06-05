@@ -47,21 +47,9 @@ namespace events
 
 
 
-    struct next_input_insertion
-    {
-        data_types::input_layout layout;
-    };
+    struct next_input_insertion{};
 
     std::ostream& operator<<(std::ostream& l, const next_input_insertion& r);
-
-
-
-    struct input_layout_change
-    {
-        data_types::input_layout layout;
-    };
-
-    std::ostream& operator<<(std::ostream& l, const input_layout_change& r);
 
 
 
@@ -129,7 +117,6 @@ using event = std::variant
     events::start,
     events::next_input_creation,
     events::next_input_insertion,
-    events::input_layout_change,
     events::input_tile_drop,
     events::board_tile_drop,
     events::tile_nullification,

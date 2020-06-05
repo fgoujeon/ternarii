@@ -20,7 +20,6 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include <libgame/game.hpp>
 #include "input_generators.hpp"
 #include "board.hpp"
-#include "board_input.hpp"
 #include <algorithm>
 #include <random>
 #include <cmath>
@@ -101,7 +100,6 @@ struct game::impl
     abstract_input_generator& input_gen;
     data_types::stage_state state;
     board board_{state.board_tiles};
-    board_input input_{state.input_tiles};
 };
 
 game::game(const data_types::stage stage):
@@ -136,19 +134,18 @@ const data_types::input_tile_matrix& game::get_input_tiles() const
     return pimpl_->state.input_tiles;
 }
 
-const data_types::input_layout& game::get_input_layout() const
-{
-    return pimpl_->input_.get_layout();
-}
-
 const data_types::board_tile_matrix& game::get_board_tiles() const
 {
     return pimpl_->board_.tile_array();
 }
 
-void game::get_targeted_tiles(libutil::matrix_coordinate_list& coords) const
+void game::get_targeted_tiles
+(
+    const data_types::input_layout& input_layout,
+    libutil::matrix_coordinate_list& coords
+) const
 {
-    return pimpl_->board_.get_targeted_tiles(pimpl_->input_, coords);
+    return pimpl_->board_.get_targeted_tiles(pimpl_->state.input_tiles, input_layout, coords);
 }
 
 bool game::is_over() const
@@ -164,44 +161,15 @@ void game::start(event_list& events)
     events.push_back(events::score_change{0});
 
     events.push_back(pimpl_->generate_next_input());
-    events.push_back(pimpl_->input_.set_tiles(pimpl_->state.next_input_tiles)); //insert next input
+
+    //insert next input
+    pimpl_->state.input_tiles = pimpl_->state.next_input_tiles;
+    events.push_back(events::next_input_insertion{});
+
     events.push_back(pimpl_->generate_next_input());
 }
 
-void game::shift_input_left(event_list& events)
-{
-    if(!is_over())
-    {
-        pimpl_->input_.shift_left(events);
-    }
-}
-
-void game::shift_input_right(event_list& events)
-{
-    if(!is_over())
-    {
-        pimpl_->input_.shift_right(events);
-    }
-}
-
-void game::rotate_input(event_list& events)
-{
-    if(!is_over())
-    {
-        pimpl_->input_.rotate(events);
-    }
-}
-
-void game::drop_input_tiles(event_list& events)
-{
-    drop_input_tiles_with_layout
-    (
-        pimpl_->input_.get_layout(),
-        events
-    );
-}
-
-void game::drop_input_tiles_with_layout
+void game::drop_input_tiles
 (
     const data_types::input_layout& layout,
     event_list& events
@@ -231,7 +199,8 @@ void game::drop_input_tiles_with_layout
     else
     {
         //move the next input into the input
-        events.push_back(pimpl_->input_.set_tiles(pimpl_->state.next_input_tiles));
+        pimpl_->state.input_tiles = pimpl_->state.next_input_tiles;
+        events.push_back(events::next_input_insertion{});
 
         //create a new next input
         events.push_back(pimpl_->generate_next_input());

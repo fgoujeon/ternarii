@@ -39,20 +39,7 @@ std::ostream& operator<<(std::ostream& l, const next_input_creation& r)
 
 std::ostream& operator<<(std::ostream& l, const next_input_insertion& r)
 {
-    l << "next_input_insertion";
-    l << "{";
-    l << "layout: " << r.layout;
-    l << "}";
-    return l;
-}
-
-std::ostream& operator<<(std::ostream& l, const input_layout_change& r)
-{
-    l << "input_layout_change";
-    l << "{";
-    l << "layout: " << r.layout;
-    l << "}";
-    return l;
+    return l << "next_input_insertion{}";
 }
 
 std::ostream& operator<<(std::ostream& l, const input_tile_drop& r)

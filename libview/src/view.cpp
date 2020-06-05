@@ -30,9 +30,21 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include <Magnum/GL/Version.h>
 #include <Magnum/Math/Color.h>
 #include <Magnum/Platform/Sdl2Application.h>
+#include <map>
 
 namespace libview
 {
+
+namespace
+{
+    enum class key_state
+    {
+        released,
+        pressed
+    };
+
+    using keyboard_state = std::map<view::key, key_state>;
+}
 
 struct view::impl final
 {
@@ -120,9 +132,32 @@ struct view::impl final
             return;
         }
 
+        //Filter autorepeat
+        if(key_states[event.key()] == key_state::pressed)
+        {
+            return;
+        }
+        key_states[event.key()] = key_state::pressed;
+
+        //Forward event to handlers
         for(std::size_t i = 0; i < feature_groups.key_event_handlers.size(); ++i)
         {
             feature_groups.key_event_handlers[i].handle_key_press(event);
+        }
+    }
+
+    void handle_key_release(key_event& event)
+    {
+        if(screen_transition_animator.is_animating())
+        {
+            return;
+        }
+
+        key_states[event.key()] = key_state::released;
+
+        for(std::size_t i = 0; i < feature_groups.key_event_handlers.size(); ++i)
+        {
+            feature_groups.key_event_handlers[i].handle_key_release(event);
         }
     }
 
@@ -239,6 +274,8 @@ struct view::impl final
     feature_group_set feature_groups;
 
     animator screen_transition_animator;
+
+    keyboard_state key_states;
 
     std::shared_ptr<Object2D> pscreen;
     std::unique_ptr<objects::debug_grid> pdebug_grid;
@@ -479,6 +516,11 @@ void view::set_viewport(const Magnum::Vector2i& size)
 void view::handle_key_press(key_event& event)
 {
     pimpl_->handle_key_press(event);
+}
+
+void view::handle_key_release(key_event& event)
+{
+    pimpl_->handle_key_release(event);
 }
 
 void view::handle_mouse_press(mouse_event& event)

@@ -18,7 +18,6 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 #include "board.hpp"
-#include "board_input.hpp"
 #include <libgame/data_types.hpp>
 #include <libutil/overload.hpp>
 #include <memory>
@@ -241,9 +240,14 @@ board::board(data_types::board_tile_matrix& tiles):
 {
 }
 
-void board::get_targeted_tiles(const board_input& in, libutil::matrix_coordinate_list& coords) const
+void board::get_targeted_tiles
+(
+    const data_types::input_tile_matrix& input_tiles,
+    const data_types::input_layout& input_layout,
+    libutil::matrix_coordinate_list& coords
+) const
 {
-    const auto board_tiles = apply_gravity(in.get_tiles(), in.get_layout(), tiles_, nullptr);
+    const auto board_tiles = apply_gravity(input_tiles, input_layout, tiles_, nullptr);
     apply_nullifiers(board_tiles, coords);
 }
 

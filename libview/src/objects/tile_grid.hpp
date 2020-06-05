@@ -41,6 +41,10 @@ namespace libview::objects
 
 class tile_grid: public Object2D, public features::animable
 {
+    public:
+        using drop_request_callback = libutil::void_function<const data_types::input_layout&>;
+        using input_layout_change_callback = libutil::void_function<const data_types::input_layout&>;
+
     private:
         using input_tile_matrix = libutil::matrix
         <
@@ -61,18 +65,20 @@ class tile_grid: public Object2D, public features::animable
         (
             Object2D& parent,
             features::drawable_group& drawables,
-            features::animable_group& animables
+            features::animable_group& animables,
+            const drop_request_callback& drop_cb,
+            const input_layout_change_callback& layout_cb
         );
 
         bool is_animating() const;
+
+        const data_types::input_layout& get_input_layout() const;
 
         void clear();
 
         void create_next_input(const data_types::input_tile_matrix& tiles);
 
-        void insert_next_input(const data_types::input_layout& layout);
-
-        void set_input_layout(const data_types::input_layout& layout);
+        void insert_next_input();
 
         void drop_input_tiles(const data_types::input_tile_drop_list& drops);
 
@@ -87,6 +93,12 @@ class tile_grid: public Object2D, public features::animable
         void set_board_tiles(const data_types::board_tile_matrix& tiles);
 
         void advance(const libutil::time_point& now, float elapsed_s);
+
+    //Button event handling
+    public:
+        void handle_button_press(data_types::move_button button);
+
+        void handle_button_release(data_types::move_button button);
 
     private:
         std::shared_ptr<Object2D> make_tile

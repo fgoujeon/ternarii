@@ -52,13 +52,15 @@ tile_grid::tile_grid
 (
     Object2D& parent,
     features::drawable_group& drawables,
-    features::animable_group& animables
+    features::animable_group& animables,
+    const drop_request_callback& drop_cb,
+    const input_layout_change_callback& layout_cb
 ):
     Object2D{&parent},
     features::animable(*this, &animables),
     drawables_(drawables),
     next_input_(*this, drawables, animables),
-    input_(*this, animables)
+    input_(*this, animables, drop_cb, layout_cb)
 {
     //board corners
     {
@@ -104,6 +106,11 @@ bool tile_grid::is_animating() const
     return animator_.is_animating();
 }
 
+const data_types::input_layout& tile_grid::get_input_layout() const
+{
+    return input_.get_layout();
+}
+
 void tile_grid::clear()
 {
     next_input_.release_tile_objects();
@@ -120,14 +127,9 @@ void tile_grid::create_next_input(const data_types::input_tile_matrix& tiles)
     next_input_.create_tiles(tiles);
 }
 
-void tile_grid::insert_next_input(const data_types::input_layout& layout)
+void tile_grid::insert_next_input()
 {
-    input_.insert_next_input(next_input_.release_tile_objects(), layout);
-}
-
-void tile_grid::set_input_layout(const data_types::input_layout& layout)
-{
-    input_.set_input_layout(layout);
+    input_.set_tiles(next_input_.release_tile_objects());
 }
 
 void tile_grid::drop_input_tiles(const data_types::input_tile_drop_list& drops)
@@ -333,6 +335,16 @@ void tile_grid::set_board_tiles(const data_types::board_tile_matrix& tiles)
 void tile_grid::advance(const libutil::time_point& now, const float /*elapsed_s*/)
 {
     animator_.advance(now);
+}
+
+void tile_grid::handle_button_press(data_types::move_button button)
+{
+    input_.handle_button_press(button);
+}
+
+void tile_grid::handle_button_release(data_types::move_button button)
+{
+    input_.handle_button_release(button);
 }
 
 std::shared_ptr<Object2D> tile_grid::make_tile

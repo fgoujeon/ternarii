@@ -74,7 +74,11 @@ namespace
         { \
             .handle_mouse_press = [this] \
             { \
-                send_move_request(data_types::move::MOVE); \
+                tile_grid.handle_button_press(data_types::move_button::MOVE); \
+            }, \
+            .handle_mouse_release = [this] \
+            { \
+                tile_grid.handle_button_release(data_types::move_button::MOVE); \
             } \
         } \
     )
@@ -92,7 +96,14 @@ struct game::impl
         feature_groups(feature_groups),
         callbacks(callbacks),
         pbackground(make_background(self, feature_groups, show_background)),
-        tile_grid(self, feature_groups.drawables, feature_groups.animables),
+        tile_grid
+        (
+            self,
+            feature_groups.drawables,
+            feature_groups.animables,
+            callbacks.handle_drop_request,
+            callbacks.handle_input_layout_change
+        ),
         score_display(self, feature_groups.drawables),
         hi_score_display(self, feature_groups.drawables),
         stage_name_label
@@ -156,20 +167,6 @@ struct game::impl
         clockwise_rotation_button.translate({3.25f, -5.85f});
     }
 
-    void send_move_request(const data_types::move move)
-    {
-        /*
-        Note: We want to ignore user inputs when we're animating, so that:
-        - we don't queue too many animations;
-        - user moves only when they knows what they're moving.
-        */
-
-        if(!tile_grid.is_animating())
-        {
-            callbacks.handle_move_request(move);
-        }
-    }
-
     feature_group_set& feature_groups;
 
     callback_set callbacks;
@@ -209,21 +206,48 @@ void game::handle_key_press(key_event& event)
     switch(event.key())
     {
         case key_event::Key::Left:
-            pimpl_->send_move_request(data_types::move::left_shift);
+            pimpl_->tile_grid.handle_button_press(data_types::move_button::left_shift);
             break;
         case key_event::Key::Right:
-            pimpl_->send_move_request(data_types::move::right_shift);
+            pimpl_->tile_grid.handle_button_press(data_types::move_button::right_shift);
             break;
         case key_event::Key::Up:
         case key_event::Key::Space:
-            pimpl_->send_move_request(data_types::move::clockwise_rotation);
+            pimpl_->tile_grid.handle_button_press(data_types::move_button::clockwise_rotation);
             break;
         case key_event::Key::Down:
-            pimpl_->send_move_request(data_types::move::drop);
+            pimpl_->tile_grid.handle_button_press(data_types::move_button::drop);
             break;
         default:
             break;
     }
+}
+
+void game::handle_key_release(key_event& event)
+{
+    switch(event.key())
+    {
+        case key_event::Key::Left:
+            pimpl_->tile_grid.handle_button_release(data_types::move_button::left_shift);
+            break;
+        case key_event::Key::Right:
+            pimpl_->tile_grid.handle_button_release(data_types::move_button::right_shift);
+            break;
+        case key_event::Key::Up:
+        case key_event::Key::Space:
+            pimpl_->tile_grid.handle_button_release(data_types::move_button::clockwise_rotation);
+            break;
+        case key_event::Key::Down:
+            pimpl_->tile_grid.handle_button_release(data_types::move_button::drop);
+            break;
+        default:
+            break;
+    }
+}
+
+const data_types::input_layout& game::get_input_layout() const
+{
+    return pimpl_->tile_grid.get_input_layout();
 }
 
 void game::clear()
@@ -251,14 +275,9 @@ void game::create_next_input(const data_types::input_tile_matrix& tiles)
     pimpl_->tile_grid.create_next_input(tiles);
 }
 
-void game::insert_next_input(const data_types::input_layout& layout)
+void game::insert_next_input()
 {
-    pimpl_->tile_grid.insert_next_input(layout);
-}
-
-void game::set_input_layout(const data_types::input_layout& layout)
-{
-    pimpl_->tile_grid.set_input_layout(layout);
+    pimpl_->tile_grid.insert_next_input();
 }
 
 void game::drop_input_tiles(const data_types::input_tile_drop_list& drops)

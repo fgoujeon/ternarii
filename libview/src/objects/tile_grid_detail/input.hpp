@@ -21,9 +21,15 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #define LIBVIEW_OBJECTS_TILE_GRID_DETAIL_INPUT_HPP
 
 #include "common.hpp"
+#include "../number_tile.hpp"
 #include "../../animation.hpp"
 #include "../../common.hpp"
 #include <libview/data_types.hpp>
+#include <libcommon/constants.hpp>
+#include <libutil/matrix.hpp>
+#include <libutil/time.hpp>
+#include <libutil/void_function.hpp>
+#include <memory>
 
 namespace libview::objects::tile_grid_detail
 {
@@ -31,19 +37,35 @@ namespace libview::objects::tile_grid_detail
 class input: public Object2D, public features::animable
 {
     public:
+        enum class order
+        {
+            rotate,
+            shift_left,
+            shift_right
+        };
+
+        struct keyboard_state
+        {
+            bool left_shift_button_pressed = false;
+            bool right_shift_button_pressed = false;
+            bool rotate_button_pressed = false;
+        };
+
+        using drop_request_callback = libutil::void_function<const data_types::input_layout&>;
+        using layout_change_callback = libutil::void_function<const data_types::input_layout&>;
+
+    public:
         input
         (
             Object2D& parent,
-            features::animable_group& animables
+            features::animable_group& animables,
+            const drop_request_callback& drop_cb,
+            const layout_change_callback& layout_cb
         );
 
-        void insert_next_input
-        (
-            const input_tile_object_matrix& next_input_tile_objects,
-            const data_types::input_layout& layout
-        );
+        const data_types::input_layout& get_layout() const;
 
-        void set_input_layout(const data_types::input_layout& layout);
+        void set_tiles(const input_tile_object_matrix& tiles);
 
         input_tile_object_matrix release_tile_objects();
 
@@ -55,10 +77,40 @@ class input: public Object2D, public features::animable
 
         void advance(const libutil::time_point& now, float elapsed_s) override;
 
+    //Keyboard event handling
+    public:
+        void handle_button_press(data_types::move_button button);
+
+        void handle_button_release(data_types::move_button button);
+
     private:
-        animator animator_;
+        void update_cog_target_position();
+
+        void update_layout();
+
+    private:
+        animator insertion_animator_;
+
+        drop_request_callback drop_request_callback_;
+        layout_change_callback layout_change_callback_;
+
+        keyboard_state keyboard_state_;
+
+        //Current/target X position of center of gravity (COG)
+        //Note: Y position of COG is always 0.
+        float cog_current_x_ = 0;
+        float cog_target_x_ = 0;
+
+        int cog_target_rotation_ = 0; //in number of 90 deg clockwise rotations
+        float cog_current_rotation_rad_ = 0; //in radians
+
+        input_tile_object_matrix tiles_;
+
+        order last_received_order_ = order::shift_left;
+
         bool suspended_ = false;
-        input_tile_object_matrix tile_objects_;
+        bool settled_ = false;
+
         data_types::input_layout layout_;
 };
 

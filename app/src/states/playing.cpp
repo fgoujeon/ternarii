@@ -72,9 +72,26 @@ playing::playing(fsm& f, const screen_transition trans, const libgame::data_type
         (
             screen::callback_set
             {
-                .handle_move_request  = [this](const libview::data_types::move m){handle_view_move_request(m);},
-                .handle_clear_request = [this]{modify_game(&libgame::game::start);},
-                .handle_exit_request  = [this]{fsm_.set_state<states::showing_stage_selection_screen>(screen_transition::zoom_out);}
+                .handle_clear_request = [this]
+                {
+                    libutil::log::info("[fsm <- screen] Clear request");
+                    modify_game(&libgame::game::start);
+                },
+                .handle_drop_request = [this](const libview::data_types::input_layout input_layout)
+                {
+                    libutil::log::info("[fsm <- screen] Drop request with layout: ", input_layout);
+                    modify_game(&libgame::game::drop_input_tiles, input_layout);
+                },
+                .handle_exit_request = [this]
+                {
+                    libutil::log::info("[fsm <- screen] Exit request");
+                    fsm_.set_state<states::showing_stage_selection_screen>(screen_transition::zoom_out);
+                },
+                .handle_input_layout_change = [this](const libview::data_types::input_layout input_layout)
+                {
+                    libutil::log::info("[fsm <- screen] Input layout change: ", input_layout);
+                    mark_tiles_for_nullification();
+                }
             },
             get_pretty_name(stage),
             must_show_background(stage)
@@ -98,7 +115,7 @@ playing::playing(fsm& f, const screen_transition trans, const libgame::data_type
         pscreen_->set_score(get_score(board_tiles));
         pscreen_->set_hi_score(pgame_->get_hi_score());
         pscreen_->create_next_input(pgame_->get_input_tiles());
-        pscreen_->insert_next_input(pgame_->get_input_layout());
+        pscreen_->insert_next_input();
         pscreen_->create_next_input(pgame_->get_next_input_tiles());
         pscreen_->set_board_tiles(board_tiles);
         mark_tiles_for_nullification();
