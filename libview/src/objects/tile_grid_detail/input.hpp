@@ -34,7 +34,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libview::objects::tile_grid_detail
 {
 
-class input: public Object2D, public features::animable, public features::key_event_handler
+class input: public Object2D, public features::animable
 {
     public:
         enum class order
@@ -58,7 +58,6 @@ class input: public Object2D, public features::animable, public features::key_ev
         (
             Object2D& parent,
             features::animable_group& animables,
-            features::key_event_handler_group& key_event_handlers,
             const drop_request_callback& drop_cb
         );
 
@@ -76,9 +75,9 @@ class input: public Object2D, public features::animable, public features::key_ev
 
     //Keyboard event handling
     public:
-        void handle_key_press(key_event& event) override;
+        void handle_button_press(data_types::move_button button);
 
-        void handle_key_release(key_event& event) override;
+        void handle_button_release(data_types::move_button button);
 
     private:
         void update_cog_target_position();

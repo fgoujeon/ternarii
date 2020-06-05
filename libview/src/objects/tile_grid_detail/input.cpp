@@ -182,12 +182,10 @@ input::input
 (
     Object2D& parent,
     features::animable_group& animables,
-    features::key_event_handler_group& key_event_handlers,
     const drop_request_callback& drop_cb
 ):
     Object2D(&parent),
     features::animable{*this, &animables},
-    features::key_event_handler{*this, &key_event_handlers},
     drop_request_callback_(drop_cb)
 {
     update_cog_target_position();
@@ -326,28 +324,27 @@ void input::advance(const libutil::time_point& now, float elapsed_s)
     );
 }
 
-void input::handle_key_press(key_event& event)
+void input::handle_button_press(data_types::move_button button)
 {
-    switch(event.key())
+    switch(button)
     {
-        case key_event::Key::Left:
+        case data_types::move_button::left_shift:
             keyboard_state_.left_shift_button_pressed = true;
             last_received_order_ = order::shift_left;
             update_cog_target_position();
             break;
-        case key_event::Key::Right:
+        case data_types::move_button::right_shift:
             keyboard_state_.right_shift_button_pressed = true;
             last_received_order_ = order::shift_right;
             update_cog_target_position();
             break;
-        case key_event::Key::Up:
-        case key_event::Key::Space:
+        case data_types::move_button::clockwise_rotation:
             keyboard_state_.rotate_button_pressed = true;
             cog_target_rotation_ = (cog_target_rotation_ + 1) % 4;
             last_received_order_ = order::rotate;
             update_cog_target_position();
             break;
-        case key_event::Key::Down:
+        case data_types::move_button::drop:
             if
             (
                 !keyboard_state_.left_shift_button_pressed &&
@@ -380,25 +377,22 @@ void input::handle_key_press(key_event& event)
                     }
                 );
             }
-        default:
-            break;
     }
 }
 
-void input::handle_key_release(key_event& event)
+void input::handle_button_release(data_types::move_button button)
 {
-    switch(event.key())
+    switch(button)
     {
-        case key_event::Key::Left:
+        case data_types::move_button::left_shift:
             keyboard_state_.left_shift_button_pressed = false;
             update_cog_target_position();
             break;
-        case key_event::Key::Right:
+        case data_types::move_button::right_shift:
             keyboard_state_.right_shift_button_pressed = false;
             update_cog_target_position();
             break;
-        case key_event::Key::Up:
-        case key_event::Key::Space:
+        case data_types::move_button::clockwise_rotation:
             keyboard_state_.rotate_button_pressed = false;
             break;
         default:

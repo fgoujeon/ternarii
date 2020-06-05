@@ -65,7 +65,6 @@ class tile_grid: public Object2D, public features::animable
             Object2D& parent,
             features::drawable_group& drawables,
             features::animable_group& animables,
-            features::key_event_handler_group& key_event_handlers,
             const drop_request_callback& drop_cb
         );
 
@@ -90,6 +89,12 @@ class tile_grid: public Object2D, public features::animable
         void set_board_tiles(const data_types::board_tile_matrix& tiles);
 
         void advance(const libutil::time_point& now, float elapsed_s);
+
+    //Button event handling
+    public:
+        void handle_button_press(data_types::move_button button);
+
+        void handle_button_release(data_types::move_button button);
 
     private:
         std::shared_ptr<Object2D> make_tile

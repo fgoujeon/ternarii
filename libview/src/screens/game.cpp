@@ -96,7 +96,6 @@ struct game::impl
             self,
             feature_groups.drawables,
             feature_groups.animables,
-            feature_groups.key_event_handlers,
             callbacks.handle_drop_request
         ),
         score_display(self, feature_groups.drawables),
@@ -201,13 +200,39 @@ void game::handle_key_press(key_event& event)
     switch(event.key())
     {
         case key_event::Key::Left:
+            pimpl_->tile_grid.handle_button_press(data_types::move_button::left_shift);
             break;
         case key_event::Key::Right:
+            pimpl_->tile_grid.handle_button_press(data_types::move_button::right_shift);
             break;
         case key_event::Key::Up:
         case key_event::Key::Space:
+            pimpl_->tile_grid.handle_button_press(data_types::move_button::clockwise_rotation);
             break;
         case key_event::Key::Down:
+            pimpl_->tile_grid.handle_button_press(data_types::move_button::drop);
+            break;
+        default:
+            break;
+    }
+}
+
+void game::handle_key_release(key_event& event)
+{
+    switch(event.key())
+    {
+        case key_event::Key::Left:
+            pimpl_->tile_grid.handle_button_release(data_types::move_button::left_shift);
+            break;
+        case key_event::Key::Right:
+            pimpl_->tile_grid.handle_button_release(data_types::move_button::right_shift);
+            break;
+        case key_event::Key::Up:
+        case key_event::Key::Space:
+            pimpl_->tile_grid.handle_button_release(data_types::move_button::clockwise_rotation);
+            break;
+        case key_event::Key::Down:
+            pimpl_->tile_grid.handle_button_release(data_types::move_button::drop);
             break;
         default:
             break;

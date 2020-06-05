@@ -55,6 +55,8 @@ class game: public Object2D, public features::key_event_handler
 
         void handle_key_press(key_event& event) override;
 
+        void handle_key_release(key_event& event) override;
+
     public:
         void clear();
 

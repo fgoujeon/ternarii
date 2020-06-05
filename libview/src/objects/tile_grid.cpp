@@ -53,14 +53,13 @@ tile_grid::tile_grid
     Object2D& parent,
     features::drawable_group& drawables,
     features::animable_group& animables,
-    features::key_event_handler_group& key_event_handlers,
     const drop_request_callback& drop_cb
 ):
     Object2D{&parent},
     features::animable(*this, &animables),
     drawables_(drawables),
     next_input_(*this, drawables, animables),
-    input_(*this, animables, key_event_handlers, drop_cb)
+    input_(*this, animables, drop_cb)
 {
     //board corners
     {
@@ -330,6 +329,16 @@ void tile_grid::set_board_tiles(const data_types::board_tile_matrix& tiles)
 void tile_grid::advance(const libutil::time_point& now, const float /*elapsed_s*/)
 {
     animator_.advance(now);
+}
+
+void tile_grid::handle_button_press(data_types::move_button button)
+{
+    input_.handle_button_press(button);
+}
+
+void tile_grid::handle_button_release(data_types::move_button button)
+{
+    input_.handle_button_release(button);
 }
 
 std::shared_ptr<Object2D> tile_grid::make_tile
