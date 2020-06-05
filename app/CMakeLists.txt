@@ -29,6 +29,14 @@ set_target_properties(
     OUTPUT_NAME "app-${PROJECT_VERSION}"
 )
 
+target_link_options(
+    app
+    PRIVATE
+        "-s WASM=1"
+        "-s FORCE_FILESYSTEM=1"
+        "-s DISABLE_EXCEPTION_CATCHING=0"
+)
+
 target_link_libraries(
     app
     PRIVATE
