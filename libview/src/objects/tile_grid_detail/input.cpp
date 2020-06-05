@@ -361,10 +361,15 @@ void input::advance(const libutil::time_point& now, float elapsed_s)
         return;
     }
 
-    const auto translation_speed = 7.0f; //in units per second
+    /*
+    Note: we want to synchronize rotation and translation speeds so that it
+    takes the same amount of time to animate a 90 degree rotation and a 0.5 unit
+    translation (which always happen simultaneously when rotating a 2 tile
+    input). Otherwise the animation seems weird.
+    */
+    const auto translation_speed = 7.0f; //in units/s
     const auto translation_step = translation_speed * elapsed_s;
-
-    const auto rotation_speed_radps = 4 * M_PI; //in radians per second
+    const auto rotation_speed_radps = translation_speed * M_PI; //in radians/s
     const auto rotation_step_rad = rotation_speed_radps * elapsed_s;
 
     //First, define current position of COG.
