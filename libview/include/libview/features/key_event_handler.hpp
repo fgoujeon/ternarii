@@ -30,6 +30,7 @@ class key_event_handler: public Magnum::SceneGraph::AbstractGroupedFeature2D<key
 {
     public:
         using key_event = Magnum::Platform::Sdl2Application::KeyEvent;
+        using key = key_event::Key;
 
         using Magnum::SceneGraph::AbstractGroupedFeature2D<key_event_handler>::AbstractGroupedFeature2D;
 

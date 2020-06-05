@@ -331,30 +331,21 @@ void input::handle_key_press(key_event& event)
     switch(event.key())
     {
         case key_event::Key::Left:
-            if(!keyboard_state_.left_shift_button_pressed)
-            {
-                keyboard_state_.left_shift_button_pressed = true;
-                last_received_order_ = order::shift_left;
-                update_cog_target_position();
-            }
+            keyboard_state_.left_shift_button_pressed = true;
+            last_received_order_ = order::shift_left;
+            update_cog_target_position();
             break;
         case key_event::Key::Right:
-            if(!keyboard_state_.right_shift_button_pressed)
-            {
-                keyboard_state_.right_shift_button_pressed = true;
-                last_received_order_ = order::shift_right;
-                update_cog_target_position();
-            }
+            keyboard_state_.right_shift_button_pressed = true;
+            last_received_order_ = order::shift_right;
+            update_cog_target_position();
             break;
         case key_event::Key::Up:
         case key_event::Key::Space:
-            if(!keyboard_state_.rotate_button_pressed)
-            {
-                keyboard_state_.rotate_button_pressed = true;
-                cog_target_rotation_ = (cog_target_rotation_ + 1) % 4;
-                last_received_order_ = order::rotate;
-                update_cog_target_position();
-            }
+            keyboard_state_.rotate_button_pressed = true;
+            cog_target_rotation_ = (cog_target_rotation_ + 1) % 4;
+            last_received_order_ = order::rotate;
+            update_cog_target_position();
             break;
         case key_event::Key::Down:
             if

@@ -32,6 +32,7 @@ class view
 {
     public:
         using application = Magnum::Platform::Sdl2Application;
+        using key              = application::KeyEvent::Key;
         using key_event        = application::KeyEvent;
         using mouse_event      = application::MouseEvent;
         using mouse_move_event = application::MouseMoveEvent;

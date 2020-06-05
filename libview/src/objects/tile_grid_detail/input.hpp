@@ -29,7 +29,6 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include <libutil/matrix.hpp>
 #include <libutil/time.hpp>
 #include <libutil/void_function.hpp>
-#include <Magnum/Animation/Player.h>
 #include <memory>
 
 namespace libview::objects::tile_grid_detail
