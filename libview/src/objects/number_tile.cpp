@@ -65,7 +65,7 @@ number_tile::number_tile(Object2D& parent, features::drawable_group& drawables, 
         sdf_image::style
         {
             .color = square_color_,
-            .outline_color = colors::black,
+            .outline_color = colors::dark_gray,
             .outline_range = {0.5f, 0.4f}
         }
     ),

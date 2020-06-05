@@ -27,7 +27,7 @@ auto title_label = objects::label::style
     .alignment = Magnum::Text::Alignment::MiddleCenter,
     .color = colors::light_gray,
     .font_size = 0.6f,
-    .outline_color = colors::black,
+    .outline_color = colors::dark_gray,
     .outline_range = {0.47f, 0.44f}
 };
 

@@ -38,7 +38,7 @@ sdf_image_tile::sdf_image_tile(Object2D& parent, features::drawable_group& drawa
         sdf_image::style
         {
             .color = square_color_,
-            .outline_color = colors::black,
+            .outline_color = colors::dark_gray,
             .outline_range = {0.5f, 0.35f}
         }
     ),

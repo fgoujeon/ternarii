@@ -74,7 +74,7 @@ tile_grid::tile_grid
                 sdf_image::style
                 {
                     .color = colors::light_gray,
-                    .outline_color = colors::black,
+                    .outline_color = colors::dark_gray,
                     .outline_range = {0.5f, 0.3f}
                 }
             );
