@@ -72,8 +72,13 @@ namespace
         IMAGE, \
         objects::sdf_image_button::callback_set \
         { \
-            .handle_mouse_press = [] \
+            .handle_mouse_press = [this] \
             { \
+                tile_grid.handle_button_press(data_types::move_button::MOVE); \
+            }, \
+            .handle_mouse_release = [this] \
+            { \
+                tile_grid.handle_button_release(data_types::move_button::MOVE); \
             } \
         } \
     )
