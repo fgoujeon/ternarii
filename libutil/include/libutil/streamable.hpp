@@ -21,6 +21,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #define LIBUTIL_STREAMABLE_HPP
 
 #include "matrix.hpp"
+#include <variant>
 #include <vector>
 #include <optional>
 #include <iostream>

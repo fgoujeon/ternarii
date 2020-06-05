@@ -20,6 +20,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #ifndef LIBUTIL_LOG_HPP
 #define LIBUTIL_LOG_HPP
 
+#include "streamable.hpp"
 #include <string_view>
 #include <iostream>
 
@@ -37,7 +38,7 @@ namespace detail
     {
         if(is_enabled())
         {
-            (os << ... << args) << std::endl;
+            (os << ... << streamable{args}) << std::endl;
         }
     }
 }
