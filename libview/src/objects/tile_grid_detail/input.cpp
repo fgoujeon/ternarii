@@ -205,9 +205,7 @@ namespace
 
     float move_toward(const float current, const float target, const float step)
     {
-        const auto tolerance = 0.1f;
-
-        if(std::abs(current - target) < tolerance)
+        if(std::abs(current - target) < step)
         {
             return target;
         }
@@ -224,9 +222,7 @@ namespace
 
     float move_toward_clockwise(const float current_rad, const float target_rad, const float step_rad)
     {
-        const auto tolerance = static_cast<float>(M_PI) / 8.0f;
-
-        if(std::abs(current_rad - target_rad) < tolerance || step_rad > 2 * M_PI)
+        if(std::abs(current_rad - target_rad) < step_rad || step_rad > 2 * M_PI)
         {
             return target_rad;
         }
