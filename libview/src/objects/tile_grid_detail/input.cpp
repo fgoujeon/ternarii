@@ -19,6 +19,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "input.hpp"
 #include <cmath>
+#include <cassert>
 
 namespace libview::objects::tile_grid_detail
 {
@@ -47,35 +48,88 @@ namespace
         return direction::neutral;
     }
 
+    /*
+    Size = 1:
+        --
+        x-
+
+    Size = 2:
+        --
+        xx
+
+    Size = 3:
+        x-
+        xx
+
+    Size = 4:
+        xx
+        xx
+
+    Other configurations are invalid and are considered 4 sized.
+    */
+    int get_size(const input_tile_object_matrix& tiles)
+    {
+        assert(at(tiles, 0, 0));
+
+        if(!at(tiles, 1, 0))
+        {
+            assert(!at(tiles, 0, 1));
+            assert(!at(tiles, 1, 1));
+            return 1;
+        }
+
+        if(!at(tiles, 0, 1))
+        {
+            assert(!at(tiles, 1, 1));
+            return 2;
+        }
+
+        if(!at(tiles, 1, 1))
+        {
+            return 3;
+        }
+
+        return 4;
+    }
+
     libutil::matrix<Magnum::Vector2, 2, 2> compute_tile_positions
     (
-        const input_tile_object_matrix& /*tiles*/,
+        const int input_size,
         const float cog_current_x,
         const float cog_current_rotation_rad
     )
     {
         auto positions = libutil::matrix<Magnum::Vector2, 2, 2>{};
 
+        switch(input_size)
         {
-            const auto x_shift = std::cosf(cog_current_rotation_rad + M_PI) / 2.0f;
-            const auto y_shift = std::sinf(cog_current_rotation_rad + M_PI) / 2.0f;
+            case 1:
+                at(positions, 0, 0) = {cog_current_x, 0.0f};
+                break;
+            case 2:
+                {
+                    const auto x_shift = std::cosf(cog_current_rotation_rad + M_PI) / 2.0f;
+                    const auto y_shift = std::sinf(cog_current_rotation_rad + M_PI) / 2.0f;
 
-            at(positions, 0, 0) =
-            {
-                cog_current_x + x_shift,
-                y_shift
-            };
-        }
+                    at(positions, 0, 0) =
+                    {
+                        cog_current_x + x_shift,
+                        y_shift
+                    };
+                }
+                {
+                    const auto x_shift = std::cosf(cog_current_rotation_rad) / 2.0f;
+                    const auto y_shift = std::sinf(cog_current_rotation_rad) / 2.0f;
 
-        {
-            const auto x_shift = std::cosf(cog_current_rotation_rad) / 2.0f;
-            const auto y_shift = std::sinf(cog_current_rotation_rad) / 2.0f;
-
-            at(positions, 1, 0) =
-            {
-                cog_current_x + x_shift,
-                y_shift
-            };
+                    at(positions, 1, 0) =
+                    {
+                        cog_current_x + x_shift,
+                        y_shift
+                    };
+                }
+                break;
+            default:
+                break;
         }
 
         return positions;
@@ -193,6 +247,8 @@ input::input
 
 void input::set_tiles(const input_tile_object_matrix& tiles)
 {
+    const auto input_size = get_size(tiles);
+
     //Init tiles.
     tiles_ = tiles;
     for(auto& ptile: tiles)
@@ -204,10 +260,15 @@ void input::set_tiles(const input_tile_object_matrix& tiles)
     }
 
     //Reset center of gravity.
-    cog_current_x_ = 0;
-    cog_current_rotation_rad_ = 0;
-    cog_target_x_ = 0;
-    cog_target_rotation_ = 0;
+    cog_current_rotation_rad_ = cog_target_rotation_ = 0;
+    if(input_size == 1)
+    {
+        cog_current_x_ = cog_target_x_ = -0.5;
+    }
+    else
+    {
+        cog_current_x_ = cog_target_x_ = 0;
+    }
 
     //Animate insertion of tiles.
     {
@@ -217,7 +278,7 @@ void input::set_tiles(const input_tile_object_matrix& tiles)
 
         const auto dst_positions = compute_tile_positions
         (
-            tiles_,
+            input_size,
             cog_current_x_,
             cog_current_rotation_rad_
         );
@@ -306,7 +367,7 @@ void input::advance(const libutil::time_point& now, float elapsed_s)
     //Then, move the tiles relatively to the COG current position and rotation.
     const auto positions = compute_tile_positions
     (
-        tiles_,
+        get_size(tiles_),
         cog_current_x_,
         cog_current_rotation_rad_
     );
@@ -340,7 +401,10 @@ void input::handle_button_press(data_types::move_button button)
             break;
         case data_types::move_button::clockwise_rotation:
             keyboard_state_.rotate_button_pressed = true;
-            cog_target_rotation_ = (cog_target_rotation_ + 1) % 4;
+            if(get_size(tiles_) != 1)
+            {
+                cog_target_rotation_ = (cog_target_rotation_ + 1) % 4;
+            }
             last_received_order_ = order::rotate;
             update_cog_target_position();
             break;
@@ -402,14 +466,28 @@ void input::handle_button_release(data_types::move_button button)
 
 void input::update_cog_target_position()
 {
-    const auto dir = get_direction(keyboard_state_);
-
-    //First of all, compute the target position of the center of gravity (COG).
     cog_target_x_ = [&]() -> float
     {
-        const auto vertical = (cog_target_rotation_ % 2 == 1);
+        //Is current input (as currently rotated) one-tile large?
+        const auto vertical = [&]
+        {
+            const auto size = get_size(tiles_);
 
-        switch(dir)
+            if(size == 1)
+            {
+                return true;
+            }
+
+            //vertical position
+            if(size == 2 && (cog_target_rotation_ % 2 == 1))
+            {
+                return true;
+            }
+
+            return false;
+        }();
+
+        switch(get_direction(keyboard_state_))
         {
             case direction::left:
                 if(vertical)
