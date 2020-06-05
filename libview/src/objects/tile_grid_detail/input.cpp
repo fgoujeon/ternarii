@@ -106,29 +106,46 @@ namespace
             case 1:
                 at(positions, 0, 0) = {cog_current_x, 0.0f};
                 break;
+
             case 2:
+                at(positions, 0, 0) =
                 {
-                    const auto x_shift = std::cosf(cog_current_rotation_rad + M_PI) / 2.0f;
-                    const auto y_shift = std::sinf(cog_current_rotation_rad + M_PI) / 2.0f;
+                    std::cosf(cog_current_rotation_rad + M_PI) / 2.0f + cog_current_x,
+                    std::sinf(cog_current_rotation_rad + M_PI) / 2.0f
+                };
+                at(positions, 1, 0) =
+                {
+                    std::cosf(cog_current_rotation_rad) / 2.0f + cog_current_x,
+                    std::sinf(cog_current_rotation_rad) / 2.0f
+                };
+                break;
+
+            default:
+                {
+                    const auto angle_gap = M_PI / 4.0f;
+                    const auto radius = 0.707f; //sqrt(0.5)
 
                     at(positions, 0, 0) =
                     {
-                        cog_current_x + x_shift,
-                        y_shift
+                        std::cosf(cog_current_rotation_rad - 3 * angle_gap) * radius + cog_current_x,
+                        std::sinf(cog_current_rotation_rad - 3 * angle_gap) * radius
                     };
-                }
-                {
-                    const auto x_shift = std::cosf(cog_current_rotation_rad) / 2.0f;
-                    const auto y_shift = std::sinf(cog_current_rotation_rad) / 2.0f;
-
+                    at(positions, 0, 1) =
+                    {
+                        std::cosf(cog_current_rotation_rad + 3 * angle_gap) * radius + cog_current_x,
+                        std::sinf(cog_current_rotation_rad + 3 * angle_gap) * radius
+                    };
                     at(positions, 1, 0) =
                     {
-                        cog_current_x + x_shift,
-                        y_shift
+                        std::cosf(cog_current_rotation_rad - 1 * angle_gap) * radius + cog_current_x,
+                        std::sinf(cog_current_rotation_rad - 1 * angle_gap) * radius
+                    };
+                    at(positions, 1, 1) =
+                    {
+                        std::cosf(cog_current_rotation_rad + 1 * angle_gap) * radius + cog_current_x,
+                        std::sinf(cog_current_rotation_rad + 1 * angle_gap) * radius
                     };
                 }
-                break;
-            default:
                 break;
         }
 
@@ -418,7 +435,7 @@ void input::handle_button_press(data_types::move_button button)
             )
             {
                 const auto special_case_offset =
-                    cog_target_rotation_ == 3 ?
+                    get_size(tiles_) == 2 && cog_target_rotation_ == 3 ?
                     -1 :
                     0
                 ;
