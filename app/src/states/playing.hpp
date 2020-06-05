@@ -45,7 +45,7 @@ class playing final: public state
         void handle_view_drop_request(const libview::data_types::input_layout& input_layout)
         {
             libutil::log::info("Drop request with layout: ", input_layout);
-            modify_game(&libgame::game::drop_input_tiles_with_layout, input_layout);
+            modify_game(&libgame::game::drop_input_tiles, input_layout);
         }
 
     //Game event handlers
@@ -145,9 +145,9 @@ class playing final: public state
 
         void mark_tiles_for_nullification()
         {
-            targeted_tiles_.clear();
-            pgame_->get_targeted_tiles(targeted_tiles_);
-            pscreen_->mark_tiles_for_nullification(targeted_tiles_);
+            //targeted_tiles_.clear();
+            //pgame_->get_targeted_tiles(targeted_tiles_);
+            //pscreen_->mark_tiles_for_nullification(targeted_tiles_);
         }
 
     private:

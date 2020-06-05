@@ -44,25 +44,19 @@ struct game
 
         const data_types::input_tile_matrix& get_input_tiles() const;
 
-        const data_types::input_layout& get_input_layout() const;
-
         const data_types::board_tile_matrix& get_board_tiles() const;
 
-        void get_targeted_tiles(libutil::matrix_coordinate_list& coords) const;
+        void get_targeted_tiles
+        (
+            const data_types::input_layout& input_layout,
+            libutil::matrix_coordinate_list& coords
+        ) const;
 
         bool is_over() const;
 
         void start(event_list& events);
 
-        void shift_input_left(event_list& events);
-
-        void shift_input_right(event_list& events);
-
-        void rotate_input(event_list& events);
-
-        void drop_input_tiles(event_list& events);
-
-        void drop_input_tiles_with_layout
+        void drop_input_tiles
         (
             const data_types::input_layout& layout,
             event_list& events

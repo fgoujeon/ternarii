@@ -29,8 +29,6 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libgame
 {
 
-class board_input;
-
 class board
 {
     public:
@@ -48,7 +46,12 @@ class board
             return tiles_;
         }
 
-        void get_targeted_tiles(const board_input& in, libutil::matrix_coordinate_list& coords) const;
+        void get_targeted_tiles
+        (
+            const data_types::input_tile_matrix& input_tiles,
+            const data_types::input_layout& input_layout,
+            libutil::matrix_coordinate_list& coords
+        ) const;
 
         void clear();
 
