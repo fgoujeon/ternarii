@@ -53,15 +53,6 @@ namespace events
 
 
 
-    struct input_layout_change
-    {
-        data_types::input_layout layout;
-    };
-
-    std::ostream& operator<<(std::ostream& l, const input_layout_change& r);
-
-
-
     struct input_tile_drop
     {
         data_types::input_tile_drop_list drops;
@@ -126,7 +117,6 @@ using event = std::variant
     events::start,
     events::next_input_creation,
     events::next_input_insertion,
-    events::input_layout_change,
     events::input_tile_drop,
     events::board_tile_drop,
     events::tile_nullification,

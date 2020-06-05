@@ -65,12 +65,6 @@ class playing final: public state
             fsm_.database.set_stage_state(stage_, pgame_->get_state());
         }
 
-        void handle_game_event(const libgame::events::input_layout_change& /*event*/)
-        {
-            //pscreen_->set_input_layout(event.layout);
-            //mark_tiles_for_nullification();
-        }
-
         void handle_game_event(const libgame::events::input_tile_drop& event)
         {
             pscreen_->drop_input_tiles(event.drops);
