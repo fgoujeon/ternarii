@@ -231,11 +231,6 @@ namespace tracks
         {
             const auto current_alpha = track.pobj->get_alpha();
 
-            if(current_alpha == track.finish_alpha)
-            {
-                return;
-            }
-
             if(track.duration_s == 0)
             {
                 track_impl = track_impl_t
