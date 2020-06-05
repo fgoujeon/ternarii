@@ -43,6 +43,7 @@ class tile_grid: public Object2D, public features::animable
 {
     public:
         using drop_request_callback = libutil::void_function<const data_types::input_layout&>;
+        using input_layout_change_callback = libutil::void_function<const data_types::input_layout&>;
 
     private:
         using input_tile_matrix = libutil::matrix
@@ -65,10 +66,13 @@ class tile_grid: public Object2D, public features::animable
             Object2D& parent,
             features::drawable_group& drawables,
             features::animable_group& animables,
-            const drop_request_callback& drop_cb
+            const drop_request_callback& drop_cb,
+            const input_layout_change_callback& layout_cb
         );
 
         bool is_animating() const;
+
+        const data_types::input_layout& get_input_layout() const;
 
         void clear();
 

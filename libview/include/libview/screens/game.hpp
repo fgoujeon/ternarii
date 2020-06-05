@@ -36,9 +36,10 @@ class game: public Object2D, public features::key_event_handler
     public:
         struct callback_set
         {
-            libutil::void_function<const data_types::input_layout&> handle_drop_request;
             libutil::void_function<> handle_clear_request;
+            libutil::void_function<const data_types::input_layout&> handle_drop_request;
             libutil::void_function<> handle_exit_request;
+            libutil::void_function<const data_types::input_layout&> handle_input_layout_change;
         };
 
     public:
@@ -58,6 +59,8 @@ class game: public Object2D, public features::key_event_handler
         void handle_key_release(key_event& event) override;
 
     public:
+        const data_types::input_layout& get_input_layout() const;
+
         void clear();
 
         void set_score(const int value);

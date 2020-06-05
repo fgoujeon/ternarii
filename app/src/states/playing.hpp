@@ -36,14 +36,6 @@ class playing final: public state
     public:
         playing(fsm& f, screen_transition trans, libgame::data_types::stage stage);
 
-    //View event handlers
-    private:
-        void handle_view_drop_request(const libview::data_types::input_layout& input_layout)
-        {
-            libutil::log::info("Drop request with layout: ", input_layout);
-            modify_game(&libgame::game::drop_input_tiles, input_layout);
-        }
-
     //Game event handlers
     private:
         void handle_game_event(const libgame::events::start&)
@@ -113,7 +105,7 @@ class playing final: public state
                 (
                     [this](const auto& event)
                     {
-                        libutil::log::info(event);
+                        libutil::log::info("[fsm <- game] ", event);
                         handle_game_event(event);
                     },
                     event
@@ -141,9 +133,9 @@ class playing final: public state
 
         void mark_tiles_for_nullification()
         {
-            //targeted_tiles_.clear();
-            //pgame_->get_targeted_tiles(targeted_tiles_);
-            //pscreen_->mark_tiles_for_nullification(targeted_tiles_);
+            targeted_tiles_.clear();
+            pgame_->get_targeted_tiles(pscreen_->get_input_layout(), targeted_tiles_);
+            pscreen_->mark_tiles_for_nullification(targeted_tiles_);
         }
 
     private:

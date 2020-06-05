@@ -101,7 +101,8 @@ struct game::impl
             self,
             feature_groups.drawables,
             feature_groups.animables,
-            callbacks.handle_drop_request
+            callbacks.handle_drop_request,
+            callbacks.handle_input_layout_change
         ),
         score_display(self, feature_groups.drawables),
         hi_score_display(self, feature_groups.drawables),
@@ -242,6 +243,11 @@ void game::handle_key_release(key_event& event)
         default:
             break;
     }
+}
+
+const data_types::input_layout& game::get_input_layout() const
+{
+    return pimpl_->tile_grid.get_input_layout();
 }
 
 void game::clear()

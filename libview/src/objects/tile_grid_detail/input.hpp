@@ -52,14 +52,18 @@ class input: public Object2D, public features::animable
         };
 
         using drop_request_callback = libutil::void_function<const data_types::input_layout&>;
+        using layout_change_callback = libutil::void_function<const data_types::input_layout&>;
 
     public:
         input
         (
             Object2D& parent,
             features::animable_group& animables,
-            const drop_request_callback& drop_cb
+            const drop_request_callback& drop_cb,
+            const layout_change_callback& layout_cb
         );
+
+        const data_types::input_layout& get_layout() const;
 
         void set_tiles(const input_tile_object_matrix& tiles);
 
@@ -82,10 +86,13 @@ class input: public Object2D, public features::animable
     private:
         void update_cog_target_position();
 
+        void update_layout();
+
     private:
         animator insertion_animator_;
 
         drop_request_callback drop_request_callback_;
+        layout_change_callback layout_change_callback_;
 
         keyboard_state keyboard_state_;
 
@@ -103,6 +110,8 @@ class input: public Object2D, public features::animable
 
         bool suspended_ = false;
         bool settled_ = false;
+
+        data_types::input_layout layout_;
 };
 
 } //namespace

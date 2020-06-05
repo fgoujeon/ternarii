@@ -253,13 +253,20 @@ input::input
 (
     Object2D& parent,
     features::animable_group& animables,
-    const drop_request_callback& drop_cb
+    const drop_request_callback& drop_cb,
+    const layout_change_callback& layout_cb
 ):
     Object2D(&parent),
     features::animable{*this, &animables},
-    drop_request_callback_(drop_cb)
+    drop_request_callback_(drop_cb),
+    layout_change_callback_(layout_cb)
 {
     update_cog_target_position();
+}
+
+const data_types::input_layout& input::get_layout() const
+{
+    return layout_;
 }
 
 void input::set_tiles(const input_tile_object_matrix& tiles)
@@ -287,6 +294,7 @@ void input::set_tiles(const input_tile_object_matrix& tiles)
         cog_current_x_ = cog_target_x_ = 0;
     }
     settled_ = false;
+    update_layout();
 
     //Animate insertion of tiles.
     {
@@ -426,6 +434,8 @@ void input::advance(const libutil::time_point& now, float elapsed_s)
         tiles_,
         positions
     );
+
+    update_layout();
 }
 
 void input::handle_button_press(data_types::move_button button)
@@ -460,29 +470,7 @@ void input::handle_button_press(data_types::move_button button)
                 !insertion_animator_.is_animating()
             )
             {
-                const auto special_case_offset =
-                    get_size(tiles_) == 2 && cog_target_rotation_ == 3 ?
-                    -1 :
-                    0
-                ;
-
-                const auto col_offset = static_cast<int>
-                (
-                    std::round
-                    (
-                        cog_target_x_ +
-                        2.4f //not 2.5, to make sure we don't round integers up
-                    )
-                ) + special_case_offset;
-
-                drop_request_callback_
-                (
-                    data_types::input_layout
-                    {
-                        .col_offset = col_offset,
-                        .rotation = cog_target_rotation_
-                    }
-                );
+                drop_request_callback_(get_layout());
             }
     }
 }
@@ -562,6 +550,37 @@ void input::update_cog_target_position()
     }();
 
     settled_ = false;
+}
+
+void input::update_layout()
+{
+    const auto old_layout = layout_;
+
+    const auto special_case_offset =
+        get_size(tiles_) == 2 && cog_target_rotation_ == 3 ?
+        -1 :
+        0
+    ;
+
+    const auto col_offset = static_cast<int>
+    (
+        std::round
+        (
+            cog_current_x_ +
+            2.4f //not 2.5, to make sure we don't round integers up
+        )
+    ) + special_case_offset;
+
+    layout_ = data_types::input_layout
+    {
+        .col_offset = col_offset,
+        .rotation = cog_target_rotation_
+    };
+
+    if(layout_ != old_layout)
+    {
+        layout_change_callback_(layout_);
+    }
 }
 
 } //namespace

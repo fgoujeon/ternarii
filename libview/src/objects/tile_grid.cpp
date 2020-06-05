@@ -53,13 +53,14 @@ tile_grid::tile_grid
     Object2D& parent,
     features::drawable_group& drawables,
     features::animable_group& animables,
-    const drop_request_callback& drop_cb
+    const drop_request_callback& drop_cb,
+    const input_layout_change_callback& layout_cb
 ):
     Object2D{&parent},
     features::animable(*this, &animables),
     drawables_(drawables),
     next_input_(*this, drawables, animables),
-    input_(*this, animables, drop_cb)
+    input_(*this, animables, drop_cb, layout_cb)
 {
     //board corners
     {
@@ -103,6 +104,11 @@ tile_grid::tile_grid
 bool tile_grid::is_animating() const
 {
     return animator_.is_animating();
+}
+
+const data_types::input_layout& tile_grid::get_input_layout() const
+{
+    return input_.get_layout();
 }
 
 void tile_grid::clear()
