@@ -102,6 +102,7 @@ class input: public Object2D, public features::animable
         order last_received_order_ = order::shift_left;
 
         bool suspended_ = false;
+        bool settled_ = false;
 };
 
 } //namespace

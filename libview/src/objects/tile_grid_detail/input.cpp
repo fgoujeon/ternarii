@@ -286,6 +286,7 @@ void input::set_tiles(const input_tile_object_matrix& tiles)
     {
         cog_current_x_ = cog_target_x_ = 0;
     }
+    settled_ = false;
 
     //Animate insertion of tiles.
     {
@@ -361,6 +362,11 @@ void input::advance(const libutil::time_point& now, float elapsed_s)
         return;
     }
 
+    if(settled_)
+    {
+        return;
+    }
+
     /*
     Note: we want to synchronize rotation and translation speeds so that it
     takes the same amount of time to animate a 90 degree rotation and a 0.5 unit
@@ -372,19 +378,34 @@ void input::advance(const libutil::time_point& now, float elapsed_s)
     const auto rotation_speed_radps = translation_speed * M_PI; //in radians/s
     const auto rotation_step_rad = rotation_speed_radps * elapsed_s;
 
-    //First, define current position of COG.
-    cog_current_x_ = move_toward
+    //Compute new position of COG.
+    const auto cog_new_x = move_toward
     (
         cog_current_x_,
         cog_target_x_,
         translation_step
     );
-    cog_current_rotation_rad_ = move_toward_clockwise
+    const auto cog_new_rotation_rad = move_toward_clockwise
     (
         cog_current_rotation_rad_,
         -cog_target_rotation_ * M_PI / 2.0f,
         rotation_step_rad
     );
+
+    //Avoid future useless executions of this function.
+    if
+    (
+        cog_current_x_ == cog_new_x &&
+        cog_current_rotation_rad_ == cog_new_rotation_rad
+    )
+    {
+        settled_ = true;
+        return;
+    }
+
+    //Set current position of COG.
+    cog_current_x_ = cog_new_x;
+    cog_current_rotation_rad_ = cog_new_rotation_rad;
 
     //Then, move the tiles relatively to the COG current position and rotation.
     const auto positions = compute_tile_positions
@@ -539,6 +560,8 @@ void input::update_cog_target_position()
                 );
         }
     }();
+
+    settled_ = false;
 }
 
 } //namespace
