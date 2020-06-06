@@ -60,7 +60,7 @@ std::shared_ptr<Object2D> make_tile_object
     );
 
     ptile->set_alpha(0.0f);
-    ptile->scale({0.46f, 0.46f});
+    ptile->scale({0.48f, 0.48f});
 
     return ptile;
 }

@@ -21,6 +21,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #define LIBVIEW_OBJECTS_SDF_IMAGE_TILE_HPP
 
 #include "sdf_image.hpp"
+#include "rounded_rectangle.hpp"
 #include "../common.hpp"
 #include <Magnum/Math/Color.h>
 #include <Magnum/Magnum.h>
@@ -34,8 +35,7 @@ class sdf_image_tile: public Object2D
         sdf_image_tile(Object2D& parent, features::drawable_group& drawables, const std::filesystem::path& image_path);
 
     private:
-        Magnum::Color4 square_color_;
-        sdf_image square_;
+        rounded_rectangle square_;
         sdf_image image_;
 };
 

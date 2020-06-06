@@ -29,17 +29,17 @@ namespace libview::objects
 
 sdf_image_tile::sdf_image_tile(Object2D& parent, features::drawable_group& drawables, const std::filesystem::path& image_path):
     Object2D{&parent},
-    square_color_(colors::light_gray),
     square_
     (
         *this,
         drawables,
-        libres::images::rounded_square,
-        sdf_image::style
+        rounded_rectangle::style
         {
-            .color = square_color_,
+            .color = colors::light_gray,
+            .dimension = {1.0f, 1.0f},
             .outline_color = colors::dark_gray,
-            .outline_range = {0.5f, 0.35f}
+            .outline_thickness = 0.04f,
+            .radius = 0.5f
         }
     ),
     image_

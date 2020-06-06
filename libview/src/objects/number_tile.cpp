@@ -56,17 +56,17 @@ namespace
 
 number_tile::number_tile(Object2D& parent, features::drawable_group& drawables, const int value):
     Object2D(&parent),
-    square_color_(value_to_color(value)),
     square_
     (
         *this,
         drawables,
-        libres::images::rounded_square,
-        sdf_image::style
+        rounded_rectangle::style
         {
-            .color = square_color_,
+            .color = value_to_color(value),
+            .dimension = {1.0f, 1.0f},
             .outline_color = colors::dark_gray,
-            .outline_range = {0.5f, 0.4f}
+            .outline_thickness = 0.04f,
+            .radius = 0.5f
         }
     ),
     label_
@@ -77,7 +77,7 @@ number_tile::number_tile(Object2D& parent, features::drawable_group& drawables, 
         {
             .alignment = Magnum::Text::Alignment::MiddleCenter,
             .color = colors::white,
-            .font_size = 1.2f,
+            .font_size = 1.15f,
             .outline_color = colors::dark_gray,
             .outline_range = {0.45f, 0.40f}
         },

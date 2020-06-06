@@ -20,7 +20,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #ifndef LIBVIEW_OBJECTS_NUMBER_TILE_HPP
 #define LIBVIEW_OBJECTS_NUMBER_TILE_HPP
 
-#include "sdf_image.hpp"
+#include "rounded_rectangle.hpp"
 #include "label.hpp"
 #include "../common.hpp"
 #include <Magnum/Math/Color.h>
@@ -35,8 +35,7 @@ class number_tile: public Object2D
         number_tile(Object2D& parent, features::drawable_group& drawables, const int value);
 
     private:
-        Magnum::Color3 square_color_;
-        sdf_image square_;
+        rounded_rectangle square_;
         label label_;
 };
 
