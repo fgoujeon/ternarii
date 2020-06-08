@@ -29,78 +29,6 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libview::objects::tile_grid_detail
 {
 
-namespace
-{
-    template<class TileMatrix>
-    libutil::matrix<Magnum::Vector2, 2, 2> get_input_tile_positions
-    (
-        const TileMatrix& tiles,
-        const data_types::input_layout& layout
-    )
-    {
-        auto positions = libutil::matrix<Magnum::Vector2, 2, 2>{};
-
-        libutil::for_each_colrow
-        (
-            [&](auto& pos, const int col, const int row)
-            {
-                //Get coordinate as indices
-                const auto coord = get_tile_coordinate(layout, {col, row});
-
-                //Convert to model coordinate
-                pos = Magnum::Vector2
-                {
-                    coord.col - 2.5f,
-                    coord.row - 0.5f
-                };
-            },
-            positions
-        );
-
-        //Center the tiles vertically if they are on the same line
-        const auto on_same_line = [&]
-        {
-            auto on_same_line = true;
-            auto opt_y = std::optional<float>{};
-            libutil::for_each
-            (
-                [&](const auto& pos, const auto& ptile)
-                {
-                    if(!ptile)
-                    {
-                        return;
-                    }
-
-                    if(!opt_y)
-                    {
-                        opt_y = pos.y();
-                        return;
-                    }
-
-                    if(pos.y() != opt_y)
-                    {
-                        on_same_line = false;
-                    }
-                },
-                positions,
-                tiles
-            );
-
-            return on_same_line;
-        }();
-
-        if(on_same_line)
-        {
-            for(auto& pos: positions)
-            {
-                pos.y() = 0;
-            }
-        }
-
-        return positions;
-    }
-}
-
 next_input::next_input
 (
     Object2D& parent,
@@ -120,31 +48,31 @@ void next_input::create_tiles(const data_types::input_tile_matrix& tiles)
     auto anim = animation::animation{};
 
     //Make tiles
-    {
-        const auto positions = get_input_tile_positions(tiles, data_types::input_layout{});
-
-        libutil::for_each
-        (
-            [&](const auto& opt_tile, const auto& position, auto& pnext_input_tile)
+    libutil::for_each_colrow
+    (
+        [&](const auto& opt_tile, auto& pnext_input_tile, const int col, const int row)
+        {
+            if(opt_tile.has_value())
             {
-                if(opt_tile.has_value())
-                {
-                    pnext_input_tile = make_tile_object(*this, drawables_, opt_tile.value());
-                    pnext_input_tile->setTranslation(position);
-                }
-            },
-            tiles,
-            positions,
-            tile_objects_
-        );
-    }
+                const auto x = (col - 0.5f) / 1.33f;
+                const auto y = (row - 0.5f) / 1.33f;
+
+                pnext_input_tile = make_tile_object(*this, drawables_, opt_tile.value());
+                pnext_input_tile->set_alpha(0);
+                pnext_input_tile->setScaling({0.36f, 0.36f});
+                pnext_input_tile->setTranslation({x, y});
+            }
+        },
+        tiles,
+        tile_objects_
+    );
 
     //Animate next input creation.
     for(auto& ptile_object: tile_objects_)
     {
         if(ptile_object)
         {
-            anim.add(animation::tracks::alpha_transition{ptile_object, 0.4, animation_duration_s});
+            anim.add(animation::tracks::alpha_transition{ptile_object, 0.4f, animation_duration_s});
         }
     }
 

@@ -35,7 +35,7 @@ std::shared_ptr<Object2D> make_tile_object
 {
     using result_t = std::shared_ptr<Object2D>;
 
-    auto ptile = std::visit
+    return std::visit
     (
         libutil::overload
         {
@@ -58,11 +58,6 @@ std::shared_ptr<Object2D> make_tile_object
         },
         tile
     );
-
-    ptile->set_alpha(0.0f);
-    ptile->scale({0.48f, 0.48f});
-
-    return ptile;
 }
 
 } //namespace

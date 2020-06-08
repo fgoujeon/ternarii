@@ -270,6 +270,7 @@ void tile_grid::merge_tiles(const data_types::tile_merge_list& merges)
 
         //create destination tile
         auto pdst_tile = make_tile(data_types::number_tile{merge.dst_tile_value}, dst_position);
+        pdst_tile->set_alpha(0);
         at(board_tiles_, merge.dst_tile_coordinate) = pdst_tile;
 
         //make destination tile appear with a fade in
@@ -324,7 +325,6 @@ void tile_grid::set_board_tiles(const data_types::board_tile_matrix& tiles)
             const auto position = tile_coordinate_to_position({col, row});
 
             auto ptile = make_tile(opt_tile.value(), position);
-            ptile->set_alpha(1);
             at(board_tiles_, col, row) = ptile;
         },
         tiles
@@ -353,7 +353,8 @@ std::shared_ptr<Object2D> tile_grid::make_tile
 )
 {
     auto ptile = tile_grid_detail::make_tile_object(*this, drawables_, tile);
-    ptile->translate(position);
+    ptile->setScaling({0.48f, 0.48f});
+    ptile->setTranslation(position);
     return ptile;
 }
 

@@ -314,7 +314,25 @@ void input::set_tiles(const input_tile_object_matrix& tiles)
                             animation::get_cubic_out_position_interpolator()
                         }
                     );
-                    anim.add(animation::tracks::alpha_transition{ptile, 1, animation_duration_s});
+                    anim.add
+                    (
+                        animation::tracks::scaling_transition
+                        {
+                            ptile,
+                            {0.48f, 0.48f},
+                            animation_duration_s,
+                            animation::get_cubic_out_position_interpolator()
+                        }
+                    );
+                    anim.add
+                    (
+                        animation::tracks::alpha_transition
+                        {
+                            ptile,
+                            1,
+                            animation_duration_s
+                        }
+                    );
                 }
             },
             tiles_,
