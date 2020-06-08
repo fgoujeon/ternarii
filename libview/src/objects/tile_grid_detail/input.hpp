@@ -89,7 +89,7 @@ class input: public Object2D, public features::animable
         void update_layout();
 
     private:
-        animator insertion_animator_;
+        animation::animator insertion_animator_;
 
         drop_request_callback drop_request_callback_;
         layout_change_callback layout_change_callback_;

@@ -53,7 +53,7 @@ class next_input: public Object2D, public features::animable
     private:
         features::drawable_group& drawables_;
 
-        animator animator_;
+        animation::animator animator_;
         bool suspended_ = false;
         input_tile_object_matrix tile_objects_;
 };

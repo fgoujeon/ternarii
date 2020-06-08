@@ -273,7 +273,7 @@ struct view::impl final
 
     feature_group_set feature_groups;
 
-    animator screen_transition_animator;
+    animation::animator screen_transition_animator;
 
     keyboard_state key_states;
 
@@ -346,7 +346,7 @@ void view::show_screen
 
                 pimpl_->screen_transition_animator.push
                 (
-                    tracks::fixed_duration_translation
+                    animation::tracks::fixed_duration_translation
                     {
                         pscreen,
                         new_screen_start_position,
@@ -354,14 +354,14 @@ void view::show_screen
                     }
                 );
 
-                auto anim = animation{};
+                auto anim = animation::animation{};
 
                 //Hide old screen, if any
                 if(pimpl_->pscreen)
                 {
                     anim.add
                     (
-                        tracks::fixed_duration_translation
+                        animation::tracks::fixed_duration_translation
                         {
                             .pobj = pimpl_->pscreen,
                             .finish_position = old_screen_finish_position,
@@ -372,7 +372,7 @@ void view::show_screen
 
                     anim.add
                     (
-                        tracks::alpha_transition
+                        animation::tracks::alpha_transition
                         {
                             .pobj = pimpl_->pscreen,
                             .finish_alpha = 0.0f,
@@ -385,7 +385,7 @@ void view::show_screen
                 {
                     anim.add
                     (
-                        tracks::fixed_duration_translation
+                        animation::tracks::fixed_duration_translation
                         {
                             .pobj = pscreen,
                             .finish_position = {0.0f, 0.0f},
@@ -396,7 +396,7 @@ void view::show_screen
 
                     anim.add
                     (
-                        tracks::alpha_transition
+                        animation::tracks::alpha_transition
                         {
                             .pobj = pscreen,
                             .finish_alpha = 1.0f,
@@ -433,7 +433,7 @@ void view::show_screen
 
                 pimpl_->screen_transition_animator.push
                 (
-                    tracks::scaling_transition
+                    animation::tracks::scaling_transition
                     {
                         .pobj = pscreen,
                         .finish_scaling = new_screen_start_scaling,
@@ -441,14 +441,14 @@ void view::show_screen
                     }
                 );
 
-                auto anim = animation{};
+                auto anim = animation::animation{};
 
                 //Hide old screen, if any
                 if(pimpl_->pscreen)
                 {
                     anim.add
                     (
-                        tracks::scaling_transition
+                        animation::tracks::scaling_transition
                         {
                             .pobj = pimpl_->pscreen,
                             .finish_scaling = old_screen_finish_scaling,
@@ -459,7 +459,7 @@ void view::show_screen
 
                     anim.add
                     (
-                        tracks::alpha_transition
+                        animation::tracks::alpha_transition
                         {
                             .pobj = pimpl_->pscreen,
                             .finish_alpha = 0.0f,
@@ -473,7 +473,7 @@ void view::show_screen
                 {
                     anim.add
                     (
-                        tracks::scaling_transition
+                        animation::tracks::scaling_transition
                         {
                             .pobj = pscreen,
                             .finish_scaling = Magnum::Vector2{1.0f, 1.0f},
@@ -484,7 +484,7 @@ void view::show_screen
 
                     anim.add
                     (
-                        tracks::alpha_transition
+                        animation::tracks::alpha_transition
                         {
                             .pobj = pscreen,
                             .finish_alpha = 1.0f,

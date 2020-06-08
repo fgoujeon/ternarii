@@ -117,7 +117,7 @@ void next_input::create_tiles(const data_types::input_tile_matrix& tiles)
 {
     const auto animation_duration_s = 0.2f;
 
-    auto anim = animation{};
+    auto anim = animation::animation{};
 
     //Make tiles
     {
@@ -144,7 +144,7 @@ void next_input::create_tiles(const data_types::input_tile_matrix& tiles)
     {
         if(ptile_object)
         {
-            anim.add(tracks::alpha_transition{ptile_object, 0.4, animation_duration_s});
+            anim.add(animation::tracks::alpha_transition{ptile_object, 0.4, animation_duration_s});
         }
     }
 

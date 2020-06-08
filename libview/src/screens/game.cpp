@@ -180,7 +180,7 @@ struct game::impl
 
     callback_set callbacks;
 
-    animator animator;
+    animation::animator animator;
 
     std::unique_ptr<objects::background> pbackground;
     objects::tile_grid tile_grid;
@@ -346,10 +346,10 @@ void game::set_game_over_overlay_visible(const bool visible)
         pimpl_->pgame_over_overlay->translate({0.0f, 5.5f});
         pimpl_->pgame_over_overlay->set_alpha(0);
 
-        auto anim = animation{};
+        auto anim = animation::animation{};
         anim.add
         (
-            tracks::fixed_duration_translation
+            animation::tracks::fixed_duration_translation
             {
                 .pobj = pimpl_->pgame_over_overlay,
                 .finish_position = {0.0f, 4.5f},
@@ -359,7 +359,7 @@ void game::set_game_over_overlay_visible(const bool visible)
         );
         anim.add
         (
-            tracks::alpha_transition
+            animation::tracks::alpha_transition
             {
                 .pobj = pimpl_->pgame_over_overlay,
                 .finish_alpha = 1.0f,
@@ -375,10 +375,10 @@ void game::set_game_over_overlay_visible(const bool visible)
             return;
         }
 
-        auto anim = animation{};
+        auto anim = animation::animation{};
         anim.add
         (
-            tracks::fixed_duration_translation
+            animation::tracks::fixed_duration_translation
             {
                 .pobj = pimpl_->pgame_over_overlay,
                 .finish_position = {0.0f, 5.5f},
@@ -388,7 +388,7 @@ void game::set_game_over_overlay_visible(const bool visible)
         );
         anim.add
         (
-            tracks::alpha_transition
+            animation::tracks::alpha_transition
             {
                 .pobj = pimpl_->pgame_over_overlay,
                 .finish_alpha = 0.0f,

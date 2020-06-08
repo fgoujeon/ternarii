@@ -296,7 +296,7 @@ void input::set_tiles(const input_tile_object_matrix& tiles)
     {
         const auto animation_duration_s = 0.2f;
 
-        auto anim = animation{};
+        auto anim = animation::animation{};
 
         const auto dst_positions = compute_tile_positions
         (
@@ -313,7 +313,7 @@ void input::set_tiles(const input_tile_object_matrix& tiles)
                 {
                     anim.add
                     (
-                        tracks::fixed_duration_translation
+                        animation::tracks::fixed_duration_translation
                         {
                             ptile,
                             dst_position,
@@ -321,7 +321,7 @@ void input::set_tiles(const input_tile_object_matrix& tiles)
                             tile_move_interpolator
                         }
                     );
-                    anim.add(tracks::alpha_transition{ptile, 1, animation_duration_s});
+                    anim.add(animation::tracks::alpha_transition{ptile, 1, animation_duration_s});
                 }
             },
             tiles_,

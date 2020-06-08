@@ -29,7 +29,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include <list>
 #include <memory>
 
-namespace libview
+namespace libview::animation
 {
 
 using player_t = Magnum::Animation::Player<std::chrono::nanoseconds, Magnum::Float>;

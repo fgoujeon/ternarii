@@ -53,7 +53,7 @@ tile_grid::tile_grid
     Object2D& parent,
     features::drawable_group& drawables,
     features::animable_group& animables,
-    animator& animator,
+    animation::animator& animator,
     const drop_request_callback& drop_cb,
     const input_layout_change_callback& layout_cb
 ):
@@ -136,7 +136,7 @@ void tile_grid::insert_next_input()
 
 void tile_grid::drop_input_tiles(const data_types::input_tile_drop_list& drops)
 {
-    auto anim = animation{};
+    auto anim = animation::animation{};
 
     //Retrieve tile objects
     const auto input_tile_objects = input_.release_tile_objects();
@@ -156,7 +156,7 @@ void tile_grid::drop_input_tiles(const data_types::input_tile_drop_list& drops)
 
         anim.add
         (
-            tracks::fixed_speed_translation
+            animation::tracks::fixed_speed_translation
             {
                 ptile,
                 dst_position,
@@ -167,17 +167,17 @@ void tile_grid::drop_input_tiles(const data_types::input_tile_drop_list& drops)
         at(board_tiles_, drop.board_coordinate) = ptile;
     }
 
-    animator_.push(tracks::closure{[this]{next_input_.suspend();}});
-    animator_.push(tracks::closure{[this]{input_.suspend();}});
+    animator_.push(animation::tracks::closure{[this]{next_input_.suspend();}});
+    animator_.push(animation::tracks::closure{[this]{input_.suspend();}});
     animator_.push(std::move(anim));
-    animator_.push(tracks::pause{0.05});
-    animator_.push(tracks::closure{[this]{input_.resume();}});
-    animator_.push(tracks::closure{[this]{next_input_.resume();}});
+    animator_.push(animation::tracks::pause{0.05});
+    animator_.push(animation::tracks::closure{[this]{input_.resume();}});
+    animator_.push(animation::tracks::closure{[this]{next_input_.resume();}});
 }
 
 void tile_grid::drop_board_tiles(const data_types::board_tile_drop_list& drops)
 {
-    auto anim = animation{};
+    auto anim = animation::animation{};
 
     for(const auto& drop: drops)
     {
@@ -187,7 +187,7 @@ void tile_grid::drop_board_tiles(const data_types::board_tile_drop_list& drops)
 
         anim.add
         (
-            tracks::fixed_speed_translation
+            animation::tracks::fixed_speed_translation
             {
                 ptile,
                 dst_position,
@@ -199,18 +199,18 @@ void tile_grid::drop_board_tiles(const data_types::board_tile_drop_list& drops)
         ptile = nullptr;
     }
 
-    animator_.push(tracks::closure{[this]{next_input_.suspend();}});
-    animator_.push(tracks::closure{[this]{input_.suspend();}});
+    animator_.push(animation::tracks::closure{[this]{next_input_.suspend();}});
+    animator_.push(animation::tracks::closure{[this]{input_.suspend();}});
     animator_.push(std::move(anim));
-    animator_.push(tracks::pause{0.05});
-    animator_.push(tracks::closure{[this]{input_.resume();}});
-    animator_.push(tracks::closure{[this]{next_input_.resume();}});
+    animator_.push(animation::tracks::pause{0.05});
+    animator_.push(animation::tracks::closure{[this]{input_.resume();}});
+    animator_.push(animation::tracks::closure{[this]{next_input_.resume();}});
 }
 
 void tile_grid::nullify_tiles(const libutil::matrix_coordinate_list& nullified_tile_coordinates)
 {
-    auto anim0 = animation{};
-    auto anim1 = animation{};
+    auto anim0 = animation::animation{};
+    auto anim1 = animation::animation{};
 
     for(const auto& coord: nullified_tile_coordinates)
     {
@@ -221,25 +221,25 @@ void tile_grid::nullify_tiles(const libutil::matrix_coordinate_list& nullified_t
             continue;
         }
 
-        anim0.add(tracks::alpha_transition{ptile, 1, 0});
-        anim1.add(tracks::alpha_transition{ptile, 0, 0.4});
+        anim0.add(animation::tracks::alpha_transition{ptile, 1, 0});
+        anim1.add(animation::tracks::alpha_transition{ptile, 0, 0.4});
 
         ptile = nullptr;
     }
 
-    animator_.push(tracks::closure{[this]{next_input_.suspend();}});
-    animator_.push(tracks::closure{[this]{input_.suspend();}});
+    animator_.push(animation::tracks::closure{[this]{next_input_.suspend();}});
+    animator_.push(animation::tracks::closure{[this]{input_.suspend();}});
     animator_.push(std::move(anim0));
     animator_.push(std::move(anim1));
-    animator_.push(tracks::pause{0.05});
-    animator_.push(tracks::closure{[this]{input_.resume();}});
-    animator_.push(tracks::closure{[this]{next_input_.resume();}});
+    animator_.push(animation::tracks::pause{0.05});
+    animator_.push(animation::tracks::closure{[this]{input_.resume();}});
+    animator_.push(animation::tracks::closure{[this]{next_input_.resume();}});
 }
 
 void tile_grid::merge_tiles(const data_types::tile_merge_list& merges)
 {
-    auto anim0 = animation{};
-    auto anim1 = animation{};
+    auto anim0 = animation::animation{};
+    auto anim1 = animation::animation{};
 
     for(const auto& merge: merges)
     {
@@ -252,7 +252,7 @@ void tile_grid::merge_tiles(const data_types::tile_merge_list& merges)
             //first, translate source tile toward position of destination tile
             anim0.add
             (
-                tracks::fixed_speed_translation
+                animation::tracks::fixed_speed_translation
                 {
                     psrc_tile,
                     dst_position,
@@ -264,7 +264,7 @@ void tile_grid::merge_tiles(const data_types::tile_merge_list& merges)
             //then, make it disappear with a fade out
             anim1.add
             (
-                tracks::alpha_transition
+                animation::tracks::alpha_transition
                 {
                     psrc_tile, 0, 0.2
                 }
@@ -280,27 +280,27 @@ void tile_grid::merge_tiles(const data_types::tile_merge_list& merges)
         at(board_tiles_, merge.dst_tile_coordinate) = pdst_tile;
 
         //make destination tile appear with a fade in
-        anim1.add(tracks::alpha_transition{pdst_tile, 1, 0.2});
+        anim1.add(animation::tracks::alpha_transition{pdst_tile, 1, 0.2});
     }
 
-    animator_.push(tracks::closure{[this]{next_input_.suspend();}});
-    animator_.push(tracks::closure{[this]{input_.suspend();}});
+    animator_.push(animation::tracks::closure{[this]{next_input_.suspend();}});
+    animator_.push(animation::tracks::closure{[this]{input_.suspend();}});
     animator_.push(std::move(anim0));
     animator_.push(std::move(anim1));
-    animator_.push(tracks::closure{[this]{input_.resume();}});
-    animator_.push(tracks::closure{[this]{next_input_.resume();}});
+    animator_.push(animation::tracks::closure{[this]{input_.resume();}});
+    animator_.push(animation::tracks::closure{[this]{next_input_.resume();}});
 }
 
 void tile_grid::mark_tiles_for_nullification(const libutil::matrix_coordinate_list& tile_coordinates)
 {
-    auto anim = animation{};
+    auto anim = animation::animation{};
 
     //Unmark all board tiles
     for(auto& ptile: board_tiles_)
     {
         if(ptile)
         {
-            anim.add(tracks::alpha_transition{ptile, 1, 0});
+            anim.add(animation::tracks::alpha_transition{ptile, 1, 0});
         }
     }
 
@@ -310,7 +310,7 @@ void tile_grid::mark_tiles_for_nullification(const libutil::matrix_coordinate_li
         auto& ptile = at(board_tiles_, coords);
         if(ptile)
         {
-            anim.add(tracks::alpha_transition{ptile, 0.5, 0});
+            anim.add(animation::tracks::alpha_transition{ptile, 0.5, 0});
         }
     }
 
