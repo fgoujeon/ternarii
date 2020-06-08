@@ -39,13 +39,6 @@ namespace
             -5.0f + c.row
         };
     }
-
-    const auto tile_move_interpolator = Magnum::Animation::ease
-    <
-        Magnum::Vector2,
-        Magnum::Math::lerp,
-        Magnum::Animation::Easing::cubicOut
-    >();
 }
 
 tile_grid::tile_grid
@@ -257,7 +250,7 @@ void tile_grid::merge_tiles(const data_types::tile_merge_list& merges)
                     psrc_tile,
                     dst_position,
                     4.5,
-                    tile_move_interpolator
+                    animation::get_cubic_out_position_interpolator()
                 }
             );
 

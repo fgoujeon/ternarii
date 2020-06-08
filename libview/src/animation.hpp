@@ -20,11 +20,12 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #ifndef LIBVIEW_ANIMATION_HPP
 #define LIBVIEW_ANIMATION_HPP
 
+#include "common.hpp"
 #include <libutil/unique_function.hpp>
 #include <libutil/time.hpp>
-#include "common.hpp"
 #include <Magnum/Animation/Easing.h>
 #include <Magnum/Animation/Player.h>
+#include <Magnum/Animation/Track.h>
 #include <chrono>
 #include <list>
 #include <memory>
@@ -34,6 +35,11 @@ namespace libview::animation
 
 using player_t = Magnum::Animation::Player<std::chrono::nanoseconds, Magnum::Float>;
 using player_supplier_t = libutil::unique_function<void(player_t&)>;
+
+template<class ValueType, class ResultType = Magnum::Animation::ResultOf<ValueType>>
+using interpolator_t = ResultType(*)(const ValueType&, const ValueType&, Magnum::Float);
+
+const interpolator_t<Magnum::Vector2>& get_cubic_out_position_interpolator();
 
 namespace tracks
 {

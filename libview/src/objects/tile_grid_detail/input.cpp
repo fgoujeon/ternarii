@@ -236,13 +236,6 @@ namespace
             return current_rad - step_rad + 2 * M_PI;
         }
     }
-
-    const auto tile_move_interpolator = Magnum::Animation::ease
-    <
-        Magnum::Vector2,
-        Magnum::Math::lerp,
-        Magnum::Animation::Easing::cubicOut
-    >();
 }
 
 input::input
@@ -318,7 +311,7 @@ void input::set_tiles(const input_tile_object_matrix& tiles)
                             ptile,
                             dst_position,
                             animation_duration_s,
-                            tile_move_interpolator
+                            animation::get_cubic_out_position_interpolator()
                         }
                     );
                     anim.add(animation::tracks::alpha_transition{ptile, 1, animation_duration_s});

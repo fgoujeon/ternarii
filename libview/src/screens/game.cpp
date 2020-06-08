@@ -62,13 +62,6 @@ namespace
 
         return pbackground;
     }
-
-    const auto game_over_overlay_interpolator = Magnum::Animation::ease
-    <
-        Magnum::Vector2,
-        Magnum::Math::lerp,
-        Magnum::Animation::Easing::cubicOut
-    >();
 }
 
 #define MOVE_BUTTON_INITIALIZER(IMAGE, MOVE) \
@@ -354,7 +347,7 @@ void game::set_game_over_overlay_visible(const bool visible)
                 .pobj = pimpl_->pgame_over_overlay,
                 .finish_position = {0.0f, 4.5f},
                 .duration_s = 0.5f,
-                .interpolator = game_over_overlay_interpolator
+                .interpolator = animation::get_cubic_out_position_interpolator()
             }
         );
         anim.add
@@ -383,7 +376,7 @@ void game::set_game_over_overlay_visible(const bool visible)
                 .pobj = pimpl_->pgame_over_overlay,
                 .finish_position = {0.0f, 5.5f},
                 .duration_s = 0.5f,
-                .interpolator = game_over_overlay_interpolator
+                .interpolator = animation::get_cubic_out_position_interpolator()
             }
         );
         anim.add
