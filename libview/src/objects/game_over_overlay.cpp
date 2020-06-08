@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#include "game_over_screen.hpp"
+#include "game_over_overlay.hpp"
 #include "../text.hpp"
 #include "../styles.hpp"
 #include "../colors.hpp"
@@ -25,7 +25,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libview::objects
 {
 
-game_over_screen::game_over_screen
+game_over_overlay::game_over_overlay
 (
     Object2D& parent,
     features::drawable_group& drawables,

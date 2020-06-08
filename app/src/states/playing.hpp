@@ -87,7 +87,7 @@ class playing final: public state
 
         void handle_game_event(const libgame::events::end_of_game&)
         {
-            pscreen_->set_game_over_screen_visible(true);
+            pscreen_->set_game_over_overlay_visible(true);
             fsm_.database.set_stage_state(stage_, pgame_->get_state());
         }
 

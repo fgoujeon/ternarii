@@ -83,7 +83,7 @@ class game: public Object2D, public features::key_event_handler
 
         void set_board_tiles(const data_types::board_tile_matrix& tiles);
 
-        void set_game_over_screen_visible(const bool visible);
+        void set_game_over_overlay_visible(const bool visible);
 
     private:
         struct impl;

@@ -19,7 +19,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 
 #include <libview/screens/game.hpp>
 #include "../objects/background.hpp"
-#include "../objects/game_over_screen.hpp"
+#include "../objects/game_over_overlay.hpp"
 #include "../objects/sdf_image_button.hpp"
 #include "../objects/sdf_image.hpp"
 #include "../objects/tile_grid.hpp"
@@ -182,7 +182,7 @@ struct game::impl
     objects::sdf_image_button drop_button;
     objects::sdf_image_button clockwise_rotation_button;
 
-    std::unique_ptr<objects::game_over_screen> pgame_over_screen;
+    std::unique_ptr<objects::game_over_overlay> pgame_over_overlay;
 };
 
 game::game
@@ -253,7 +253,7 @@ const data_types::input_layout& game::get_input_layout() const
 void game::clear()
 {
     pimpl_->tile_grid.clear();
-    pimpl_->pgame_over_screen.reset();
+    pimpl_->pgame_over_overlay.reset();
 }
 
 void game::set_score(const int value)
@@ -310,22 +310,22 @@ void game::set_board_tiles(const data_types::board_tile_matrix& tiles)
     pimpl_->tile_grid.set_board_tiles(tiles);
 }
 
-void game::set_game_over_screen_visible(const bool visible)
+void game::set_game_over_overlay_visible(const bool visible)
 {
     if(visible)
     {
-        pimpl_->pgame_over_screen = std::make_unique<objects::game_over_screen>
+        pimpl_->pgame_over_overlay = std::make_unique<objects::game_over_overlay>
         (
             *this,
             pimpl_->feature_groups.drawables,
             pimpl_->feature_groups.clickables,
             [this]{pimpl_->callbacks.handle_clear_request();}
         );
-        pimpl_->pgame_over_screen->translate({0.0f, 4.5f});
+        pimpl_->pgame_over_overlay->translate({0.0f, 4.5f});
     }
     else
     {
-        pimpl_->pgame_over_screen.reset();
+        pimpl_->pgame_over_overlay.reset();
     }
 }
 

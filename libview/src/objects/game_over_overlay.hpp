@@ -17,8 +17,8 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef LIBVIEW_OBJECTS_GAME_OVER_SCREEN_HPP
-#define LIBVIEW_OBJECTS_GAME_OVER_SCREEN_HPP
+#ifndef LIBVIEW_OBJECTS_GAME_OVER_OVERLAY_HPP
+#define LIBVIEW_OBJECTS_GAME_OVER_OVERLAY_HPP
 
 #include "square.hpp"
 #include "label_button.hpp"
@@ -29,10 +29,10 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libview::objects
 {
 
-class game_over_screen: public Object2D
+class game_over_overlay: public Object2D
 {
     public:
-        game_over_screen
+        game_over_overlay
         (
             Object2D& parent,
             features::drawable_group& drawables,
