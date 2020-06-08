@@ -19,11 +19,12 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 
 #include <libview/screens/game.hpp>
 #include "../objects/background.hpp"
-#include "../objects/game_over_screen.hpp"
+#include "../objects/game_over_overlay.hpp"
 #include "../objects/sdf_image_button.hpp"
 #include "../objects/sdf_image.hpp"
 #include "../objects/tile_grid.hpp"
 #include "../objects/score_display.hpp"
+#include "../animation.hpp"
 #include "../colors.hpp"
 #include "../common.hpp"
 #include <libres.hpp>
@@ -61,6 +62,13 @@ namespace
 
         return pbackground;
     }
+
+    const auto game_over_overlay_interpolator = Magnum::Animation::ease
+    <
+        Magnum::Vector2,
+        Magnum::Math::lerp,
+        Magnum::Animation::Easing::cubicOut
+    >();
 }
 
 #define MOVE_BUTTON_INITIALIZER(IMAGE, MOVE) \
@@ -101,6 +109,7 @@ struct game::impl
             self,
             feature_groups.drawables,
             feature_groups.animables,
+            animator,
             callbacks.handle_drop_request,
             callbacks.handle_input_layout_change
         ),
@@ -171,6 +180,8 @@ struct game::impl
 
     callback_set callbacks;
 
+    animator animator;
+
     std::unique_ptr<objects::background> pbackground;
     objects::tile_grid tile_grid;
     objects::score_display score_display;
@@ -182,7 +193,7 @@ struct game::impl
     objects::sdf_image_button drop_button;
     objects::sdf_image_button clockwise_rotation_button;
 
-    std::unique_ptr<objects::game_over_screen> pgame_over_screen;
+    std::shared_ptr<objects::game_over_overlay> pgame_over_overlay;
 };
 
 game::game
@@ -194,12 +205,18 @@ game::game
     const bool show_background
 ):
     Object2D{&parent},
+    features::animable{*this, &feature_groups.animables},
     features::key_event_handler{*this, &feature_groups.key_event_handlers},
     pimpl_(std::make_unique<impl>(*this, feature_groups, callbacks, stage_name, show_background))
 {
 }
 
 game::~game() = default;
+
+void game::advance(const libutil::time_point& now, const float /*elapsed_s*/)
+{
+    pimpl_->animator.advance(now);
+}
 
 void game::handle_key_press(key_event& event)
 {
@@ -253,7 +270,7 @@ const data_types::input_layout& game::get_input_layout() const
 void game::clear()
 {
     pimpl_->tile_grid.clear();
-    pimpl_->pgame_over_screen.reset();
+    set_game_over_overlay_visible(false);
 }
 
 void game::set_score(const int value)
@@ -310,22 +327,77 @@ void game::set_board_tiles(const data_types::board_tile_matrix& tiles)
     pimpl_->tile_grid.set_board_tiles(tiles);
 }
 
-void game::set_game_over_screen_visible(const bool visible)
+void game::set_game_over_overlay_visible(const bool visible)
 {
     if(visible)
     {
-        pimpl_->pgame_over_screen = std::make_unique<objects::game_over_screen>
+        if(pimpl_->pgame_over_overlay)
+        {
+            return;
+        }
+
+        pimpl_->pgame_over_overlay = std::make_shared<objects::game_over_overlay>
         (
             *this,
             pimpl_->feature_groups.drawables,
             pimpl_->feature_groups.clickables,
             [this]{pimpl_->callbacks.handle_clear_request();}
         );
-        pimpl_->pgame_over_screen->translate({0.0f, 4.5f});
+        pimpl_->pgame_over_overlay->translate({0.0f, 5.5f});
+        pimpl_->pgame_over_overlay->set_alpha(0);
+
+        auto anim = animation{};
+        anim.add
+        (
+            tracks::fixed_duration_translation
+            {
+                .pobj = pimpl_->pgame_over_overlay,
+                .finish_position = {0.0f, 4.5f},
+                .duration_s = 0.5f,
+                .interpolator = game_over_overlay_interpolator
+            }
+        );
+        anim.add
+        (
+            tracks::alpha_transition
+            {
+                .pobj = pimpl_->pgame_over_overlay,
+                .finish_alpha = 1.0f,
+                .duration_s = 0.5f
+            }
+        );
+        pimpl_->animator.push(std::move(anim));
     }
     else
     {
-        pimpl_->pgame_over_screen.reset();
+        if(!pimpl_->pgame_over_overlay)
+        {
+            return;
+        }
+
+        auto anim = animation{};
+        anim.add
+        (
+            tracks::fixed_duration_translation
+            {
+                .pobj = pimpl_->pgame_over_overlay,
+                .finish_position = {0.0f, 5.5f},
+                .duration_s = 0.5f,
+                .interpolator = game_over_overlay_interpolator
+            }
+        );
+        anim.add
+        (
+            tracks::alpha_transition
+            {
+                .pobj = pimpl_->pgame_over_overlay,
+                .finish_alpha = 0.0f,
+                .duration_s = 0.5f
+            }
+        );
+        pimpl_->animator.push(std::move(anim));
+
+        pimpl_->pgame_over_overlay.reset();
     }
 }
 

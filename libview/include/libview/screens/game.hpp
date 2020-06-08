@@ -31,7 +31,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libview::screens
 {
 
-class game: public Object2D, public features::key_event_handler
+class game: public Object2D, public features::animable, public features::key_event_handler
 {
     public:
         struct callback_set
@@ -54,6 +54,12 @@ class game: public Object2D, public features::key_event_handler
 
         ~game();
 
+    //animable overrides
+    private:
+        void advance(const libutil::time_point& now, float elapsed_s) override;
+
+    //key_event_handler overrides
+    private:
         void handle_key_press(key_event& event) override;
 
         void handle_key_release(key_event& event) override;
@@ -83,7 +89,7 @@ class game: public Object2D, public features::key_event_handler
 
         void set_board_tiles(const data_types::board_tile_matrix& tiles);
 
-        void set_game_over_screen_visible(const bool visible);
+        void set_game_over_overlay_visible(const bool visible);
 
     private:
         struct impl;

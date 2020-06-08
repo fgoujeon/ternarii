@@ -53,12 +53,14 @@ tile_grid::tile_grid
     Object2D& parent,
     features::drawable_group& drawables,
     features::animable_group& animables,
+    animator& animator,
     const drop_request_callback& drop_cb,
     const input_layout_change_callback& layout_cb
 ):
     Object2D{&parent},
     features::animable(*this, &animables),
     drawables_(drawables),
+    animator_(animator),
     next_input_(*this, drawables, animables),
     input_(*this, animables, drop_cb, layout_cb)
 {

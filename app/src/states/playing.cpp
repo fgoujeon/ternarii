@@ -119,7 +119,7 @@ playing::playing(fsm& f, const screen_transition trans, const libgame::data_type
         pscreen_->create_next_input(pgame_->get_next_input_tiles());
         pscreen_->set_board_tiles(board_tiles);
         mark_tiles_for_nullification();
-        pscreen_->set_game_over_screen_visible(is_overflowed(board_tiles));
+        pscreen_->set_game_over_overlay_visible(is_overflowed(board_tiles));
     }
     else
     {
