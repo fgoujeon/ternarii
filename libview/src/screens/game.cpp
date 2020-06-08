@@ -109,6 +109,7 @@ struct game::impl
             self,
             feature_groups.drawables,
             feature_groups.animables,
+            animator,
             callbacks.handle_drop_request,
             callbacks.handle_input_layout_change
         ),

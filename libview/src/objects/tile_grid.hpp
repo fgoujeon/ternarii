@@ -66,6 +66,7 @@ class tile_grid: public Object2D, public features::animable
             Object2D& parent,
             features::drawable_group& drawables,
             features::animable_group& animables,
+            animator& animator,
             const drop_request_callback& drop_cb,
             const input_layout_change_callback& layout_cb
         );
@@ -110,7 +111,7 @@ class tile_grid: public Object2D, public features::animable
     private:
         features::drawable_group& drawables_;
 
-        animator animator_;
+        animator& animator_;
 
         std::vector<std::unique_ptr<sdf_image>> board_corners_;
         data_types::input_layout input_layout_;
