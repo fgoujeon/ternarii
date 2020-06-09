@@ -55,13 +55,13 @@ void label::draw(const Magnum::Matrix3& transformation_matrix, Magnum::SceneGrap
 {
     if(visible_)
     {
-        const auto color_transformation_matrix = get_color_transformation_matrix();
+        const auto absolute_alpha = get_absolute_alpha();
 
         text::get_shader().bindVectorTexture(text::get_glyph_cache().texture());
         text::get_shader().setTransformationProjectionMatrix(camera.projectionMatrix() * transformation_matrix);
-        text::get_shader().setColor(color_transformation_matrix * style_.color);
+        text::get_shader().setColor(style_.color * absolute_alpha);
         text::get_shader().setSmoothness(0.035f / (transformation_matrix.uniformScaling() * style_.font_size));
-        text::get_shader().setOutlineColor(color_transformation_matrix * style_.outline_color);
+        text::get_shader().setOutlineColor(style_.outline_color * absolute_alpha);
         text::get_shader().setOutlineRange(style_.outline_range[0], style_.outline_range[1]);
 
         renderer_.mesh().draw(text::get_shader());

@@ -62,7 +62,7 @@ void background::set_color(const Magnum::Color4& color)
 
 void background::draw(const Magnum::Matrix3& transformation_matrix, Magnum::SceneGraph::Camera2D& camera)
 {
-    get_shader().setColor(get_color_transformation_matrix() * color_);
+    get_shader().setColor(color_ * get_absolute_alpha());
     get_shader().setTransformationProjectionMatrix
     (
         camera.projectionMatrix() *

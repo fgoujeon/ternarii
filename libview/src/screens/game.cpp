@@ -58,7 +58,8 @@ namespace
 
         pbackground->scale({16.0f, 16.0f});
         pbackground->translate({0.0f, -1.0f});
-        pbackground->set_color(Magnum::Color4{1.0, 1.0, 1.0, 0.02});
+        pbackground->set_color(colors::white);
+        pbackground->set_alpha(0.02);
 
         return pbackground;
     }

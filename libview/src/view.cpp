@@ -60,7 +60,7 @@ struct view::impl final
         //configure renderer
         Magnum::GL::Renderer::setClearColor(colors::dark_gray);
         Magnum::GL::Renderer::enable(Magnum::GL::Renderer::Feature::Blending);
-        Magnum::GL::Renderer::setBlendFunction(Magnum::GL::Renderer::BlendFunction::SourceAlpha, Magnum::GL::Renderer::BlendFunction::OneMinusSourceAlpha);
+        Magnum::GL::Renderer::setBlendFunction(Magnum::GL::Renderer::BlendFunction::One, Magnum::GL::Renderer::BlendFunction::OneMinusSourceAlpha);
         Magnum::GL::Renderer::setBlendEquation(Magnum::GL::Renderer::BlendEquation::Add, Magnum::GL::Renderer::BlendEquation::Add);
 
         if(conf.show_fps_counter)

@@ -78,13 +78,13 @@ void score_display::draw(const Magnum::Matrix3& transformation_matrix, Magnum::S
 {
     if(visible_)
     {
-        const auto color_transformation_matrix = get_color_transformation_matrix();
+        const auto absolute_alpha = get_absolute_alpha();
 
         text::get_shader().bindVectorTexture(text::get_glyph_cache().texture());
         text::get_shader().setTransformationProjectionMatrix(camera.projectionMatrix() * transformation_matrix);
-        text::get_shader().setColor(color_transformation_matrix * colors::white);
+        text::get_shader().setColor(colors::white * absolute_alpha);
         text::get_shader().setSmoothness(0.035f / transformation_matrix.uniformScaling());
-        text::get_shader().setOutlineColor(color_transformation_matrix * colors::dark_gray);
+        text::get_shader().setOutlineColor(colors::dark_gray * absolute_alpha);
         text::get_shader().setOutlineRange(0.47, 0.40);
 
         renderer_.mesh().draw(text::get_shader());

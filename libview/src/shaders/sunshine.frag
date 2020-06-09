@@ -52,6 +52,6 @@ void main()
     //smooth ray borders
     alpha = alpha * smoothstep(RAY_WIDTH + 0.01 / radius, RAY_WIDTH, angle);
 
-    gl_FragColor = vec4(u_color.xyz, u_color.w * alpha);
+    gl_FragColor = u_color * alpha;
 }
 )^"

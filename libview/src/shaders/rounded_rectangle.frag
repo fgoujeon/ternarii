@@ -18,15 +18,15 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 #ifdef GL_ES
-precision mediump float;
+precision lowp float;
 #endif
 
 uniform lowp vec2 u_dimension; //normalized dimension of rectangle
 uniform lowp vec4 u_color;
-uniform mediump float u_radius;
-uniform mediump float u_smoothness;
-uniform mediump float u_outline_thickness;
-uniform mediump vec4 u_outline_color;
+uniform lowp float u_radius;
+uniform lowp float u_smoothness;
+uniform lowp float u_outline_thickness;
+uniform lowp vec4 u_outline_color;
 
 varying highp vec2 v_position;
 
@@ -48,7 +48,11 @@ void main()
     float dist;
     if(on_x_edge && on_y_edge) //corner
     {
-        vec2 circle_center = vec2(u_dimension.x - u_radius, u_dimension.y - u_radius);
+        vec2 circle_center = vec2
+        (
+            u_dimension.x - u_radius,
+            u_dimension.y - u_radius
+        );
         dist = distance(circle_center, abs_pos);
     }
     else if(on_x_edge) //left or right edge
@@ -64,15 +68,26 @@ void main()
         dist = 0.0;
     }
 
-    if(dist < u_radius - u_outline_thickness) //fill
+    //Fill
+    float fill_alpha = 1.0 - smoothstep
+    (
+        u_radius - u_outline_thickness - u_smoothness,
+        u_radius - u_outline_thickness,
+        dist
+    );
+    gl_FragColor = u_color * fill_alpha;
+
+    //Outline
+    if(u_outline_thickness > 0.0)
     {
-        float weight = 1.0 - smoothstep(u_radius - u_outline_thickness - u_smoothness, u_radius - u_outline_thickness, dist);
-        gl_FragColor = mix(u_outline_color, u_color, weight);
-    }
-    else //outline
-    {
-        float alpha = 1.0 - smoothstep(u_radius - u_smoothness, u_radius, dist);
-        gl_FragColor = vec4(u_outline_color.xyz, alpha * u_outline_color.w);
+        float outline_alpha_0 = 1.0 - fill_alpha;
+        float outline_alpha_1 = 1.0 - smoothstep
+        (
+            u_radius - u_smoothness,
+            u_radius,
+            dist
+        );
+        gl_FragColor += u_outline_color * outline_alpha_0 * outline_alpha_1;
     }
 }
 )^"

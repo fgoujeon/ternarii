@@ -61,18 +61,6 @@ class Object2D: public Magnum::SceneGraph::Object<transformation_t>
             return alpha_;
         }
 
-        Magnum::Matrix4 get_color_transformation_matrix() const
-        {
-            const auto alpha_factor = get_absolute_alpha();
-            return Magnum::Matrix4
-            {
-                {1.0f, 0.0f, 0.0f, 0.0f},
-                {0.0f, 1.0f, 0.0f, 0.0f},
-                {0.0f, 0.0f, 1.0f, 0.0f},
-                {0.0f, 0.0f, 0.0f, alpha_factor},
-            };
-        }
-
         void set_alpha(const float value)
         {
             alpha_ = value;
