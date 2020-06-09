@@ -45,10 +45,9 @@ namespace
             case 7:  return 0x3f94de_rgbf;
             case 8:  return 0x4c52e0_rgbf;
             case 9:  return 0x904ce0_rgbf;
-            case 10: return 0xd84ce0_rgbf;
-            case 11: return 0xe998ed_rgbf;
-            case 12: return 0x989898_rgbf;
-            case 13: return 0x461b3f_rgbf;
+            case 10: return 0xc490ff_rgbf;
+            case 11: return 0x989898_rgbf;
+            case 12: return 0x461b3f_rgbf;
             default: return 0x000000_rgbf;
         }
     }
