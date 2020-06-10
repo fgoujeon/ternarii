@@ -68,6 +68,7 @@ void shine::draw(const Magnum::Matrix3& transformation_matrix, Magnum::SceneGrap
     get_shader().set_angle_rad(angle_rad_);
     get_shader().set_ray_count(style_.ray_count);
     get_shader().set_ray_width(style_.ray_width);
+    get_shader().set_smoothness(0.045f / transformation_matrix.uniformScaling());
     get_mesh().draw(get_shader());
 }
 

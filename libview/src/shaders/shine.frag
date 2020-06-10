@@ -20,13 +20,14 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #define PI2 6.28318530718
 
 #ifdef GL_ES
-precision mediump float;
+precision lowp float;
 #endif
 
 uniform lowp vec4 u_color;
-uniform float u_angle; //[0,1]
-uniform float u_ray_count;
-uniform float u_ray_width; //[0,1]
+uniform lowp float u_angle; //[0,1]
+uniform lowp float u_ray_count;
+uniform lowp float u_ray_width; //[0,1]
+uniform lowp float u_smoothness;
 
 varying highp vec2 v_position;
 
@@ -44,13 +45,13 @@ void main()
 
     //make saw wave function with angle
     angle = mod(angle, 1.0 / u_ray_count) * u_ray_count; //[0,1]
-    angle = abs(angle - 0.5) * 2.0; //[0,1]
+    angle = abs(angle - 0.5) / 0.5; //[0,1]
 
     //we want rays to be opaque in center and transparent at end of radius
     float alpha = (1.0 - radius);
 
     //smooth ray borders
-    alpha = alpha * smoothstep(u_ray_width + 0.01 / radius, u_ray_width, angle);
+    alpha = alpha * smoothstep(u_ray_width + u_smoothness / radius, u_ray_width, angle);
 
     gl_FragColor = u_color * alpha;
 }
