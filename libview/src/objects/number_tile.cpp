@@ -30,6 +30,18 @@ namespace libview::objects
 
 namespace
 {
+    std::string get_label_text(const int value)
+    {
+        switch(value)
+        {
+            default: return std::to_string(value);
+            case 10: return "X";
+            case 11: return "γ"; //Gamma
+            case 12: return "Ω"; //Omega
+            case 13: return "?";
+        }
+    }
+
     Magnum::Color3 lighter(const Magnum::Color3& c)
     {
         auto hsv = c.toHsv();
@@ -197,7 +209,7 @@ number_tile::number_tile
             .outline_color = darker(get_square_color(value)),
             .outline_range = {0.45f, 0.40f}
         },
-        std::to_string(value).c_str()
+        get_label_text(value).c_str()
     )
 {
 }
