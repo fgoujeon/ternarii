@@ -29,19 +29,23 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libview::objects
 {
 
-class number_tile: public Object2D
+class number_tile: public Object2D, public features::animable
 {
     public:
         number_tile
         (
             Object2D& parent,
             features::drawable_group& drawables,
+            features::animable_group& animables,
             const int value
         );
+
+        void advance(const libutil::time_point& now, float elapsed_s);
 
     private:
         rounded_rectangle square_;
         std::unique_ptr<rounded_rectangle> pglow_;
+        float glow_cycle_ = reinterpret_cast<int>(this) / 1000.0f; //cheap random
         label label_;
 };
 

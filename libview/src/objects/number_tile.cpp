@@ -23,6 +23,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include <libres.hpp>
 #include <Magnum/GL/Mesh.h>
 #include <Magnum/Shaders/Flat.h>
+#include <cmath>
 
 namespace libview::objects
 {
@@ -93,9 +94,11 @@ number_tile::number_tile
 (
     Object2D& parent,
     features::drawable_group& drawables,
+    features::animable_group& animables,
     const int value
 ):
     Object2D(&parent),
+    features::animable(*this, &animables),
     square_
     (
         *this,
@@ -122,6 +125,16 @@ number_tile::number_tile
         std::to_string(value).c_str()
     )
 {
+}
+
+void number_tile::advance(const libutil::time_point& /*now*/, float elapsed_s)
+{
+    if(pglow_)
+    {
+        glow_cycle_ = std::fmodf(glow_cycle_ + (elapsed_s * 2), 2 * M_PI);
+        const auto glow_alpha = std::sinf(glow_cycle_) / 2.0f + 0.5f;
+        pglow_->set_alpha(glow_alpha);
+    }
 }
 
 } //namespace

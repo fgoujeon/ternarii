@@ -30,6 +30,7 @@ std::shared_ptr<Object2D> make_tile_object
 (
     Object2D& parent,
     features::drawable_group& drawables,
+    features::animable_group& animables,
     const data_types::tile& tile
 )
 {
@@ -41,7 +42,7 @@ std::shared_ptr<Object2D> make_tile_object
         {
             [&](const data_types::number_tile& tile) -> result_t
             {
-                return std::make_shared<number_tile>(parent, drawables, tile.value);
+                return std::make_shared<number_tile>(parent, drawables, animables, tile.value);
             },
             [&](const data_types::column_nullifier_tile&) -> result_t
             {

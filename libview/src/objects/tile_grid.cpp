@@ -53,6 +53,7 @@ tile_grid::tile_grid
     Object2D{&parent},
     features::animable(*this, &animables),
     drawables_(drawables),
+    animables_(animables),
     animator_(animator),
     next_input_(*this, drawables, animables),
     input_(*this, animables, drop_cb, layout_cb)
@@ -352,7 +353,7 @@ std::shared_ptr<Object2D> tile_grid::make_tile
     const Magnum::Vector2& position
 )
 {
-    auto ptile = tile_grid_detail::make_tile_object(*this, drawables_, tile);
+    auto ptile = tile_grid_detail::make_tile_object(*this, drawables_, animables_, tile);
     ptile->setScaling({0.46f, 0.46f});
     ptile->setTranslation(position);
     return ptile;

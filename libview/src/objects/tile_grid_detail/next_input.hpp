@@ -52,6 +52,7 @@ class next_input: public Object2D, public features::animable
 
     private:
         features::drawable_group& drawables_;
+        features::animable_group& animables_;
 
         animation::animator animator_;
         bool suspended_ = false;
