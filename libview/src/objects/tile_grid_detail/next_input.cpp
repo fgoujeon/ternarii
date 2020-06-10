@@ -54,8 +54,8 @@ void next_input::create_tiles(const data_types::input_tile_matrix& tiles)
         {
             if(opt_tile.has_value())
             {
-                const auto x = (col - 0.5f) / 1.33f;
-                const auto y = (row - 0.5f) / 1.33f;
+                const auto x = (col - 0.5f) / 1.28f;
+                const auto y = (row - 0.5f) / 1.28f;
 
                 pnext_input_tile = make_tile_object(*this, drawables_, opt_tile.value());
                 pnext_input_tile->set_alpha(0);

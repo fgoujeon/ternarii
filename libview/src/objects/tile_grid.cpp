@@ -353,7 +353,7 @@ std::shared_ptr<Object2D> tile_grid::make_tile
 )
 {
     auto ptile = tile_grid_detail::make_tile_object(*this, drawables_, tile);
-    ptile->setScaling({0.48f, 0.48f});
+    ptile->setScaling({0.46f, 0.46f});
     ptile->setTranslation(position);
     return ptile;
 }

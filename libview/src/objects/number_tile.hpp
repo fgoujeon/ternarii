@@ -32,7 +32,12 @@ namespace libview::objects
 class number_tile: public Object2D
 {
     public:
-        number_tile(Object2D& parent, features::drawable_group& drawables, const int value);
+        number_tile
+        (
+            Object2D& parent,
+            features::drawable_group& drawables,
+            const int value
+        );
 
     private:
         rounded_rectangle square_;

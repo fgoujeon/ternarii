@@ -89,7 +89,12 @@ namespace
     }
 }
 
-number_tile::number_tile(Object2D& parent, features::drawable_group& drawables, const int value):
+number_tile::number_tile
+(
+    Object2D& parent,
+    features::drawable_group& drawables,
+    const int value
+):
     Object2D(&parent),
     square_
     (
@@ -98,8 +103,6 @@ number_tile::number_tile(Object2D& parent, features::drawable_group& drawables, 
         rounded_rectangle::style
         {
             .color = value_to_color(value),
-            .outline_color = colors::dark_gray,
-            .outline_thickness = 0.04f,
             .radius = 0.5f
         }
     ),
