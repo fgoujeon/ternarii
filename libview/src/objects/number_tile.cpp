@@ -53,6 +53,13 @@ namespace
         }
     }
 
+    Magnum::Color3 lighter(const Magnum::Color3& c)
+    {
+        auto hsv = c.toHsv();
+        hsv.value = (hsv.value + 1.0f) / 2;
+        return Magnum::Color3::fromHsv(hsv);
+    }
+
     Magnum::Color3 darker(const Magnum::Color3& c)
     {
         auto hsv = c.toHsv();
@@ -104,7 +111,7 @@ namespace
             drawables,
             rounded_rectangle::style
             {
-                .color = value_to_color(value),
+                .color = lighter(value_to_color(value)),
                 .radius = 0.7f,
                 .smoothness_factor = 30
             }
@@ -125,16 +132,6 @@ number_tile::number_tile
 ):
     Object2D(&parent),
     features::animable(*this, &animables),
-    square_
-    (
-        *this,
-        drawables,
-        rounded_rectangle::style
-        {
-            .color = value_to_color(value),
-            .radius = 0.5f
-        }
-    ),
     pshine0_
     (
         make_shine
@@ -144,7 +141,7 @@ number_tile::number_tile
             animables,
             shine::style
             {
-                .color = value_to_color(value),
+                .color = lighter(value_to_color(value)),
                 .ray_count = 8,
                 .ray_width = 0.5f,
                 .speed_radps = 0.05f
@@ -161,13 +158,23 @@ number_tile::number_tile
             animables,
             shine::style
             {
-                .color = value_to_color(value),
+                .color = lighter(value_to_color(value)),
                 .ray_count = 6,
                 .ray_width = 0.1f,
                 .speed_radps = 0.12f
             },
             value
         )
+    ),
+    square_
+    (
+        *this,
+        drawables,
+        rounded_rectangle::style
+        {
+            .color = value_to_color(value),
+            .radius = 0.5f
+        }
     ),
     pglow_(make_glow(*this, drawables, value)),
     label_

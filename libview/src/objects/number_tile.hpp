@@ -44,9 +44,9 @@ class number_tile: public Object2D, public features::animable
         void advance(const libutil::time_point& now, float elapsed_s);
 
     private:
-        rounded_rectangle square_;
         std::unique_ptr<shine> pshine0_;
         std::unique_ptr<shine> pshine1_;
+        rounded_rectangle square_;
         std::unique_ptr<rounded_rectangle> pglow_;
         float glow_cycle_ = reinterpret_cast<int>(this) / 1000.0f; //cheap random
         label label_;
