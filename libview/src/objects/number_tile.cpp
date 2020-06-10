@@ -48,19 +48,19 @@ namespace
     {
         switch(value)
         {
-            case 0:  return 0xa05252_rgbf; //Infrared
+            case 0:  return 0x8c5e5e_rgbf; //Infrared
             case 1:  return 0xdd3b3b_rgbf; //Red
             case 2:  return 0xef7429_rgbf; //Orange
-            case 3:  return 0xe5bb13_rgbf; //Yellow
+            case 3:  return 0xe5b413_rgbf; //Yellow
             case 4:  return 0xa1c927_rgbf; //Lime
-            case 5:  return 0x2bcd73_rgbf; //Green
-            case 6:  return 0x25d7d2_rgbf; //Cyan
-            case 7:  return 0x3f94de_rgbf; //Blue
-            case 8:  return 0x4c52e0_rgbf; //Blue-violet
-            case 9:  return 0x904ce0_rgbf; //Violet
-            case 10: return 0xc490ff_rgbf; //Ultraviolet
-            case 11: return 0x989898_rgbf; //X-ray
-            case 12: return 0x461b3f_rgbf; //Gamma ray
+            case 5:  return 0x2bcd61_rgbf; //Green
+            case 6:  return 0x25d1d7_rgbf; //Cyan
+            case 7:  return 0x3f8fde_rgbf; //Blue
+            case 8:  return 0x6c55e0_rgbf; //Violet
+            case 9:  return 0xc6a9ff_rgbf; //Ultraviolet
+            case 10: return 0x969696_rgbf; //X-ray
+            case 11: return 0xd7d13f_rgbf; //Gamma ray
+            case 12: return 0x000000_rgbf; //Cosmic ray
             default: return 0x000000_rgbf;
         }
     }
@@ -108,7 +108,7 @@ namespace
         const int value
     )
     {
-        if(value < 10)
+        if(value < 9)
         {
             return nullptr;
         }
