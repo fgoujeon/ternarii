@@ -51,6 +51,13 @@ namespace
             default: return 0x000000_rgbf;
         }
     }
+
+    Magnum::Color3 darker(const Magnum::Color3& c)
+    {
+        auto hsv = c.toHsv();
+        hsv.value /= 1.2f;
+        return Magnum::Color3::fromHsv(hsv);
+    }
 }
 
 number_tile::number_tile(Object2D& parent, features::drawable_group& drawables, const int value):
@@ -77,7 +84,7 @@ number_tile::number_tile(Object2D& parent, features::drawable_group& drawables, 
             .alignment = Magnum::Text::Alignment::MiddleCenter,
             .color = colors::white,
             .font_size = 1.15f,
-            .outline_color = colors::dark_gray,
+            .outline_color = darker(value_to_color(value)),
             .outline_range = {0.45f, 0.40f}
         },
         std::to_string(value).c_str()
