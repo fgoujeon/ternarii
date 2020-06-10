@@ -37,7 +37,8 @@ next_input::next_input
 ):
     Object2D(&parent),
     features::animable(*this, &animables),
-    drawables_(drawables)
+    drawables_(drawables),
+    animables_(animables)
 {
 }
 
@@ -54,10 +55,10 @@ void next_input::create_tiles(const data_types::input_tile_matrix& tiles)
         {
             if(opt_tile.has_value())
             {
-                const auto x = (col - 0.5f) / 1.33f;
-                const auto y = (row - 0.5f) / 1.33f;
+                const auto x = (col - 0.5f) / 1.28f;
+                const auto y = (row - 0.5f) / 1.28f;
 
-                pnext_input_tile = make_tile_object(*this, drawables_, opt_tile.value());
+                pnext_input_tile = make_tile_object(*this, drawables_, animables_, opt_tile.value());
                 pnext_input_tile->set_alpha(0);
                 pnext_input_tile->setScaling({0.36f, 0.36f});
                 pnext_input_tile->setTranslation({x, y});

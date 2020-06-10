@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#include "sunshine.hpp"
+#include "shine.hpp"
 #include <Magnum/GL/Context.h>
 #include <Magnum/GL/Extensions.h>
 #include <Magnum/GL/Shader.h>
@@ -33,11 +33,11 @@ namespace
     ;
 
     constexpr auto frag_src =
-       #include "sunshine.frag"
+       #include "shine.frag"
     ;
 }
 
-sunshine::sunshine()
+shine::shine()
 {
     const auto version = Magnum::GL::Version::GLES200;
 
@@ -56,12 +56,16 @@ sunshine::sunshine()
     transformation_projection_matrix_uniform_ = uniformLocation("u_transformation_projection_matrix");
     color_uniform_ = uniformLocation("u_color");
     angle_uniform_ = uniformLocation("u_angle");
+    ray_count_uniform_ = uniformLocation("u_ray_count");
+    ray_width_uniform_ = uniformLocation("u_ray_width");
 
     setTransformationProjectionMatrix({});
     setColor(Magnum::Color4{1.0f});
+    set_ray_count(16);
+    set_ray_width(0.5f);
 }
 
-void sunshine::set_angle_rad(const float angle_rad)
+void shine::set_angle_rad(const float angle_rad)
 {
     //Make it positive, [0,2*pi]
     const auto angle_rad_pos = angle_rad >= 0 ? angle_rad : angle_rad + 2 * M_PI;

@@ -38,6 +38,7 @@ std::shared_ptr<Object2D> make_tile_object
 (
     Object2D& parent,
     features::drawable_group& drawables,
+    features::animable_group& animables,
     const data_types::tile& tile
 );
 

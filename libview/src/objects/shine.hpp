@@ -17,8 +17,8 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef LIBVIEW_OBJECTS_BACKGROUND_HPP
-#define LIBVIEW_OBJECTS_BACKGROUND_HPP
+#ifndef LIBVIEW_OBJECTS_SHINE_HPP
+#define LIBVIEW_OBJECTS_SHINE_HPP
 
 #include "../common.hpp"
 #include <libutil/time.hpp>
@@ -28,17 +28,25 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libview::objects
 {
 
-class background: public Object2D, public features::drawable, public features::animable
+class shine: public Object2D, public features::drawable, public features::animable
 {
     public:
-        background
+        struct style
+        {
+            Magnum::Color4 color;
+            int ray_count = 16;
+            float ray_width = 0.5f; //normalized
+            float speed_radps = 0.05f; //in radians per second
+        };
+
+    public:
+        shine
         (
             Object2D& parent,
             features::drawable_group& drawables,
-            features::animable_group& animables
+            features::animable_group& animables,
+            const style& stl
         );
-
-        void set_color(const Magnum::Color4& color);
 
     private:
         void draw(const Magnum::Matrix3& transformation_matrix, Magnum::SceneGraph::Camera2D& camera) override;
@@ -46,8 +54,8 @@ class background: public Object2D, public features::drawable, public features::a
         void advance(const libutil::time_point& now, float elapsed_s) override;
 
     private:
-        Magnum::Color4 color_;
-        float angle_rad_ = 0;
+        style style_;
+        float angle_rad_ = reinterpret_cast<int>(this) / 1000.0; //cheap random
 };
 
 } //namespace

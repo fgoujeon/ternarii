@@ -17,8 +17,8 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef LIBVIEW_SHADERS_SUNSHINE_HPP
-#define LIBVIEW_SHADERS_SUNSHINE_HPP
+#ifndef LIBVIEW_SHADERS_SHINE_HPP
+#define LIBVIEW_SHADERS_SHINE_HPP
 
 #include <libutil/time.hpp>
 #include <Magnum/GL/AbstractShaderProgram.h>
@@ -28,31 +28,43 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libview::shaders
 {
 
-class sunshine: public Magnum::GL::AbstractShaderProgram
+class shine: public Magnum::GL::AbstractShaderProgram
 {
     public:
         typedef Magnum::GL::Attribute<0, Magnum::Vector2> Position;
         typedef Magnum::GL::Attribute<1, Magnum::Vector2> TextureCoordinates;
 
-        explicit sunshine();
+        explicit shine();
 
-        sunshine(const sunshine&) = delete;
+        shine(const shine&) = delete;
 
-        sunshine(sunshine&&) noexcept = default;
+        shine(shine&&) noexcept = default;
 
-        sunshine& operator=(const sunshine&) = delete;
+        shine& operator=(const shine&) = delete;
 
-        sunshine& operator=(sunshine&&) noexcept = default;
+        shine& operator=(shine&&) noexcept = default;
 
-        sunshine& setTransformationProjectionMatrix(const Magnum::Matrix3& matrix)
+        shine& setTransformationProjectionMatrix(const Magnum::Matrix3& matrix)
         {
             setUniform(transformation_projection_matrix_uniform_, matrix);
             return *this;
         }
 
-        sunshine& setColor(const Magnum::Color4& color)
+        shine& setColor(const Magnum::Color4& color)
         {
             setUniform(color_uniform_, color);
+            return *this;
+        }
+
+        shine& set_ray_count(const int count)
+        {
+            setUniform(ray_count_uniform_, static_cast<float>(count));
+            return *this;
+        }
+
+        shine& set_ray_width(const float count)
+        {
+            setUniform(ray_width_uniform_, count);
             return *this;
         }
 
@@ -62,6 +74,8 @@ class sunshine: public Magnum::GL::AbstractShaderProgram
         Magnum::Int transformation_projection_matrix_uniform_ = 0;
         Magnum::Int color_uniform_ = 1;
         Magnum::Int angle_uniform_ = 2;
+        Magnum::Int ray_count_uniform_ = 3;
+        Magnum::Int ray_width_uniform_ = 4;
 };
 
 } //namespace
