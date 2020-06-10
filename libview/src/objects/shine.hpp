@@ -35,6 +35,7 @@ class shine: public Object2D, public features::drawable, public features::animab
         {
             Magnum::Color4 color;
             int ray_count = 16;
+            float ray_width = 0.5f; //normalized
             float speed_radps = 0.05f; //in radians per second
         };
 
@@ -54,7 +55,7 @@ class shine: public Object2D, public features::drawable, public features::animab
 
     private:
         style style_;
-        float angle_rad_ = 0;
+        float angle_rad_ = reinterpret_cast<int>(this) / 1000.0; //cheap random
 };
 
 } //namespace

@@ -65,6 +65,7 @@ namespace
         Object2D& parent,
         features::drawable_group& drawables,
         features::animable_group& animables,
+        const shine::style& style,
         const int value
     )
     {
@@ -78,11 +79,7 @@ namespace
             parent,
             drawables,
             animables,
-            shine::style
-            {
-                .color = value_to_color(value),
-                .ray_count = 8
-            }
+            style
         );
         pshine->setScaling({1.7f, 1.7f});
 
@@ -138,7 +135,40 @@ number_tile::number_tile
             .radius = 0.5f
         }
     ),
-    pshine_(make_shine(*this, drawables, animables, value)),
+    pshine0_
+    (
+        make_shine
+        (
+            *this,
+            drawables,
+            animables,
+            shine::style
+            {
+                .color = value_to_color(value),
+                .ray_count = 8,
+                .ray_width = 0.5f,
+                .speed_radps = 0.05f
+            },
+            value
+        )
+    ),
+    pshine1_
+    (
+        make_shine
+        (
+            *this,
+            drawables,
+            animables,
+            shine::style
+            {
+                .color = value_to_color(value),
+                .ray_count = 6,
+                .ray_width = 0.1f,
+                .speed_radps = 0.12f
+            },
+            value
+        )
+    ),
     pglow_(make_glow(*this, drawables, value)),
     label_
     (

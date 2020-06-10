@@ -65,14 +65,15 @@ void shine::draw(const Magnum::Matrix3& transformation_matrix, Magnum::SceneGrap
         camera.projectionMatrix() *
         transformation_matrix
     );
+    get_shader().set_angle_rad(angle_rad_);
     get_shader().set_ray_count(style_.ray_count);
+    get_shader().set_ray_width(style_.ray_width);
     get_mesh().draw(get_shader());
 }
 
 void shine::advance(const libutil::time_point& /*now*/, const float elapsed_s)
 {
     angle_rad_ = std::fmodf(angle_rad_ + elapsed_s * style_.speed_radps, 2 * M_PI);
-    get_shader().set_angle_rad(angle_rad_);
 }
 
 } //namespace

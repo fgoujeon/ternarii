@@ -56,13 +56,15 @@ namespace
             feature_groups.animables,
             objects::shine::style
             {
-                .color = colors::white
+                .color = colors::white,
+                .ray_count = 16,
+                .ray_width = 0.55f,
             }
         );
 
         pbackground->scale({16.0f, 16.0f});
         pbackground->translate({0.0f, -1.0f});
-        pbackground->set_alpha(0.02);
+        pbackground->set_alpha(0.02f);
 
         return pbackground;
     }

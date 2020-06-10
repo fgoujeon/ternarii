@@ -57,10 +57,12 @@ shine::shine()
     color_uniform_ = uniformLocation("u_color");
     angle_uniform_ = uniformLocation("u_angle");
     ray_count_uniform_ = uniformLocation("u_ray_count");
+    ray_width_uniform_ = uniformLocation("u_ray_width");
 
     setTransformationProjectionMatrix({});
     setColor(Magnum::Color4{1.0f});
     set_ray_count(16);
+    set_ray_width(0.5f);
 }
 
 void shine::set_angle_rad(const float angle_rad)

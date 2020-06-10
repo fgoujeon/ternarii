@@ -18,7 +18,6 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 #define PI2 6.28318530718
-#define RAY_WIDTH 0.55 //[0,1]
 
 #ifdef GL_ES
 precision mediump float;
@@ -27,6 +26,7 @@ precision mediump float;
 uniform lowp vec4 u_color;
 uniform float u_angle; //[0,1]
 uniform float u_ray_count;
+uniform float u_ray_width; //[0,1]
 
 varying highp vec2 v_position;
 
@@ -50,7 +50,7 @@ void main()
     float alpha = (1.0 - radius);
 
     //smooth ray borders
-    alpha = alpha * smoothstep(RAY_WIDTH + 0.01 / radius, RAY_WIDTH, angle);
+    alpha = alpha * smoothstep(u_ray_width + 0.01 / radius, u_ray_width, angle);
 
     gl_FragColor = u_color * alpha;
 }
