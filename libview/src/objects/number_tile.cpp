@@ -30,29 +30,6 @@ namespace libview::objects
 
 namespace
 {
-    Magnum::Color3 value_to_color(const int value)
-    {
-        using namespace Magnum::Math::Literals;
-
-        switch(value)
-        {
-            case 0:  return 0xa05252_rgbf;
-            case 1:  return 0xdd3b3b_rgbf;
-            case 2:  return 0xef7429_rgbf;
-            case 3:  return 0xe5bb13_rgbf;
-            case 4:  return 0xa1c927_rgbf;
-            case 5:  return 0x2bcd73_rgbf;
-            case 6:  return 0x25d7d2_rgbf;
-            case 7:  return 0x3f94de_rgbf;
-            case 8:  return 0x4c52e0_rgbf;
-            case 9:  return 0x904ce0_rgbf;
-            case 10: return 0xc490ff_rgbf;
-            case 11: return 0x989898_rgbf;
-            case 12: return 0x461b3f_rgbf;
-            default: return 0x000000_rgbf;
-        }
-    }
-
     Magnum::Color3 lighter(const Magnum::Color3& c)
     {
         auto hsv = c.toHsv();
@@ -65,6 +42,37 @@ namespace
         auto hsv = c.toHsv();
         hsv.value /= 1.2f;
         return Magnum::Color3::fromHsv(hsv);
+    }
+
+    Magnum::Color3 get_square_color(const int value)
+    {
+        switch(value)
+        {
+            case 0:  return 0xa05252_rgbf; //Infrared
+            case 1:  return 0xdd3b3b_rgbf; //Red
+            case 2:  return 0xef7429_rgbf; //Orange
+            case 3:  return 0xe5bb13_rgbf; //Yellow
+            case 4:  return 0xa1c927_rgbf; //Lime
+            case 5:  return 0x2bcd73_rgbf; //Green
+            case 6:  return 0x25d7d2_rgbf; //Cyan
+            case 7:  return 0x3f94de_rgbf; //Blue
+            case 8:  return 0x4c52e0_rgbf; //Blue-violet
+            case 9:  return 0x904ce0_rgbf; //Violet
+            case 10: return 0xc490ff_rgbf; //Ultraviolet
+            case 11: return 0x989898_rgbf; //X-ray
+            case 12: return 0x461b3f_rgbf; //Gamma ray
+            default: return 0x000000_rgbf;
+        }
+    }
+
+    Magnum::Color3 get_glow_color(const int value)
+    {
+        return lighter(get_square_color(value));
+    }
+
+    Magnum::Color3 get_shine_color(const int value)
+    {
+        return lighter(get_square_color(value));
     }
 
     std::unique_ptr<shine> make_shine
@@ -111,7 +119,7 @@ namespace
             drawables,
             rounded_rectangle::style
             {
-                .color = lighter(value_to_color(value)),
+                .color = get_glow_color(value),
                 .radius = 0.7f,
                 .smoothness_factor = 30
             }
@@ -141,7 +149,7 @@ number_tile::number_tile
             animables,
             shine::style
             {
-                .color = lighter(value_to_color(value)),
+                .color = get_shine_color(value),
                 .ray_count = 8,
                 .ray_width = 0.5f,
                 .speed_radps = 0.05f
@@ -158,7 +166,7 @@ number_tile::number_tile
             animables,
             shine::style
             {
-                .color = lighter(value_to_color(value)),
+                .color = get_shine_color(value),
                 .ray_count = 6,
                 .ray_width = 0.1f,
                 .speed_radps = 0.12f
@@ -172,7 +180,7 @@ number_tile::number_tile
         drawables,
         rounded_rectangle::style
         {
-            .color = value_to_color(value),
+            .color = get_square_color(value),
             .radius = 0.5f
         }
     ),
@@ -186,7 +194,7 @@ number_tile::number_tile
             .alignment = Magnum::Text::Alignment::MiddleCenter,
             .color = colors::white,
             .font_size = 1.15f,
-            .outline_color = darker(value_to_color(value)),
+            .outline_color = darker(get_square_color(value)),
             .outline_range = {0.45f, 0.40f}
         },
         std::to_string(value).c_str()
