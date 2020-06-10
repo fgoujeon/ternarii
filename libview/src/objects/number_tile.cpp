@@ -60,6 +60,31 @@ namespace
         return Magnum::Color3::fromHsv(hsv);
     }
 
+    std::unique_ptr<shine> make_shine
+    (
+        Object2D& parent,
+        features::drawable_group& drawables,
+        features::animable_group& animables,
+        const int value
+    )
+    {
+        if(value < 11)
+        {
+            return nullptr;
+        }
+
+        auto pshine = std::make_unique<shine>
+        (
+            parent,
+            drawables,
+            animables
+        );
+        pshine->set_color(value_to_color(value));
+        pshine->setScaling({1.7f, 1.7f});
+
+        return pshine;
+    }
+
     std::unique_ptr<rounded_rectangle> make_glow
     (
         Object2D& parent,
@@ -109,6 +134,7 @@ number_tile::number_tile
             .radius = 0.5f
         }
     ),
+    pshine_(make_shine(*this, drawables, animables, value)),
     pglow_(make_glow(*this, drawables, value)),
     label_
     (
