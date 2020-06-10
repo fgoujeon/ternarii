@@ -17,8 +17,8 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#include "background.hpp"
-#include "../shaders/sunshine.hpp"
+#include "shine.hpp"
+#include "../shaders/shine.hpp"
 #include <Magnum/GL/Mesh.h>
 #include <Magnum/MeshTools/Compile.h>
 #include <Magnum/Primitives/Square.h>
@@ -36,14 +36,14 @@ namespace
         return mesh;
     }
 
-    shaders::sunshine& get_shader()
+    shaders::shine& get_shader()
     {
-        static shaders::sunshine shader;
+        static shaders::shine shader;
         return shader;
     }
 }
 
-background::background
+shine::shine
 (
     Object2D& parent,
     features::drawable_group& drawables,
@@ -55,12 +55,12 @@ background::background
 {
 }
 
-void background::set_color(const Magnum::Color4& color)
+void shine::set_color(const Magnum::Color4& color)
 {
     color_ = color;
 }
 
-void background::draw(const Magnum::Matrix3& transformation_matrix, Magnum::SceneGraph::Camera2D& camera)
+void shine::draw(const Magnum::Matrix3& transformation_matrix, Magnum::SceneGraph::Camera2D& camera)
 {
     get_shader().setColor(color_ * get_absolute_alpha());
     get_shader().setTransformationProjectionMatrix
@@ -71,7 +71,7 @@ void background::draw(const Magnum::Matrix3& transformation_matrix, Magnum::Scen
     get_mesh().draw(get_shader());
 }
 
-void background::advance(const libutil::time_point& /*now*/, const float elapsed_s)
+void shine::advance(const libutil::time_point& /*now*/, const float elapsed_s)
 {
     const auto speed_radps = 0.05f; //in radians per second
     angle_rad_ = std::fmodf(angle_rad_ + elapsed_s * speed_radps, 2 * M_PI);

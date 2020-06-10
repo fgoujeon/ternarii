@@ -18,7 +18,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 #include <libview/screens/game.hpp>
-#include "../objects/background.hpp"
+#include "../objects/shine.hpp"
 #include "../objects/game_over_overlay.hpp"
 #include "../objects/sdf_image_button.hpp"
 #include "../objects/sdf_image.hpp"
@@ -37,7 +37,7 @@ namespace libview::screens
 
 namespace
 {
-    std::unique_ptr<objects::background> make_background
+    std::unique_ptr<objects::shine> make_background
     (
         game& self,
         feature_group_set& feature_groups,
@@ -49,7 +49,7 @@ namespace
             return nullptr;
         }
 
-        auto pbackground = std::make_unique<objects::background>
+        auto pbackground = std::make_unique<objects::shine>
         (
             self,
             feature_groups.drawables,
@@ -176,7 +176,7 @@ struct game::impl
 
     animation::animator animator;
 
-    std::unique_ptr<objects::background> pbackground;
+    std::unique_ptr<objects::shine> pbackground;
     objects::tile_grid tile_grid;
     objects::score_display score_display;
     objects::score_display hi_score_display;

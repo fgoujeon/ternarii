@@ -17,8 +17,8 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef LIBVIEW_OBJECTS_BACKGROUND_HPP
-#define LIBVIEW_OBJECTS_BACKGROUND_HPP
+#ifndef LIBVIEW_OBJECTS_SHINE_HPP
+#define LIBVIEW_OBJECTS_SHINE_HPP
 
 #include "../common.hpp"
 #include <libutil/time.hpp>
@@ -28,10 +28,10 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libview::objects
 {
 
-class background: public Object2D, public features::drawable, public features::animable
+class shine: public Object2D, public features::drawable, public features::animable
 {
     public:
-        background
+        shine
         (
             Object2D& parent,
             features::drawable_group& drawables,
