@@ -56,12 +56,19 @@ class shine: public Magnum::GL::AbstractShaderProgram
             return *this;
         }
 
+        shine& set_ray_count(const int count)
+        {
+            setUniform(ray_count_uniform_, static_cast<float>(count));
+            return *this;
+        }
+
         void set_angle_rad(float angle_rad);
 
     private:
         Magnum::Int transformation_projection_matrix_uniform_ = 0;
         Magnum::Int color_uniform_ = 1;
         Magnum::Int angle_uniform_ = 2;
+        Magnum::Int ray_count_uniform_ = 3;
 };
 
 } //namespace

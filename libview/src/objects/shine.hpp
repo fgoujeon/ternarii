@@ -31,14 +31,21 @@ namespace libview::objects
 class shine: public Object2D, public features::drawable, public features::animable
 {
     public:
+        struct style
+        {
+            Magnum::Color4 color;
+            int ray_count = 16;
+            float speed_radps = 0.05f; //in radians per second
+        };
+
+    public:
         shine
         (
             Object2D& parent,
             features::drawable_group& drawables,
-            features::animable_group& animables
+            features::animable_group& animables,
+            const style& stl
         );
-
-        void set_color(const Magnum::Color4& color);
 
     private:
         void draw(const Magnum::Matrix3& transformation_matrix, Magnum::SceneGraph::Camera2D& camera) override;
@@ -46,7 +53,7 @@ class shine: public Object2D, public features::drawable, public features::animab
         void advance(const libutil::time_point& now, float elapsed_s) override;
 
     private:
-        Magnum::Color4 color_;
+        style style_;
         float angle_rad_ = 0;
 };
 

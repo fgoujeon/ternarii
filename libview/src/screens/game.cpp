@@ -53,12 +53,15 @@ namespace
         (
             self,
             feature_groups.drawables,
-            feature_groups.animables
+            feature_groups.animables,
+            objects::shine::style
+            {
+                .color = colors::white
+            }
         );
 
         pbackground->scale({16.0f, 16.0f});
         pbackground->translate({0.0f, -1.0f});
-        pbackground->set_color(colors::white);
         pbackground->set_alpha(0.02);
 
         return pbackground;

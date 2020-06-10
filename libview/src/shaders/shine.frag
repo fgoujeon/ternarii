@@ -18,7 +18,6 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 #define PI2 6.28318530718
-#define RAY_COUNT 16.0
 #define RAY_WIDTH 0.55 //[0,1]
 
 #ifdef GL_ES
@@ -27,6 +26,7 @@ precision mediump float;
 
 uniform lowp vec4 u_color;
 uniform float u_angle; //[0,1]
+uniform float u_ray_count;
 
 varying highp vec2 v_position;
 
@@ -43,7 +43,7 @@ void main()
     angle = mod(angle + u_angle, 1.0); //[0,1]
 
     //make saw wave function with angle
-    angle = mod(angle, 1.0 / RAY_COUNT) * RAY_COUNT; //[0,1]
+    angle = mod(angle, 1.0 / u_ray_count) * u_ray_count; //[0,1]
     angle = abs(angle - 0.5) * 2.0; //[0,1]
 
     //we want rays to be opaque in center and transparent at end of radius

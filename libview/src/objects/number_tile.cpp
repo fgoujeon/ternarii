@@ -77,9 +77,13 @@ namespace
         (
             parent,
             drawables,
-            animables
+            animables,
+            shine::style
+            {
+                .color = value_to_color(value),
+                .ray_count = 8
+            }
         );
-        pshine->set_color(value_to_color(value));
         pshine->setScaling({1.7f, 1.7f});
 
         return pshine;
