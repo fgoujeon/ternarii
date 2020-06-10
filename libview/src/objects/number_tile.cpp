@@ -193,7 +193,7 @@ number_tile::number_tile
         rounded_rectangle::style
         {
             .color = get_square_color(value),
-            .radius = 0.5f
+            .radius = 0.6f
         }
     ),
     pglow_(make_glow(*this, drawables, value)),
