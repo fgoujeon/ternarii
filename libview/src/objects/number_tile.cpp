@@ -58,6 +58,35 @@ namespace
         hsv.value /= 1.2f;
         return Magnum::Color3::fromHsv(hsv);
     }
+
+    std::unique_ptr<rounded_rectangle> make_glow
+    (
+        Object2D& parent,
+        features::drawable_group& drawables,
+        const int value
+    )
+    {
+        if(value < 10)
+        {
+            return nullptr;
+        }
+
+        auto pglow = std::make_unique<rounded_rectangle>
+        (
+            parent,
+            drawables,
+            rounded_rectangle::style
+            {
+                .color = value_to_color(value),
+                .radius = 0.7f,
+                .smoothness_factor = 30
+            }
+        );
+
+        pglow->setScaling({1.8f, 1.8f});
+
+        return pglow;
+    }
 }
 
 number_tile::number_tile(Object2D& parent, features::drawable_group& drawables, const int value):
@@ -69,12 +98,12 @@ number_tile::number_tile(Object2D& parent, features::drawable_group& drawables, 
         rounded_rectangle::style
         {
             .color = value_to_color(value),
-            .dimension = {1.0f, 1.0f},
             .outline_color = colors::dark_gray,
             .outline_thickness = 0.04f,
             .radius = 0.5f
         }
     ),
+    pglow_(make_glow(*this, drawables, value)),
     label_
     (
         *this,

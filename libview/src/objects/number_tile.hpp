@@ -36,6 +36,7 @@ class number_tile: public Object2D
 
     private:
         rounded_rectangle square_;
+        std::unique_ptr<rounded_rectangle> pglow_;
         label label_;
 };
 
