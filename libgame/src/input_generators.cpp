@@ -189,7 +189,7 @@ namespace
     Top-level generators
     */
 
-    abstract_input_generator& get_purity_room_input_generator()
+    abstract_input_generator& get_purity_chapel_input_generator()
     {
         return get_random_number_tile_pair_generator();
     }
@@ -233,7 +233,7 @@ abstract_input_generator& get_input_generator(data_types::stage stage)
     switch(stage)
     {
         default:
-        CASE(purity_room);
+        CASE(purity_chapel);
         CASE(nullifier_room);
         CASE(triplet_pines_mall);
     }

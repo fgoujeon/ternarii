@@ -48,7 +48,7 @@ using tile_merge_list       = libcommon::data_types::tile_merge_list;
 
 enum class stage
 {
-    purity_room,
+    purity_chapel,
     nullifier_room,
     triplet_pines_mall
 };

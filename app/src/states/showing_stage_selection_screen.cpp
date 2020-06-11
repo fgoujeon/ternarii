@@ -32,12 +32,12 @@ showing_stage_selection_screen::showing_stage_selection_screen(fsm& ctx, const s
         (
             screen::callback_set
             {
-                .purity_room_selection_request = [this]
+                .purity_chapel_selection_request = [this]
                 {
                     fsm_.set_state<playing>
                     (
                         screen_transition::zoom_in,
-                        libgame::data_types::stage::purity_room
+                        libgame::data_types::stage::purity_chapel
                     );
                 },
                 .nullifier_room_selection_request = [this]

@@ -52,8 +52,8 @@ namespace
     {
         switch(s)
         {
-            case libgame::data_types::stage::purity_room:
-                return "PURITY ROOM";
+            case libgame::data_types::stage::purity_chapel:
+                return "PURITY CHAPEL";
             case libgame::data_types::stage::nullifier_room:
                 return "NULLIFIER ROOM";
             case libgame::data_types::stage::triplet_pines_mall:
@@ -66,7 +66,7 @@ namespace
     {
         switch(s)
         {
-            case libgame::data_types::stage::purity_room:
+            case libgame::data_types::stage::purity_chapel:
                 return std::nullopt;
             case libgame::data_types::stage::nullifier_room:
                 return libres::images::background_nullifier_room;

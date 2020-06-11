@@ -73,29 +73,29 @@ struct stage_selection::impl
             "SELECT STAGE"
         ),
 
-        //Purity room
-        purity_room_container(&self),
-        purity_room_button
+        //Purity chapel
+        purity_chapel_container(&self),
+        purity_chapel_button
         (
-            purity_room_container,
+            purity_chapel_container,
             feature_groups.drawables,
             feature_groups.clickables,
             stage_button_style,
             objects::label_button::callback_set
             {
-                .mouse_release_callback = [this]{this->callbacks.purity_room_selection_request();}
+                .mouse_release_callback = [this]{this->callbacks.purity_chapel_selection_request();}
             }
         ),
-        purity_room_name_label
+        purity_chapel_name_label
         (
-            purity_room_container,
+            purity_chapel_container,
             feature_groups.drawables,
             stage_name_label_style,
-            "PURITY ROOM"
+            "PURITY CHAPEL"
         ),
-        purity_room_description_label
+        purity_chapel_description_label
         (
-            purity_room_container,
+            purity_chapel_container,
             feature_groups.drawables,
             stage_description_label_style,
             "(no special tiles)"
@@ -205,13 +205,13 @@ struct stage_selection::impl
         title_label.translate({0.0f, 7.0f});
 
         {
-            purity_room_container.setTranslation({0.0f, 3.0f});
+            purity_chapel_container.setTranslation({0.0f, 3.0f});
 
-            purity_room_button.scale({2.2f, 2.2f});
+            purity_chapel_button.scale({2.2f, 2.2f});
 
-            purity_room_name_label.translate({0.0f, 0.5f});
+            purity_chapel_name_label.translate({0.0f, 0.5f});
 
-            purity_room_description_label.translate({0.0f, -0.5f});
+            purity_chapel_description_label.translate({0.0f, -0.5f});
         }
 
         {
@@ -259,10 +259,10 @@ struct stage_selection::impl
 
     objects::label title_label;
 
-    Object2D purity_room_container;
-    objects::blank_button purity_room_button;
-    objects::label purity_room_name_label;
-    objects::label purity_room_description_label;
+    Object2D purity_chapel_container;
+    objects::blank_button purity_chapel_button;
+    objects::label purity_chapel_name_label;
+    objects::label purity_chapel_description_label;
 
     Object2D nullifier_room_container;
     objects::blank_button nullifier_room_button;

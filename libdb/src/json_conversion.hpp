@@ -221,7 +221,7 @@ namespace libdb
         }
         */
 
-        auto& state = to.stage_states[data_types::stage::purity_room];
+        auto& state = to.stage_states[data_types::stage::purity_chapel];
 
         state.hi_score = from.at("hiScore").get<int>();
 
@@ -301,7 +301,7 @@ namespace libdb
             );
         };
 
-        auto& state = to.stage_states[data_types::stage::purity_room];
+        auto& state = to.stage_states[data_types::stage::purity_chapel];
 
         state.hi_score = from.at("hiScore").get<int>();
         fill_matrix(from.at("nextInputTiles"), state.next_input_tiles);
