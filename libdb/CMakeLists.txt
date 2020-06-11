@@ -38,8 +38,8 @@ target_include_directories(
 
 target_link_options(
     libdb
-    PUBLIC
-        "-lidbfs.js"
+    INTERFACE
+        -lidbfs.js
 )
 
 target_link_libraries(

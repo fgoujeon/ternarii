@@ -17,31 +17,17 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef LIBDB_DATABASE_HPP
-#define LIBDB_DATABASE_HPP
+#ifndef LIBDB_JSON_FILESYSTEM_HPP
+#define LIBDB_JSON_FILESYSTEM_HPP
 
-#include "events.hpp"
-#include "data_types.hpp"
-#include <memory>
+#include <functional>
 
-namespace libdb
+namespace libdb::filesystem
 {
 
-class database
-{
-    public:
-        database(const event_handler& evt_handler);
+void async_load(const std::function<void()>& cb);
 
-        ~database();
-
-        const std::optional<data_types::game_state>& get_game_state() const;
-
-        void set_stage_state(data_types::stage stage, const data_types::stage_state& state);
-
-    private:
-        struct impl;
-        std::unique_ptr<impl> pimpl_;
-};
+void async_save();
 
 } //namespace
 

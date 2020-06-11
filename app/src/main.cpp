@@ -61,6 +61,17 @@ namespace
             return configuration{};
         }
     }
+
+    struct configurator
+    {
+        configurator(const configuration& conf)
+        {
+            if(conf.enable_log)
+            {
+                libutil::log::enable();
+            }
+        }
+    };
 }
 
 class app: public Magnum::Platform::Sdl2Application
@@ -73,6 +84,7 @@ class app: public Magnum::Platform::Sdl2Application
                 Configuration{}.setWindowFlags(Configuration::WindowFlag::Resizable)
             },
             conf_(parse_command_line(args.argc, args.argv)),
+            configurator_(conf_),
             database_([this](const libdb::event& event){handle_database_event(event);}),
             view_
             (
@@ -84,10 +96,6 @@ class app: public Magnum::Platform::Sdl2Application
             ),
             fsm_(database_, view_)
         {
-            if(conf_.enable_log)
-            {
-                libutil::log::enable();
-            }
         }
 
     //Sdl2Application virtual functions
@@ -96,7 +104,6 @@ class app: public Magnum::Platform::Sdl2Application
         {
             Magnum::GL::defaultFramebuffer.clear(Magnum::GL::FramebufferClear::Color);
             view_.draw();
-            database_.iterate();
             swapBuffers();
             redraw();
         }
@@ -147,11 +154,9 @@ class app: public Magnum::Platform::Sdl2Application
 
     private:
         configuration conf_;
-
+        configurator configurator_;
         libdb::database database_;
-
         libview::view view_;
-
         fsm fsm_;
 };
 

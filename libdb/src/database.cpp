@@ -18,13 +18,12 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 #include "json_conversion.hpp"
+#include "filesystem.hpp"
 #include <libdb/database.hpp>
 #include <nlohmann/json.hpp>
 #include <libutil/log.hpp>
-#include <emscripten.h>
 #include <filesystem>
 #include <fstream>
-#include <iostream>
 
 namespace libdb
 {
@@ -53,37 +52,11 @@ namespace
 
 struct database::impl
 {
-    private:
-        enum class state
-        {
-            starting,
-            loading_filesystem,
-            loading_data,
-            ready
-        };
-
     public:
         impl(const event_handler& evt_handler):
             event_handler_(evt_handler)
         {
-        }
-
-        void iterate()
-        {
-            switch(current_state_)
-            {
-                case state::starting:
-                    async_load_filesystem();
-                    break;
-                case state::loading_filesystem:
-                    async_wait_for_filesystem();
-                    break;
-                case state::loading_data:
-                    load_data();
-                    break;
-                case state::ready:
-                    break;
-            }
+            filesystem::async_load([this]{load_data();});
         }
 
         const std::optional<data_types::game_state>& get_game_state() const
@@ -100,40 +73,11 @@ struct database::impl
 
             opt_game_state_->stage_states[stage] = state;
 
-            if(current_state_ == state::ready)
-            {
-                save_data();
-                async_save_filesystem();
-            }
+            save_data();
+            filesystem::async_save();
         }
 
     private:
-        void async_load_filesystem()
-        {
-            EM_ASM(
-                FS.mount(IDBFS, {}, '/home');
-
-                Module.savingPersistentFilesystem = 0;
-                Module.persistentFilesystemLoaded = 0;
-                console.log("Loading persistent filesystem...");
-                FS.syncfs(true, function(err) {
-                    assert(!err);
-                    console.log("Loaded persistent filesystem.");
-                    Module.persistentFilesystemLoaded = 1;
-                });
-            );
-
-            current_state_ = state::loading_filesystem;
-        }
-
-        void async_wait_for_filesystem()
-        {
-            if(emscripten_run_script_int("Module.persistentFilesystemLoaded") == 1)
-            {
-                current_state_ = state::loading_data;
-            }
-        }
-
         bool try_load_data(const int version)
         {
             const auto path = get_database_path(version);
@@ -177,7 +121,6 @@ struct database::impl
                 std::cerr << "Unknown error\n";
             }
 
-            current_state_ = state::ready;
             event_handler_(events::end_of_loading{});
         }
 
@@ -201,22 +144,8 @@ struct database::impl
             }
         }
 
-        void async_save_filesystem()
-        {
-            EM_ASM(
-                if(Module.savingPersistentFilesystem == 0) {
-                    Module.savingPersistentFilesystem = 1;
-                    FS.syncfs(false, function(err) {
-                        assert(!err);
-                        Module.savingPersistentFilesystem = 0;
-                    });
-                }
-            );
-        }
-
     private:
         event_handler event_handler_;
-        state current_state_ = state::starting;
         std::optional<data_types::game_state> opt_game_state_;
 };
 
@@ -226,11 +155,6 @@ database::database(const event_handler& evt_handler):
 }
 
 database::~database() = default;
-
-void database::iterate()
-{
-    pimpl_->iterate();
-}
 
 const std::optional<data_types::game_state>& database::get_game_state() const
 {
