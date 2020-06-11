@@ -37,36 +37,33 @@ namespace libview::screens
 
 namespace
 {
-    std::unique_ptr<objects::shine> make_background
+    std::unique_ptr<objects::sdf_image> make_background_image
     (
-        game& self,
+        game& parent,
         feature_group_set& feature_groups,
-        const bool make
+        const std::optional<std::filesystem::path>& opt_background_image_path
     )
     {
-        if(!make)
+        if(!opt_background_image_path)
         {
             return nullptr;
         }
 
-        auto pbackground = std::make_unique<objects::shine>
+        auto pimage = std::make_unique<objects::sdf_image>
         (
-            self,
+            parent,
             feature_groups.drawables,
-            feature_groups.animables,
-            objects::shine::style
+            *opt_background_image_path,
+            objects::sdf_image::style
             {
-                .color = colors::white,
-                .ray_count = 16,
-                .ray_width = 0.55f,
+                .color = colors::white
             }
         );
 
-        pbackground->scale({16.0f, 16.0f});
-        pbackground->translate({0.0f, -1.0f});
-        pbackground->set_alpha(0.02f);
+        pimage->setScaling({3.0f, 3.0f});
+        pimage->set_alpha(0.1f);
 
-        return pbackground;
+        return pimage;
     }
 }
 
@@ -98,11 +95,19 @@ struct game::impl
         feature_group_set& feature_groups,
         const callback_set& callbacks,
         const std::string_view& stage_name,
-        const bool show_background
+        const std::optional<std::filesystem::path>& opt_background_image_path
     ):
         feature_groups(feature_groups),
         callbacks(callbacks),
-        pbackground(make_background(self, feature_groups, show_background)),
+        pbackground_image
+        (
+            make_background_image
+            (
+                self,
+                feature_groups,
+                opt_background_image_path
+            )
+        ),
         tile_grid
         (
             self,
@@ -181,7 +186,7 @@ struct game::impl
 
     animation::animator animator;
 
-    std::unique_ptr<objects::shine> pbackground;
+    std::unique_ptr<objects::sdf_image> pbackground_image;
     objects::tile_grid tile_grid;
     objects::score_display score_display;
     objects::score_display hi_score_display;
@@ -201,12 +206,22 @@ game::game
     feature_group_set& feature_groups,
     const callback_set& callbacks,
     const std::string_view& stage_name,
-    const bool show_background
+    const std::optional<std::filesystem::path>& opt_background_image_path
 ):
     Object2D{&parent},
     features::animable{*this, &feature_groups.animables},
     features::key_event_handler{*this, &feature_groups.key_event_handlers},
-    pimpl_(std::make_unique<impl>(*this, feature_groups, callbacks, stage_name, show_background))
+    pimpl_
+    (
+        std::make_unique<impl>
+        (
+            *this,
+            feature_groups,
+            callbacks,
+            stage_name,
+            opt_background_image_path
+        )
+    )
 {
 }
 

@@ -25,10 +25,10 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libview::colors
 {
 
-static inline const auto black      = 0x000000ff_rgbaf;
-static inline const auto dark_gray  = 0x404248ff_rgbaf;
-static inline const auto light_gray = 0xddddddff_rgbaf;
-static inline const auto white      = 0xffffffff_rgbaf;
+static inline const auto black       = 0x000000ff_rgbaf;
+static inline const auto dark_gray   = 0x404248ff_rgbaf;
+static inline const auto light_gray  = 0xddddddff_rgbaf;
+static inline const auto white       = 0xffffffff_rgbaf;
 
 } //namespace
 

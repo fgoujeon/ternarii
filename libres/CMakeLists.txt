@@ -94,16 +94,18 @@ endfunction()
 
 add_ttf_to_sdf_command(DejaVuSans)
 
-add_svg_to_sdf_command(exit              64)
-add_svg_to_sdf_command(board_corner      64)
-add_svg_to_sdf_command(column_nullifier  64)
-add_svg_to_sdf_command(logo              64)
-add_svg_to_sdf_command(logo_text         256)
-add_svg_to_sdf_command(move_button       64)
-add_svg_to_sdf_command(number_nullifier  64)
-add_svg_to_sdf_command(rotate_button     64)
-add_svg_to_sdf_command(row_nullifier     64)
-add_svg_to_sdf_command(tile_triplet      64)
+add_svg_to_sdf_command(background_nullifier_room     64)
+add_svg_to_sdf_command(background_triplet_pines_mall 128)
+add_svg_to_sdf_command(board_corner                  64)
+add_svg_to_sdf_command(column_nullifier              64)
+add_svg_to_sdf_command(exit                          64)
+add_svg_to_sdf_command(logo                          64)
+add_svg_to_sdf_command(logo_text                     256)
+add_svg_to_sdf_command(move_button                   64)
+add_svg_to_sdf_command(number_nullifier              64)
+add_svg_to_sdf_command(rotate_button                 64)
+add_svg_to_sdf_command(row_nullifier                 64)
+add_svg_to_sdf_command(tile_triplet                  64)
 
 #Generate libres.hpp
 file(GLOB SRC_SVG_FILES src/images/*.svg)
@@ -120,9 +122,11 @@ add_library(
     "src/dummy.cpp"
     "${CMAKE_CURRENT_BINARY_DIR}/out/fonts/DejaVuSans.conf"
     "${CMAKE_CURRENT_BINARY_DIR}/out/fonts/DejaVuSans.tga"
-    "${CMAKE_CURRENT_BINARY_DIR}/out/images/exit.tga"
+    "${CMAKE_CURRENT_BINARY_DIR}/out/images/background_nullifier_room.tga"
+    "${CMAKE_CURRENT_BINARY_DIR}/out/images/background_triplet_pines_mall.tga"
     "${CMAKE_CURRENT_BINARY_DIR}/out/images/board_corner.tga"
     "${CMAKE_CURRENT_BINARY_DIR}/out/images/column_nullifier.tga"
+    "${CMAKE_CURRENT_BINARY_DIR}/out/images/exit.tga"
     "${CMAKE_CURRENT_BINARY_DIR}/out/images/logo.tga"
     "${CMAKE_CURRENT_BINARY_DIR}/out/images/logo_text.tga"
     "${CMAKE_CURRENT_BINARY_DIR}/out/images/move_button.tga"

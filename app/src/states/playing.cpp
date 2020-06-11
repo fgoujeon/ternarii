@@ -19,6 +19,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "playing.hpp"
 #include "showing_stage_selection_screen.hpp"
+#include <libres.hpp>
 
 namespace states
 {
@@ -51,16 +52,28 @@ namespace
     {
         switch(s)
         {
-            case libgame::data_types::stage::purity_room:    return "PURITY ROOM";
-            case libgame::data_types::stage::nullifier_room: return "NULLIFIER ROOM";
-            case libgame::data_types::stage::triplet_pines_mall: return "TRIPLET PINES MALL";
+            case libgame::data_types::stage::purity_room:
+                return "PURITY ROOM";
+            case libgame::data_types::stage::nullifier_room:
+                return "NULLIFIER ROOM";
+            case libgame::data_types::stage::triplet_pines_mall:
+                return "TRIPLET PINES MALL";
         }
         return "";
     }
 
-    bool must_show_background(const libgame::data_types::stage s)
+    std::optional<std::filesystem::path> get_background_image(const libgame::data_types::stage s)
     {
-        return s == libgame::data_types::stage::nullifier_room;
+        switch(s)
+        {
+            case libgame::data_types::stage::purity_room:
+                return std::nullopt;
+            case libgame::data_types::stage::nullifier_room:
+                return libres::images::background_nullifier_room;
+            case libgame::data_types::stage::triplet_pines_mall:
+                return libres::images::background_triplet_pines_mall;
+        }
+        return std::nullopt;
     }
 }
 
@@ -95,7 +108,7 @@ playing::playing(fsm& f, const screen_transition trans, const libgame::data_type
                 }
             },
             get_pretty_name(stage),
-            must_show_background(stage)
+            get_background_image(stage)
         )
     )
 {

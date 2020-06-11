@@ -27,6 +27,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include <Magnum/Math/Color.h>
 #include <Magnum/Platform/Sdl2Application.h>
 #include <libutil/void_function.hpp>
+#include <filesystem>
 
 namespace libview::screens
 {
@@ -49,7 +50,7 @@ class game: public Object2D, public features::animable, public features::key_eve
             feature_group_set& feature_groups,
             const callback_set& callbacks,
             const std::string_view& stage_name,
-            bool show_background
+            const std::optional<std::filesystem::path>& opt_background_image_path
         );
 
         ~game();
