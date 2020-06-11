@@ -53,6 +53,7 @@ namespace
         {
             case libgame::data_types::stage::purity_room:    return "PURITY ROOM";
             case libgame::data_types::stage::nullifier_room: return "NULLIFIER ROOM";
+            case libgame::data_types::stage::triplet_pines_mall: return "TRIPLET PINES MALL";
         }
         return "";
     }

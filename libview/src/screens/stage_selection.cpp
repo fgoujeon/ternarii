@@ -34,7 +34,7 @@ namespace
     const auto stage_button_style = objects::blank_button::style
     {
         .color = colors::light_gray,
-        .dimension = {1.0f, 0.6f},
+        .dimension = {1.0f, 0.5f},
         .highlight_color = colors::white,
         .radius = 0.16f
     };
@@ -72,9 +72,12 @@ struct stage_selection::impl
             styles::title_label,
             "SELECT STAGE"
         ),
+
+        //Purity room
+        purity_room_container(&self),
         purity_room_button
         (
-            self,
+            purity_room_container,
             feature_groups.drawables,
             feature_groups.clickables,
             stage_button_style,
@@ -85,21 +88,24 @@ struct stage_selection::impl
         ),
         purity_room_name_label
         (
-            self,
+            purity_room_container,
             feature_groups.drawables,
             stage_name_label_style,
             "PURITY ROOM"
         ),
         purity_room_description_label
         (
-            self,
+            purity_room_container,
             feature_groups.drawables,
             stage_description_label_style,
             "(no special tiles)"
         ),
+
+        //Nullifier room
+        nullifier_room_container(&self),
         nullifier_room_button
         (
-            self,
+            nullifier_room_container,
             feature_groups.drawables,
             feature_groups.clickables,
             stage_button_style,
@@ -110,29 +116,79 @@ struct stage_selection::impl
         ),
         nullifier_room_name_label
         (
-            self,
+            nullifier_room_container,
             feature_groups.drawables,
             stage_name_label_style,
             "NULLIFIER ROOM"
         ),
         nullifier_room_special_tile_0
         (
-            self,
+            nullifier_room_container,
             feature_groups.drawables,
             libres::images::row_nullifier
         ),
         nullifier_room_special_tile_1
         (
-            self,
+            nullifier_room_container,
             feature_groups.drawables,
             libres::images::column_nullifier
         ),
         nullifier_room_special_tile_2
         (
-            self,
+            nullifier_room_container,
             feature_groups.drawables,
             libres::images::number_nullifier
         ),
+
+        //Triplet pines mall
+        triplet_pines_mall_container(&self),
+        triplet_pines_mall_button
+        (
+            triplet_pines_mall_container,
+            feature_groups.drawables,
+            feature_groups.clickables,
+            stage_button_style,
+            objects::label_button::callback_set
+            {
+                .mouse_release_callback = [this]{this->callbacks.triplet_pines_mall_selection_request();}
+            }
+        ),
+        triplet_pines_mall_name_label
+        (
+            triplet_pines_mall_container,
+            feature_groups.drawables,
+            stage_name_label_style,
+            "TRIPLET PINES MALL"
+        ),
+        triplet_pines_mall_tile_triplet
+        (
+            triplet_pines_mall_container,
+            feature_groups.drawables,
+            libres::images::tile_triplet,
+            objects::sdf_image::style
+            {
+                .color = colors::black
+            }
+        ),
+        triplet_pines_mall_special_tile_0
+        (
+            triplet_pines_mall_container,
+            feature_groups.drawables,
+            libres::images::row_nullifier
+        ),
+        triplet_pines_mall_special_tile_1
+        (
+            triplet_pines_mall_container,
+            feature_groups.drawables,
+            libres::images::column_nullifier
+        ),
+        triplet_pines_mall_special_tile_2
+        (
+            triplet_pines_mall_container,
+            feature_groups.drawables,
+            libres::images::number_nullifier
+        ),
+
         back_button
         (
             self,
@@ -149,28 +205,50 @@ struct stage_selection::impl
         title_label.translate({0.0f, 7.0f});
 
         {
-            purity_room_button.scale({2.0f, 2.0f});
-            purity_room_button.translate({0.0f, 2.5f});
+            purity_room_container.setTranslation({0.0f, 3.0f});
 
-            purity_room_name_label.translate({0.0f, 3.0f});
+            purity_room_button.scale({2.2f, 2.2f});
 
-            purity_room_description_label.translate({0.0f, 2.0f});
+            purity_room_name_label.translate({0.0f, 0.5f});
+
+            purity_room_description_label.translate({0.0f, -0.5f});
         }
 
         {
-            nullifier_room_button.scale({2.0f, 2.0f});
-            nullifier_room_button.translate({0.0f, -1.5f});
+            nullifier_room_container.setTranslation({0.0f, 0.0f});
 
-            nullifier_room_name_label.translate({0.0f, -1.0f});
+            nullifier_room_button.scale({2.2f, 2.2f});
+
+            nullifier_room_name_label.translate({0.0f, 0.5f});
 
             nullifier_room_special_tile_0.scale({0.4f, 0.4f});
-            nullifier_room_special_tile_0.translate({-1.0f, -2.0f});
+            nullifier_room_special_tile_0.translate({-1.0f, -0.5f});
 
             nullifier_room_special_tile_1.scale({0.4f, 0.4f});
-            nullifier_room_special_tile_1.translate({-0.0f, -2.0f});
+            nullifier_room_special_tile_1.translate({-0.0f, -0.5f});
 
             nullifier_room_special_tile_2.scale({0.4f, 0.4f});
-            nullifier_room_special_tile_2.translate({1.0f, -2.0f});
+            nullifier_room_special_tile_2.translate({1.0f, -0.5f});
+        }
+
+        {
+            triplet_pines_mall_container.setTranslation({0.0f, -3.0f});
+
+            triplet_pines_mall_button.scale({2.2f, 2.2f});
+
+            triplet_pines_mall_name_label.translate({0.0f, 0.5f});
+
+            triplet_pines_mall_tile_triplet.scale({0.4f, 0.4f});
+            triplet_pines_mall_tile_triplet.translate({-1.5f, -0.5f});
+
+            triplet_pines_mall_special_tile_0.scale({0.4f, 0.4f});
+            triplet_pines_mall_special_tile_0.translate({-0.5f, -0.5f});
+
+            triplet_pines_mall_special_tile_1.scale({0.4f, 0.4f});
+            triplet_pines_mall_special_tile_1.translate({0.5f, -0.5f});
+
+            triplet_pines_mall_special_tile_2.scale({0.4f, 0.4f});
+            triplet_pines_mall_special_tile_2.translate({1.5f, -0.5f});
         }
 
         back_button.scale({2.0f, 2.0f});
@@ -181,15 +259,25 @@ struct stage_selection::impl
 
     objects::label title_label;
 
+    Object2D purity_room_container;
     objects::blank_button purity_room_button;
     objects::label purity_room_name_label;
     objects::label purity_room_description_label;
 
+    Object2D nullifier_room_container;
     objects::blank_button nullifier_room_button;
     objects::label nullifier_room_name_label;
     objects::sdf_image_tile nullifier_room_special_tile_0;
     objects::sdf_image_tile nullifier_room_special_tile_1;
     objects::sdf_image_tile nullifier_room_special_tile_2;
+
+    Object2D triplet_pines_mall_container;
+    objects::blank_button triplet_pines_mall_button;
+    objects::label triplet_pines_mall_name_label;
+    objects::sdf_image triplet_pines_mall_tile_triplet;
+    objects::sdf_image_tile triplet_pines_mall_special_tile_0;
+    objects::sdf_image_tile triplet_pines_mall_special_tile_1;
+    objects::sdf_image_tile triplet_pines_mall_special_tile_2;
 
     objects::label_button back_button;
 };

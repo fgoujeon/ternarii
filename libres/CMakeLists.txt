@@ -103,6 +103,7 @@ add_svg_to_sdf_command(move_button       64)
 add_svg_to_sdf_command(number_nullifier  64)
 add_svg_to_sdf_command(rotate_button     64)
 add_svg_to_sdf_command(row_nullifier     64)
+add_svg_to_sdf_command(tile_triplet      64)
 
 #Generate libres.hpp
 file(GLOB SRC_SVG_FILES src/images/*.svg)
@@ -128,6 +129,7 @@ add_library(
     "${CMAKE_CURRENT_BINARY_DIR}/out/images/number_nullifier.tga"
     "${CMAKE_CURRENT_BINARY_DIR}/out/images/rotate_button.tga"
     "${CMAKE_CURRENT_BINARY_DIR}/out/images/row_nullifier.tga"
+    "${CMAKE_CURRENT_BINARY_DIR}/out/images/tile_triplet.tga"
 )
 
 target_include_directories(

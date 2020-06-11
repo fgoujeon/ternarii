@@ -35,6 +35,7 @@ class stage_selection: public Object2D
         {
             libutil::void_function<> purity_room_selection_request;
             libutil::void_function<> nullifier_room_selection_request;
+            libutil::void_function<> triplet_pines_mall_selection_request;
             libutil::void_function<> back_request;
         };
 

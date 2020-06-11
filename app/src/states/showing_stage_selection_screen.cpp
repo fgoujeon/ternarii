@@ -48,6 +48,14 @@ showing_stage_selection_screen::showing_stage_selection_screen(fsm& ctx, const s
                         libgame::data_types::stage::nullifier_room
                     );
                 },
+                .triplet_pines_mall_selection_request = [this]
+                {
+                    fsm_.set_state<playing>
+                    (
+                        screen_transition::zoom_in,
+                        libgame::data_types::stage::triplet_pines_mall
+                    );
+                },
                 .back_request = [this]
                 {
                     fsm_.set_state<showing_title_screen>(screen_transition::left_to_right);

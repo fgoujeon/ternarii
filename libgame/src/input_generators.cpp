@@ -110,6 +110,32 @@ namespace
 
 
 
+    class random_number_tile_triple_generator: public abstract_input_generator
+    {
+        public:
+            data_types::input_tile_matrix generate(const int max, const double standard_deviation) override
+            {
+                return
+                {
+                    gen_.generate(max, standard_deviation),
+                    gen_.generate(max, standard_deviation),
+                    gen_.generate(max, standard_deviation),
+                    std::nullopt
+                };
+            }
+
+        private:
+            random_number_tile_generator gen_;
+    };
+
+    abstract_input_generator& get_random_number_tile_triple_generator()
+    {
+        static auto generator = random_number_tile_triple_generator{};
+        return generator;
+    }
+
+
+
     /*
     random_input_generator
 
@@ -181,18 +207,38 @@ namespace
         );
         return generator;
     }
+
+    abstract_input_generator& get_triplet_pines_mall_input_generator()
+    {
+        static auto generator = random_input_generator
+        (
+            {
+                {get_random_number_tile_pair_generator(),                         225},
+                {get_random_number_tile_triple_generator(),                       75},
+                {get_simple_input_generator<data_types::column_nullifier_tile>(), 1},
+                {get_simple_input_generator<data_types::row_nullifier_tile>(),    1},
+                {get_simple_input_generator<data_types::number_nullifier_tile>(), 1},
+            }
+        );
+        return generator;
+    }
 }
 
 abstract_input_generator& get_input_generator(data_types::stage stage)
 {
+#define CASE(STAGE) \
+    case data_types::stage::STAGE: \
+        return get_##STAGE##_input_generator();
+
     switch(stage)
     {
         default:
-        case data_types::stage::purity_room:
-            return get_purity_room_input_generator();
-        case data_types::stage::nullifier_room:
-            return get_nullifier_room_input_generator();
+        CASE(purity_room);
+        CASE(nullifier_room);
+        CASE(triplet_pines_mall);
     }
+
+#undef CASE
 }
 
 } //namespace
