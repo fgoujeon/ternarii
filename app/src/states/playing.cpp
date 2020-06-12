@@ -47,34 +47,6 @@ namespace
 
         return stage_state_it->second;
     }
-
-    std::string_view get_pretty_name(const libgame::data_types::stage s)
-    {
-        switch(s)
-        {
-            case libgame::data_types::stage::purity_chapel:
-                return "PURITY CHAPEL";
-            case libgame::data_types::stage::nullifier_room:
-                return "NULLIFIER ROOM";
-            case libgame::data_types::stage::triplet_pines_mall:
-                return "TRIPLET PINES MALL";
-        }
-        return "";
-    }
-
-    std::optional<std::filesystem::path> get_background_image(const libgame::data_types::stage s)
-    {
-        switch(s)
-        {
-            case libgame::data_types::stage::purity_chapel:
-                return std::nullopt;
-            case libgame::data_types::stage::nullifier_room:
-                return libres::images::background_nullifier_room;
-            case libgame::data_types::stage::triplet_pines_mall:
-                return libres::images::background_triplet_pines_mall;
-        }
-        return std::nullopt;
-    }
 }
 
 playing::playing(fsm& f, const screen_transition trans, const libgame::data_types::stage stage):
@@ -84,6 +56,7 @@ playing::playing(fsm& f, const screen_transition trans, const libgame::data_type
     (
         fsm_.view.make_screen<screen>
         (
+            stage,
             screen::callback_set
             {
                 .handle_clear_request = [this]
@@ -106,9 +79,7 @@ playing::playing(fsm& f, const screen_transition trans, const libgame::data_type
                     libutil::log::info("[fsm <- screen] Input layout change: ", input_layout);
                     mark_tiles_for_nullification();
                 }
-            },
-            get_pretty_name(stage),
-            get_background_image(stage)
+            }
         )
     )
 {
