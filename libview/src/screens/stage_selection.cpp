@@ -23,6 +23,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include "../objects/sdf_image_tile.hpp"
 #include "../colors.hpp"
 #include "../styles.hpp"
+#include "../data_types.hpp"
 #include "../common.hpp"
 #include <libres.hpp>
 
@@ -83,7 +84,13 @@ struct stage_selection::impl
             stage_button_style,
             objects::label_button::callback_set
             {
-                .mouse_release_callback = [this]{this->callbacks.purity_chapel_selection_request();}
+                .mouse_release_callback = [this]
+                {
+                    this->callbacks.stage_selection_request
+                    (
+                        data_types::stage::purity_chapel
+                    );
+                }
             }
         ),
         purity_chapel_name_label
@@ -91,7 +98,7 @@ struct stage_selection::impl
             purity_chapel_container,
             feature_groups.drawables,
             stage_name_label_style,
-            "PURITY CHAPEL"
+            data_types::get_pretty_name(data_types::stage::purity_chapel)
         ),
         purity_chapel_description_label
         (
@@ -111,7 +118,13 @@ struct stage_selection::impl
             stage_button_style,
             objects::label_button::callback_set
             {
-                .mouse_release_callback = [this]{this->callbacks.nullifier_room_selection_request();}
+                .mouse_release_callback = [this]
+                {
+                    this->callbacks.stage_selection_request
+                    (
+                        data_types::stage::nullifier_room
+                    );
+                }
             }
         ),
         nullifier_room_name_label
@@ -119,7 +132,7 @@ struct stage_selection::impl
             nullifier_room_container,
             feature_groups.drawables,
             stage_name_label_style,
-            "NULLIFIER ROOM"
+            data_types::get_pretty_name(data_types::stage::nullifier_room)
         ),
         nullifier_room_special_tile_0
         (
@@ -150,7 +163,13 @@ struct stage_selection::impl
             stage_button_style,
             objects::label_button::callback_set
             {
-                .mouse_release_callback = [this]{this->callbacks.triplet_pines_mall_selection_request();}
+                .mouse_release_callback = [this]
+                {
+                    this->callbacks.stage_selection_request
+                    (
+                        data_types::stage::triplet_pines_mall
+                    );
+                }
             }
         ),
         triplet_pines_mall_name_label
@@ -158,7 +177,7 @@ struct stage_selection::impl
             triplet_pines_mall_container,
             feature_groups.drawables,
             stage_name_label_style,
-            "TRIPLET PINES MALL"
+            data_types::get_pretty_name(data_types::stage::triplet_pines_mall)
         ),
         triplet_pines_mall_tile_triplet
         (

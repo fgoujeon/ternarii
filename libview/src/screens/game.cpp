@@ -26,6 +26,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include "../objects/score_display.hpp"
 #include "../animation.hpp"
 #include "../colors.hpp"
+#include "../data_types.hpp"
 #include "../common.hpp"
 #include <libres.hpp>
 #include <libutil/time.hpp>
@@ -37,13 +38,28 @@ namespace libview::screens
 
 namespace
 {
+    std::optional<std::filesystem::path> get_background_image(const data_types::stage s)
+    {
+        switch(s)
+        {
+            case data_types::stage::purity_chapel:
+                return std::nullopt;
+            case data_types::stage::nullifier_room:
+                return libres::images::background_nullifier_room;
+            case data_types::stage::triplet_pines_mall:
+                return libres::images::background_triplet_pines_mall;
+        }
+        return std::nullopt;
+    }
+
     std::unique_ptr<objects::sdf_image> make_background_image
     (
         game& parent,
         feature_group_set& feature_groups,
-        const std::optional<std::filesystem::path>& opt_background_image_path
+        const data_types::stage stage
     )
     {
+        const auto opt_background_image_path = get_background_image(stage);
         if(!opt_background_image_path)
         {
             return nullptr;
@@ -94,8 +110,7 @@ struct game::impl
         game& self,
         feature_group_set& feature_groups,
         const callback_set& callbacks,
-        const std::string_view& stage_name,
-        const std::optional<std::filesystem::path>& opt_background_image_path
+        const data_types::stage stage
     ):
         feature_groups(feature_groups),
         callbacks(callbacks),
@@ -105,7 +120,7 @@ struct game::impl
             (
                 self,
                 feature_groups,
-                opt_background_image_path
+                stage
             )
         ),
         tile_grid
@@ -131,7 +146,7 @@ struct game::impl
                 .outline_color = colors::dark_gray,
                 .outline_range = {0.47f, 0.40f}
             },
-            stage_name
+            data_types::get_pretty_name(stage)
         ),
         exit_button
         (
@@ -204,9 +219,8 @@ game::game
 (
     Object2D& parent,
     feature_group_set& feature_groups,
-    const callback_set& callbacks,
-    const std::string_view& stage_name,
-    const std::optional<std::filesystem::path>& opt_background_image_path
+    const data_types::stage stage,
+    const callback_set& callbacks
 ):
     Object2D{&parent},
     features::animable{*this, &feature_groups.animables},
@@ -218,8 +232,7 @@ game::game
             *this,
             feature_groups,
             callbacks,
-            stage_name,
-            opt_background_image_path
+            stage
         )
     )
 {

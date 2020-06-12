@@ -17,40 +17,15 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef LIBVIEW_SCREENS_STAGE_SELECTION_HPP
-#define LIBVIEW_SCREENS_STAGE_SELECTION_HPP
+#ifndef LIBVIEW_SRC_DATA_TYPES_HPP
+#define LIBVIEW_SRC_DATA_TYPES_HPP
 
-#include "../common.hpp"
 #include <libview/data_types.hpp>
-#include <libutil/time.hpp>
-#include <libutil/void_function.hpp>
 
-namespace libview::screens
+namespace libview::data_types
 {
 
-class stage_selection: public Object2D
-{
-    public:
-        struct callback_set
-        {
-            libutil::void_function<data_types::stage> stage_selection_request;
-            libutil::void_function<> back_request;
-        };
-
-    public:
-        stage_selection
-        (
-            Object2D& parent,
-            feature_group_set& feature_groups,
-            const callback_set& callbacks
-        );
-
-        ~stage_selection();
-
-    private:
-        struct impl;
-        std::unique_ptr<impl> pimpl_;
-};
+std::string_view get_pretty_name(const stage s);
 
 } //namespace
 

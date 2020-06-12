@@ -41,6 +41,7 @@ using input_tile_matrix     = libcommon::data_types::input_tile_matrix;
 using number_nullifier_tile = libcommon::data_types::number_nullifier_tile;
 using number_tile           = libcommon::data_types::number_tile;
 using row_nullifier_tile    = libcommon::data_types::row_nullifier_tile;
+using stage                 = libcommon::data_types::stage;
 using tile                  = libcommon::data_types::tile;
 using tile_merge            = libcommon::data_types::tile_merge;
 using tile_merge_list       = libcommon::data_types::tile_merge_list;
