@@ -18,6 +18,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 #include "data_types.hpp"
+#include <libres.hpp>
 
 namespace libview::data_types
 {
@@ -26,14 +27,28 @@ std::string_view get_pretty_name(const stage s)
 {
     switch(s)
     {
-        case data_types::stage::purity_chapel:
+        case stage::purity_chapel:
             return "PURITY CHAPEL";
-        case data_types::stage::nullifier_room:
+        case stage::nullifier_room:
             return "NULLIFIER ROOM";
-        case data_types::stage::triplet_pines_mall:
+        case stage::triplet_pines_mall:
             return "TRIPLET PINES MALL";
     }
     return "";
+}
+
+std::optional<std::filesystem::path> get_image(const stage s)
+{
+    switch(s)
+    {
+        case stage::purity_chapel:
+            return std::nullopt;
+        case stage::nullifier_room:
+            return libres::images::background_nullifier_room;
+        case stage::triplet_pines_mall:
+            return libres::images::background_triplet_pines_mall;
+    }
+    return std::nullopt;
 }
 
 } //namespace

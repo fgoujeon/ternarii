@@ -32,14 +32,6 @@ namespace libview::screens
 
 namespace
 {
-    const auto stage_button_style = objects::blank_button::style
-    {
-        .color = colors::light_gray,
-        .dimension = {1.0f, 0.5f},
-        .highlight_color = colors::white,
-        .radius = 0.16f
-    };
-
     const auto stage_name_label_style = objects::label::style
     {
         .alignment = Magnum::Text::Alignment::MiddleCenter,
@@ -58,6 +50,37 @@ namespace
 
     class selection_button: public Object2D
     {
+        private:
+            static std::unique_ptr<objects::sdf_image> make_stage_image
+            (
+                selection_button& parent,
+                feature_group_set& feature_groups,
+                const data_types::stage stage
+            )
+            {
+                const auto opt_path = data_types::get_image(stage);
+                if(!opt_path)
+                {
+                    return nullptr;
+                }
+
+                auto pimage = std::make_unique<objects::sdf_image>
+                (
+                    parent,
+                    feature_groups.drawables,
+                    *opt_path,
+                    objects::sdf_image::style
+                    {
+                        .color = colors::black
+                    }
+                );
+
+                pimage->setScaling({0.75f, 0.75f});
+                pimage->setTranslation({-2.25f, 0.0f});
+
+                return pimage;
+            }
+
         public:
             selection_button
             (
@@ -72,7 +95,13 @@ namespace
                     *this,
                     feature_groups.drawables,
                     feature_groups.clickables,
-                    stage_button_style,
+                    objects::blank_button::style
+                    {
+                        .color = colors::light_gray,
+                        .dimension = {1.0f, 0.33f},
+                        .highlight_color = colors::white,
+                        .radius = 0.16f
+                    },
                     objects::label_button::callback_set
                     {
                         .mouse_release_callback = [callbacks, stage]
@@ -87,15 +116,20 @@ namespace
                     feature_groups.drawables,
                     stage_name_label_style,
                     data_types::get_pretty_name(stage)
+                ),
+                pstage_image_
+                (
+                    make_stage_image(*this, feature_groups, stage)
                 )
             {
-                button_.setScaling({2.2f, 2.2f});
-                name_label_.setTranslation({0.0f, 0.5f});
+                button_.setScaling({3.3f, 3.3f});
+                name_label_.setTranslation({0.75f, 0.5f});
             }
 
         private:
             objects::blank_button button_;
             objects::label name_label_;
+            std::unique_ptr<objects::sdf_image> pstage_image_;
     };
 }
 
@@ -214,36 +248,36 @@ struct stage_selection::impl
         {
             purity_chapel_button.setTranslation({0.0f, 3.0f});
 
-            purity_chapel_description_label.setTranslation({0.0f, -0.4f});
+            purity_chapel_description_label.setTranslation({0.75f, -0.4f});
         }
 
         {
             nullifier_room_button.setTranslation({0.0f, 0.0f});
 
             nullifier_room_special_tile_0.setScaling({0.4f, 0.4f});
-            nullifier_room_special_tile_0.setTranslation({-1.0f, -0.4f});
+            nullifier_room_special_tile_0.setTranslation({-0.25f, -0.4f});
 
             nullifier_room_special_tile_1.setScaling({0.4f, 0.4f});
-            nullifier_room_special_tile_1.setTranslation({-0.0f, -0.4f});
+            nullifier_room_special_tile_1.setTranslation({0.75f, -0.4f});
 
             nullifier_room_special_tile_2.setScaling({0.4f, 0.4f});
-            nullifier_room_special_tile_2.setTranslation({1.0f, -0.4f});
+            nullifier_room_special_tile_2.setTranslation({1.75f, -0.4f});
         }
 
         {
             triplet_pines_mall_button.setTranslation({0.0f, -3.0f});
 
             triplet_pines_mall_tile_triplet.setScaling({0.4f, 0.4f});
-            triplet_pines_mall_tile_triplet.setTranslation({-1.5f, -0.4f});
+            triplet_pines_mall_tile_triplet.setTranslation({-0.75f, -0.4f});
 
             triplet_pines_mall_special_tile_0.setScaling({0.4f, 0.4f});
-            triplet_pines_mall_special_tile_0.setTranslation({-0.5f, -0.4f});
+            triplet_pines_mall_special_tile_0.setTranslation({0.25f, -0.4f});
 
             triplet_pines_mall_special_tile_1.setScaling({0.4f, 0.4f});
-            triplet_pines_mall_special_tile_1.setTranslation({0.5f, -0.4f});
+            triplet_pines_mall_special_tile_1.setTranslation({1.25f, -0.4f});
 
             triplet_pines_mall_special_tile_2.setScaling({0.4f, 0.4f});
-            triplet_pines_mall_special_tile_2.setTranslation({1.5f, -0.4f});
+            triplet_pines_mall_special_tile_2.setTranslation({2.25f, -0.4f});
         }
 
         back_button.setScaling({2.0f, 2.0f});

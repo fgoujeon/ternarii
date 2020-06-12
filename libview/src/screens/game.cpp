@@ -38,20 +38,6 @@ namespace libview::screens
 
 namespace
 {
-    std::optional<std::filesystem::path> get_background_image(const data_types::stage s)
-    {
-        switch(s)
-        {
-            case data_types::stage::purity_chapel:
-                return std::nullopt;
-            case data_types::stage::nullifier_room:
-                return libres::images::background_nullifier_room;
-            case data_types::stage::triplet_pines_mall:
-                return libres::images::background_triplet_pines_mall;
-        }
-        return std::nullopt;
-    }
-
     std::unique_ptr<objects::sdf_image> make_background_image
     (
         game& parent,
@@ -59,7 +45,7 @@ namespace
         const data_types::stage stage
     )
     {
-        const auto opt_background_image_path = get_background_image(stage);
+        const auto opt_background_image_path = data_types::get_image(stage);
         if(!opt_background_image_path)
         {
             return nullptr;

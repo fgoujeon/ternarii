@@ -21,11 +21,15 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #define LIBVIEW_SRC_DATA_TYPES_HPP
 
 #include <libview/data_types.hpp>
+#include <filesystem>
+#include <optional>
 
 namespace libview::data_types
 {
 
 std::string_view get_pretty_name(const stage s);
+
+std::optional<std::filesystem::path> get_image(const stage s);
 
 } //namespace
 
