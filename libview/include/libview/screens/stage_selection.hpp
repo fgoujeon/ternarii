@@ -33,9 +33,7 @@ class stage_selection: public Object2D
     public:
         struct callback_set
         {
-            libutil::void_function<> purity_chapel_selection_request;
-            libutil::void_function<> nullifier_room_selection_request;
-            libutil::void_function<> triplet_pines_mall_selection_request;
+            libutil::void_function<data_types::stage> stage_selection_request;
             libutil::void_function<> back_request;
         };
 

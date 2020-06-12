@@ -32,28 +32,12 @@ showing_stage_selection_screen::showing_stage_selection_screen(fsm& ctx, const s
         (
             screen::callback_set
             {
-                .purity_chapel_selection_request = [this]
+                .stage_selection_request = [this](const libview::data_types::stage stage)
                 {
                     fsm_.set_state<playing>
                     (
                         screen_transition::zoom_in,
-                        libgame::data_types::stage::purity_chapel
-                    );
-                },
-                .nullifier_room_selection_request = [this]
-                {
-                    fsm_.set_state<playing>
-                    (
-                        screen_transition::zoom_in,
-                        libgame::data_types::stage::nullifier_room
-                    );
-                },
-                .triplet_pines_mall_selection_request = [this]
-                {
-                    fsm_.set_state<playing>
-                    (
-                        screen_transition::zoom_in,
-                        libgame::data_types::stage::triplet_pines_mall
+                        stage
                     );
                 },
                 .back_request = [this]

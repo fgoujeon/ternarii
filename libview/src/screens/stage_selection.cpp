@@ -83,7 +83,13 @@ struct stage_selection::impl
             stage_button_style,
             objects::label_button::callback_set
             {
-                .mouse_release_callback = [this]{this->callbacks.purity_chapel_selection_request();}
+                .mouse_release_callback = [this]
+                {
+                    this->callbacks.stage_selection_request
+                    (
+                        data_types::stage::purity_chapel
+                    );
+                }
             }
         ),
         purity_chapel_name_label
@@ -111,7 +117,13 @@ struct stage_selection::impl
             stage_button_style,
             objects::label_button::callback_set
             {
-                .mouse_release_callback = [this]{this->callbacks.nullifier_room_selection_request();}
+                .mouse_release_callback = [this]
+                {
+                    this->callbacks.stage_selection_request
+                    (
+                        data_types::stage::nullifier_room
+                    );
+                }
             }
         ),
         nullifier_room_name_label
@@ -150,7 +162,13 @@ struct stage_selection::impl
             stage_button_style,
             objects::label_button::callback_set
             {
-                .mouse_release_callback = [this]{this->callbacks.triplet_pines_mall_selection_request();}
+                .mouse_release_callback = [this]
+                {
+                    this->callbacks.stage_selection_request
+                    (
+                        data_types::stage::triplet_pines_mall
+                    );
+                }
             }
         ),
         triplet_pines_mall_name_label
