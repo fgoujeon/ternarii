@@ -23,6 +23,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include "../objects/sdf_image_tile.hpp"
 #include "../colors.hpp"
 #include "../styles.hpp"
+#include "../data_types.hpp"
 #include "../common.hpp"
 #include <libres.hpp>
 
@@ -97,7 +98,7 @@ struct stage_selection::impl
             purity_chapel_container,
             feature_groups.drawables,
             stage_name_label_style,
-            "PURITY CHAPEL"
+            data_types::get_pretty_name(data_types::stage::purity_chapel)
         ),
         purity_chapel_description_label
         (
@@ -131,7 +132,7 @@ struct stage_selection::impl
             nullifier_room_container,
             feature_groups.drawables,
             stage_name_label_style,
-            "NULLIFIER ROOM"
+            data_types::get_pretty_name(data_types::stage::nullifier_room)
         ),
         nullifier_room_special_tile_0
         (
@@ -176,7 +177,7 @@ struct stage_selection::impl
             triplet_pines_mall_container,
             feature_groups.drawables,
             stage_name_label_style,
-            "TRIPLET PINES MALL"
+            data_types::get_pretty_name(data_types::stage::triplet_pines_mall)
         ),
         triplet_pines_mall_tile_triplet
         (

@@ -26,6 +26,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include "../objects/score_display.hpp"
 #include "../animation.hpp"
 #include "../colors.hpp"
+#include "../data_types.hpp"
 #include "../common.hpp"
 #include <libres.hpp>
 #include <libutil/time.hpp>
@@ -37,20 +38,6 @@ namespace libview::screens
 
 namespace
 {
-    std::string_view get_pretty_name(const data_types::stage s)
-    {
-        switch(s)
-        {
-            case data_types::stage::purity_chapel:
-                return "PURITY CHAPEL";
-            case data_types::stage::nullifier_room:
-                return "NULLIFIER ROOM";
-            case data_types::stage::triplet_pines_mall:
-                return "TRIPLET PINES MALL";
-        }
-        return "";
-    }
-
     std::optional<std::filesystem::path> get_background_image(const data_types::stage s)
     {
         switch(s)
@@ -159,7 +146,7 @@ struct game::impl
                 .outline_color = colors::dark_gray,
                 .outline_range = {0.47f, 0.40f}
             },
-            get_pretty_name(stage)
+            data_types::get_pretty_name(stage)
         ),
         exit_button
         (
