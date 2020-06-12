@@ -7,36 +7,36 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="100"
-   height="100"
-   viewBox="0 0 26.458333 26.458334"
-   version="1.1"
-   id="svg8"
+   sodipodi:docname="tile_triplet.svg"
    inkscape:version="1.0 (4035a4fb49, 2020-05-01)"
-   sodipodi:docname="tile_triplet.svg">
+   id="svg8"
+   version="1.1"
+   viewBox="0 0 26.458333 26.458334"
+   height="100"
+   width="100">
   <defs
      id="defs2" />
   <sodipodi:namedview
-     id="base"
-     pagecolor="#000000"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="1"
-     inkscape:pageshadow="2"
-     inkscape:zoom="3.959798"
-     inkscape:cx="20.18909"
-     inkscape:cy="65.252824"
-     inkscape:document-units="mm"
-     inkscape:current-layer="layer1"
-     inkscape:document-rotation="0"
-     showgrid="false"
-     inkscape:window-width="1627"
-     inkscape:window-height="986"
-     inkscape:window-x="53"
-     inkscape:window-y="27"
-     inkscape:window-maximized="1"
+     inkscape:pagecheckerboard="false"
      units="px"
-     inkscape:pagecheckerboard="false" />
+     inkscape:window-maximized="1"
+     inkscape:window-y="27"
+     inkscape:window-x="53"
+     inkscape:window-height="986"
+     inkscape:window-width="1627"
+     showgrid="false"
+     inkscape:document-rotation="0"
+     inkscape:current-layer="layer1"
+     inkscape:document-units="mm"
+     inkscape:cy="65.252824"
+     inkscape:cx="20.18909"
+     inkscape:zoom="3.959798"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="1"
+     borderopacity="1.0"
+     bordercolor="#666666"
+     pagecolor="#000000"
+     id="base" />
   <metadata
      id="metadata5">
     <rdf:RDF>
@@ -50,32 +50,36 @@
     </rdf:RDF>
   </metadata>
   <g
-     inkscape:label="Layer 1"
+     id="layer1"
      inkscape:groupmode="layer"
-     id="layer1">
-    <rect
-       rx="3.283725"
-       y="0.79375058"
-       x="0.79375058"
-       height="11.90625"
-       width="11.90625"
-       id="rect834"
-       style="fill:#ffffff;fill-opacity:1;stroke-width:16.4399;stroke-linejoin:round;stroke-opacity:0.979141" />
-    <rect
-       style="fill:#ffffff;fill-opacity:1;stroke-width:16.4399;stroke-linejoin:round;stroke-opacity:0.979141"
-       id="rect834-3"
-       width="11.90625"
-       height="11.90625"
-       x="0.79375058"
-       y="13.758333"
-       rx="3.2837253" />
-    <rect
-       rx="3.2837255"
-       y="13.758333"
-       x="13.758333"
-       height="11.90625"
-       width="11.90625"
-       id="rect834-3-6"
-       style="fill:#ffffff;fill-opacity:1;stroke-width:16.4399;stroke-linejoin:round;stroke-opacity:0.979141" />
+     inkscape:label="Layer 1">
+    <g
+       transform="translate(0.396875,0.396875)"
+       id="g836">
+      <rect
+         rx="3.0741255"
+         y="0.77686226"
+         x="0.77686226"
+         height="11.146276"
+         width="11.146276"
+         id="rect834"
+         style="fill:none;fill-opacity:1;stroke:#ffffff;stroke-width:0.49539;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+      <rect
+         style="fill:none;fill-opacity:1;stroke:#ffffff;stroke-width:0.49539;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         id="rect834-3"
+         width="11.146276"
+         height="11.146276"
+         x="0.77686226"
+         y="13.741445"
+         rx="3.0741258" />
+      <rect
+         rx="3.074126"
+         y="13.741445"
+         x="13.741445"
+         height="11.146276"
+         width="11.146276"
+         id="rect834-3-6"
+         style="fill:none;fill-opacity:1;stroke:#ffffff;stroke-width:0.49539;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+    </g>
   </g>
 </svg>
