@@ -60,8 +60,8 @@ shine::shine()
     ray_width_uniform_ = uniformLocation("u_ray_width");
     smoothness_uniform_ = uniformLocation("u_smoothness");
 
-    setTransformationProjectionMatrix({});
-    setColor(Magnum::Color4{1.0f});
+    set_transformation_projection_matrix({});
+    set_color(Magnum::Color4{1.0f});
     set_ray_count(16);
     set_ray_width(0.5f);
     set_smoothness(0);

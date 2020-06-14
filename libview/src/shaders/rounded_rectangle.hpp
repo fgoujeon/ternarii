@@ -43,13 +43,13 @@ class rounded_rectangle: public Magnum::GL::AbstractShaderProgram
 
         rounded_rectangle& operator=(rounded_rectangle&&) noexcept = default;
 
-        rounded_rectangle& setTransformationProjectionMatrix(const Magnum::Matrix3& matrix)
+        rounded_rectangle& set_transformation_projection_matrix(const Magnum::Matrix3& matrix)
         {
             setUniform(transformation_projection_matrix_uniform_, matrix);
             return *this;
         }
 
-        rounded_rectangle& setColor(const Magnum::Color4& color)
+        rounded_rectangle& set_color(const Magnum::Color4& color)
         {
             setUniform(color_uniform_, color);
             return *this;

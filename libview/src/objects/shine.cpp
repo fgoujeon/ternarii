@@ -59,8 +59,8 @@ shine::shine
 
 void shine::draw(const Magnum::Matrix3& transformation_matrix, Magnum::SceneGraph::Camera2D& camera)
 {
-    get_shader().setColor(style_.color * get_absolute_alpha());
-    get_shader().setTransformationProjectionMatrix
+    get_shader().set_color(style_.color * get_absolute_alpha());
+    get_shader().set_transformation_projection_matrix
     (
         camera.projectionMatrix() *
         transformation_matrix
