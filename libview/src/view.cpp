@@ -265,7 +265,7 @@ struct view::impl final
 
     configuration conf_;
 
-    Scene2D scene;
+    scene scene;
     object2d camera_object;
     Magnum::SceneGraph::Camera2D camera;
 
@@ -538,7 +538,7 @@ void view::handle_mouse_move(mouse_move_event& event)
     pimpl_->handle_mouse_move(event);
 }
 
-Scene2D& view::get_scene()
+scene& view::get_scene()
 {
     return pimpl_->scene;
 }

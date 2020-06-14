@@ -71,10 +71,10 @@ class object2d: public Magnum::SceneGraph::Object<transformation_t>
         float alpha_ = 1.0f;
 };
 
-class Scene2D: public object2d
+class scene: public object2d
 {
     public:
-        explicit Scene2D() = default;
+        explicit scene() = default;
 
     private:
         bool isScene() const override final

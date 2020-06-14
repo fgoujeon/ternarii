@@ -94,7 +94,7 @@ class view
         void handle_mouse_move(mouse_move_event& event);
 
     private:
-        Scene2D& get_scene();
+        scene& get_scene();
 
         feature_group_set& get_feature_groups();
 
