@@ -21,35 +21,16 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #define FSM_HPP
 
 #include <libdb/database.hpp>
-#include <libgame/game.hpp>
 #include <libview/view.hpp>
-#include <memory>
+#include <libutil/fsm.hpp>
 
-struct state
+struct fsm_context
 {
-    virtual ~state() = default;
-    virtual void handle_database_event(const libdb::events::end_of_loading&){}
-};
-
-//Finite state machine
-struct fsm
-{
-    fsm
-    (
-        libdb::database& database,
-        libview::view& view
-    );
-
-    template<class State, class... Args>
-    void set_state(Args&&... args)
-    {
-        pstate = std::make_unique<State>(*this, std::forward<Args>(args)...);
-    }
-
-    std::unique_ptr<state> pstate;
-
     libdb::database& database;
     libview::view& view;
 };
+
+//Finite state machine
+using fsm = libutil::fsm::fsm<fsm_context>;
 
 #endif

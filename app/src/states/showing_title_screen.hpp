@@ -28,7 +28,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace states
 {
 
-class showing_title_screen final: public state
+class showing_title_screen final: public libutil::fsm::state
 {
     private:
         using screen = libview::screens::title;
@@ -39,7 +39,7 @@ class showing_title_screen final: public state
             fsm_(ctx),
             pscreen_
             (
-                fsm_.view.make_screen<libview::screens::title>
+                fsm_.get_context().view.make_screen<libview::screens::title>
                 (
                     screen::callback_set
                     {
@@ -49,7 +49,7 @@ class showing_title_screen final: public state
                 )
             )
         {
-            fsm_.view.show_screen(pscreen_, trans);
+            fsm_.get_context().view.show_screen(pscreen_, trans);
         }
 
     private:

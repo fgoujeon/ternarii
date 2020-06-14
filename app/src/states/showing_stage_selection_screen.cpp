@@ -28,7 +28,7 @@ showing_stage_selection_screen::showing_stage_selection_screen(fsm& ctx, const s
     fsm_(ctx),
     pscreen_
     (
-        fsm_.view.make_screen<screen>
+        fsm_.get_context().view.make_screen<screen>
         (
             screen::callback_set
             {
@@ -48,7 +48,7 @@ showing_stage_selection_screen::showing_stage_selection_screen(fsm& ctx, const s
         )
     )
 {
-    fsm_.view.show_screen(pscreen_, trans);
+    fsm_.get_context().view.show_screen(pscreen_, trans);
 }
 
 } //namespace

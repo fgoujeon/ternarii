@@ -27,7 +27,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace states
 {
 
-class playing final: public state
+class playing final: public libutil::fsm::state
 {
     public:
         using screen = libview::screens::game;
@@ -62,7 +62,7 @@ class playing final: public state
         {
             pscreen_->insert_next_input();
             mark_tiles_for_nullification();
-            fsm_.database.set_stage_state(stage_, pgame_->get_state());
+            fsm_.get_context().database.set_stage_state(stage_, pgame_->get_state());
         }
 
         void handle_game_event(const libgame::events::input_tile_drop& event)
@@ -88,7 +88,7 @@ class playing final: public state
         void handle_game_event(const libgame::events::end_of_game&)
         {
             pscreen_->set_game_over_overlay_visible(true);
-            fsm_.database.set_stage_state(stage_, pgame_->get_state());
+            fsm_.get_context().database.set_stage_state(stage_, pgame_->get_state());
         }
 
         void handle_game_events(const libgame::event_list& events)

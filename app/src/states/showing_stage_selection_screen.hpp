@@ -26,7 +26,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace states
 {
 
-class showing_stage_selection_screen final: public state
+class showing_stage_selection_screen final: public libutil::fsm::state
 {
     public:
         using screen_transition = libview::view::screen_transition;

@@ -26,7 +26,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace states
 {
 
-class loading_database final: public state
+class loading_database final: public libutil::fsm::state
 {
     public:
         loading_database(fsm& ctx):
@@ -34,12 +34,15 @@ class loading_database final: public state
         {
         }
 
-        void handle_database_event(const libdb::events::end_of_loading&) override
+        void handle_event(const std::any& event) override
         {
-            fsm_.set_state<showing_title_screen>
-            (
-                libview::view::screen_transition::top_to_bottom
-            );
+            if(const auto pevent = std::any_cast<libdb::events::end_of_loading>(&event))
+            {
+                fsm_.set_state<showing_title_screen>
+                (
+                    libview::view::screen_transition::top_to_bottom
+                );
+            }
         }
 
     private:

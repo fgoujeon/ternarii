@@ -27,7 +27,7 @@ showing_about_screen::showing_about_screen(fsm& ctx, const screen_transition tra
     fsm_(ctx),
     pscreen_
     (
-        fsm_.view.make_screen<screen>
+        fsm_.get_context().view.make_screen<screen>
         (
             screen::callback_set
             {
@@ -36,7 +36,7 @@ showing_about_screen::showing_about_screen(fsm& ctx, const screen_transition tra
         )
     )
 {
-    fsm_.view.show_screen(pscreen_, trans);
+    fsm_.get_context().view.show_screen(pscreen_, trans);
 }
 
 } //namespace

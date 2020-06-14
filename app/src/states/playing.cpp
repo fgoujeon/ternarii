@@ -54,7 +54,7 @@ playing::playing(fsm& f, const screen_transition trans, const libgame::data_type
     stage_(stage),
     pscreen_
     (
-        fsm_.view.make_screen<screen>
+        fsm_.get_context().view.make_screen<screen>
         (
             stage,
             screen::callback_set
@@ -84,7 +84,7 @@ playing::playing(fsm& f, const screen_transition trans, const libgame::data_type
     )
 {
     //Load game state from database
-    const auto& opt_game_state = fsm_.database.get_game_state();
+    const auto& opt_game_state = fsm_.get_context().database.get_game_state();
 
     //Find stage state
     const auto opt_stage_state = find_stage_state(opt_game_state, stage);
@@ -112,7 +112,7 @@ playing::playing(fsm& f, const screen_transition trans, const libgame::data_type
         modify_game(&libgame::game::start);
     }
 
-    fsm_.view.show_screen(pscreen_, trans);
+    fsm_.get_context().view.show_screen(pscreen_, trans);
 }
 
 } //namespace

@@ -94,8 +94,9 @@ class app: public Magnum::Platform::Sdl2Application
                     .show_debug_grid = conf_.show_debug_grid
                 }
             ),
-            fsm_(database_, view_)
+            fsm_(ctx_)
         {
+            fsm_.set_state<states::loading_database>();
         }
 
     //Sdl2Application virtual functions
@@ -146,7 +147,7 @@ class app: public Magnum::Platform::Sdl2Application
             (
                 [this](const auto& event)
                 {
-                    fsm_.pstate->handle_database_event(event);
+                    fsm_.handle_event(event);
                 },
                 event
             );
@@ -157,6 +158,7 @@ class app: public Magnum::Platform::Sdl2Application
         configurator configurator_;
         libdb::database database_;
         libview::view view_;
+        fsm_context ctx_{database_, view_};
         fsm fsm_;
 };
 
