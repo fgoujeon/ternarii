@@ -98,19 +98,6 @@ int get_score(const board_tile_matrix& tiles)
     return score;
 }
 
-int get_free_cell_count(const board_tile_matrix& tiles)
-{
-    auto count = constants::board_authorized_cell_count;
-    for(const auto& opt_tile: tiles)
-    {
-        if(opt_tile)
-        {
-            --count;
-        }
-    }
-    return count;
-}
-
 
 
 /*

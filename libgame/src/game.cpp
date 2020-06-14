@@ -44,7 +44,7 @@ struct game::impl
     events::next_input_creation generate_next_input()
     {
         const auto board_highest_tile_value = get_highest_tile_value(state.board_tiles);
-        const auto board_tile_count = board::authorized_cell_count - get_free_cell_count(state.board_tiles);
+        const auto board_tile_count = get_tile_count(state.board_tiles);
 
         //Generate a new input
         state.next_input_tiles = input_gen.generate
