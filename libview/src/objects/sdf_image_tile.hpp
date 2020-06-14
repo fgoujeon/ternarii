@@ -29,10 +29,10 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libview::objects
 {
 
-class sdf_image_tile: public Object2D
+class sdf_image_tile: public object2d
 {
     public:
-        sdf_image_tile(Object2D& parent, features::drawable_group& drawables, const std::filesystem::path& image_path);
+        sdf_image_tile(object2d& parent, features::drawable_group& drawables, const std::filesystem::path& image_path);
 
     private:
         rounded_rectangle square_;

@@ -30,12 +30,12 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libview::objects
 {
 
-class number_tile: public Object2D, public features::animable
+class number_tile: public object2d, public features::animable
 {
     public:
         number_tile
         (
-            Object2D& parent,
+            object2d& parent,
             features::drawable_group& drawables,
             features::animable_group& animables,
             const int value

@@ -27,8 +27,8 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libview::objects
 {
 
-sdf_image_tile::sdf_image_tile(Object2D& parent, features::drawable_group& drawables, const std::filesystem::path& image_path):
-    Object2D{&parent},
+sdf_image_tile::sdf_image_tile(object2d& parent, features::drawable_group& drawables, const std::filesystem::path& image_path):
+    object2d{&parent},
     square_
     (
         *this,

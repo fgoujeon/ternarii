@@ -30,7 +30,7 @@ namespace libview::objects
 {
 
 //Signed distance field image object
-class sdf_image: public Object2D, public features::drawable
+class sdf_image: public object2d, public features::drawable
 {
     public:
         struct style
@@ -43,7 +43,7 @@ class sdf_image: public Object2D, public features::drawable
     public:
         sdf_image
         (
-            Object2D& parent,
+            object2d& parent,
             features::drawable_group& drawables,
             const std::filesystem::path& image_path,
             const style& stl
@@ -54,7 +54,7 @@ class sdf_image: public Object2D, public features::drawable
         void set_outline_color(const Magnum::Color4& color);
 
     private:
-        void draw(const Magnum::Matrix3& transformation_matrix, Magnum::SceneGraph::Camera2D& camera) override;
+        void draw(const Magnum::Matrix3& transformation_matrix, camera& camera) override;
 
     private:
         style style_;

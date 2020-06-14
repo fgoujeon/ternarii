@@ -26,17 +26,17 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libview::objects
 {
 
-class score_display: public Object2D, public features::drawable
+class score_display: public object2d, public features::drawable
 {
     public:
-        explicit score_display(Object2D& parent, features::drawable_group& drawables);
+        explicit score_display(object2d& parent, features::drawable_group& drawables);
 
         void set_score(const int value);
 
         void set_visible(const bool value);
 
     private:
-        void draw(const Magnum::Matrix3& transformation_matrix, Magnum::SceneGraph::Camera2D& camera) override;
+        void draw(const Magnum::Matrix3& transformation_matrix, camera& camera) override;
 
     private:
         Magnum::Text::Renderer2D renderer_;

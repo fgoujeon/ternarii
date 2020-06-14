@@ -32,7 +32,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libview::screens
 {
 
-class game: public Object2D, public features::animable, public features::key_event_handler
+class game: public object2d, public features::animable, public features::key_event_handler
 {
     public:
         struct callback_set
@@ -46,7 +46,7 @@ class game: public Object2D, public features::animable, public features::key_eve
     public:
         game
         (
-            Object2D& parent,
+            object2d& parent,
             feature_group_set& feature_groups,
             data_types::stage stage,
             const callback_set& callbacks

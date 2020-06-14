@@ -45,22 +45,22 @@ namespace
 
 shine::shine
 (
-    Object2D& parent,
+    object2d& parent,
     features::drawable_group& drawables,
     features::animable_group& animables,
     const style& stl
 ):
-    Object2D{&parent},
+    object2d{&parent},
     features::drawable{*this, &drawables},
     features::animable{*this, &animables},
     style_(stl)
 {
 }
 
-void shine::draw(const Magnum::Matrix3& transformation_matrix, Magnum::SceneGraph::Camera2D& camera)
+void shine::draw(const Magnum::Matrix3& transformation_matrix, camera& camera)
 {
-    get_shader().setColor(style_.color * get_absolute_alpha());
-    get_shader().setTransformationProjectionMatrix
+    get_shader().set_color(style_.color * get_absolute_alpha());
+    get_shader().set_transformation_projection_matrix
     (
         camera.projectionMatrix() *
         transformation_matrix

@@ -30,7 +30,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libview::screens
 {
 
-class title: public Object2D
+class title: public object2d
 {
     public:
         struct callback_set
@@ -42,7 +42,7 @@ class title: public Object2D
     public:
         title
         (
-            Object2D& parent,
+            object2d& parent,
             feature_group_set& feature_groups,
             const callback_set& callbacks
         );

@@ -27,7 +27,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libview::objects
 {
 
-class rounded_rectangle: public Object2D, public features::drawable
+class rounded_rectangle: public object2d, public features::drawable
 {
     public:
         struct style
@@ -43,7 +43,7 @@ class rounded_rectangle: public Object2D, public features::drawable
     public:
         rounded_rectangle
         (
-            Object2D& parent,
+            object2d& parent,
             features::drawable_group& drawables,
             const style& stl
         );
@@ -51,7 +51,7 @@ class rounded_rectangle: public Object2D, public features::drawable
         void set_color(const Magnum::Color4& color);
 
     private:
-        void draw(const Magnum::Matrix3& transformation_matrix, Magnum::SceneGraph::Camera2D& camera) override;
+        void draw(const Magnum::Matrix3& transformation_matrix, camera& camera) override;
 
     private:
         style style_;

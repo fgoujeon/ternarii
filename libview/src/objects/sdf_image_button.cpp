@@ -31,13 +31,13 @@ namespace libview::objects
 
 sdf_image_button::sdf_image_button
 (
-    Object2D& parent,
+    object2d& parent,
     features::drawable_group& drawables,
     features::clickable_group& clickables,
     const std::filesystem::path& image_path,
     const callback_set& callbacks
 ):
-    Object2D{&parent},
+    object2d{&parent},
     features::clickable{*this, &clickables},
     callbacks_(callbacks),
     image_

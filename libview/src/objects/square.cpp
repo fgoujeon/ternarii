@@ -42,8 +42,8 @@ namespace
     }
 }
 
-square::square(Object2D& parent, features::drawable_group& drawables, const Magnum::Color4& color):
-    Object2D{&parent},
+square::square(object2d& parent, features::drawable_group& drawables, const Magnum::Color4& color):
+    object2d{&parent},
     features::drawable{*this, &drawables},
     color_(color)
 {
@@ -54,7 +54,7 @@ void square::set_color(const Magnum::Color4& color)
     color_ = color;
 }
 
-void square::draw(const Magnum::Matrix3& transformation_matrix, Magnum::SceneGraph::Camera2D& camera)
+void square::draw(const Magnum::Matrix3& transformation_matrix, camera& camera)
 {
     get_shader().setColor(color_ * get_absolute_alpha());
     get_shader().setTransformationProjectionMatrix

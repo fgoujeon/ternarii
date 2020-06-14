@@ -28,7 +28,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libview::objects
 {
 
-class blank_button: public Object2D, public features::clickable
+class blank_button: public object2d, public features::clickable
 {
     public:
         struct callback_set
@@ -50,7 +50,7 @@ class blank_button: public Object2D, public features::clickable
     public:
         blank_button
         (
-            Object2D& parent,
+            object2d& parent,
             features::drawable_group& drawables,
             features::clickable_group& clickables,
             const style& stl,

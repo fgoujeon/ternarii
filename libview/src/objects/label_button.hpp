@@ -27,7 +27,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libview::objects
 {
 
-class label_button: public Object2D
+class label_button: public object2d
 {
     public:
         using callback_set = blank_button::callback_set;
@@ -41,7 +41,7 @@ class label_button: public Object2D
     public:
         label_button
         (
-            Object2D& parent,
+            object2d& parent,
             features::drawable_group& drawables,
             features::clickable_group& clickables,
             const style& stl,

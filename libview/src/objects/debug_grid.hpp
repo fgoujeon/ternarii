@@ -26,11 +26,11 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libview::objects
 {
 
-class debug_grid: public Object2D
+class debug_grid: public object2d
 {
     public:
-        debug_grid(Object2D& parent, features::drawable_group& drawables):
-            Object2D{&parent}
+        debug_grid(object2d& parent, features::drawable_group& drawables):
+            object2d{&parent}
         {
             const auto line_color = 0x111111_rgbf;
             const auto line_thickness = 0.03f;

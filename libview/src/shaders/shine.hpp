@@ -44,13 +44,13 @@ class shine: public Magnum::GL::AbstractShaderProgram
 
         shine& operator=(shine&&) noexcept = default;
 
-        shine& setTransformationProjectionMatrix(const Magnum::Matrix3& matrix)
+        shine& set_transformation_projection_matrix(const Magnum::Matrix3& matrix)
         {
             setUniform(transformation_projection_matrix_uniform_, matrix);
             return *this;
         }
 
-        shine& setColor(const Magnum::Color4& color)
+        shine& set_color(const Magnum::Color4& color)
         {
             setUniform(color_uniform_, color);
             return *this;

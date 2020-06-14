@@ -29,14 +29,14 @@ namespace libview::objects::tile_grid_detail
 
 using input_tile_object_matrix = libutil::matrix
 <
-    std::shared_ptr<Object2D>,
+    std::shared_ptr<object2d>,
     libcommon::constants::input_column_count,
     libcommon::constants::input_row_count
 >;
 
-std::shared_ptr<Object2D> make_tile_object
+std::shared_ptr<object2d> make_tile_object
 (
-    Object2D& parent,
+    object2d& parent,
     features::drawable_group& drawables,
     features::animable_group& animables,
     const data_types::tile& tile

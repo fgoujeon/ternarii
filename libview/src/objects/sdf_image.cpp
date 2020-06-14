@@ -83,12 +83,12 @@ namespace
 
 sdf_image::sdf_image
 (
-    Object2D& parent,
+    object2d& parent,
     features::drawable_group& drawables,
     const std::filesystem::path& image_path,
     const style& stl
 ):
-    Object2D{&parent},
+    object2d{&parent},
     features::drawable{*this, &drawables},
     style_(stl),
     texture_(make_texture(image_path))
@@ -105,7 +105,7 @@ void sdf_image::set_outline_color(const Magnum::Color4& color)
     style_.outline_color = color;
 }
 
-void sdf_image::draw(const Magnum::Matrix3& transformation_matrix, Magnum::SceneGraph::Camera2D& camera)
+void sdf_image::draw(const Magnum::Matrix3& transformation_matrix, camera& camera)
 {
     const auto absolute_alpha = get_absolute_alpha();
 

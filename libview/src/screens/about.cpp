@@ -116,11 +116,11 @@ struct about::impl
 
 about::about
 (
-    Object2D& parent,
+    object2d& parent,
     feature_group_set& feature_groups,
     const callback_set& callbacks
 ):
-    Object2D{&parent},
+    object2d{&parent},
     pimpl_(std::make_unique<impl>(*this, feature_groups, callbacks))
 {
 }

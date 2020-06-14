@@ -34,7 +34,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libview::objects::tile_grid_detail
 {
 
-class input: public Object2D, public features::animable
+class input: public object2d, public features::animable
 {
     public:
         enum class order
@@ -57,7 +57,7 @@ class input: public Object2D, public features::animable
     public:
         input
         (
-            Object2D& parent,
+            object2d& parent,
             features::animable_group& animables,
             const drop_request_callback& drop_cb,
             const layout_change_callback& layout_cb

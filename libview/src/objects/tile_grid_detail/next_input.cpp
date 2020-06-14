@@ -31,11 +31,11 @@ namespace libview::objects::tile_grid_detail
 
 next_input::next_input
 (
-    Object2D& parent,
+    object2d& parent,
     features::drawable_group& drawables,
     features::animable_group& animables
 ):
-    Object2D(&parent),
+    object2d(&parent),
     features::animable(*this, &animables),
     drawables_(drawables),
     animables_(animables)

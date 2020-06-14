@@ -89,7 +89,7 @@ namespace
 
     std::unique_ptr<shine> make_shine
     (
-        Object2D& parent,
+        object2d& parent,
         features::drawable_group& drawables,
         features::animable_group& animables,
         const shine::style& style,
@@ -115,7 +115,7 @@ namespace
 
     std::unique_ptr<rounded_rectangle> make_glow
     (
-        Object2D& parent,
+        object2d& parent,
         features::drawable_group& drawables,
         const int value
     )
@@ -145,12 +145,12 @@ namespace
 
 number_tile::number_tile
 (
-    Object2D& parent,
+    object2d& parent,
     features::drawable_group& drawables,
     features::animable_group& animables,
     const int value
 ):
-    Object2D(&parent),
+    object2d(&parent),
     features::animable(*this, &animables),
     pshine0_
     (

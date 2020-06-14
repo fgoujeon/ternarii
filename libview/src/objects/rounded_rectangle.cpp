@@ -44,11 +44,11 @@ namespace
 
 rounded_rectangle::rounded_rectangle
 (
-    Object2D& parent,
+    object2d& parent,
     features::drawable_group& drawables,
     const style& stl
 ):
-    Object2D{&parent},
+    object2d{&parent},
     features::drawable{*this, &drawables},
     style_(stl)
 {
@@ -59,12 +59,12 @@ void rounded_rectangle::set_color(const Magnum::Color4& color)
     style_.color = color;
 }
 
-void rounded_rectangle::draw(const Magnum::Matrix3& transformation_matrix, Magnum::SceneGraph::Camera2D& camera)
+void rounded_rectangle::draw(const Magnum::Matrix3& transformation_matrix, camera& camera)
 {
     const auto absolute_alpha = get_absolute_alpha();
 
-    get_shader().setColor(style_.color * absolute_alpha);
-    get_shader().setTransformationProjectionMatrix
+    get_shader().set_color(style_.color * absolute_alpha);
+    get_shader().set_transformation_projection_matrix
     (
         camera.projectionMatrix() *
         transformation_matrix

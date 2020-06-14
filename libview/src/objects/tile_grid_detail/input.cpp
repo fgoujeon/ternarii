@@ -240,12 +240,12 @@ namespace
 
 input::input
 (
-    Object2D& parent,
+    object2d& parent,
     features::animable_group& animables,
     const drop_request_callback& drop_cb,
     const layout_change_callback& layout_cb
 ):
-    Object2D(&parent),
+    object2d(&parent),
     features::animable{*this, &animables},
     drop_request_callback_(drop_cb),
     layout_change_callback_(layout_cb)

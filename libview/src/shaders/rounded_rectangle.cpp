@@ -61,8 +61,8 @@ rounded_rectangle::rounded_rectangle()
     outline_thickness_uniform_ = uniformLocation("u_outline_thickness");
     outline_color_uniform_ = uniformLocation("u_outline_color");
 
-    setTransformationProjectionMatrix({});
-    setColor(Magnum::Color4{1.0f});
+    set_transformation_projection_matrix({});
+    set_color(Magnum::Color4{1.0f});
     set_dimension({1.0f, 1.0f});
     set_radius(0.0f);
     set_smoothness(0.0f);

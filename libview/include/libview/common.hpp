@@ -33,18 +33,19 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libview
 {
 
+using camera = Magnum::SceneGraph::Camera2D;
 using transformation_t = Magnum::SceneGraph::TranslationRotationScalingTransformation2D;
 
-class Object2D: public Magnum::SceneGraph::Object<transformation_t>
+class object2d: public Magnum::SceneGraph::Object<transformation_t>
 {
     public:
-        Object2D(Object2D* pparent = nullptr):
+        object2d(object2d* pparent = nullptr):
             Magnum::SceneGraph::Object<transformation_t>(pparent),
             pparent_(pparent)
         {
         }
 
-        virtual ~Object2D() = default;
+        virtual ~object2d() = default;
 
         float get_alpha() const
         {
@@ -67,14 +68,14 @@ class Object2D: public Magnum::SceneGraph::Object<transformation_t>
         }
 
     private:
-        Object2D* pparent_ = nullptr;
+        object2d* pparent_ = nullptr;
         float alpha_ = 1.0f;
 };
 
-class Scene2D: public Object2D
+class scene: public object2d
 {
     public:
-        explicit Scene2D() = default;
+        explicit scene() = default;
 
     private:
         bool isScene() const override final

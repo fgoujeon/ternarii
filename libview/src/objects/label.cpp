@@ -25,12 +25,12 @@ namespace libview::objects
 
 label::label
 (
-    Object2D& parent,
+    object2d& parent,
     features::drawable_group& drawables,
     const style& stl,
     const std::string_view& value
 ):
-    Object2D{&parent},
+    object2d{&parent},
     features::drawable{*this, &drawables},
     renderer_(text::get_font(), text::get_glyph_cache(), stl.font_size, stl.alignment),
     style_(stl)
@@ -51,7 +51,7 @@ void label::set_text(const std::string_view& value)
     visible_ = true;
 }
 
-void label::draw(const Magnum::Matrix3& transformation_matrix, Magnum::SceneGraph::Camera2D& camera)
+void label::draw(const Magnum::Matrix3& transformation_matrix, camera& camera)
 {
     if(visible_)
     {

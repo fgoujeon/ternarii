@@ -28,7 +28,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libview::objects
 {
 
-class shine: public Object2D, public features::drawable, public features::animable
+class shine: public object2d, public features::drawable, public features::animable
 {
     public:
         struct style
@@ -42,14 +42,14 @@ class shine: public Object2D, public features::drawable, public features::animab
     public:
         shine
         (
-            Object2D& parent,
+            object2d& parent,
             features::drawable_group& drawables,
             features::animable_group& animables,
             const style& stl
         );
 
     private:
-        void draw(const Magnum::Matrix3& transformation_matrix, Magnum::SceneGraph::Camera2D& camera) override;
+        void draw(const Magnum::Matrix3& transformation_matrix, camera& camera) override;
 
         void advance(const libutil::time_point& now, float elapsed_s) override;
 

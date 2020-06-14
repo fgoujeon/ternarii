@@ -112,7 +112,7 @@ namespace tracks
 
     struct fixed_duration_translation
     {
-        std::shared_ptr<Object2D> pobj;
+        std::shared_ptr<object2d> pobj;
         Magnum::Vector2 finish_position;
         float duration_s = 0; //in seconds
         Magnum::Animation::Track<Magnum::Float, Magnum::Vector2>::Interpolator interpolator = Magnum::Math::lerp;
@@ -158,7 +158,7 @@ namespace tracks
             player.addWithCallback
             (
                 track_impl,
-                [](Magnum::Float, const Magnum::Vector2& translation, Object2D& obj)
+                [](Magnum::Float, const Magnum::Vector2& translation, object2d& obj)
                 {
                     obj.setTranslation(translation);
                 },
@@ -171,7 +171,7 @@ namespace tracks
 
     struct fixed_speed_translation
     {
-        std::shared_ptr<Object2D> pobj;
+        std::shared_ptr<object2d> pobj;
         Magnum::Vector2 finish_position;
         float speed = 0; //in distance unit per second
         Magnum::Animation::Track<Magnum::Float, Magnum::Vector2>::Interpolator interpolator = Magnum::Math::lerp;
@@ -210,7 +210,7 @@ namespace tracks
             player.addWithCallback
             (
                 track_impl,
-                [](Magnum::Float, const Magnum::Vector2& translation, Object2D& obj)
+                [](Magnum::Float, const Magnum::Vector2& translation, object2d& obj)
                 {
                     obj.setTranslation(translation);
                 },
@@ -223,7 +223,7 @@ namespace tracks
 
     struct alpha_transition
     {
-        std::shared_ptr<Object2D> pobj;
+        std::shared_ptr<object2d> pobj;
         float finish_alpha = 0;
         float duration_s = 0; //in seconds
         Magnum::Animation::Track<Magnum::Float, float>::Interpolator interpolator = Magnum::Math::lerp;
@@ -264,7 +264,7 @@ namespace tracks
             player.addWithCallback
             (
                 track_impl,
-                [](Magnum::Float, const float& alpha, Object2D& obj)
+                [](Magnum::Float, const float& alpha, object2d& obj)
                 {
                     obj.set_alpha(alpha);
                 },
@@ -277,7 +277,7 @@ namespace tracks
 
     struct scaling_transition
     {
-        std::shared_ptr<Object2D> pobj;
+        std::shared_ptr<object2d> pobj;
         Magnum::Vector2 finish_scaling;
         float duration_s = 0; //in seconds
         Magnum::Animation::Track<Magnum::Float, Magnum::Vector2>::Interpolator interpolator = Magnum::Math::lerp;
@@ -324,7 +324,7 @@ namespace tracks
             player.addWithCallback
             (
                 track_impl,
-                [](Magnum::Float, const Magnum::Vector2& scaling, Object2D& obj)
+                [](Magnum::Float, const Magnum::Vector2& scaling, object2d& obj)
                 {
                     obj.setScaling(scaling);
                 },

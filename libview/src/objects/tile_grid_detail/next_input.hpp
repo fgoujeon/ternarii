@@ -28,12 +28,12 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libview::objects::tile_grid_detail
 {
 
-class next_input: public Object2D, public features::animable
+class next_input: public object2d, public features::animable
 {
     public:
         next_input
         (
-            Object2D& parent,
+            object2d& parent,
             features::drawable_group& drawables,
             features::animable_group& animables
         );

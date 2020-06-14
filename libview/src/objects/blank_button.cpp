@@ -26,13 +26,13 @@ namespace libview::objects
 
 blank_button::blank_button
 (
-    Object2D& parent,
+    object2d& parent,
     features::drawable_group& drawables,
     features::clickable_group& clickables,
     const style& stl,
     const callback_set& callbacks
 ):
-    Object2D{&parent},
+    object2d{&parent},
     features::clickable{*this, &clickables},
     style_(stl),
     callbacks_(callbacks),

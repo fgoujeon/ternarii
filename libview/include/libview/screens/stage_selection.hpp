@@ -28,7 +28,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libview::screens
 {
 
-class stage_selection: public Object2D
+class stage_selection: public object2d
 {
     public:
         struct callback_set
@@ -40,7 +40,7 @@ class stage_selection: public Object2D
     public:
         stage_selection
         (
-            Object2D& parent,
+            object2d& parent,
             feature_group_set& feature_groups,
             const callback_set& callbacks
         );
