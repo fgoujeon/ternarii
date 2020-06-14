@@ -36,17 +36,6 @@ struct abstract_input_generator
     ) = 0;
 };
 
-struct abstract_input_subgenerator
-{
-    virtual ~abstract_input_subgenerator() = default;
-
-    virtual data_types::input_tile_matrix generate
-    (
-        const int max,
-        const double standard_deviation
-    ) = 0;
-};
-
 abstract_input_generator& get_input_generator(data_types::stage stage);
 
 } //namespace

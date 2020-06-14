@@ -26,6 +26,19 @@ namespace libgame
 
 namespace
 {
+    struct abstract_input_subgenerator
+    {
+        virtual ~abstract_input_subgenerator() = default;
+
+        virtual data_types::input_tile_matrix generate
+        (
+            const int max,
+            const double standard_deviation
+        ) = 0;
+    };
+
+
+
     class random_number_tile_generator
     {
         private:
