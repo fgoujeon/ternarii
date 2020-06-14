@@ -105,7 +105,7 @@ void sdf_image::set_outline_color(const Magnum::Color4& color)
     style_.outline_color = color;
 }
 
-void sdf_image::draw(const Magnum::Matrix3& transformation_matrix, Magnum::SceneGraph::Camera2D& camera)
+void sdf_image::draw(const Magnum::Matrix3& transformation_matrix, camera& camera)
 {
     const auto absolute_alpha = get_absolute_alpha();
 

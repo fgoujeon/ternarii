@@ -51,7 +51,7 @@ void label::set_text(const std::string_view& value)
     visible_ = true;
 }
 
-void label::draw(const Magnum::Matrix3& transformation_matrix, Magnum::SceneGraph::Camera2D& camera)
+void label::draw(const Magnum::Matrix3& transformation_matrix, camera& camera)
 {
     if(visible_)
     {

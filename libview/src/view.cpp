@@ -267,7 +267,7 @@ struct view::impl final
 
     scene scene;
     object2d camera_object;
-    Magnum::SceneGraph::Camera2D camera;
+    camera camera;
 
     libutil::time_point previous_frame_time = libutil::clock::now();
 

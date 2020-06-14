@@ -36,7 +36,7 @@ class score_display: public object2d, public features::drawable
         void set_visible(const bool value);
 
     private:
-        void draw(const Magnum::Matrix3& transformation_matrix, Magnum::SceneGraph::Camera2D& camera) override;
+        void draw(const Magnum::Matrix3& transformation_matrix, camera& camera) override;
 
     private:
         Magnum::Text::Renderer2D renderer_;

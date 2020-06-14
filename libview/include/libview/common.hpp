@@ -33,6 +33,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libview
 {
 
+using camera = Magnum::SceneGraph::Camera2D;
 using transformation_t = Magnum::SceneGraph::TranslationRotationScalingTransformation2D;
 
 class object2d: public Magnum::SceneGraph::Object<transformation_t>

@@ -59,7 +59,7 @@ void rounded_rectangle::set_color(const Magnum::Color4& color)
     style_.color = color;
 }
 
-void rounded_rectangle::draw(const Magnum::Matrix3& transformation_matrix, Magnum::SceneGraph::Camera2D& camera)
+void rounded_rectangle::draw(const Magnum::Matrix3& transformation_matrix, camera& camera)
 {
     const auto absolute_alpha = get_absolute_alpha();
 

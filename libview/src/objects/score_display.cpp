@@ -74,7 +74,7 @@ void score_display::set_visible(const bool value)
     visible_ = value;
 }
 
-void score_display::draw(const Magnum::Matrix3& transformation_matrix, Magnum::SceneGraph::Camera2D& camera)
+void score_display::draw(const Magnum::Matrix3& transformation_matrix, camera& camera)
 {
     if(visible_)
     {
