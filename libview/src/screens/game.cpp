@@ -29,12 +29,64 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include "../data_types.hpp"
 #include "../common.hpp"
 #include <libres.hpp>
+#include <libutil/fsm.hpp>
 #include <libutil/time.hpp>
 #include <Magnum/Math/Color.h>
 #include <Magnum/Platform/Sdl2Application.h>
 
 namespace libview::screens
 {
+
+//FSM
+namespace
+{
+    struct fsm_context
+    {
+        objects::tile_grid& tile_grid;
+    };
+
+    using fsm = libutil::fsm::fsm<fsm_context>;
+
+    namespace events
+    {
+        struct button_press
+        {
+            data_types::move_button button;
+        };
+
+        struct button_release
+        {
+            data_types::move_button button;
+        };
+    }
+
+    namespace states
+    {
+        class playing: public libutil::fsm::state
+        {
+            public:
+                playing(fsm& fsm):
+                    fsm_(fsm)
+                {
+                }
+
+                void handle_event(const std::any& event)
+                {
+                    if(const auto pevent = std::any_cast<events::button_press>(&event))
+                    {
+                        fsm_.get_context().tile_grid.handle_button_press(pevent->button);
+                    }
+                    else if(const auto pevent = std::any_cast<events::button_release>(&event))
+                    {
+                        fsm_.get_context().tile_grid.handle_button_release(pevent->button);
+                    }
+                }
+
+            private:
+                fsm& fsm_;
+        };
+    }
+}
 
 namespace
 {
@@ -80,11 +132,11 @@ namespace
         { \
             .handle_mouse_press = [this] \
             { \
-                tile_grid.handle_button_press(data_types::move_button::MOVE); \
+                fsm.handle_event(events::button_press{data_types::move_button::MOVE}); \
             }, \
             .handle_mouse_release = [this] \
             { \
-                tile_grid.handle_button_release(data_types::move_button::MOVE); \
+                fsm.handle_event(events::button_release{data_types::move_button::MOVE}); \
             } \
         } \
     )
@@ -179,6 +231,8 @@ struct game::impl
 
         clockwise_rotation_button.scale({move_button_scaling, move_button_scaling});
         clockwise_rotation_button.translate({3.25f, -5.85f});
+
+        fsm.set_state<states::playing>();
     }
 
     feature_group_set& feature_groups;
@@ -199,6 +253,9 @@ struct game::impl
     objects::sdf_image_button clockwise_rotation_button;
 
     std::shared_ptr<objects::game_over_overlay> pgame_over_overlay;
+
+    fsm_context ctx{tile_grid};
+    fsm fsm{ctx};
 };
 
 game::game
@@ -236,17 +293,17 @@ void game::handle_key_press(key_event& event)
     switch(event.key())
     {
         case key_event::Key::Left:
-            pimpl_->tile_grid.handle_button_press(data_types::move_button::left_shift);
+            pimpl_->fsm.handle_event(events::button_press{data_types::move_button::left_shift});
             break;
         case key_event::Key::Right:
-            pimpl_->tile_grid.handle_button_press(data_types::move_button::right_shift);
+            pimpl_->fsm.handle_event(events::button_press{data_types::move_button::right_shift});
             break;
         case key_event::Key::Up:
         case key_event::Key::Space:
-            pimpl_->tile_grid.handle_button_press(data_types::move_button::clockwise_rotation);
+            pimpl_->fsm.handle_event(events::button_press{data_types::move_button::clockwise_rotation});
             break;
         case key_event::Key::Down:
-            pimpl_->tile_grid.handle_button_press(data_types::move_button::drop);
+            pimpl_->fsm.handle_event(events::button_press{data_types::move_button::drop});
             break;
         default:
             break;
@@ -258,17 +315,17 @@ void game::handle_key_release(key_event& event)
     switch(event.key())
     {
         case key_event::Key::Left:
-            pimpl_->tile_grid.handle_button_release(data_types::move_button::left_shift);
+            pimpl_->fsm.handle_event(events::button_release{data_types::move_button::left_shift});
             break;
         case key_event::Key::Right:
-            pimpl_->tile_grid.handle_button_release(data_types::move_button::right_shift);
+            pimpl_->fsm.handle_event(events::button_release{data_types::move_button::right_shift});
             break;
         case key_event::Key::Up:
         case key_event::Key::Space:
-            pimpl_->tile_grid.handle_button_release(data_types::move_button::clockwise_rotation);
+            pimpl_->fsm.handle_event(events::button_release{data_types::move_button::clockwise_rotation});
             break;
         case key_event::Key::Down:
-            pimpl_->tile_grid.handle_button_release(data_types::move_button::drop);
+            pimpl_->fsm.handle_event(events::button_release{data_types::move_button::drop});
             break;
         default:
             break;
