@@ -44,11 +44,11 @@ namespace
 
 rounded_rectangle::rounded_rectangle
 (
-    Object2D& parent,
+    object2d& parent,
     features::drawable_group& drawables,
     const style& stl
 ):
-    Object2D{&parent},
+    object2d{&parent},
     features::drawable{*this, &drawables},
     style_(stl)
 {

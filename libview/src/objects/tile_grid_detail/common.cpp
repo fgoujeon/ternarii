@@ -26,15 +26,15 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libview::objects::tile_grid_detail
 {
 
-std::shared_ptr<Object2D> make_tile_object
+std::shared_ptr<object2d> make_tile_object
 (
-    Object2D& parent,
+    object2d& parent,
     features::drawable_group& drawables,
     features::animable_group& animables,
     const data_types::tile& tile
 )
 {
-    using result_t = std::shared_ptr<Object2D>;
+    using result_t = std::shared_ptr<object2d>;
 
     return std::visit
     (

@@ -55,8 +55,8 @@ namespace
     }
 }
 
-score_display::score_display(Object2D& parent, features::drawable_group& drawables):
-    Object2D{&parent},
+score_display::score_display(object2d& parent, features::drawable_group& drawables):
+    object2d{&parent},
     features::drawable{*this, &drawables},
     renderer_(text::get_font(), text::get_glyph_cache(), 1.0f, Magnum::Text::Alignment::TopRight)
 {

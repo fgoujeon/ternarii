@@ -45,12 +45,12 @@ namespace
 
 shine::shine
 (
-    Object2D& parent,
+    object2d& parent,
     features::drawable_group& drawables,
     features::animable_group& animables,
     const style& stl
 ):
-    Object2D{&parent},
+    object2d{&parent},
     features::drawable{*this, &drawables},
     features::animable{*this, &animables},
     style_(stl)

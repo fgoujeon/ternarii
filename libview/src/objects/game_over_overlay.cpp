@@ -27,12 +27,12 @@ namespace libview::objects
 
 game_over_overlay::game_over_overlay
 (
-    Object2D& parent,
+    object2d& parent,
     features::drawable_group& drawables,
     features::clickable_group& clickables,
     const libutil::void_function<>& new_game_button_press_callback
 ):
-    Object2D{&parent},
+    object2d{&parent},
     background_rectangle_(*this, drawables, colors::light_gray),
     label_
     (

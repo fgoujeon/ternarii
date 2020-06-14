@@ -42,8 +42,8 @@ namespace
     }
 }
 
-square::square(Object2D& parent, features::drawable_group& drawables, const Magnum::Color4& color):
-    Object2D{&parent},
+square::square(object2d& parent, features::drawable_group& drawables, const Magnum::Color4& color):
+    object2d{&parent},
     features::drawable{*this, &drawables},
     color_(color)
 {

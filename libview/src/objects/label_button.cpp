@@ -28,14 +28,14 @@ namespace libview::objects
 
 label_button::label_button
 (
-    Object2D& parent,
+    object2d& parent,
     features::drawable_group& drawables,
     features::clickable_group& clickables,
     const style& stl,
     const char* const text,
     const callback_set& callbacks
 ):
-    Object2D{&parent},
+    object2d{&parent},
     button_
     (
         *this,

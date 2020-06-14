@@ -39,7 +39,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libview::objects
 {
 
-class tile_grid: public Object2D, public features::animable
+class tile_grid: public object2d, public features::animable
 {
     public:
         using drop_request_callback = libutil::void_function<const data_types::input_layout&>;
@@ -48,14 +48,14 @@ class tile_grid: public Object2D, public features::animable
     private:
         using input_tile_matrix = libutil::matrix
         <
-            std::shared_ptr<Object2D>,
+            std::shared_ptr<object2d>,
             libcommon::constants::input_column_count,
             libcommon::constants::input_row_count
         >;
 
         using board_tile_matrix = libutil::matrix
         <
-            std::shared_ptr<Object2D>,
+            std::shared_ptr<object2d>,
             libcommon::constants::board_column_count,
             libcommon::constants::board_row_count
         >;
@@ -63,7 +63,7 @@ class tile_grid: public Object2D, public features::animable
     public:
         tile_grid
         (
-            Object2D& parent,
+            object2d& parent,
             features::drawable_group& drawables,
             features::animable_group& animables,
             animation::animator& animator,
@@ -102,7 +102,7 @@ class tile_grid: public Object2D, public features::animable
         void handle_button_release(data_types::move_button button);
 
     private:
-        std::shared_ptr<Object2D> make_tile
+        std::shared_ptr<object2d> make_tile
         (
             const data_types::tile& tile,
             const Magnum::Vector2& position

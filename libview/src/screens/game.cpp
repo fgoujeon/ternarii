@@ -203,12 +203,12 @@ struct game::impl
 
 game::game
 (
-    Object2D& parent,
+    object2d& parent,
     feature_group_set& feature_groups,
     const data_types::stage stage,
     const callback_set& callbacks
 ):
-    Object2D{&parent},
+    object2d{&parent},
     features::animable{*this, &feature_groups.animables},
     features::key_event_handler{*this, &feature_groups.key_event_handlers},
     pimpl_

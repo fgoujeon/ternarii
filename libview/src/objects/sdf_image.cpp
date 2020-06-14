@@ -83,12 +83,12 @@ namespace
 
 sdf_image::sdf_image
 (
-    Object2D& parent,
+    object2d& parent,
     features::drawable_group& drawables,
     const std::filesystem::path& image_path,
     const style& stl
 ):
-    Object2D{&parent},
+    object2d{&parent},
     features::drawable{*this, &drawables},
     style_(stl),
     texture_(make_texture(image_path))

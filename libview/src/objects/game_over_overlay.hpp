@@ -29,12 +29,12 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libview::objects
 {
 
-class game_over_overlay: public Object2D
+class game_over_overlay: public object2d
 {
     public:
         game_over_overlay
         (
-            Object2D& parent,
+            object2d& parent,
             features::drawable_group& drawables,
             features::clickable_group& clickables,
             const libutil::void_function<>& new_game_button_press_callback

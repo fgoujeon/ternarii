@@ -266,7 +266,7 @@ struct view::impl final
     configuration conf_;
 
     Scene2D scene;
-    Object2D camera_object;
+    object2d camera_object;
     Magnum::SceneGraph::Camera2D camera;
 
     libutil::time_point previous_frame_time = libutil::clock::now();
@@ -277,7 +277,7 @@ struct view::impl final
 
     keyboard_state key_states;
 
-    std::shared_ptr<Object2D> pscreen;
+    std::shared_ptr<object2d> pscreen;
     std::unique_ptr<objects::debug_grid> pdebug_grid;
     std::unique_ptr<objects::label> pfps_counter;
 
@@ -294,7 +294,7 @@ view::~view() = default;
 
 void view::show_screen
 (
-    const std::shared_ptr<Object2D>& pscreen,
+    const std::shared_ptr<object2d>& pscreen,
     screen_transition trans
 )
 {

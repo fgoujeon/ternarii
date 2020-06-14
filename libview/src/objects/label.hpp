@@ -29,7 +29,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libview::objects
 {
 
-class label: public Object2D, public features::drawable
+class label: public object2d, public features::drawable
 {
     public:
         struct style
@@ -44,7 +44,7 @@ class label: public Object2D, public features::drawable
     public:
         label
         (
-            Object2D& parent,
+            object2d& parent,
             features::drawable_group& drawables,
             const style& style,
             const std::string_view& value = {}

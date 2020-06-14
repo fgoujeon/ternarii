@@ -48,7 +48,7 @@ namespace
         .outline_range = {0.5f, 0.5f}
     };
 
-    class selection_button: public Object2D
+    class selection_button: public object2d
     {
         private:
             static std::unique_ptr<objects::sdf_image> make_stage_image
@@ -84,12 +84,12 @@ namespace
         public:
             selection_button
             (
-                Object2D& parent,
+                object2d& parent,
                 feature_group_set& feature_groups,
                 const data_types::stage stage,
                 const stage_selection::callback_set& callbacks
             ):
-                Object2D(&parent),
+                object2d(&parent),
                 button_
                 (
                     *this,
@@ -307,11 +307,11 @@ struct stage_selection::impl
 
 stage_selection::stage_selection
 (
-    Object2D& parent,
+    object2d& parent,
     feature_group_set& feature_groups,
     const callback_set& callbacks
 ):
-    Object2D{&parent},
+    object2d{&parent},
     pimpl_(std::make_unique<impl>(*this, feature_groups, callbacks))
 {
 }

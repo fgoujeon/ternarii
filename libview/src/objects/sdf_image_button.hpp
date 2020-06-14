@@ -27,7 +27,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libview::objects
 {
 
-class sdf_image_button: public Object2D, public features::clickable
+class sdf_image_button: public object2d, public features::clickable
 {
     public:
         struct callback_set
@@ -39,7 +39,7 @@ class sdf_image_button: public Object2D, public features::clickable
     public:
         sdf_image_button
         (
-            Object2D& parent,
+            object2d& parent,
             features::drawable_group& drawables,
             features::clickable_group& clickables,
             const std::filesystem::path& image_path,

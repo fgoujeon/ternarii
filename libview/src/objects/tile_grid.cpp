@@ -43,14 +43,14 @@ namespace
 
 tile_grid::tile_grid
 (
-    Object2D& parent,
+    object2d& parent,
     features::drawable_group& drawables,
     features::animable_group& animables,
     animation::animator& animator,
     const drop_request_callback& drop_cb,
     const input_layout_change_callback& layout_cb
 ):
-    Object2D{&parent},
+    object2d{&parent},
     features::animable(*this, &animables),
     drawables_(drawables),
     animables_(animables),
@@ -347,7 +347,7 @@ void tile_grid::handle_button_release(data_types::move_button button)
     input_.handle_button_release(button);
 }
 
-std::shared_ptr<Object2D> tile_grid::make_tile
+std::shared_ptr<object2d> tile_grid::make_tile
 (
     const data_types::tile& tile,
     const Magnum::Vector2& position

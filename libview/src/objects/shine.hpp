@@ -28,7 +28,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libview::objects
 {
 
-class shine: public Object2D, public features::drawable, public features::animable
+class shine: public object2d, public features::drawable, public features::animable
 {
     public:
         struct style
@@ -42,7 +42,7 @@ class shine: public Object2D, public features::drawable, public features::animab
     public:
         shine
         (
-            Object2D& parent,
+            object2d& parent,
             features::drawable_group& drawables,
             features::animable_group& animables,
             const style& stl

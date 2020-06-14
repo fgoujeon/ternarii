@@ -73,7 +73,7 @@ class view
 
         void show_screen
         (
-            const std::shared_ptr<Object2D>& pscreen,
+            const std::shared_ptr<object2d>& pscreen,
             screen_transition trans
         );
 
