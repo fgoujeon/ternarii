@@ -136,8 +136,6 @@ int get_highest_tile_value(const board_tile_matrix& tiles);
 
 int get_score(const board_tile_matrix& tiles);
 
-int get_free_cell_count(const board_tile_matrix& tiles);
-
 
 
 struct input_layout

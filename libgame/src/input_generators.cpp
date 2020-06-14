@@ -26,6 +26,19 @@ namespace libgame
 
 namespace
 {
+    struct abstract_input_subgenerator
+    {
+        virtual ~abstract_input_subgenerator() = default;
+
+        virtual data_types::input_tile_matrix generate
+        (
+            const int max,
+            const double standard_deviation
+        ) = 0;
+    };
+
+
+
     class random_number_tile_generator
     {
         private:
@@ -33,10 +46,18 @@ namespace
 
         public:
             //return random value from 0 to max
-            data_types::number_tile generate(const int max, const double standard_deviation)
+            data_types::number_tile generate
+            (
+                const int max,
+                const double standard_deviation
+            )
             {
                 //generate random number with normal distribution
-                const auto real_val = dis_(rng_.engine, distribution::param_type{0, standard_deviation});
+                const auto real_val = dis_
+                (
+                    rng_.engine,
+                    distribution::param_type{0, standard_deviation}
+                );
 
                 //remove negative values
                 const auto positive_real_val = std::abs(real_val);
@@ -57,7 +78,7 @@ namespace
 
 
 
-    class simple_input_generator: public abstract_input_generator
+    class simple_input_generator: public abstract_input_subgenerator
     {
         public:
             simple_input_generator(const data_types::input_tile_matrix& tiles):
@@ -65,7 +86,11 @@ namespace
             {
             }
 
-            data_types::input_tile_matrix generate(const int /*max*/, const double /*standard_deviation*/) override
+            data_types::input_tile_matrix generate
+            (
+                const int /*max*/,
+                const double /*standard_deviation*/
+            ) override
             {
                 return tiles_;
             }
@@ -75,7 +100,7 @@ namespace
     };
 
     template<class Tile>
-    abstract_input_generator& get_simple_input_generator()
+    abstract_input_subgenerator& get_simple_input_generator()
     {
         const auto input = data_types::input_tile_matrix{Tile{}};
         static auto generator = simple_input_generator{input};
@@ -84,10 +109,14 @@ namespace
 
 
 
-    class random_number_tile_pair_generator: public abstract_input_generator
+    class random_number_tile_pair_generator: public abstract_input_subgenerator
     {
         public:
-            data_types::input_tile_matrix generate(const int max, const double standard_deviation) override
+            data_types::input_tile_matrix generate
+            (
+                const int max,
+                const double standard_deviation
+            ) override
             {
                 return
                 {
@@ -102,7 +131,7 @@ namespace
             random_number_tile_generator gen_;
     };
 
-    abstract_input_generator& get_random_number_tile_pair_generator()
+    abstract_input_subgenerator& get_random_number_tile_pair_generator()
     {
         static auto generator = random_number_tile_pair_generator{};
         return generator;
@@ -110,10 +139,14 @@ namespace
 
 
 
-    class random_number_tile_triple_generator: public abstract_input_generator
+    class random_number_tile_triple_generator: public abstract_input_subgenerator
     {
         public:
-            data_types::input_tile_matrix generate(const int max, const double standard_deviation) override
+            data_types::input_tile_matrix generate
+            (
+                const int max,
+                const double standard_deviation
+            ) override
             {
                 return
                 {
@@ -128,7 +161,7 @@ namespace
             random_number_tile_generator gen_;
     };
 
-    abstract_input_generator& get_random_number_tile_triple_generator()
+    abstract_input_subgenerator& get_random_number_tile_triple_generator()
     {
         static auto generator = random_number_tile_triple_generator{};
         return generator;
@@ -142,15 +175,15 @@ namespace
     Higher-order random input generator.
     */
 
-    struct weighted_input_generator_ref
+    struct weighted_input_subgenerator_ref
     {
-        abstract_input_generator& generator;
+        abstract_input_subgenerator& generator;
         double weight = 1;
     };
 
-    using weighted_input_generator_ref_list = std::vector<weighted_input_generator_ref>;
+    using weighted_input_subgenerator_ref_list = std::vector<weighted_input_subgenerator_ref>;
 
-    std::vector<double> get_weigths(const weighted_input_generator_ref_list& generators)
+    std::vector<double> get_weigths(const weighted_input_subgenerator_ref_list& generators)
     {
         auto weights = std::vector<double>{};
         for(const auto& generator: generators)
@@ -163,22 +196,77 @@ namespace
     class random_input_generator: public abstract_input_generator
     {
         public:
-            random_input_generator(const weighted_input_generator_ref_list& generators):
-                generators_(std::move(generators)),
-                weights_(get_weigths(generators_)),
+            random_input_generator(const weighted_input_subgenerator_ref_list& subgenerators):
+                subgenerators_(std::move(subgenerators)),
+                weights_(get_weigths(subgenerators_)),
                 dis_(weights_.begin(), weights_.end())
             {
             }
 
-            data_types::input_tile_matrix generate(const int max, const double standard_deviation) override
+            data_types::input_tile_matrix generate
+            (
+                const int board_highest_tile_value,
+                const int board_tile_count
+            ) override
             {
+                /*
+                We want to generate tiles whose value goes from 0 to the value
+                of the highest tile of the board.
+                This max value is clamped between 2 (we don't want only 0s at
+                the beginning of a game) and 9 (we don't want the player to get
+                too many "free" points from the input just by being lucky).
+                */
+                const auto max_value = std::clamp(board_highest_tile_value, 2, 9);
+
+                /*
+                Compute the standard deviation (SD) of the normal distribution
+                (whose average is set to 0).
+                The lower the SD is, the more likely the generated value is
+                small.
+                We want to adjust the SD according to the fill rate of the
+                board:
+                - When the board is near empty, the SD is high so that the
+                player can quickly grow his tiles.
+                - When the board is near full, the SD is low so that the player
+                gets the low-value tiles he might be waiting for to unlock his
+                combos.
+                */
+                const auto standard_deviation = [&]
+                {
+                    /*
+                    Normalized fill rate of the board.
+                    Value goes from 0.0 (empty) to 1.0 (full).
+                    */
+                    const auto fill_rate =
+                        static_cast<double>(board_tile_count) /
+                        libcommon::constants::board_authorized_cell_count
+                    ;
+
+                    const auto sd_max = 4.0; //SD of empty board
+                    const auto sd_min = 1.8; //SD of full board
+                    const auto sd_variable_part = sd_max - sd_min;
+
+                    /*
+                    The higher the exponent is, the "longer" the SD stays at max value.
+                    We only want the SD to significantly decrease when the board is 3/4
+                    full.
+                    */
+                    const auto fill_rate_pow = std::pow(fill_rate, 6);
+
+                    return sd_min + sd_variable_part * (1.0 - fill_rate_pow);
+                }();
+
                 const auto r = dis_(rng_.engine);
-                return generators_[r].generator.generate(max, standard_deviation);
+                return subgenerators_[r].generator.generate
+                (
+                    max_value,
+                    standard_deviation
+                );
             }
 
         private:
             libutil::rng rng_;
-            weighted_input_generator_ref_list generators_;
+            weighted_input_subgenerator_ref_list subgenerators_;
             std::vector<double> weights_;
             std::discrete_distribution<int> dis_;
     };
@@ -191,7 +279,13 @@ namespace
 
     abstract_input_generator& get_purity_chapel_input_generator()
     {
-        return get_random_number_tile_pair_generator();
+        static auto generator = random_input_generator
+        (
+            {
+                {get_random_number_tile_pair_generator(), 1}
+            }
+        );
+        return generator;
     }
 
     abstract_input_generator& get_nullifier_room_input_generator()

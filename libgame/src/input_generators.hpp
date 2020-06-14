@@ -29,7 +29,11 @@ struct abstract_input_generator
 {
     virtual ~abstract_input_generator() = default;
 
-    virtual data_types::input_tile_matrix generate(const int max, const double standard_deviation) = 0;
+    virtual data_types::input_tile_matrix generate
+    (
+        const int board_highest_tile_value,
+        const int board_tile_count
+    ) = 0;
 };
 
 abstract_input_generator& get_input_generator(data_types::stage stage);
