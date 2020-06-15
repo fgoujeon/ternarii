@@ -19,6 +19,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "playing.hpp"
 #include "showing_game_over_overlay.hpp"
+#include "paused.hpp"
 
 namespace libview::screens::game_detail::states
 {
@@ -33,9 +34,13 @@ void playing::handle_event(const std::any& event)
     {
         fsm_.get_context().tile_grid.handle_button_release(pevent->button);
     }
-    else if(const auto pevent = std::any_cast<events::game_over>(&event))
+    else if(std::any_cast<events::game_over>(&event))
     {
         fsm_.set_state<showing_game_over_overlay>();
+    }
+    else if(std::any_cast<events::pause_request>(&event))
+    {
+        fsm_.set_state<paused>();
     }
 }
 

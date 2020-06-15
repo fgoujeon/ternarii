@@ -17,33 +17,18 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef LIBVIEW_SCREENS_GAME_DETAIL_EVENTS_HPP
-#define LIBVIEW_SCREENS_GAME_DETAIL_EVENTS_HPP
+#include "paused.hpp"
+#include "playing.hpp"
 
-#include <libview/data_types.hpp>
-
-namespace libview::screens::game_detail
+namespace libview::screens::game_detail::states
 {
 
-namespace events
+void paused::handle_event(const std::any& event)
 {
-    struct button_press
+    if(std::any_cast<events::pause_request>(&event))
     {
-        data_types::move_button button;
-    };
-
-    struct button_release
-    {
-        data_types::move_button button;
-    };
-
-    struct game_over{};
-
-    struct new_game_request{};
-
-    struct pause_request{};
+        fsm_.set_state<playing>();
+    }
 }
 
 } //namespace
-
-#endif

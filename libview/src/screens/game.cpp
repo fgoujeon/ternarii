@@ -148,7 +148,10 @@ struct game::impl
             libres::images::exit,
             objects::sdf_image_button::callback_set
             {
-                .handle_mouse_release = [this]{this->callbacks.handle_exit_request();}
+                .handle_mouse_release = [this]
+                {
+                    fsm.handle_event(game_detail::events::pause_request{});
+                }
             }
         ),
         MOVE_BUTTON_INITIALIZER(libres::images::move_button,   left_shift),
