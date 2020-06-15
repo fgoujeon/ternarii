@@ -199,6 +199,7 @@ struct game::impl
     callback_set callbacks;
 
     animation::animator animator;
+    animation::animator pause_animator;
 
     std::unique_ptr<objects::sdf_image> pbackground_image;
     objects::tile_grid tile_grid;
@@ -217,6 +218,7 @@ struct game::impl
         feature_groups,
         callbacks,
         animator,
+        pause_animator,
         tile_grid
     };
     game_detail::fsm fsm{ctx};
@@ -250,6 +252,7 @@ game::~game() = default;
 void game::advance(const libutil::time_point& now, const float /*elapsed_s*/)
 {
     pimpl_->animator.advance(now);
+    pimpl_->pause_animator.advance(now);
 }
 
 void game::handle_key_press(key_event& event)

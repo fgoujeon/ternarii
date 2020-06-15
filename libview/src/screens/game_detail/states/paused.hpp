@@ -22,6 +22,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "../events.hpp"
 #include "../fsm.hpp"
+#include "../../../objects/pause_overlay.hpp"
 #include <libview/data_types.hpp>
 #include <libutil/fsm.hpp>
 
@@ -31,22 +32,15 @@ namespace libview::screens::game_detail::states
 class paused: public libutil::fsm::state
 {
     public:
-        paused(fsm& fsm):
-            fsm_(fsm)
-        {
-            fsm_.get_context().animator.pause();
-        }
+        paused(fsm& fsm);
 
-        ~paused()
-        {
-            fsm_.get_context().animator.resume();
-        }
+        ~paused();
 
         void handle_event(const std::any& event);
 
     private:
         fsm& fsm_;
-        animation::animator animator_;
+        std::shared_ptr<objects::pause_overlay> ppause_overlay_;
 };
 
 } //namespace

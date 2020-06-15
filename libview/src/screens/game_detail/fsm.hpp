@@ -34,6 +34,7 @@ struct fsm_context
     feature_group_set& feature_groups;
     game::callback_set& callbacks;
     animation::animator& animator;
+    animation::animator& pause_animator;
     objects::tile_grid& tile_grid;
 };
 
