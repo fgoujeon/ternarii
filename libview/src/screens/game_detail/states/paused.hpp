@@ -34,6 +34,12 @@ class paused: public libutil::fsm::state
         paused(fsm& fsm):
             fsm_(fsm)
         {
+            fsm_.get_context().animator.pause();
+        }
+
+        ~paused()
+        {
+            fsm_.get_context().animator.resume();
         }
 
         void handle_event(const std::any& event);

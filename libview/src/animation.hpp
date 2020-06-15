@@ -380,6 +380,16 @@ class animation
             player_.advance(now.time_since_epoch());
         }
 
+        void pause()
+        {
+            player_.pause(libutil::clock::now().time_since_epoch());
+        }
+
+        void resume()
+        {
+            player_.resume(libutil::clock::now().time_since_epoch());
+        }
+
         bool is_done() const
         {
             return started_ && player_.state() == Magnum::Animation::State::Stopped;
@@ -428,6 +438,22 @@ class animator
                 {
                     keep_advancing = false;
                 }
+            }
+        }
+
+        void pause()
+        {
+            if(!animations_.empty())
+            {
+                animations_.front().pause();
+            }
+        }
+
+        void resume()
+        {
+            if(!animations_.empty())
+            {
+                animations_.front().resume();
             }
         }
 
