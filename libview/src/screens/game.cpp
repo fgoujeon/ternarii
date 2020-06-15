@@ -18,6 +18,10 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 #include <libview/screens/game.hpp>
+#include "game_detail/states/playing.hpp"
+#include "game_detail/states/showing_game_over_overlay.hpp"
+#include "game_detail/fsm.hpp"
+#include "game_detail/events.hpp"
 #include "../objects/shine.hpp"
 #include "../objects/game_over_overlay.hpp"
 #include "../objects/sdf_image_button.hpp"
@@ -36,154 +40,6 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 
 namespace libview::screens
 {
-
-//FSM
-namespace
-{
-    struct fsm_context
-    {
-        game& screen;
-        feature_group_set& feature_groups;
-        game::callback_set& callbacks;
-        animation::animator& animator;
-        objects::tile_grid& tile_grid;
-    };
-
-    using fsm = libutil::fsm::fsm<fsm_context>;
-
-    namespace events
-    {
-        struct button_press
-        {
-            data_types::move_button button;
-        };
-
-        struct button_release
-        {
-            data_types::move_button button;
-        };
-
-        struct game_over{};
-
-        struct new_game_request{};
-    }
-
-    namespace states
-    {
-        class showing_game_over_overlay;
-
-        class playing: public libutil::fsm::state
-        {
-            public:
-                playing(fsm& fsm):
-                    fsm_(fsm)
-                {
-                }
-
-                void handle_event(const std::any& event)
-                {
-                    if(const auto pevent = std::any_cast<events::button_press>(&event))
-                    {
-                        fsm_.get_context().tile_grid.handle_button_press(pevent->button);
-                    }
-                    else if(const auto pevent = std::any_cast<events::button_release>(&event))
-                    {
-                        fsm_.get_context().tile_grid.handle_button_release(pevent->button);
-                    }
-                    else if(const auto pevent = std::any_cast<events::game_over>(&event))
-                    {
-                        fsm_.set_state<showing_game_over_overlay>();
-                    }
-                }
-
-            private:
-                fsm& fsm_;
-        };
-
-        class showing_game_over_overlay: public libutil::fsm::state
-        {
-            public:
-                showing_game_over_overlay(fsm& fsm):
-                    fsm_(fsm),
-                    pgame_over_overlay_
-                    (
-                        std::make_shared<objects::game_over_overlay>
-                        (
-                            fsm_.get_context().screen,
-                            fsm_.get_context().feature_groups.drawables,
-                            fsm_.get_context().feature_groups.clickables,
-                            [this]
-                            {
-                                fsm_.get_context().callbacks.handle_clear_request();
-                            }
-                        )
-                    )
-                {
-                    pgame_over_overlay_->translate({0.0f, 5.5f});
-                    pgame_over_overlay_->set_alpha(0);
-
-                    auto anim = animation::animation{};
-                    anim.add
-                    (
-                        animation::tracks::fixed_duration_translation
-                        {
-                            .pobj = pgame_over_overlay_,
-                            .finish_position = {0.0f, 4.5f},
-                            .duration_s = 0.5f,
-                            .interpolator = animation::get_cubic_out_position_interpolator()
-                        }
-                    );
-                    anim.add
-                    (
-                        animation::tracks::alpha_transition
-                        {
-                            .pobj = pgame_over_overlay_,
-                            .finish_alpha = 1.0f,
-                            .duration_s = 0.5f
-                        }
-                    );
-                    fsm_.get_context().animator.push(std::move(anim));
-                }
-
-                ~showing_game_over_overlay()
-                {
-                    auto anim = animation::animation{};
-                    anim.add
-                    (
-                        animation::tracks::fixed_duration_translation
-                        {
-                            .pobj = pgame_over_overlay_,
-                            .finish_position = {0.0f, 5.5f},
-                            .duration_s = 0.5f,
-                            .interpolator = animation::get_cubic_out_position_interpolator()
-                        }
-                    );
-                    anim.add
-                    (
-                        animation::tracks::alpha_transition
-                        {
-                            .pobj = pgame_over_overlay_,
-                            .finish_alpha = 0.0f,
-                            .duration_s = 0.5f
-                        }
-                    );
-                    fsm_.get_context().animator.push(std::move(anim));
-                }
-
-                void handle_event(const std::any& event)
-                {
-                    if(std::any_cast<events::new_game_request>(&event))
-                    {
-                        fsm_.set_state<playing>();
-                    }
-                }
-
-            private:
-                fsm& fsm_;
-                std::shared_ptr<objects::game_over_overlay> pgame_over_overlay_;
-        };
-    }
-}
 
 namespace
 {
@@ -229,11 +85,11 @@ namespace
         { \
             .handle_mouse_press = [this] \
             { \
-                fsm.handle_event(events::button_press{data_types::move_button::MOVE}); \
+                fsm.handle_event(game_detail::events::button_press{data_types::move_button::MOVE}); \
             }, \
             .handle_mouse_release = [this] \
             { \
-                fsm.handle_event(events::button_release{data_types::move_button::MOVE}); \
+                fsm.handle_event(game_detail::events::button_release{data_types::move_button::MOVE}); \
             } \
         } \
     )
@@ -330,7 +186,7 @@ struct game::impl
         clockwise_rotation_button.scale({move_button_scaling, move_button_scaling});
         clockwise_rotation_button.translate({3.25f, -5.85f});
 
-        fsm.set_state<states::playing>();
+        fsm.set_state<game_detail::states::playing>();
     }
 
     game& self;
@@ -352,7 +208,7 @@ struct game::impl
     objects::sdf_image_button drop_button;
     objects::sdf_image_button clockwise_rotation_button;
 
-    fsm_context ctx
+    game_detail::fsm_context ctx
     {
         self,
         feature_groups,
@@ -360,7 +216,7 @@ struct game::impl
         animator,
         tile_grid
     };
-    fsm fsm{ctx};
+    game_detail::fsm fsm{ctx};
 };
 
 game::game
@@ -398,17 +254,17 @@ void game::handle_key_press(key_event& event)
     switch(event.key())
     {
         case key_event::Key::Left:
-            pimpl_->fsm.handle_event(events::button_press{data_types::move_button::left_shift});
+            pimpl_->fsm.handle_event(game_detail::events::button_press{data_types::move_button::left_shift});
             break;
         case key_event::Key::Right:
-            pimpl_->fsm.handle_event(events::button_press{data_types::move_button::right_shift});
+            pimpl_->fsm.handle_event(game_detail::events::button_press{data_types::move_button::right_shift});
             break;
         case key_event::Key::Up:
         case key_event::Key::Space:
-            pimpl_->fsm.handle_event(events::button_press{data_types::move_button::clockwise_rotation});
+            pimpl_->fsm.handle_event(game_detail::events::button_press{data_types::move_button::clockwise_rotation});
             break;
         case key_event::Key::Down:
-            pimpl_->fsm.handle_event(events::button_press{data_types::move_button::drop});
+            pimpl_->fsm.handle_event(game_detail::events::button_press{data_types::move_button::drop});
             break;
         default:
             break;
@@ -420,17 +276,17 @@ void game::handle_key_release(key_event& event)
     switch(event.key())
     {
         case key_event::Key::Left:
-            pimpl_->fsm.handle_event(events::button_release{data_types::move_button::left_shift});
+            pimpl_->fsm.handle_event(game_detail::events::button_release{data_types::move_button::left_shift});
             break;
         case key_event::Key::Right:
-            pimpl_->fsm.handle_event(events::button_release{data_types::move_button::right_shift});
+            pimpl_->fsm.handle_event(game_detail::events::button_release{data_types::move_button::right_shift});
             break;
         case key_event::Key::Up:
         case key_event::Key::Space:
-            pimpl_->fsm.handle_event(events::button_release{data_types::move_button::clockwise_rotation});
+            pimpl_->fsm.handle_event(game_detail::events::button_release{data_types::move_button::clockwise_rotation});
             break;
         case key_event::Key::Down:
-            pimpl_->fsm.handle_event(events::button_release{data_types::move_button::drop});
+            pimpl_->fsm.handle_event(game_detail::events::button_release{data_types::move_button::drop});
             break;
         default:
             break;
@@ -506,11 +362,11 @@ void game::set_game_over_overlay_visible(const bool visible)
 {
     if(visible)
     {
-        pimpl_->fsm.handle_event(events::game_over{});
+        pimpl_->fsm.handle_event(game_detail::events::game_over{});
     }
     else
     {
-        pimpl_->fsm.handle_event(events::new_game_request{});
+        pimpl_->fsm.handle_event(game_detail::events::new_game_request{});
     }
 }
 
