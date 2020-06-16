@@ -17,29 +17,33 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef LIBVIEW_OBJECTS_SCORE_DISPLAY_HPP
-#define LIBVIEW_OBJECTS_SCORE_DISPLAY_HPP
+#include <libutil/to_string.hpp>
 
-#include "../common.hpp"
-#include <Magnum/Text/Renderer.h>
-
-namespace libview::objects
+namespace libutil
 {
 
-class score_display: public object2d, public features::drawable
+std::string to_string(int from)
 {
-    public:
-        explicit score_display(object2d& parent, features::drawable_group& drawables);
+    std::string str;
+    auto digit_index = 0;
 
-        void set_score(const int value);
+    do
+    {
+        const auto digit = from % 10;
+        const auto digit_char = static_cast<char>('0' + digit);
 
-    private:
-        void draw(const Magnum::Matrix3& transformation_matrix, camera& camera) override;
+        //add thousands separator
+        if(digit_index != 0 && digit_index % 3 == 0)
+            str = ' ' + str;
 
-    private:
-        Magnum::Text::Renderer2D renderer_;
-};
+        //add digit
+        str = std::string{digit_char} + str;
+
+        ++digit_index;
+        from /= 10;
+    } while(from != 0);
+
+    return str;
+}
 
 } //namespace
-
-#endif

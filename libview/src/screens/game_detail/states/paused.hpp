@@ -17,27 +17,30 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef LIBVIEW_OBJECTS_SCORE_DISPLAY_HPP
-#define LIBVIEW_OBJECTS_SCORE_DISPLAY_HPP
+#ifndef LIBVIEW_SCREENS_GAME_DETAIL_STATES_PAUSED_HPP
+#define LIBVIEW_SCREENS_GAME_DETAIL_STATES_PAUSED_HPP
 
-#include "../common.hpp"
-#include <Magnum/Text/Renderer.h>
+#include "../events.hpp"
+#include "../fsm.hpp"
+#include "../../../objects/pause_overlay.hpp"
+#include <libview/data_types.hpp>
+#include <libutil/fsm.hpp>
 
-namespace libview::objects
+namespace libview::screens::game_detail::states
 {
 
-class score_display: public object2d, public features::drawable
+class paused: public libutil::fsm::state
 {
     public:
-        explicit score_display(object2d& parent, features::drawable_group& drawables);
+        paused(fsm& fsm);
 
-        void set_score(const int value);
+        ~paused();
+
+        void handle_event(const std::any& event);
 
     private:
-        void draw(const Magnum::Matrix3& transformation_matrix, camera& camera) override;
-
-    private:
-        Magnum::Text::Renderer2D renderer_;
+        fsm& fsm_;
+        std::shared_ptr<objects::pause_overlay> ppause_overlay_;
 };
 
 } //namespace

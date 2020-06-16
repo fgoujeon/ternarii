@@ -18,6 +18,10 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 #include <libview/screens/game.hpp>
+#include "game_detail/states/playing.hpp"
+#include "game_detail/states/showing_game_over_overlay.hpp"
+#include "game_detail/fsm.hpp"
+#include "game_detail/events.hpp"
 #include "../objects/shine.hpp"
 #include "../objects/game_over_overlay.hpp"
 #include "../objects/sdf_image_button.hpp"
@@ -29,6 +33,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include "../data_types.hpp"
 #include "../common.hpp"
 #include <libres.hpp>
+#include <libutil/fsm.hpp>
 #include <libutil/time.hpp>
 #include <Magnum/Math/Color.h>
 #include <Magnum/Platform/Sdl2Application.h>
@@ -80,11 +85,11 @@ namespace
         { \
             .handle_mouse_press = [this] \
             { \
-                tile_grid.handle_button_press(data_types::move_button::MOVE); \
+                fsm.handle_event(game_detail::events::button_press{data_types::move_button::MOVE}); \
             }, \
             .handle_mouse_release = [this] \
             { \
-                tile_grid.handle_button_release(data_types::move_button::MOVE); \
+                fsm.handle_event(game_detail::events::button_release{data_types::move_button::MOVE}); \
             } \
         } \
     )
@@ -98,6 +103,7 @@ struct game::impl
         const callback_set& callbacks,
         const data_types::stage stage
     ):
+        self(self),
         feature_groups(feature_groups),
         callbacks(callbacks),
         pbackground_image
@@ -109,6 +115,47 @@ struct game::impl
                 stage
             )
         ),
+        menu_label
+        (
+            self,
+            feature_groups.drawables,
+            objects::label::style
+            {
+                .alignment = Magnum::Text::Alignment::MiddleCenter,
+                .color = colors::light_gray,
+                .font_size = 0.28f,
+                .outline_range = {0.5f, 1.0f}
+            },
+            "MENU"
+        ),
+        menu_button
+        (
+            self,
+            feature_groups.drawables,
+            feature_groups.clickables,
+            libres::images::menu,
+            objects::sdf_image_button::callback_set
+            {
+                .handle_mouse_release = [this]
+                {
+                    fsm.handle_event(game_detail::events::pause_request{});
+                }
+            }
+        ),
+        score_name_label
+        (
+            self,
+            feature_groups.drawables,
+            objects::label::style
+            {
+                .alignment = Magnum::Text::Alignment::MiddleRight,
+                .color = colors::light_gray,
+                .font_size = 0.28f,
+                .outline_range = {0.5f, 1.0f}
+            },
+            "SCORE"
+        ),
+        score_display(self, feature_groups.drawables),
         tile_grid
         (
             self,
@@ -118,8 +165,6 @@ struct game::impl
             callbacks.handle_drop_request,
             callbacks.handle_input_layout_change
         ),
-        score_display(self, feature_groups.drawables),
-        hi_score_display(self, feature_groups.drawables),
         stage_name_label
         (
             self,
@@ -134,71 +179,76 @@ struct game::impl
             },
             data_types::get_pretty_name(stage)
         ),
-        exit_button
-        (
-            self,
-            feature_groups.drawables,
-            feature_groups.clickables,
-            libres::images::exit,
-            objects::sdf_image_button::callback_set
-            {
-                .handle_mouse_release = [this]{this->callbacks.handle_exit_request();}
-            }
-        ),
         MOVE_BUTTON_INITIALIZER(libres::images::move_button,   left_shift),
         MOVE_BUTTON_INITIALIZER(libres::images::move_button,   right_shift),
         MOVE_BUTTON_INITIALIZER(libres::images::move_button,   drop),
         MOVE_BUTTON_INITIALIZER(libres::images::rotate_button, clockwise_rotation)
     {
-        const auto move_button_scaling = 0.95f;
+        menu_label.setTranslation({-2.85f, 7.25f});
+        menu_button.scale({0.5f, 0.5f});
+        menu_button.translate({-2.85f, 6.75f});
 
-        score_display.set_visible(true);
-        score_display.scale({0.7f, 0.7f});
-        score_display.translate({3.4f, 7.6f});
-
-        hi_score_display.scale({0.3f, 0.3f});
-        hi_score_display.translate({3.3f, 6.8f});
+        score_name_label.setTranslation({3.25f, 7.25f});
+        score_display.setScaling({0.75f, 0.75f});
+        score_display.setTranslation({3.4f, 7.2f});
 
         tile_grid.translate({0.0f, 1.0f});
 
         stage_name_label.translate({0.0f, -4.68f});
 
-        exit_button.scale({0.5f, 0.5f});
-        exit_button.translate({-2.8f, 7.0f});
+        //Move buttons
+        {
+            const auto move_button_scaling = 0.95f;
 
-        left_shift_button.scale({move_button_scaling, move_button_scaling});
-        left_shift_button.translate({-3.25f, -5.85f});
+            left_shift_button.scale({move_button_scaling, move_button_scaling});
+            left_shift_button.translate({-3.25f, -5.85f});
 
-        right_shift_button.rotate(180.0_degf);
-        right_shift_button.scale({move_button_scaling, move_button_scaling});
-        right_shift_button.translate({-1.4f, -6.75f});
+            right_shift_button.rotate(180.0_degf);
+            right_shift_button.scale({move_button_scaling, move_button_scaling});
+            right_shift_button.translate({-1.4f, -6.75f});
 
-        drop_button.rotate(90.0_degf);
-        drop_button.scale({move_button_scaling, move_button_scaling});
-        drop_button.translate({1.4f, -6.75f});
+            drop_button.rotate(90.0_degf);
+            drop_button.scale({move_button_scaling, move_button_scaling});
+            drop_button.translate({1.4f, -6.75f});
 
-        clockwise_rotation_button.scale({move_button_scaling, move_button_scaling});
-        clockwise_rotation_button.translate({3.25f, -5.85f});
+            clockwise_rotation_button.scale({move_button_scaling, move_button_scaling});
+            clockwise_rotation_button.translate({3.25f, -5.85f});
+        }
+
+        fsm.set_state<game_detail::states::playing>();
     }
+
+    game& self;
 
     feature_group_set& feature_groups;
 
     callback_set callbacks;
 
     animation::animator animator;
+    animation::animator pause_animator;
 
     std::unique_ptr<objects::sdf_image> pbackground_image;
-    objects::tile_grid tile_grid;
+    objects::label menu_label;
+    objects::sdf_image_button menu_button;
+    objects::label score_name_label;
     objects::score_display score_display;
-    objects::score_display hi_score_display;
+    objects::tile_grid tile_grid;
     objects::label stage_name_label;
-    objects::sdf_image_button exit_button;
     objects::sdf_image_button left_shift_button;
     objects::sdf_image_button right_shift_button;
     objects::sdf_image_button drop_button;
     objects::sdf_image_button clockwise_rotation_button;
 
-    std::shared_ptr<objects::game_over_overlay> pgame_over_overlay;
+    game_detail::fsm_context ctx
+    {
+        self,
+        feature_groups,
+        callbacks,
+        animator,
+        pause_animator,
+        tile_grid
+    };
+    game_detail::fsm fsm{ctx};
 };
 
 game::game
@@ -229,6 +279,7 @@ game::~game() = default;
 void game::advance(const libutil::time_point& now, const float /*elapsed_s*/)
 {
     pimpl_->animator.advance(now);
+    pimpl_->pause_animator.advance(now);
 }
 
 void game::handle_key_press(key_event& event)
@@ -236,17 +287,17 @@ void game::handle_key_press(key_event& event)
     switch(event.key())
     {
         case key_event::Key::Left:
-            pimpl_->tile_grid.handle_button_press(data_types::move_button::left_shift);
+            pimpl_->fsm.handle_event(game_detail::events::button_press{data_types::move_button::left_shift});
             break;
         case key_event::Key::Right:
-            pimpl_->tile_grid.handle_button_press(data_types::move_button::right_shift);
+            pimpl_->fsm.handle_event(game_detail::events::button_press{data_types::move_button::right_shift});
             break;
         case key_event::Key::Up:
         case key_event::Key::Space:
-            pimpl_->tile_grid.handle_button_press(data_types::move_button::clockwise_rotation);
+            pimpl_->fsm.handle_event(game_detail::events::button_press{data_types::move_button::clockwise_rotation});
             break;
         case key_event::Key::Down:
-            pimpl_->tile_grid.handle_button_press(data_types::move_button::drop);
+            pimpl_->fsm.handle_event(game_detail::events::button_press{data_types::move_button::drop});
             break;
         default:
             break;
@@ -258,17 +309,17 @@ void game::handle_key_release(key_event& event)
     switch(event.key())
     {
         case key_event::Key::Left:
-            pimpl_->tile_grid.handle_button_release(data_types::move_button::left_shift);
+            pimpl_->fsm.handle_event(game_detail::events::button_release{data_types::move_button::left_shift});
             break;
         case key_event::Key::Right:
-            pimpl_->tile_grid.handle_button_release(data_types::move_button::right_shift);
+            pimpl_->fsm.handle_event(game_detail::events::button_release{data_types::move_button::right_shift});
             break;
         case key_event::Key::Up:
         case key_event::Key::Space:
-            pimpl_->tile_grid.handle_button_release(data_types::move_button::clockwise_rotation);
+            pimpl_->fsm.handle_event(game_detail::events::button_release{data_types::move_button::clockwise_rotation});
             break;
         case key_event::Key::Down:
-            pimpl_->tile_grid.handle_button_release(data_types::move_button::drop);
+            pimpl_->fsm.handle_event(game_detail::events::button_release{data_types::move_button::drop});
             break;
         default:
             break;
@@ -293,11 +344,7 @@ void game::set_score(const int value)
 
 void game::set_hi_score(const int value)
 {
-    if(value != 0)
-    {
-        pimpl_->hi_score_display.set_score(value);
-        pimpl_->hi_score_display.set_visible(true);
-    }
+    pimpl_->ctx.hi_score = value;
 }
 
 void game::create_next_input(const data_types::input_tile_matrix& tiles)
@@ -344,73 +391,11 @@ void game::set_game_over_overlay_visible(const bool visible)
 {
     if(visible)
     {
-        if(pimpl_->pgame_over_overlay)
-        {
-            return;
-        }
-
-        pimpl_->pgame_over_overlay = std::make_shared<objects::game_over_overlay>
-        (
-            *this,
-            pimpl_->feature_groups.drawables,
-            pimpl_->feature_groups.clickables,
-            [this]{pimpl_->callbacks.handle_clear_request();}
-        );
-        pimpl_->pgame_over_overlay->translate({0.0f, 5.5f});
-        pimpl_->pgame_over_overlay->set_alpha(0);
-
-        auto anim = animation::animation{};
-        anim.add
-        (
-            animation::tracks::fixed_duration_translation
-            {
-                .pobj = pimpl_->pgame_over_overlay,
-                .finish_position = {0.0f, 4.5f},
-                .duration_s = 0.5f,
-                .interpolator = animation::get_cubic_out_position_interpolator()
-            }
-        );
-        anim.add
-        (
-            animation::tracks::alpha_transition
-            {
-                .pobj = pimpl_->pgame_over_overlay,
-                .finish_alpha = 1.0f,
-                .duration_s = 0.5f
-            }
-        );
-        pimpl_->animator.push(std::move(anim));
+        pimpl_->fsm.handle_event(game_detail::events::game_over{});
     }
     else
     {
-        if(!pimpl_->pgame_over_overlay)
-        {
-            return;
-        }
-
-        auto anim = animation::animation{};
-        anim.add
-        (
-            animation::tracks::fixed_duration_translation
-            {
-                .pobj = pimpl_->pgame_over_overlay,
-                .finish_position = {0.0f, 5.5f},
-                .duration_s = 0.5f,
-                .interpolator = animation::get_cubic_out_position_interpolator()
-            }
-        );
-        anim.add
-        (
-            animation::tracks::alpha_transition
-            {
-                .pobj = pimpl_->pgame_over_overlay,
-                .finish_alpha = 0.0f,
-                .duration_s = 0.5f
-            }
-        );
-        pimpl_->animator.push(std::move(anim));
-
-        pimpl_->pgame_over_overlay.reset();
+        pimpl_->fsm.handle_event(game_detail::events::new_game_request{});
     }
 }
 

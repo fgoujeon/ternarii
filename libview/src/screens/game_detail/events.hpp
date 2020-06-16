@@ -17,28 +17,32 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef LIBVIEW_OBJECTS_SCORE_DISPLAY_HPP
-#define LIBVIEW_OBJECTS_SCORE_DISPLAY_HPP
+#ifndef LIBVIEW_SCREENS_GAME_DETAIL_EVENTS_HPP
+#define LIBVIEW_SCREENS_GAME_DETAIL_EVENTS_HPP
 
-#include "../common.hpp"
-#include <Magnum/Text/Renderer.h>
+#include <libview/data_types.hpp>
 
-namespace libview::objects
+namespace libview::screens::game_detail
 {
 
-class score_display: public object2d, public features::drawable
+namespace events
 {
-    public:
-        explicit score_display(object2d& parent, features::drawable_group& drawables);
+    struct button_press
+    {
+        data_types::move_button button;
+    };
 
-        void set_score(const int value);
+    struct button_release
+    {
+        data_types::move_button button;
+    };
 
-    private:
-        void draw(const Magnum::Matrix3& transformation_matrix, camera& camera) override;
+    struct game_over{};
 
-    private:
-        Magnum::Text::Renderer2D renderer_;
-};
+    struct new_game_request{};
+
+    struct pause_request{};
+}
 
 } //namespace
 

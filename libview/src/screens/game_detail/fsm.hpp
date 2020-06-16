@@ -17,28 +17,30 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef LIBVIEW_OBJECTS_SCORE_DISPLAY_HPP
-#define LIBVIEW_OBJECTS_SCORE_DISPLAY_HPP
+#ifndef LIBVIEW_SCREENS_GAME_DETAIL_FSM_HPP
+#define LIBVIEW_SCREENS_GAME_DETAIL_FSM_HPP
 
-#include "../common.hpp"
-#include <Magnum/Text/Renderer.h>
+#include "../../animation.hpp"
+#include "../../objects/tile_grid.hpp"
+#include <libview/screens/game.hpp>
+#include <libutil/fsm.hpp>
 
-namespace libview::objects
+namespace libview::screens::game_detail
 {
 
-class score_display: public object2d, public features::drawable
+struct fsm_context
 {
-    public:
-        explicit score_display(object2d& parent, features::drawable_group& drawables);
+    game& screen;
+    feature_group_set& feature_groups;
+    game::callback_set& callbacks;
+    animation::animator& animator;
+    animation::animator& pause_animator;
+    objects::tile_grid& tile_grid;
 
-        void set_score(const int value);
-
-    private:
-        void draw(const Magnum::Matrix3& transformation_matrix, camera& camera) override;
-
-    private:
-        Magnum::Text::Renderer2D renderer_;
+    int hi_score = 0;
 };
+
+using fsm = libutil::fsm::fsm<fsm_context>;
 
 } //namespace
 
