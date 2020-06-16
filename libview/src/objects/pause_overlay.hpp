@@ -48,6 +48,10 @@ class pause_overlay: public object2d
             const callback_set& callbacks
         );
 
+        void set_time(int value);
+
+        void set_move_count(int value);
+
         void set_hi_score(int value);
 
     private:

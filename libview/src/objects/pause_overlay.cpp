@@ -31,7 +31,7 @@ namespace
 {
     const auto name_label_style = label::style
     {
-        .alignment = Magnum::Text::Alignment::MiddleRight,
+        .alignment = Magnum::Text::Alignment::LineRight,
         .color = colors::dark_gray,
         .font_size = 0.4f,
         .outline_range = {0.55f, 1.0f}
@@ -39,7 +39,7 @@ namespace
 
     const auto value_label_style = label::style
     {
-        .alignment = Magnum::Text::Alignment::MiddleLeft,
+        .alignment = Magnum::Text::Alignment::LineLeft,
         .color = colors::dark_gray,
         .font_size = 0.4f,
         .outline_range = {0.5f, 1.0f}
@@ -67,9 +67,9 @@ pause_overlay::pause_overlay
         }
     ),
     time_name_label_        (*this, drawables, name_label_style,  "TIME:"),
-    time_value_label_       (*this, drawables, value_label_style, "0:35:12"),
+    time_value_label_       (*this, drawables, value_label_style, "0"),
     move_count_name_label_  (*this, drawables, name_label_style,  "MOVES:"),
-    move_count_value_label_ (*this, drawables, value_label_style, "132"),
+    move_count_value_label_ (*this, drawables, value_label_style, "0"),
     hi_score_name_label_    (*this, drawables, name_label_style,  "HI-SCORE:"),
     hi_score_value_label_   (*this, drawables, value_label_style, "0"),
     resume_button_
@@ -102,7 +102,7 @@ pause_overlay::pause_overlay
         drawables,
         label::style
         {
-            .alignment = Magnum::Text::Alignment::MiddleCenter,
+            .alignment = Magnum::Text::Alignment::LineCenter,
             .color = colors::dark_gray,
             .font_size = 0.3f
         },
@@ -131,6 +131,16 @@ pause_overlay::pause_overlay
     exit_button_.setTranslation({0.0f, -1.5f});
 
     save_note_label_.setTranslation({0.0f, -2.5f});
+}
+
+void pause_overlay::set_time(int value)
+{
+    time_value_label_.set_text(libutil::to_string(value) + " s");
+}
+
+void pause_overlay::set_move_count(int value)
+{
+    move_count_value_label_.set_text(libutil::to_string(value));
 }
 
 void pause_overlay::set_hi_score(int value)
