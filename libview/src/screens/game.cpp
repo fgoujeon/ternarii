@@ -115,6 +115,21 @@ struct game::impl
                 stage
             )
         ),
+        menu_label
+        (
+            self,
+            feature_groups.drawables,
+            objects::label::style
+            {
+                .alignment = Magnum::Text::Alignment::MiddleCenter,
+                .color = colors::light_gray,
+                .font_size = 0.28f,
+                .outline_range = {0.53f, 1.0f}
+            },
+            "MENU"
+        ),
+        score_display(self, feature_groups.drawables),
+        hi_score_display(self, feature_groups.drawables),
         tile_grid
         (
             self,
@@ -124,8 +139,6 @@ struct game::impl
             callbacks.handle_drop_request,
             callbacks.handle_input_layout_change
         ),
-        score_display(self, feature_groups.drawables),
-        hi_score_display(self, feature_groups.drawables),
         stage_name_label
         (
             self,
@@ -140,12 +153,12 @@ struct game::impl
             },
             data_types::get_pretty_name(stage)
         ),
-        exit_button
+        menu_button
         (
             self,
             feature_groups.drawables,
             feature_groups.clickables,
-            libres::images::exit,
+            libres::images::menu,
             objects::sdf_image_button::callback_set
             {
                 .handle_mouse_release = [this]
@@ -172,8 +185,10 @@ struct game::impl
 
         stage_name_label.translate({0.0f, -4.68f});
 
-        exit_button.scale({0.5f, 0.5f});
-        exit_button.translate({-2.8f, 7.0f});
+        menu_label.setTranslation({-2.85f, 7.25f});
+
+        menu_button.scale({0.5f, 0.5f});
+        menu_button.translate({-2.85f, 6.75f});
 
         left_shift_button.scale({move_button_scaling, move_button_scaling});
         left_shift_button.translate({-3.25f, -5.85f});
@@ -202,11 +217,12 @@ struct game::impl
     animation::animator pause_animator;
 
     std::unique_ptr<objects::sdf_image> pbackground_image;
-    objects::tile_grid tile_grid;
+    objects::label menu_label;
     objects::score_display score_display;
     objects::score_display hi_score_display;
+    objects::tile_grid tile_grid;
     objects::label stage_name_label;
-    objects::sdf_image_button exit_button;
+    objects::sdf_image_button menu_button;
     objects::sdf_image_button left_shift_button;
     objects::sdf_image_button right_shift_button;
     objects::sdf_image_button drop_button;

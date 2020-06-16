@@ -109,7 +109,7 @@ pause_overlay::pause_overlay
     )
 {
     triangle_.setScaling({0.25f, 0.25f});
-    triangle_.setTranslation({-3.0f, 2.9f});
+    triangle_.setTranslation({-2.85f, 2.9f});
     triangle_.rotate(45.0_degf);
 
     background_rectangle_.setScaling({4.0f, 4.0f});
