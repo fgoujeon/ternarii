@@ -48,7 +48,7 @@ paused::paused(fsm& fsm):
 {
     fsm_.get_context().animator.pause();
 
-    ppause_overlay_->setTranslation({0.0f, 1.0f});
+    ppause_overlay_->setTranslation({0.0f, 4.0f});
     ppause_overlay_->set_alpha(0);
 
     auto anim = animation::animation{};
@@ -57,7 +57,7 @@ paused::paused(fsm& fsm):
         animation::tracks::fixed_duration_translation
         {
             .pobj = ppause_overlay_,
-            .finish_position = {0.0f, 0.0f},
+            .finish_position = {0.0f, 3.0f},
             .duration_s = 0.5f,
             .interpolator = animation::get_cubic_out_position_interpolator()
         }
@@ -82,7 +82,7 @@ paused::~paused()
         animation::tracks::fixed_duration_translation
         {
             .pobj = ppause_overlay_,
-            .finish_position = {0.0f, 1.0f},
+            .finish_position = {0.0f, 4.0f},
             .duration_s = 0.5f,
             .interpolator = animation::get_cubic_out_position_interpolator()
         }

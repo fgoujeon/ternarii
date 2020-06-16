@@ -20,6 +20,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #ifndef LIBVIEW_OBJECTS_PAUSE_OVERLAY_HPP
 #define LIBVIEW_OBJECTS_PAUSE_OVERLAY_HPP
 
+#include "rounded_rectangle.hpp"
 #include "square.hpp"
 #include "label_button.hpp"
 #include "label.hpp"
@@ -48,8 +49,18 @@ class pause_overlay: public object2d
         );
 
     private:
-        square background_rectangle_;
-        label pause_label_;
+        square triangle_;
+        rounded_rectangle background_rectangle_;
+
+        label time_name_label_;
+        label time_value_label_;
+
+        label move_count_name_label_;
+        label move_count_value_label_;
+
+        label hi_score_name_label_;
+        label hi_score_value_label_;
+
         label_button resume_button_;
         label_button exit_button_;
         label save_note_label_;

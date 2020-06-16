@@ -21,9 +21,29 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include "../text.hpp"
 #include "../styles.hpp"
 #include "../colors.hpp"
+#include <cmath>
 
 namespace libview::objects
 {
+
+namespace
+{
+    const auto name_label_style = label::style
+    {
+        .alignment = Magnum::Text::Alignment::MiddleRight,
+        .color = colors::dark_gray,
+        .font_size = 0.4f,
+        .outline_range = {0.55f, 1.0f}
+    };
+
+    const auto value_label_style = label::style
+    {
+        .alignment = Magnum::Text::Alignment::MiddleLeft,
+        .color = colors::dark_gray,
+        .font_size = 0.4f,
+        .outline_range = {0.5f, 1.0f}
+    };
+}
 
 pause_overlay::pause_overlay
 (
@@ -33,26 +53,24 @@ pause_overlay::pause_overlay
     const callback_set& callbacks
 ):
     object2d{&parent},
+    triangle_(*this, drawables, colors::light_gray),
     background_rectangle_
     (
         *this,
         drawables,
-        colors::light_gray
-    ),
-    pause_label_
-    (
-        *this,
-        drawables,
-        label::style
+        rounded_rectangle::style
         {
-            .alignment = Magnum::Text::Alignment::MiddleCenter,
-            .color = colors::dark_gray,
-            .font_size = 1.0f,
-            .outline_color = colors::dark_gray,
-            .outline_range = {0.48f, 0.5f}
-        },
-        "PAUSE"
+            .color = colors::light_gray,
+            .dimension = {1.0f, 0.75f},
+            .radius = 0.16
+        }
     ),
+    time_name_label_        (*this, drawables, name_label_style,  "TIME: "),
+    time_value_label_       (*this, drawables, value_label_style, "0:35:12"),
+    move_count_name_label_  (*this, drawables, name_label_style,  "MOVES: "),
+    move_count_value_label_ (*this, drawables, value_label_style, "132"),
+    hi_score_name_label_    (*this, drawables, name_label_style,  "HI-SCORE: "),
+    hi_score_value_label_   (*this, drawables, value_label_style, "245 231"),
     resume_button_
     (
         *this,
@@ -90,17 +108,28 @@ pause_overlay::pause_overlay
         "Note: Game is saved at each move."
     )
 {
-    background_rectangle_.scale({50.0f, 4.0f});
+    triangle_.setScaling({0.25f, 0.25f});
+    triangle_.setTranslation({-3.0f, 2.9f});
+    triangle_.rotate(45.0_degf);
 
-    pause_label_.translate({0.0f, 3.0f});
+    background_rectangle_.setScaling({4.0f, 4.0f});
 
-    resume_button_.scale({2.0f, 2.0f});
-    resume_button_.translate({0.0f, -1.0f});
+    time_name_label_.setTranslation({0.0f, 2.25f});
+    time_value_label_.setTranslation({0.0f, 2.25f});
 
-    exit_button_.scale({2.0f, 2.0f});
-    exit_button_.translate({0.0f, -2.0f});
+    move_count_name_label_.setTranslation({0.0f, 1.5f});
+    move_count_value_label_.setTranslation({0.0f, 1.5f});
 
-    save_note_label_.translate({0.0f, -3.0f});
+    hi_score_name_label_.setTranslation({0.0f, 0.75f});
+    hi_score_value_label_.setTranslation({0.0f, 0.75f});
+
+    resume_button_.setScaling({2.0f, 2.0f});
+    resume_button_.setTranslation({0.0f, -0.5f});
+
+    exit_button_.setScaling({2.0f, 2.0f});
+    exit_button_.setTranslation({0.0f, -1.5f});
+
+    save_note_label_.setTranslation({0.0f, -2.5f});
 }
 
 } //namespace
