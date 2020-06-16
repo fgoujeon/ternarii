@@ -128,8 +128,34 @@ struct game::impl
             },
             "MENU"
         ),
+        menu_button
+        (
+            self,
+            feature_groups.drawables,
+            feature_groups.clickables,
+            libres::images::menu,
+            objects::sdf_image_button::callback_set
+            {
+                .handle_mouse_release = [this]
+                {
+                    fsm.handle_event(game_detail::events::pause_request{});
+                }
+            }
+        ),
+        score_name_label
+        (
+            self,
+            feature_groups.drawables,
+            objects::label::style
+            {
+                .alignment = Magnum::Text::Alignment::MiddleRight,
+                .color = colors::light_gray,
+                .font_size = 0.28f,
+                .outline_range = {0.5f, 1.0f}
+            },
+            "SCORE"
+        ),
         score_display(self, feature_groups.drawables),
-        hi_score_display(self, feature_groups.drawables),
         tile_grid
         (
             self,
@@ -153,56 +179,41 @@ struct game::impl
             },
             data_types::get_pretty_name(stage)
         ),
-        menu_button
-        (
-            self,
-            feature_groups.drawables,
-            feature_groups.clickables,
-            libres::images::menu,
-            objects::sdf_image_button::callback_set
-            {
-                .handle_mouse_release = [this]
-                {
-                    fsm.handle_event(game_detail::events::pause_request{});
-                }
-            }
-        ),
         MOVE_BUTTON_INITIALIZER(libres::images::move_button,   left_shift),
         MOVE_BUTTON_INITIALIZER(libres::images::move_button,   right_shift),
         MOVE_BUTTON_INITIALIZER(libres::images::move_button,   drop),
         MOVE_BUTTON_INITIALIZER(libres::images::rotate_button, clockwise_rotation)
     {
-        const auto move_button_scaling = 0.95f;
+        menu_label.setTranslation({-2.85f, 7.25f});
+        menu_button.scale({0.5f, 0.5f});
+        menu_button.translate({-2.85f, 6.75f});
 
-        score_display.set_visible(true);
-        score_display.scale({0.7f, 0.7f});
-        score_display.translate({3.4f, 7.6f});
-
-        hi_score_display.scale({0.3f, 0.3f});
-        hi_score_display.translate({3.3f, 6.8f});
+        score_name_label.setTranslation({3.25f, 7.25f});
+        score_display.setScaling({0.75f, 0.75f});
+        score_display.setTranslation({3.4f, 7.2f});
 
         tile_grid.translate({0.0f, 1.0f});
 
         stage_name_label.translate({0.0f, -4.68f});
 
-        menu_label.setTranslation({-2.85f, 7.25f});
+        //Move buttons
+        {
+            const auto move_button_scaling = 0.95f;
 
-        menu_button.scale({0.5f, 0.5f});
-        menu_button.translate({-2.85f, 6.75f});
+            left_shift_button.scale({move_button_scaling, move_button_scaling});
+            left_shift_button.translate({-3.25f, -5.85f});
 
-        left_shift_button.scale({move_button_scaling, move_button_scaling});
-        left_shift_button.translate({-3.25f, -5.85f});
+            right_shift_button.rotate(180.0_degf);
+            right_shift_button.scale({move_button_scaling, move_button_scaling});
+            right_shift_button.translate({-1.4f, -6.75f});
 
-        right_shift_button.rotate(180.0_degf);
-        right_shift_button.scale({move_button_scaling, move_button_scaling});
-        right_shift_button.translate({-1.4f, -6.75f});
+            drop_button.rotate(90.0_degf);
+            drop_button.scale({move_button_scaling, move_button_scaling});
+            drop_button.translate({1.4f, -6.75f});
 
-        drop_button.rotate(90.0_degf);
-        drop_button.scale({move_button_scaling, move_button_scaling});
-        drop_button.translate({1.4f, -6.75f});
-
-        clockwise_rotation_button.scale({move_button_scaling, move_button_scaling});
-        clockwise_rotation_button.translate({3.25f, -5.85f});
+            clockwise_rotation_button.scale({move_button_scaling, move_button_scaling});
+            clockwise_rotation_button.translate({3.25f, -5.85f});
+        }
 
         fsm.set_state<game_detail::states::playing>();
     }
@@ -218,11 +229,11 @@ struct game::impl
 
     std::unique_ptr<objects::sdf_image> pbackground_image;
     objects::label menu_label;
+    objects::sdf_image_button menu_button;
+    objects::label score_name_label;
     objects::score_display score_display;
-    objects::score_display hi_score_display;
     objects::tile_grid tile_grid;
     objects::label stage_name_label;
-    objects::sdf_image_button menu_button;
     objects::sdf_image_button left_shift_button;
     objects::sdf_image_button right_shift_button;
     objects::sdf_image_button drop_button;
@@ -334,11 +345,6 @@ void game::set_score(const int value)
 void game::set_hi_score(const int value)
 {
     pimpl_->ctx.hi_score = value;
-    if(value != 0)
-    {
-        pimpl_->hi_score_display.set_score(value);
-        pimpl_->hi_score_display.set_visible(true);
-    }
 }
 
 void game::create_next_input(const data_types::input_tile_matrix& tiles)

@@ -42,26 +42,18 @@ void score_display::set_score(const int value)
     renderer_.render(libutil::to_string(value));
 }
 
-void score_display::set_visible(const bool value)
-{
-    visible_ = value;
-}
-
 void score_display::draw(const Magnum::Matrix3& transformation_matrix, camera& camera)
 {
-    if(visible_)
-    {
-        const auto absolute_alpha = get_absolute_alpha();
+    const auto absolute_alpha = get_absolute_alpha();
 
-        text::get_shader().bindVectorTexture(text::get_glyph_cache().texture());
-        text::get_shader().setTransformationProjectionMatrix(camera.projectionMatrix() * transformation_matrix);
-        text::get_shader().setColor(colors::white * absolute_alpha);
-        text::get_shader().setSmoothness(0.035f / transformation_matrix.uniformScaling());
-        text::get_shader().setOutlineColor(colors::dark_gray * absolute_alpha);
-        text::get_shader().setOutlineRange(0.47, 0.40);
+    text::get_shader().bindVectorTexture(text::get_glyph_cache().texture());
+    text::get_shader().setTransformationProjectionMatrix(camera.projectionMatrix() * transformation_matrix);
+    text::get_shader().setColor(colors::white * absolute_alpha);
+    text::get_shader().setSmoothness(0.035f / transformation_matrix.uniformScaling());
+    text::get_shader().setOutlineColor(colors::dark_gray * absolute_alpha);
+    text::get_shader().setOutlineRange(0.47, 0.40);
 
-        renderer_.mesh().draw(text::get_shader());
-    }
+    renderer_.mesh().draw(text::get_shader());
 }
 
 } //namespace
