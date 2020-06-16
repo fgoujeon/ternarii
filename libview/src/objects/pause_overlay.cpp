@@ -66,11 +66,11 @@ pause_overlay::pause_overlay
             .radius = 0.16
         }
     ),
-    time_name_label_        (*this, drawables, name_label_style,  "TIME: "),
+    time_name_label_        (*this, drawables, name_label_style,  "TIME:"),
     time_value_label_       (*this, drawables, value_label_style, "0:35:12"),
-    move_count_name_label_  (*this, drawables, name_label_style,  "MOVES: "),
+    move_count_name_label_  (*this, drawables, name_label_style,  "MOVES:"),
     move_count_value_label_ (*this, drawables, value_label_style, "132"),
-    hi_score_name_label_    (*this, drawables, name_label_style,  "HI-SCORE: "),
+    hi_score_name_label_    (*this, drawables, name_label_style,  "HI-SCORE:"),
     hi_score_value_label_   (*this, drawables, value_label_style, "0"),
     resume_button_
     (
@@ -116,13 +116,13 @@ pause_overlay::pause_overlay
     background_rectangle_.setScaling({4.0f, 4.0f});
 
     time_name_label_.setTranslation({0.0f, 2.25f});
-    time_value_label_.setTranslation({0.0f, 2.25f});
+    time_value_label_.setTranslation({0.1f, 2.25f});
 
     move_count_name_label_.setTranslation({0.0f, 1.5f});
-    move_count_value_label_.setTranslation({0.0f, 1.5f});
+    move_count_value_label_.setTranslation({0.1f, 1.5f});
 
     hi_score_name_label_.setTranslation({0.0f, 0.75f});
-    hi_score_value_label_.setTranslation({0.0f, 0.75f});
+    hi_score_value_label_.setTranslation({0.1f, 0.75f});
 
     resume_button_.setScaling({2.0f, 2.0f});
     resume_button_.setTranslation({0.0f, -0.5f});
