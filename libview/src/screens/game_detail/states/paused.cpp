@@ -50,6 +50,7 @@ paused::paused(fsm& fsm):
 
     ppause_overlay_->setTranslation({0.0f, 4.0f});
     ppause_overlay_->set_alpha(0);
+    ppause_overlay_->set_hi_score(fsm_.get_context().hi_score);
 
     auto anim = animation::animation{};
     anim.add

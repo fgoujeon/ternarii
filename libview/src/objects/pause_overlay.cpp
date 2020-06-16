@@ -21,6 +21,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include "../text.hpp"
 #include "../styles.hpp"
 #include "../colors.hpp"
+#include <libutil/to_string.hpp>
 #include <cmath>
 
 namespace libview::objects
@@ -70,7 +71,7 @@ pause_overlay::pause_overlay
     move_count_name_label_  (*this, drawables, name_label_style,  "MOVES: "),
     move_count_value_label_ (*this, drawables, value_label_style, "132"),
     hi_score_name_label_    (*this, drawables, name_label_style,  "HI-SCORE: "),
-    hi_score_value_label_   (*this, drawables, value_label_style, "245 231"),
+    hi_score_value_label_   (*this, drawables, value_label_style, "0"),
     resume_button_
     (
         *this,
@@ -130,6 +131,11 @@ pause_overlay::pause_overlay
     exit_button_.setTranslation({0.0f, -1.5f});
 
     save_note_label_.setTranslation({0.0f, -2.5f});
+}
+
+void pause_overlay::set_hi_score(int value)
+{
+    hi_score_value_label_.set_text(libutil::to_string(value));
 }
 
 } //namespace

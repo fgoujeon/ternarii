@@ -17,31 +17,33 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef LIBVIEW_SCREENS_GAME_DETAIL_FSM_HPP
-#define LIBVIEW_SCREENS_GAME_DETAIL_FSM_HPP
+#include <libutil/to_string.hpp>
 
-#include "../../animation.hpp"
-#include "../../objects/tile_grid.hpp"
-#include <libview/screens/game.hpp>
-#include <libutil/fsm.hpp>
-
-namespace libview::screens::game_detail
+namespace libutil
 {
 
-struct fsm_context
+std::string to_string(int from)
 {
-    game& screen;
-    feature_group_set& feature_groups;
-    game::callback_set& callbacks;
-    animation::animator& animator;
-    animation::animator& pause_animator;
-    objects::tile_grid& tile_grid;
+    std::string str;
+    auto digit_index = 0;
 
-    int hi_score = 0;
-};
+    do
+    {
+        const auto digit = from % 10;
+        const auto digit_char = static_cast<char>('0' + digit);
 
-using fsm = libutil::fsm::fsm<fsm_context>;
+        //add thousands separator
+        if(digit_index != 0 && digit_index % 3 == 0)
+            str = ' ' + str;
+
+        //add digit
+        str = std::string{digit_char} + str;
+
+        ++digit_index;
+        from /= 10;
+    } while(from != 0);
+
+    return str;
+}
 
 } //namespace
-
-#endif

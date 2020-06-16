@@ -124,7 +124,7 @@ struct game::impl
                 .alignment = Magnum::Text::Alignment::MiddleCenter,
                 .color = colors::light_gray,
                 .font_size = 0.28f,
-                .outline_range = {0.53f, 1.0f}
+                .outline_range = {0.5f, 1.0f}
             },
             "MENU"
         ),
@@ -333,6 +333,7 @@ void game::set_score(const int value)
 
 void game::set_hi_score(const int value)
 {
+    pimpl_->ctx.hi_score = value;
     if(value != 0)
     {
         pimpl_->hi_score_display.set_score(value);

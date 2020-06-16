@@ -48,6 +48,8 @@ class pause_overlay: public object2d
             const callback_set& callbacks
         );
 
+        void set_hi_score(int value);
+
     private:
         square triangle_;
         rounded_rectangle background_rectangle_;
