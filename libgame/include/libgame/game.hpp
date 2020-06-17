@@ -40,6 +40,8 @@ struct game
 
         int get_hi_score() const;
 
+        int get_move_count() const;
+
         const data_types::input_tile_matrix& get_next_input_tiles() const;
 
         const data_types::input_tile_matrix& get_input_tiles() const;

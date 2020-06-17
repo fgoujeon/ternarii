@@ -86,6 +86,11 @@ int game::get_hi_score() const
     return pimpl_->state.hi_score;
 }
 
+int game::get_move_count() const
+{
+    return pimpl_->state.move_count;
+}
+
 const data_types::input_tile_matrix& game::get_next_input_tiles() const
 {
     return pimpl_->state.next_input_tiles;

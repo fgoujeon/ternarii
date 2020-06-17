@@ -179,11 +179,17 @@ namespace libgame::data_types
         from.at("nextInputTiles"). get_to(to.next_input_tiles.data);
         from.at("inputTiles").     get_to(to.input_tiles.data);
         from.at("boardTiles").     get_to(to.board_tiles.data);
+
+        if(from.contains("moveCount"))
+        {
+            from.at("moveCount").get_to(to.move_count);
+        }
     }
 
     void to_json(nlohmann::json& to, const stage_state& from)
     {
         to["hiScore"]        = from.hi_score;
+        to["moveCount"]      = from.move_count;
         to["nextInputTiles"] = from.next_input_tiles.data;
         to["inputTiles"]     = from.input_tiles.data;
         to["boardTiles"]     = from.board_tiles.data;
@@ -331,6 +337,7 @@ namespace libdb
                         ],
                         "hiScore":179575,
                         "inputTiles":[{"type":0,"value":0},{"type":0,"value":1},null,null],
+                        "moveCount": 3,
                         "nextInputTiles":[{"type":0,"value":2},{"type":0,"value":1},null,null]
                     }
                 ],
@@ -348,6 +355,7 @@ namespace libdb
                         ],
                         "hiScore":179575,
                         "inputTiles":[{"type":0,"value":0},{"type":0,"value":1},null,null],
+                        "moveCount": 3,
                         "nextInputTiles":[{"type":0,"value":2},{"type":0,"value":1},null,null]
                     }
                 ]

@@ -89,16 +89,17 @@ playing::playing(fsm& f, const screen_transition trans, const libgame::data_type
     //Find stage state
     const auto opt_stage_state = find_stage_state(opt_game_state, stage);
 
-    //create game
+    //Create game
     if(opt_stage_state)
     {
         pgame_ = std::make_unique<libgame::game>(stage, *opt_stage_state);
 
         const auto& board_tiles = pgame_->get_board_tiles();
 
-        //initialize view
+        //Initialize view
         pscreen_->set_score(get_score(board_tiles));
         pscreen_->set_hi_score(pgame_->get_hi_score());
+        pscreen_->set_move_count(pgame_->get_move_count());
         pscreen_->create_next_input(pgame_->get_input_tiles());
         pscreen_->insert_next_input();
         pscreen_->create_next_input(pgame_->get_next_input_tiles());
