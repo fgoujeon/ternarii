@@ -135,11 +135,11 @@ pause_overlay::pause_overlay
 
 void pause_overlay::set_start_time(const std::chrono::system_clock::time_point& value)
 {
-    const auto duration_s = std::chrono::duration<double>
-    {
+    const auto duration = std::chrono::duration_cast<std::chrono::seconds>
+    (
         std::chrono::system_clock::now() - value
-    };
-    time_value_label_.set_text(libutil::to_string(duration_s.count()) + " s");
+    );
+    time_value_label_.set_text(libutil::to_string(duration));
 }
 
 void pause_overlay::set_move_count(int value)

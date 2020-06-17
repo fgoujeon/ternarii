@@ -20,12 +20,15 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #ifndef LIBUTIL_TO_STRING_HPP
 #define LIBUTIL_TO_STRING_HPP
 
+#include <chrono>
 #include <string>
 
 namespace libutil
 {
 
 std::string to_string(int from);
+
+std::string to_string(const std::chrono::seconds& from);
 
 } //namespace
 

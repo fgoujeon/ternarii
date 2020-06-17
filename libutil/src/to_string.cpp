@@ -46,4 +46,47 @@ std::string to_string(int from)
     return str;
 }
 
+std::string to_string(const std::chrono::seconds& from)
+{
+    constexpr auto second = 1;
+    constexpr auto minute = 60 * second;
+    constexpr auto hour = 60 * minute;
+
+    //Break down into hours, minutes and seconds
+    auto n = from.count();
+    const auto hours = n / hour;
+    n -= hours * hour;
+    const auto minutes = n / minute;
+    n -= minutes * minute;
+    const auto seconds = n;
+
+    //Format string
+    auto str = std::string{};
+    {
+        if(hours != 0)
+        {
+            str += std::to_string(hours) + ":";
+        }
+
+        //Minutes
+        if(minutes != 0)
+        {
+            if(minutes < 10 && !str.empty())
+            {
+                str += "0";
+            }
+            str += std::to_string(minutes) + "'";
+        }
+
+        //Seconds
+        if(seconds < 10 && !str.empty())
+        {
+            str += "0";
+        }
+        str += std::to_string(n) + "\"";
+    }
+
+    return str;
+}
+
 } //namespace

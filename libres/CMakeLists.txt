@@ -35,7 +35,7 @@ function(add_ttf_to_sdf_command FILENAME)
         COMMAND ${MAGNUM_FONTCONVERTER_PROGRAM} ARGS
             --font FreeTypeFont
             --converter MagnumFontConverter
-            --characters "'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789γΩíš.-+(),\;:/_?! '"
+            --characters " !\\\"\\\'\\\(\\\)+,-./0123456789:\;\?ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyzíšΩγ"
             --font-size 128
             --output-size "512 512"
             --radius 32
