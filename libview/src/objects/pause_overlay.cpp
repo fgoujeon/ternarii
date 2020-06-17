@@ -50,10 +50,12 @@ pause_overlay::pause_overlay
 (
     object2d& parent,
     features::drawable_group& drawables,
+    features::animable_group& animables,
     features::clickable_group& clickables,
     const callback_set& callbacks
 ):
     object2d{&parent},
+    features::animable{*this, &animables},
     triangle_(*this, drawables, colors::light_gray),
     background_rectangle_
     (
@@ -133,9 +135,10 @@ pause_overlay::pause_overlay
     save_note_label_.setTranslation({0.0f, -2.5f});
 }
 
-void pause_overlay::set_time(int value)
+void pause_overlay::set_start_time(const std::chrono::system_clock::time_point& value)
 {
-    time_value_label_.set_text(libutil::to_string(value) + " s");
+    start_time_ = value;
+    update_game_time();
 }
 
 void pause_overlay::set_move_count(int value)
@@ -146,6 +149,20 @@ void pause_overlay::set_move_count(int value)
 void pause_overlay::set_hi_score(int value)
 {
     hi_score_value_label_.set_text(libutil::to_string(value));
+}
+
+void pause_overlay::advance(const std::chrono::steady_clock::time_point& /*now*/, float /*elapsed_s*/)
+{
+    update_game_time();
+}
+
+void pause_overlay::update_game_time()
+{
+    const auto duration = std::chrono::duration_cast<std::chrono::seconds>
+    (
+        std::chrono::system_clock::now() - start_time_
+    );
+    time_value_label_.set_text(libutil::to_string(duration));
 }
 
 } //namespace

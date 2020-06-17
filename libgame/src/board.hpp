@@ -53,8 +53,6 @@ class board
             libutil::matrix_coordinate_list& coords
         ) const;
 
-        void clear();
-
         void drop_input_tiles
         (
             const data_types::input_tile_matrix& input_tiles,

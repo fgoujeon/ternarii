@@ -31,6 +31,7 @@ paused::paused(fsm& fsm):
         (
             fsm_.get_context().screen,
             fsm_.get_context().feature_groups.drawables,
+            fsm_.get_context().feature_groups.animables,
             fsm_.get_context().feature_groups.clickables,
             objects::pause_overlay::callback_set
             {
@@ -50,6 +51,7 @@ paused::paused(fsm& fsm):
 
     ppause_overlay_->setTranslation({0.0f, 4.0f});
     ppause_overlay_->set_alpha(0);
+    ppause_overlay_->set_start_time(fsm_.get_context().start_time);
     ppause_overlay_->set_move_count(fsm_.get_context().move_count);
     ppause_overlay_->set_hi_score(fsm_.get_context().hi_score);
 

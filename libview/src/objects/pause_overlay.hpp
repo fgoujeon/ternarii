@@ -26,11 +26,12 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include "label.hpp"
 #include "../common.hpp"
 #include <libutil/void_function.hpp>
+#include <chrono>
 
 namespace libview::objects
 {
 
-class pause_overlay: public object2d
+class pause_overlay: public object2d, public features::animable
 {
     public:
         struct callback_set
@@ -44,15 +45,21 @@ class pause_overlay: public object2d
         (
             object2d& parent,
             features::drawable_group& drawables,
+            features::animable_group& animables,
             features::clickable_group& clickables,
             const callback_set& callbacks
         );
 
-        void set_time(int value);
+        void set_start_time(const std::chrono::system_clock::time_point& value);
 
         void set_move_count(int value);
 
         void set_hi_score(int value);
+
+        void advance(const std::chrono::steady_clock::time_point& now, float elapsed_s);
+
+    private:
+        void update_game_time();
 
     private:
         square triangle_;
@@ -70,6 +77,8 @@ class pause_overlay: public object2d
         label_button resume_button_;
         label_button exit_button_;
         label save_note_label_;
+
+        std::chrono::system_clock::time_point start_time_;
 };
 
 } //namespace

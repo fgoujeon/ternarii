@@ -184,6 +184,17 @@ namespace libgame::data_types
         {
             from.at("moveCount").get_to(to.move_count);
         }
+
+        if(from.contains("startTime"))
+        {
+            std::time_t time = 0;
+            from.at("startTime").get_to(time);
+            to.start_time = std::chrono::system_clock::from_time_t(time);
+        }
+        else
+        {
+            to.start_time = std::chrono::system_clock::now();
+        }
     }
 
     void to_json(nlohmann::json& to, const stage_state& from)
@@ -193,6 +204,7 @@ namespace libgame::data_types
         to["nextInputTiles"] = from.next_input_tiles.data;
         to["inputTiles"]     = from.input_tiles.data;
         to["boardTiles"]     = from.board_tiles.data;
+        to["startTime"]      = std::chrono::system_clock::to_time_t(from.start_time);
     }
 }
 

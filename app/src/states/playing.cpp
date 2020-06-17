@@ -99,6 +99,7 @@ playing::playing(fsm& f, const screen_transition trans, const libgame::data_type
 
         //Initialize view
         pscreen_->set_score(get_score(board_tiles));
+        pscreen_->set_start_time(stage_state.start_time);
         pscreen_->set_hi_score(stage_state.hi_score);
         pscreen_->set_move_count(stage_state.move_count);
         pscreen_->create_next_input(stage_state.input_tiles);

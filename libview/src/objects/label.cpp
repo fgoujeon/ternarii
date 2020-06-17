@@ -46,6 +46,12 @@ void label::set_text(const std::string_view& value)
         return;
     }
 
+    if(text_ == value)
+    {
+        return;
+    }
+    text_ = value;
+
     renderer_.reserve(value.size(), Magnum::GL::BufferUsage::DynamicDraw, Magnum::GL::BufferUsage::StaticDraw);
     renderer_.render(value.data());
     visible_ = true;
