@@ -86,6 +86,11 @@ int game::get_hi_score() const
     return pimpl_->state.hi_score;
 }
 
+int game::get_move_count() const
+{
+    return pimpl_->state.move_count;
+}
+
 const data_types::input_tile_matrix& game::get_next_input_tiles() const
 {
     return pimpl_->state.next_input_tiles;
@@ -144,6 +149,10 @@ void game::drop_input_tiles
 
     //drop the input
     pimpl_->board_.drop_input_tiles(pimpl_->state.input_tiles, layout, events);
+
+    auto& move_count = pimpl_->state.move_count;
+    ++move_count;
+    events.push_back(events::move_count_change{move_count});
 
     if(is_over())
     {

@@ -37,6 +37,7 @@ struct fsm_context
     animation::animator& pause_animator;
     objects::tile_grid& tile_grid;
 
+    int move_count = 0;
     int hi_score = 0;
 };
 

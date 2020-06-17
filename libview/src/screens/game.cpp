@@ -347,6 +347,11 @@ void game::set_hi_score(const int value)
     pimpl_->ctx.hi_score = value;
 }
 
+void game::set_move_count(const int value)
+{
+    pimpl_->ctx.move_count = value;
+}
+
 void game::create_next_input(const data_types::input_tile_matrix& tiles)
 {
     pimpl_->tile_grid.create_next_input(tiles);

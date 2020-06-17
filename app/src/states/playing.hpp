@@ -43,6 +43,11 @@ class playing final: public libutil::fsm::state
             pscreen_->clear();
         }
 
+        void handle_game_event(const libgame::events::move_count_change& event)
+        {
+            pscreen_->set_move_count(event.value);
+        }
+
         void handle_game_event(const libgame::events::score_change& event)
         {
             pscreen_->set_score(event.score);

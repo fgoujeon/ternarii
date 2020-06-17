@@ -107,6 +107,15 @@ namespace events
 
 
 
+    struct move_count_change
+    {
+        int value = 0;
+    };
+
+    std::ostream& operator<<(std::ostream& l, const move_count_change& r);
+
+
+
     struct end_of_game{};
 
     std::ostream& operator<<(std::ostream& l, const end_of_game&);
@@ -123,6 +132,7 @@ using event = std::variant
     events::tile_merge,
     events::score_change,
     events::hi_score_change,
+    events::move_count_change,
     events::end_of_game
 >;
 
