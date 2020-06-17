@@ -17,23 +17,23 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#include "paused.hpp"
+#include "showing_menu_overlay.hpp"
 #include "playing.hpp"
 
 namespace libview::screens::game_detail::states
 {
 
-paused::paused(fsm& fsm):
+showing_menu_overlay::showing_menu_overlay(fsm& fsm):
     fsm_(fsm),
-    ppause_overlay_
+    pmenu_overlay_
     (
-        std::make_shared<objects::pause_overlay>
+        std::make_shared<objects::game_menu_overlay>
         (
             fsm_.get_context().screen,
             fsm_.get_context().feature_groups.drawables,
             fsm_.get_context().feature_groups.animables,
             fsm_.get_context().feature_groups.clickables,
-            objects::pause_overlay::callback_set
+            objects::game_menu_overlay::callback_set
             {
                 .handle_exit_request = [this]
                 {
@@ -49,18 +49,18 @@ paused::paused(fsm& fsm):
 {
     fsm_.get_context().animator.pause();
 
-    ppause_overlay_->setTranslation({0.0f, 4.0f});
-    ppause_overlay_->set_alpha(0);
-    ppause_overlay_->set_start_time(fsm_.get_context().start_time);
-    ppause_overlay_->set_move_count(fsm_.get_context().move_count);
-    ppause_overlay_->set_hi_score(fsm_.get_context().hi_score);
+    pmenu_overlay_->setTranslation({0.0f, 4.0f});
+    pmenu_overlay_->set_alpha(0);
+    pmenu_overlay_->set_start_time(fsm_.get_context().start_time);
+    pmenu_overlay_->set_move_count(fsm_.get_context().move_count);
+    pmenu_overlay_->set_hi_score(fsm_.get_context().hi_score);
 
     auto anim = animation::animation{};
     anim.add
     (
         animation::tracks::fixed_duration_translation
         {
-            .pobj = ppause_overlay_,
+            .pobj = pmenu_overlay_,
             .finish_position = {0.0f, 3.0f},
             .duration_s = 0.5f,
             .interpolator = animation::get_cubic_out_position_interpolator()
@@ -70,7 +70,7 @@ paused::paused(fsm& fsm):
     (
         animation::tracks::alpha_transition
         {
-            .pobj = ppause_overlay_,
+            .pobj = pmenu_overlay_,
             .finish_alpha = 1.0f,
             .duration_s = 0.5f
         }
@@ -78,14 +78,14 @@ paused::paused(fsm& fsm):
     fsm_.get_context().pause_animator.push(std::move(anim));
 }
 
-paused::~paused()
+showing_menu_overlay::~showing_menu_overlay()
 {
     auto anim = animation::animation{};
     anim.add
     (
         animation::tracks::fixed_duration_translation
         {
-            .pobj = ppause_overlay_,
+            .pobj = pmenu_overlay_,
             .finish_position = {0.0f, 4.0f},
             .duration_s = 0.5f,
             .interpolator = animation::get_cubic_out_position_interpolator()
@@ -95,7 +95,7 @@ paused::~paused()
     (
         animation::tracks::alpha_transition
         {
-            .pobj = ppause_overlay_,
+            .pobj = pmenu_overlay_,
             .finish_alpha = 0.0f,
             .duration_s = 0.5f
         }
@@ -105,7 +105,7 @@ paused::~paused()
     fsm_.get_context().animator.resume();
 }
 
-void paused::handle_event(const std::any& event)
+void showing_menu_overlay::handle_event(const std::any& event)
 {
     if(std::any_cast<events::pause_request>(&event))
     {

@@ -19,7 +19,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "playing.hpp"
 #include "showing_game_over_overlay.hpp"
-#include "paused.hpp"
+#include "showing_menu_overlay.hpp"
 
 namespace libview::screens::game_detail::states
 {
@@ -40,7 +40,7 @@ void playing::handle_event(const std::any& event)
     }
     else if(std::any_cast<events::pause_request>(&event))
     {
-        fsm_.set_state<paused>();
+        fsm_.set_state<showing_menu_overlay>();
     }
 }
 

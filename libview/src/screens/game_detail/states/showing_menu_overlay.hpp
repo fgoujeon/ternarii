@@ -17,30 +17,30 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef LIBVIEW_SCREENS_GAME_DETAIL_STATES_PAUSED_HPP
-#define LIBVIEW_SCREENS_GAME_DETAIL_STATES_PAUSED_HPP
+#ifndef LIBVIEW_SCREENS_GAME_DETAIL_STATES_SHOWING_MENU_OVERLAY_HPP
+#define LIBVIEW_SCREENS_GAME_DETAIL_STATES_SHOWING_MENU_OVERLAY_HPP
 
 #include "../events.hpp"
 #include "../fsm.hpp"
-#include "../../../objects/pause_overlay.hpp"
+#include "../../../objects/game_menu_overlay.hpp"
 #include <libview/data_types.hpp>
 #include <libutil/fsm.hpp>
 
 namespace libview::screens::game_detail::states
 {
 
-class paused: public libutil::fsm::state
+class showing_menu_overlay: public libutil::fsm::state
 {
     public:
-        paused(fsm& fsm);
+        showing_menu_overlay(fsm& fsm);
 
-        ~paused();
+        ~showing_menu_overlay();
 
         void handle_event(const std::any& event);
 
     private:
         fsm& fsm_;
-        std::shared_ptr<objects::pause_overlay> ppause_overlay_;
+        std::shared_ptr<objects::game_menu_overlay> pmenu_overlay_;
 };
 
 } //namespace

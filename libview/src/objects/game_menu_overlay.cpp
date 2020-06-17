@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#include "pause_overlay.hpp"
+#include "game_menu_overlay.hpp"
 #include "../text.hpp"
 #include "../styles.hpp"
 #include "../colors.hpp"
@@ -46,7 +46,7 @@ namespace
     };
 }
 
-pause_overlay::pause_overlay
+game_menu_overlay::game_menu_overlay
 (
     object2d& parent,
     features::drawable_group& drawables,
@@ -135,28 +135,28 @@ pause_overlay::pause_overlay
     save_note_label_.setTranslation({0.0f, -2.5f});
 }
 
-void pause_overlay::set_start_time(const std::chrono::system_clock::time_point& value)
+void game_menu_overlay::set_start_time(const std::chrono::system_clock::time_point& value)
 {
     start_time_ = value;
     update_game_time();
 }
 
-void pause_overlay::set_move_count(int value)
+void game_menu_overlay::set_move_count(int value)
 {
     move_count_value_label_.set_text(libutil::to_string(value));
 }
 
-void pause_overlay::set_hi_score(int value)
+void game_menu_overlay::set_hi_score(int value)
 {
     hi_score_value_label_.set_text(libutil::to_string(value));
 }
 
-void pause_overlay::advance(const std::chrono::steady_clock::time_point& /*now*/, float /*elapsed_s*/)
+void game_menu_overlay::advance(const std::chrono::steady_clock::time_point& /*now*/, float /*elapsed_s*/)
 {
     update_game_time();
 }
 
-void pause_overlay::update_game_time()
+void game_menu_overlay::update_game_time()
 {
     const auto duration = std::chrono::duration_cast<std::chrono::seconds>
     (

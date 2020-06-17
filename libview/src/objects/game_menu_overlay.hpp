@@ -17,8 +17,8 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef LIBVIEW_OBJECTS_PAUSE_OVERLAY_HPP
-#define LIBVIEW_OBJECTS_PAUSE_OVERLAY_HPP
+#ifndef LIBVIEW_OBJECTS_GAME_MENU_OVERLAY_HPP
+#define LIBVIEW_OBJECTS_GAME_MENU_OVERLAY_HPP
 
 #include "rounded_rectangle.hpp"
 #include "square.hpp"
@@ -31,7 +31,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libview::objects
 {
 
-class pause_overlay: public object2d, public features::animable
+class game_menu_overlay: public object2d, public features::animable
 {
     public:
         struct callback_set
@@ -41,7 +41,7 @@ class pause_overlay: public object2d, public features::animable
         };
 
     public:
-        pause_overlay
+        game_menu_overlay
         (
             object2d& parent,
             features::drawable_group& drawables,
