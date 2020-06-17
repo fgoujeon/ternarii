@@ -21,7 +21,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #define LIBVIEW_SCREENS_ABOUT_HPP
 
 #include "../common.hpp"
-#include <libutil/time.hpp>
+#include <chrono>
 #include <Magnum/Math/Color.h>
 #include <Magnum/Platform/Sdl2Application.h>
 #include <libutil/void_function.hpp>

@@ -23,7 +23,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include "../features/key_event_handler.hpp"
 #include "../common.hpp"
 #include <libview/data_types.hpp>
-#include <libutil/time.hpp>
+#include <chrono>
 #include <Magnum/Math/Color.h>
 #include <Magnum/Platform/Sdl2Application.h>
 #include <libutil/void_function.hpp>
@@ -56,7 +56,7 @@ class game: public object2d, public features::animable, public features::key_eve
 
     //animable overrides
     private:
-        void advance(const libutil::time::point& now, float elapsed_s) override;
+        void advance(const std::chrono::steady_clock::time_point& now, float elapsed_s) override;
 
     //key_event_handler overrides
     private:

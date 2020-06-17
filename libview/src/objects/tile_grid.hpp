@@ -30,7 +30,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include <libview/data_types.hpp>
 #include <libcommon/constants.hpp>
 #include <libutil/matrix.hpp>
-#include <libutil/time.hpp>
+#include <chrono>
 #include <Magnum/Animation/Player.h>
 #include <Magnum/GL/Mesh.h>
 #include <Magnum/Shaders/VertexColor.h>
@@ -93,7 +93,7 @@ class tile_grid: public object2d, public features::animable
 
         void set_board_tiles(const data_types::board_tile_matrix& tiles);
 
-        void advance(const libutil::time::point& now, float elapsed_s);
+        void advance(const std::chrono::steady_clock::time_point& now, float elapsed_s);
 
     //Button event handling
     public:

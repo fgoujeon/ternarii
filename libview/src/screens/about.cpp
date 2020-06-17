@@ -23,7 +23,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include "../styles.hpp"
 #include "../colors.hpp"
 #include "../common.hpp"
-#include <libutil/time.hpp>
+#include <chrono>
 #include <Magnum/Math/Color.h>
 #include <Magnum/Platform/Sdl2Application.h>
 

@@ -21,7 +21,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #define LIBVIEW_FEATURES_ANIMABLE_HPP
 
 #include <Magnum/SceneGraph/AbstractGroupedFeature.h>
-#include <libutil/time.hpp>
+#include <chrono>
 
 namespace libview::features
 {
@@ -31,7 +31,7 @@ class animable: public Magnum::SceneGraph::AbstractGroupedFeature2D<animable>
     public:
         using Magnum::SceneGraph::AbstractGroupedFeature2D<animable>::AbstractGroupedFeature2D;
 
-        virtual void advance(const libutil::time::point& now, float elapsed_s) = 0;
+        virtual void advance(const std::chrono::steady_clock::time_point& now, float elapsed_s) = 0;
 };
 
 using animable_group = Magnum::SceneGraph::FeatureGroup2D<animable>;

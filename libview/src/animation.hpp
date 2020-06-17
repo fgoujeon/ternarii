@@ -22,7 +22,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "common.hpp"
 #include <libutil/unique_function.hpp>
-#include <libutil/time.hpp>
+#include <chrono>
 #include <Magnum/Animation/Easing.h>
 #include <Magnum/Animation/Player.h>
 #include <Magnum/Animation/Track.h>
@@ -362,7 +362,7 @@ class animation
             player_suppliers_.push_back(make_player_supplier(std::forward<Track>(track)));
         }
 
-        void advance(const libutil::time::point& now)
+        void advance(const std::chrono::steady_clock::time_point& now)
         {
             if(!started_)
             {
@@ -382,12 +382,12 @@ class animation
 
         void pause()
         {
-            player_.pause(libutil::time::now().time_since_epoch());
+            player_.pause(std::chrono::steady_clock::now().time_since_epoch());
         }
 
         void resume()
         {
-            player_.resume(libutil::time::now().time_since_epoch());
+            player_.resume(std::chrono::steady_clock::now().time_since_epoch());
         }
 
         bool is_done() const
@@ -416,7 +416,7 @@ class animator
             return !animations_.empty();
         }
 
-        void advance(const libutil::time::point& now)
+        void advance(const std::chrono::steady_clock::time_point& now)
         {
             auto keep_advancing = true;
 

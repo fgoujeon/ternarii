@@ -27,7 +27,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include <libview/data_types.hpp>
 #include <libcommon/constants.hpp>
 #include <libutil/matrix.hpp>
-#include <libutil/time.hpp>
+#include <chrono>
 #include <libutil/void_function.hpp>
 #include <memory>
 
@@ -75,7 +75,7 @@ class input: public object2d, public features::animable
 
         void resume();
 
-        void advance(const libutil::time::point& now, float elapsed_s) override;
+        void advance(const std::chrono::steady_clock::time_point& now, float elapsed_s) override;
 
     //Keyboard event handling
     public:

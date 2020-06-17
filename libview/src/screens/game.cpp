@@ -34,7 +34,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include "../common.hpp"
 #include <libres.hpp>
 #include <libutil/fsm.hpp>
-#include <libutil/time.hpp>
+#include <chrono>
 #include <Magnum/Math/Color.h>
 #include <Magnum/Platform/Sdl2Application.h>
 
@@ -276,7 +276,7 @@ game::game
 
 game::~game() = default;
 
-void game::advance(const libutil::time::point& now, const float /*elapsed_s*/)
+void game::advance(const std::chrono::steady_clock::time_point& now, const float /*elapsed_s*/)
 {
     pimpl_->animator.advance(now);
     pimpl_->pause_animator.advance(now);

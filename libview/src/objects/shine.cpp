@@ -72,7 +72,7 @@ void shine::draw(const Magnum::Matrix3& transformation_matrix, camera& camera)
     get_mesh().draw(get_shader());
 }
 
-void shine::advance(const libutil::time::point& /*now*/, const float elapsed_s)
+void shine::advance(const std::chrono::steady_clock::time_point& /*now*/, const float elapsed_s)
 {
     angle_rad_ = std::fmodf(angle_rad_ + elapsed_s * style_.speed_radps, 2 * M_PI);
 }

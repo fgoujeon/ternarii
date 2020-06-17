@@ -20,7 +20,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #ifndef LIBVIEW_SHADERS_SHINE_HPP
 #define LIBVIEW_SHADERS_SHINE_HPP
 
-#include <libutil/time.hpp>
+#include <chrono>
 #include <Magnum/GL/AbstractShaderProgram.h>
 #include <Magnum/Math/Color.h>
 #include <Magnum/Math/Matrix3.h>

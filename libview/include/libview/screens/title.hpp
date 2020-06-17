@@ -22,7 +22,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "../common.hpp"
 #include <libview/data_types.hpp>
-#include <libutil/time.hpp>
+#include <chrono>
 #include <libutil/void_function.hpp>
 #include <Magnum/Math/Color.h>
 #include <Magnum/Platform/Sdl2Application.h>

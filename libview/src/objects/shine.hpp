@@ -21,7 +21,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #define LIBVIEW_OBJECTS_SHINE_HPP
 
 #include "../common.hpp"
-#include <libutil/time.hpp>
+#include <chrono>
 #include <Magnum/Math/Color.h>
 #include <Magnum/Magnum.h>
 
@@ -51,7 +51,7 @@ class shine: public object2d, public features::drawable, public features::animab
     private:
         void draw(const Magnum::Matrix3& transformation_matrix, camera& camera) override;
 
-        void advance(const libutil::time::point& now, float elapsed_s) override;
+        void advance(const std::chrono::steady_clock::time_point& now, float elapsed_s) override;
 
     private:
         style style_;
