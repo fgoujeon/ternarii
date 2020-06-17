@@ -26,6 +26,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include "label.hpp"
 #include "../common.hpp"
 #include <libutil/void_function.hpp>
+#include <chrono>
 
 namespace libview::objects
 {
@@ -48,7 +49,7 @@ class pause_overlay: public object2d
             const callback_set& callbacks
         );
 
-        void set_time(int value);
+        void set_start_time(const std::chrono::system_clock::time_point& value);
 
         void set_move_count(int value);
 

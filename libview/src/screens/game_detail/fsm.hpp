@@ -24,6 +24,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include "../../objects/tile_grid.hpp"
 #include <libview/screens/game.hpp>
 #include <libutil/fsm.hpp>
+#include <chrono>
 
 namespace libview::screens::game_detail
 {
@@ -37,6 +38,7 @@ struct fsm_context
     animation::animator& pause_animator;
     objects::tile_grid& tile_grid;
 
+    std::chrono::system_clock::time_point start_time = std::chrono::system_clock::now();
     int move_count = 0;
     int hi_score = 0;
 };

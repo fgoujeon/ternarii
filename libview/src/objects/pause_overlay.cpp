@@ -133,9 +133,13 @@ pause_overlay::pause_overlay
     save_note_label_.setTranslation({0.0f, -2.5f});
 }
 
-void pause_overlay::set_time(int value)
+void pause_overlay::set_start_time(const std::chrono::system_clock::time_point& value)
 {
-    time_value_label_.set_text(libutil::to_string(value) + " s");
+    const auto duration_s = std::chrono::duration<double>
+    {
+        std::chrono::system_clock::now() - value
+    };
+    time_value_label_.set_text(libutil::to_string(duration_s.count()) + " s");
 }
 
 void pause_overlay::set_move_count(int value)
