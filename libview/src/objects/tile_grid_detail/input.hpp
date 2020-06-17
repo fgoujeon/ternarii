@@ -75,7 +75,7 @@ class input: public object2d, public features::animable
 
         void resume();
 
-        void advance(const libutil::time_point& now, float elapsed_s) override;
+        void advance(const libutil::time::point& now, float elapsed_s) override;
 
     //Keyboard event handling
     public:

@@ -31,7 +31,7 @@ class animable: public Magnum::SceneGraph::AbstractGroupedFeature2D<animable>
     public:
         using Magnum::SceneGraph::AbstractGroupedFeature2D<animable>::AbstractGroupedFeature2D;
 
-        virtual void advance(const libutil::time_point& now, float elapsed_s) = 0;
+        virtual void advance(const libutil::time::point& now, float elapsed_s) = 0;
 };
 
 using animable_group = Magnum::SceneGraph::FeatureGroup2D<animable>;

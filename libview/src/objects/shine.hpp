@@ -51,7 +51,7 @@ class shine: public object2d, public features::drawable, public features::animab
     private:
         void draw(const Magnum::Matrix3& transformation_matrix, camera& camera) override;
 
-        void advance(const libutil::time_point& now, float elapsed_s) override;
+        void advance(const libutil::time::point& now, float elapsed_s) override;
 
     private:
         style style_;

@@ -87,7 +87,7 @@ struct view::impl final
 
     void draw()
     {
-        const auto now = libutil::clock::now();
+        const auto now = libutil::time::now();
         const auto elapsed_s = std::chrono::duration<double>{now - previous_frame_time}.count();
         previous_frame_time = now;
 
@@ -269,7 +269,7 @@ struct view::impl final
     object2d camera_object;
     camera camera;
 
-    libutil::time_point previous_frame_time = libutil::clock::now();
+    libutil::time::point previous_frame_time = libutil::time::now();
 
     feature_group_set feature_groups;
 
@@ -281,7 +281,7 @@ struct view::impl final
     std::unique_ptr<objects::debug_grid> pdebug_grid;
     std::unique_ptr<objects::label> pfps_counter;
 
-    libutil::time_point fps_measure_start_time = libutil::clock::now();
+    libutil::time::point fps_measure_start_time = libutil::time::now();
     int fps_measure_count = 0;
 };
 

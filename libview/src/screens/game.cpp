@@ -276,7 +276,7 @@ game::game
 
 game::~game() = default;
 
-void game::advance(const libutil::time_point& now, const float /*elapsed_s*/)
+void game::advance(const libutil::time::point& now, const float /*elapsed_s*/)
 {
     pimpl_->animator.advance(now);
     pimpl_->pause_animator.advance(now);

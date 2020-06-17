@@ -56,7 +56,7 @@ class game: public object2d, public features::animable, public features::key_eve
 
     //animable overrides
     private:
-        void advance(const libutil::time_point& now, float elapsed_s) override;
+        void advance(const libutil::time::point& now, float elapsed_s) override;
 
     //key_event_handler overrides
     private:

@@ -22,11 +22,17 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 
 #include <chrono>
 
-namespace libutil
+namespace libutil::time
 {
 
 using clock = std::chrono::steady_clock;
-using time_point = std::chrono::time_point<clock>;
+using point = std::chrono::time_point<clock>;
+
+inline
+point now()
+{
+    return clock::now();
+}
 
 } //namespace
 

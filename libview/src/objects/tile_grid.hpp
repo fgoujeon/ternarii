@@ -93,7 +93,7 @@ class tile_grid: public object2d, public features::animable
 
         void set_board_tiles(const data_types::board_tile_matrix& tiles);
 
-        void advance(const libutil::time_point& now, float elapsed_s);
+        void advance(const libutil::time::point& now, float elapsed_s);
 
     //Button event handling
     public:

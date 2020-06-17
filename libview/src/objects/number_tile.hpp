@@ -41,7 +41,7 @@ class number_tile: public object2d, public features::animable
             const int value
         );
 
-        void advance(const libutil::time_point& now, float elapsed_s);
+        void advance(const libutil::time::point& now, float elapsed_s);
 
     private:
         std::unique_ptr<shine> pshine0_;

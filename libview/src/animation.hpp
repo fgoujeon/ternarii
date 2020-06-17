@@ -362,7 +362,7 @@ class animation
             player_suppliers_.push_back(make_player_supplier(std::forward<Track>(track)));
         }
 
-        void advance(const libutil::time_point& now)
+        void advance(const libutil::time::point& now)
         {
             if(!started_)
             {
@@ -382,12 +382,12 @@ class animation
 
         void pause()
         {
-            player_.pause(libutil::clock::now().time_since_epoch());
+            player_.pause(libutil::time::now().time_since_epoch());
         }
 
         void resume()
         {
-            player_.resume(libutil::clock::now().time_since_epoch());
+            player_.resume(libutil::time::now().time_since_epoch());
         }
 
         bool is_done() const
@@ -416,7 +416,7 @@ class animator
             return !animations_.empty();
         }
 
-        void advance(const libutil::time_point& now)
+        void advance(const libutil::time::point& now)
         {
             auto keep_advancing = true;
 

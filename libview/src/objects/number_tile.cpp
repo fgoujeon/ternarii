@@ -214,7 +214,7 @@ number_tile::number_tile
 {
 }
 
-void number_tile::advance(const libutil::time_point& /*now*/, float elapsed_s)
+void number_tile::advance(const libutil::time::point& /*now*/, float elapsed_s)
 {
     if(pglow_)
     {

@@ -363,7 +363,7 @@ void input::resume()
     suspended_ = false;
 }
 
-void input::advance(const libutil::time_point& now, float elapsed_s)
+void input::advance(const libutil::time::point& now, float elapsed_s)
 {
     if(suspended_)
     {
