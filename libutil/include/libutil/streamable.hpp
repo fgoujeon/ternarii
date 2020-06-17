@@ -104,6 +104,12 @@ std::ostream& operator<<(std::ostream& l, const streamable<std::array<T, Size>>&
     return streamable_detail::stream_sequence_container(l, r.value);
 }
 
+inline
+std::ostream& operator<<(std::ostream& l, const streamable<std::chrono::system_clock::time_point>& r)
+{
+    return l << std::chrono::system_clock::to_time_t(r.value);
+}
+
 template<class T>
 std::ostream& operator<<(std::ostream& l, const streamable<std::optional<T>>& r)
 {

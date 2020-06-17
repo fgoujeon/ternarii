@@ -97,6 +97,7 @@ bool game::is_over() const
 
 void game::start(event_list& events)
 {
+    //Clear data
     pimpl_->state.next_input_tiles = {};
     pimpl_->state.input_tiles = {};
     pimpl_->state.board_tiles = {};
@@ -105,6 +106,8 @@ void game::start(event_list& events)
 
     events.push_back(events::start{});
     events.push_back(events::score_change{0});
+    events.push_back(events::move_count_change{pimpl_->state.move_count});
+    events.push_back(events::start_time_change{pimpl_->state.start_time});
 
     events.push_back(pimpl_->generate_next_input());
 
