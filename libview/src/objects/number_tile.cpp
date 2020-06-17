@@ -79,6 +79,10 @@ namespace
 
     Magnum::Color3 get_glow_color(const int value)
     {
+        if(value == 10)
+        {
+            return 0xeeeeee_rgbf;
+        }
         return lighter(get_square_color(value));
     }
 
