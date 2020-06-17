@@ -69,6 +69,7 @@ class label: public object2d, public features::drawable
         Magnum::Text::Renderer2D renderer_;
         style style_;
         bool visible_ = true;
+        std::string text_;
 };
 
 } //namespace

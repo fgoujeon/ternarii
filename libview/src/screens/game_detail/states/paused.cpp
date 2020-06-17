@@ -31,6 +31,7 @@ paused::paused(fsm& fsm):
         (
             fsm_.get_context().screen,
             fsm_.get_context().feature_groups.drawables,
+            fsm_.get_context().feature_groups.animables,
             fsm_.get_context().feature_groups.clickables,
             objects::pause_overlay::callback_set
             {
