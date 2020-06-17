@@ -68,7 +68,7 @@ namespace
             case 5:  return 0x2bcd61_rgbf; //Green
             case 6:  return 0x25d1d7_rgbf; //Cyan
             case 7:  return 0x3f8fde_rgbf; //Blue
-            case 8:  return 0x6c55e0_rgbf; //Violet
+            case 8:  return 0x7155e0_rgbf; //Violet
             case 9:  return 0xc6a9ff_rgbf; //Ultraviolet
             case 10: return 0x969696_rgbf; //X-ray
             case 11: return 0xd7d13f_rgbf; //Gamma ray
