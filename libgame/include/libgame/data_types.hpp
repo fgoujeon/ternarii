@@ -50,6 +50,7 @@ using tile_merge_list       = libcommon::data_types::tile_merge_list;
 struct stage_state
 {
     int hi_score = 0;
+    int move_count = 0;
     input_tile_matrix next_input_tiles;
     input_tile_matrix input_tiles;
     board_tile_matrix board_tiles;

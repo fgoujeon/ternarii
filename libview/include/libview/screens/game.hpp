@@ -73,6 +73,8 @@ class game: public object2d, public features::animable, public features::key_eve
 
         void set_hi_score(const int value);
 
+        void set_move_count(const int value);
+
         void create_next_input(const data_types::input_tile_matrix& tiles);
 
         void insert_next_input();

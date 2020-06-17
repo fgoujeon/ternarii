@@ -96,6 +96,15 @@ std::ostream& operator<<(std::ostream& l, const hi_score_change& r)
     return l;
 }
 
+std::ostream& operator<<(std::ostream& l, const move_count_change& r)
+{
+    l << "move_count_change";
+    l << "{";
+    l << "value: " << r.value;
+    l << "}";
+    return l;
+}
+
 std::ostream& operator<<(std::ostream& l, const end_of_game&)
 {
     return l << "end_of_game{}";
