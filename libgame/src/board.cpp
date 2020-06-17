@@ -251,14 +251,6 @@ void board::get_targeted_tiles
     apply_nullifiers(board_tiles, coords);
 }
 
-void board::clear()
-{
-    for(auto& opt_tile: tiles_)
-    {
-        opt_tile = std::nullopt;
-    }
-}
-
 void board::drop_input_tiles
 (
     const data_types::input_tile_matrix& input_tiles,

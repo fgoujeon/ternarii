@@ -97,7 +97,11 @@ bool game::is_over() const
 
 void game::start(event_list& events)
 {
-    pimpl_->board_.clear();
+    pimpl_->state.next_input_tiles = {};
+    pimpl_->state.input_tiles = {};
+    pimpl_->state.board_tiles = {};
+    pimpl_->state.move_count = 0;
+    pimpl_->state.start_time = std::chrono::system_clock::now();
 
     events.push_back(events::start{});
     events.push_back(events::score_change{0});
