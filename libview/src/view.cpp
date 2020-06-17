@@ -321,7 +321,7 @@ void view::show_screen
                 const auto duration_s =
                     trans == screen_transition::top_to_bottom ?
                     1.0f :
-                    0.7f
+                    0.5f
                 ;
 
                 const auto new_screen_start_position = [&]
@@ -411,7 +411,11 @@ void view::show_screen
         case screen_transition::zoom_in:
         case screen_transition::zoom_out:
             {
-                const auto duration_s = 1.0f;
+                const auto duration_s =
+                    trans == screen_transition::zoom_in ?
+                    1.0f :
+                    0.7f
+                ;
 
                 const auto new_screen_start_scaling = [&]
                 {

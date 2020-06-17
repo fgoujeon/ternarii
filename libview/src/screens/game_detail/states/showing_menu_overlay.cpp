@@ -49,7 +49,7 @@ showing_menu_overlay::showing_menu_overlay(fsm& fsm):
 {
     fsm_.get_context().animator.pause();
 
-    pmenu_overlay_->setTranslation({0.0f, 4.0f});
+    pmenu_overlay_->setTranslation({0.0f, 3.5f});
     pmenu_overlay_->set_alpha(0);
     pmenu_overlay_->set_start_time(fsm_.get_context().start_time);
     pmenu_overlay_->set_move_count(fsm_.get_context().move_count);
@@ -62,7 +62,7 @@ showing_menu_overlay::showing_menu_overlay(fsm& fsm):
         {
             .pobj = pmenu_overlay_,
             .finish_position = {0.0f, 3.0f},
-            .duration_s = 0.5f,
+            .duration_s = 0.3f,
             .interpolator = animation::get_cubic_out_position_interpolator()
         }
     );
@@ -72,7 +72,7 @@ showing_menu_overlay::showing_menu_overlay(fsm& fsm):
         {
             .pobj = pmenu_overlay_,
             .finish_alpha = 1.0f,
-            .duration_s = 0.5f
+            .duration_s = 0.3f
         }
     );
     fsm_.get_context().pause_animator.push(std::move(anim));
@@ -86,8 +86,8 @@ showing_menu_overlay::~showing_menu_overlay()
         animation::tracks::fixed_duration_translation
         {
             .pobj = pmenu_overlay_,
-            .finish_position = {0.0f, 4.0f},
-            .duration_s = 0.5f,
+            .finish_position = {0.0f, 3.5f},
+            .duration_s = 0.3f,
             .interpolator = animation::get_cubic_out_position_interpolator()
         }
     );
@@ -97,7 +97,7 @@ showing_menu_overlay::~showing_menu_overlay()
         {
             .pobj = pmenu_overlay_,
             .finish_alpha = 0.0f,
-            .duration_s = 0.5f
+            .duration_s = 0.3f
         }
     );
     fsm_.get_context().pause_animator.push(std::move(anim));
