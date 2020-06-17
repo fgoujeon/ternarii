@@ -81,31 +81,6 @@ const data_types::stage_state& game::get_state() const
     return pimpl_->state;
 }
 
-int game::get_hi_score() const
-{
-    return pimpl_->state.hi_score;
-}
-
-int game::get_move_count() const
-{
-    return pimpl_->state.move_count;
-}
-
-const data_types::input_tile_matrix& game::get_next_input_tiles() const
-{
-    return pimpl_->state.next_input_tiles;
-}
-
-const data_types::input_tile_matrix& game::get_input_tiles() const
-{
-    return pimpl_->state.input_tiles;
-}
-
-const data_types::board_tile_matrix& game::get_board_tiles() const
-{
-    return pimpl_->board_.tile_array();
-}
-
 void game::get_targeted_tiles
 (
     const data_types::input_layout& input_layout,

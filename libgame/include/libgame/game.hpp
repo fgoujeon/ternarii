@@ -38,16 +38,6 @@ struct game
 
         const data_types::stage_state& get_state() const;
 
-        int get_hi_score() const;
-
-        int get_move_count() const;
-
-        const data_types::input_tile_matrix& get_next_input_tiles() const;
-
-        const data_types::input_tile_matrix& get_input_tiles() const;
-
-        const data_types::board_tile_matrix& get_board_tiles() const;
-
         void get_targeted_tiles
         (
             const data_types::input_layout& input_layout,
