@@ -30,7 +30,7 @@ game_over_overlay::game_over_overlay
     object2d& parent,
     features::drawable_group& drawables,
     features::clickable_group& clickables,
-    const libutil::void_function<>& new_game_button_press_callback
+    const callback_set& callbacks
 ):
     object2d{&parent},
     background_rectangle_(*this, drawables, colors::light_gray),
@@ -48,6 +48,18 @@ game_over_overlay::game_over_overlay
         },
         "GAME OVER"
     ),
+    exit_button_
+    (
+        *this,
+        drawables,
+        clickables,
+        styles::white_label_button,
+        "EXIT",
+        objects::label_button::callback_set
+        {
+            .mouse_release_callback = callbacks.handle_exit_button_press
+        }
+    ),
     new_game_button_
     (
         *this,
@@ -57,7 +69,7 @@ game_over_overlay::game_over_overlay
         "NEW GAME",
         objects::label_button::callback_set
         {
-            .mouse_release_callback = [new_game_button_press_callback]{new_game_button_press_callback();}
+            .mouse_release_callback = callbacks.handle_new_game_button_press
         }
     )
 {
@@ -65,8 +77,11 @@ game_over_overlay::game_over_overlay
 
     label_.translate({0.0f, 0.4f});
 
+    exit_button_.scale({1.8f, 1.8f});
+    exit_button_.translate({-2.0f, -0.5f});
+
     new_game_button_.scale({1.8f, 1.8f});
-    new_game_button_.translate({0.0f, -0.5f});
+    new_game_button_.translate({2.0f, -0.5f});
 }
 
 } //namespace

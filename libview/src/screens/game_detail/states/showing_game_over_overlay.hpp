@@ -40,9 +40,16 @@ class showing_game_over_overlay: public libutil::fsm::state
                     fsm_.get_context().screen,
                     fsm_.get_context().feature_groups.drawables,
                     fsm_.get_context().feature_groups.clickables,
-                    [this]
+                    objects::game_over_overlay::callback_set
                     {
-                        fsm_.get_context().callbacks.handle_clear_request();
+                        .handle_exit_button_press = [this]
+                        {
+                            fsm_.get_context().callbacks.handle_exit_request();
+                        },
+                        .handle_new_game_button_press = [this]
+                        {
+                            fsm_.get_context().callbacks.handle_clear_request();
+                        }
                     }
                 )
             )

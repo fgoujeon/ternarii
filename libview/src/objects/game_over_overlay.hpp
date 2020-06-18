@@ -32,17 +32,25 @@ namespace libview::objects
 class game_over_overlay: public object2d
 {
     public:
+        struct callback_set
+        {
+            libutil::void_function<> handle_exit_button_press;
+            libutil::void_function<> handle_new_game_button_press;
+        };
+
+    public:
         game_over_overlay
         (
             object2d& parent,
             features::drawable_group& drawables,
             features::clickable_group& clickables,
-            const libutil::void_function<>& new_game_button_press_callback
+            const callback_set& callbacks
         );
 
     private:
         square background_rectangle_;
         label label_;
+        objects::label_button exit_button_;
         objects::label_button new_game_button_;
 };
 
