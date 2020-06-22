@@ -20,12 +20,14 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #ifndef LIBDB_INDEXED_DB_HPP
 #define LIBDB_INDEXED_DB_HPP
 
+#include <functional>
+
 namespace libdb::indexed_db
 {
 
-using read_success_callback_t  = void(*)(void* arg, void* data, int size);
-using write_success_callback_t = void(*)(void* arg);
-using failure_callback_t       = void(*)(void* arg, const char* error);
+using read_success_callback_t  = std::function<void(void* data, int size)>;
+using write_success_callback_t = std::function<void()>;
+using failure_callback_t       = std::function<void(const char* error)>;
 
 /*
 Reads given database entry.
@@ -36,9 +38,8 @@ void async_read
     const char* database_name,
     const char* store_name,
     int key,
-    void* arg,
-    const read_success_callback_t success_callback,
-    const failure_callback_t failure_callback
+    const read_success_callback_t& success_callback,
+    const failure_callback_t& failure_callback
 );
 
 /*
@@ -51,9 +52,8 @@ void async_write
     int key,
     const void* data,
     int size,
-    void* arg,
-    const write_success_callback_t success_callback,
-    const failure_callback_t failure_callback
+    const write_success_callback_t& success_callback,
+    const failure_callback_t& failure_callback
 );
 
 } //namespace

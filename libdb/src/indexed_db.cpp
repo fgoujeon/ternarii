@@ -25,16 +25,20 @@ namespace libdb::indexed_db
 
 namespace
 {
+    using read_success_raw_callback_t  = void(*)(void* arg, void* data, int size);
+    using write_success_raw_callback_t = void(*)(void* arg);
+    using failure_raw_callback_t       = void(*)(void* arg, const char* error);
+
     EM_JS(
         void,
-        async_read_2,
+        raw_async_read,
         (
             const char* database_name,
             const char* store_name,
             const int key,
             void* arg,
-            const read_success_callback_t success_callback,
-            const failure_callback_t failure_callback
+            const read_success_raw_callback_t success_callback,
+            const failure_raw_callback_t failure_callback
         ),
         {
             var openRequest = indexedDB.open(UTF8ToString(database_name), 1);
@@ -101,7 +105,7 @@ namespace
 
     EM_JS(
         void,
-        async_write_2,
+        raw_async_write,
         (
             const char* database_name,
             const char* store_name,
@@ -109,8 +113,8 @@ namespace
             const void* data,
             const int size,
             void* arg,
-            const write_success_callback_t success_callback,
-            const failure_callback_t failure_callback
+            const write_success_raw_callback_t success_callback,
+            const failure_raw_callback_t failure_callback
         ),
         {
             var openRequest = indexedDB.open(UTF8ToString(database_name), 1);
@@ -168,19 +172,36 @@ void async_read
     const char* database_name,
     const char* store_name,
     const int key,
-    void* arg,
-    const read_success_callback_t success_callback,
-    const failure_callback_t failure_callback
+    const read_success_callback_t& success_callback,
+    const failure_callback_t& failure_callback
 )
 {
-    async_read_2
+    struct context
+    {
+        read_success_callback_t success_callback;
+        failure_callback_t failure_callback;
+    };
+
+    auto pctx = new context{success_callback, failure_callback};
+
+    raw_async_read
     (
         database_name,
         store_name,
         key,
-        arg,
-        success_callback,
-        failure_callback
+        pctx,
+        [](void* vpctx, void* data, int size)
+        {
+            auto pctx = reinterpret_cast<context*>(vpctx);
+            pctx->success_callback(data, size);
+            delete pctx;
+        },
+        [](void* vpctx, const char* error)
+        {
+            auto pctx = reinterpret_cast<context*>(vpctx);
+            pctx->failure_callback(error);
+            delete pctx;
+        }
     );
 }
 
@@ -191,21 +212,38 @@ void async_write
     int key,
     const void* data,
     const int size,
-    void* arg,
-    const write_success_callback_t success_callback,
-    const failure_callback_t failure_callback
+    const write_success_callback_t& success_callback,
+    const failure_callback_t& failure_callback
 )
 {
-    async_write_2
+    struct context
+    {
+        write_success_callback_t success_callback;
+        failure_callback_t failure_callback;
+    };
+
+    auto pctx = new context{success_callback, failure_callback};
+
+    raw_async_write
     (
         database_name,
         store_name,
         key,
         data,
         size,
-        arg,
-        success_callback,
-        failure_callback
+        pctx,
+        [](void* vpctx)
+        {
+            auto pctx = reinterpret_cast<context*>(vpctx);
+            pctx->success_callback();
+            delete pctx;
+        },
+        [](void* vpctx, const char* error)
+        {
+            auto pctx = reinterpret_cast<context*>(vpctx);
+            pctx->failure_callback(error);
+            delete pctx;
+        }
     );
 }
 
@@ -216,7 +254,7 @@ extern "C"
 {
     void EMSCRIPTEN_KEEPALIVE libdb_indexed_db_call_read_success_callback
     (
-        const libdb::indexed_db::read_success_callback_t cb,
+        const libdb::indexed_db::read_success_raw_callback_t cb,
         void* arg,
         void* data,
         int size
@@ -227,7 +265,7 @@ extern "C"
 
     void EMSCRIPTEN_KEEPALIVE libdb_indexed_db_call_write_success_callback
     (
-        const libdb::indexed_db::write_success_callback_t cb,
+        const libdb::indexed_db::write_success_raw_callback_t cb,
         void* arg
     )
     {
@@ -236,7 +274,7 @@ extern "C"
 
     void EMSCRIPTEN_KEEPALIVE libdb_indexed_db_call_failure_callback
     (
-        const libdb::indexed_db::failure_callback_t cb,
+        const libdb::indexed_db::failure_raw_callback_t cb,
         void* arg,
         const char* error
     )
