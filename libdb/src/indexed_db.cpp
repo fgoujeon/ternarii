@@ -66,13 +66,24 @@ namespace
                 let request = store.get(key);
 
                 request.onsuccess = function() {
-                    ccall
-                    (
-                        "libdb_indexed_db_call_read_success_callback",
-                        'v',
-                        ["number", "number", "array", "number"],
-                        [success_callback, arg, request.result, request.result.length]
-                    );
+                    let data = request.result;
+                    if (typeof data === 'undefined') {
+                        ccall
+                        (
+                            "libdb_indexed_db_call_read_success_callback",
+                            'v',
+                            ["number", "number", "number", "number"],
+                            [success_callback, arg, 0, 0]
+                        );
+                    } else {
+                        ccall
+                        (
+                            "libdb_indexed_db_call_read_success_callback",
+                            'v',
+                            ["number", "number", "array", "number"],
+                            [success_callback, arg, data, data.length]
+                        );
+                    }
                 };
 
                 request.onerror = function() {

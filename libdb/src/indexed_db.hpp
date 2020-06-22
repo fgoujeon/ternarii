@@ -27,6 +27,10 @@ using read_success_callback_t  = void(*)(void* arg, void* data, int size);
 using write_success_callback_t = void(*)(void* arg);
 using failure_callback_t       = void(*)(void* arg, const char* error);
 
+/*
+Reads given database entry.
+Note: If given entry doesn't exist, calls success_callback(arg, nullptr, 0).
+*/
 void async_read
 (
     const char* database_name,
@@ -37,6 +41,9 @@ void async_read
     const failure_callback_t failure_callback
 );
 
+/*
+Writes to given database entry.
+*/
 void async_write
 (
     const char* database_name,
