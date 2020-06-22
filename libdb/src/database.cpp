@@ -19,11 +19,13 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "json_conversion.hpp"
 #include "filesystem.hpp"
+#include "indexed_db.hpp"
 #include <libdb/database.hpp>
 #include <nlohmann/json.hpp>
 #include <libutil/log.hpp>
 #include <filesystem>
 #include <fstream>
+#include <sstream>
 
 namespace libdb
 {
@@ -32,12 +34,14 @@ namespace
 {
     constexpr int current_version = 2;
 
+    //Deprecated files
     std::filesystem::path get_config_dir()
     {
         static const auto dir = std::filesystem::path{std::getenv("HOME")} / ".config" / "ternarii";
         return dir;
     }
 
+    //Deprecated files
     std::filesystem::path get_database_path(const int version = current_version)
     {
         switch(version)
@@ -56,7 +60,34 @@ struct database::impl
         impl(const event_handler& evt_handler):
             event_handler_(evt_handler)
         {
-            filesystem::async_load([this]{load_data();});
+            indexed_db::async_read
+            (
+                "database",
+                "game_state",
+                2,
+                [this](void* data, int size)
+                {
+                    if(data)
+                    {
+                        auto json_str = std::string_view
+                        {
+                            reinterpret_cast<char*>(data),
+                            static_cast<std::string_view::size_type>(size)
+                        };
+                        libutil::log::info("Loaded data from IndexedDB.", json_str);
+                        load_from_idb(json_str, 2);
+                    }
+                    else
+                    {
+                        libutil::log::info("No IndexedDB data found. Trying with IDBFS...");
+                        filesystem::async_load([this]{load_from_idbfs();});
+                    }
+                },
+                [](const char* error)
+                {
+                    libutil::log::error("IndexedDB read error: ", error);
+                }
+            );
         }
 
         const std::optional<data_types::game_state>& get_game_state() const
@@ -74,11 +105,11 @@ struct database::impl
             opt_game_state_->stage_states[stage] = state;
 
             save_data();
-            filesystem::async_save();
         }
 
     private:
-        bool try_load_data(const int version)
+        //Deprecated format
+        bool try_load_from_idbfs(const int version)
         {
             const auto path = get_database_path(version);
             if(!exists(path))
@@ -102,14 +133,15 @@ struct database::impl
             return true;
         }
 
-        void load_data()
+        //Deprecated format
+        void load_from_idbfs()
         {
             try
             {
                 auto loaded = false;
                 for(auto i = current_version; i >= 0 && !loaded; --i)
                 {
-                    loaded = try_load_data(i);
+                    loaded = try_load_from_idbfs(i);
                 }
             }
             catch(const std::exception& e)
@@ -124,15 +156,48 @@ struct database::impl
             event_handler_(events::end_of_loading{});
         }
 
+        void load_from_idb(const std::string_view& json_str, const int json_version)
+        {
+            //Parse JSON string
+            const auto json = nlohmann::json::parse(json_str);
+
+            //Convert JSON to state
+            auto game_state = data_types::game_state{};
+            from_json(json, game_state, json_version);
+            opt_game_state_ = game_state;
+
+            event_handler_(events::end_of_loading{});
+        }
+
         void save_data()
         {
             try
             {
-                const auto path = get_database_path();
-                std::filesystem::create_directories(path.parent_path());
-                auto ofs = std::ofstream{path};
+                //Convert to JSON
                 const auto json = nlohmann::json(*opt_game_state_);
-                ofs << json;
+
+                //Get JSON string
+                auto oss = std::ostringstream{};
+                oss << json;
+
+                auto pstr = std::make_shared<std::string>(oss.str());
+
+                indexed_db::async_write
+                (
+                    "database",
+                    "game_state",
+                    2,
+                    pstr->c_str(),
+                    pstr->size(),
+                    [pstr]
+                    {
+                        libutil::log::info("Write success.");
+                    },
+                    [](const char* error)
+                    {
+                        libutil::log::error("Write error: ", error);
+                    }
+                );
             }
             catch(const std::exception& e)
             {

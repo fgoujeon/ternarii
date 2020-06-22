@@ -49,6 +49,12 @@ void info(const Args&... args)
     detail::log_to(std::cout, args...);
 }
 
+template<class... Args>
+void error(const Args&... args)
+{
+    detail::log_to(std::cerr, args...);
+}
+
 } //namespace
 
 #endif

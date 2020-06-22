@@ -17,8 +17,8 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef LIBDB_JSON_FILESYSTEM_HPP
-#define LIBDB_JSON_FILESYSTEM_HPP
+#ifndef LIBDB_FILESYSTEM_HPP
+#define LIBDB_FILESYSTEM_HPP
 
 #include <functional>
 
@@ -26,8 +26,6 @@ namespace libdb::filesystem
 {
 
 void async_load(const std::function<void()>& cb);
-
-void async_save();
 
 } //namespace
 

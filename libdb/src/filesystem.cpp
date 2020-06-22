@@ -61,20 +61,6 @@ void async_load(const std::function<void()>& cb)
     );
 }
 
-void async_save()
-{
-    if(current_state != state::ready)
-    {
-        return;
-    }
-
-    EM_ASM(
-        FS.syncfs(false, function(err) {
-            assert(!err);
-        });
-    );
-}
-
 } //namespace
 
 //Functions called from JavaScript
