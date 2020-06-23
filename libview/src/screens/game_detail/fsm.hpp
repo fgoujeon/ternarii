@@ -23,11 +23,34 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include "../../animation.hpp"
 #include "../../objects/tile_grid.hpp"
 #include <libview/screens/game.hpp>
+#include <libview/data_types.hpp>
 #include <libutil/fsm.hpp>
 #include <chrono>
 
 namespace libview::screens::game_detail
 {
+
+//Events sent to states
+namespace events
+{
+    struct button_press
+    {
+        data_types::move_button button;
+    };
+
+    struct button_release
+    {
+        data_types::move_button button;
+    };
+
+    struct game_over{};
+
+    struct new_game_request{};
+
+    struct pause_request{};
+
+    struct iteration{};
+}
 
 struct fsm_context
 {

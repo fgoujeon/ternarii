@@ -20,7 +20,6 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #ifndef LIBVIEW_SCREENS_GAME_DETAIL_STATES_PLAYING_HPP
 #define LIBVIEW_SCREENS_GAME_DETAIL_STATES_PLAYING_HPP
 
-#include "../events.hpp"
 #include "../fsm.hpp"
 #include <libview/data_types.hpp>
 #include <libutil/fsm.hpp>

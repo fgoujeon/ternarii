@@ -20,7 +20,6 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #ifndef LIBVIEW_SCREENS_GAME_DETAIL_STATES_SHOWING_MENU_OVERLAY_HPP
 #define LIBVIEW_SCREENS_GAME_DETAIL_STATES_SHOWING_MENU_OVERLAY_HPP
 
-#include "../events.hpp"
 #include "../fsm.hpp"
 #include "../../../objects/game_menu_overlay.hpp"
 #include <libview/data_types.hpp>

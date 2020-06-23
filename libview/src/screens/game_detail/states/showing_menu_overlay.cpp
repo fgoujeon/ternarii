@@ -110,6 +110,10 @@ void showing_menu_overlay::handle_event(const std::any& event)
     {
         fsm_.set_state<playing>();
     }
+    else if(std::any_cast<events::iteration>(&event))
+    {
+        pmenu_overlay_->set_time_s(fsm_.get_context().time_s);
+    }
 }
 
 } //namespace
