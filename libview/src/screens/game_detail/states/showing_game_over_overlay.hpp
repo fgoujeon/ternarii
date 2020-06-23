@@ -40,6 +40,8 @@ class showing_game_over_overlay: public libutil::fsm::state
                     fsm_.get_context().screen,
                     fsm_.get_context().feature_groups.drawables,
                     fsm_.get_context().feature_groups.clickables,
+                    fsm_.get_context().move_count,
+                    fsm_.get_context().time_s,
                     objects::game_over_overlay::callback_set
                     {
                         .handle_exit_button_press = [this]
