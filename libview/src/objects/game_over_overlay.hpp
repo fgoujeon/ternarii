@@ -44,12 +44,15 @@ class game_over_overlay: public object2d
             object2d& parent,
             features::drawable_group& drawables,
             features::clickable_group& clickables,
+            int move_count,
+            int time_s,
             const callback_set& callbacks
         );
 
     private:
         square background_rectangle_;
-        label label_;
+        label title_label_;
+        label stat_label_;
         objects::label_button exit_button_;
         objects::label_button new_game_button_;
 };
