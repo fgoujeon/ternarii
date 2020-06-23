@@ -103,6 +103,15 @@ class app: public Magnum::Platform::Sdl2Application
     private:
         void drawEvent() override
         {
+            const auto now = std::chrono::steady_clock::now();
+            const auto elapsed_s = std::chrono::duration<double>{now - previous_frame_time_}.count();
+            previous_frame_time_ = now;
+
+            //Advance
+            fsm_.handle_event(events::iteration{now, elapsed_s});
+            view_.advance(now, elapsed_s);
+
+            //Draw
             Magnum::GL::defaultFramebuffer.clear(Magnum::GL::FramebufferClear::Color);
             view_.draw();
             swapBuffers();
@@ -160,6 +169,8 @@ class app: public Magnum::Platform::Sdl2Application
         libview::view view_;
         fsm_context ctx_{database_, view_};
         fsm fsm_;
+
+        std::chrono::steady_clock::time_point previous_frame_time_ = std::chrono::steady_clock::now();
 };
 
 MAGNUM_APPLICATION_MAIN(app)

@@ -38,7 +38,7 @@ struct fsm_context
     animation::animator& pause_animator;
     objects::tile_grid& tile_grid;
 
-    std::chrono::system_clock::time_point start_time = std::chrono::system_clock::now();
+    int time_s = 0;
     int move_count = 0;
     int hi_score = 0;
 };

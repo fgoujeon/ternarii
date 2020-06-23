@@ -54,6 +54,8 @@ struct game
             event_list& events
         );
 
+        void advance(double elapsed_s);
+
     private:
         struct impl;
         std::unique_ptr<impl> pimpl_;

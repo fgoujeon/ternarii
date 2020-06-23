@@ -102,12 +102,11 @@ void game::start(event_list& events)
     pimpl_->state.input_tiles = {};
     pimpl_->state.board_tiles = {};
     pimpl_->state.move_count = 0;
-    pimpl_->state.start_time = std::chrono::system_clock::now();
+    pimpl_->state.time_s = 0;
 
     events.push_back(events::start{});
     events.push_back(events::score_change{0});
     events.push_back(events::move_count_change{pimpl_->state.move_count});
-    events.push_back(events::start_time_change{pimpl_->state.start_time});
 
     events.push_back(pimpl_->generate_next_input());
 
@@ -158,6 +157,11 @@ void game::drop_input_tiles
         //create a new next input
         events.push_back(pimpl_->generate_next_input());
     }
+}
+
+void game::advance(double elapsed_s)
+{
+    pimpl_->state.time_s += elapsed_s;
 }
 
 } //namespace

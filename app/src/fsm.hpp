@@ -24,6 +24,15 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include <libview/view.hpp>
 #include <libutil/fsm.hpp>
 
+namespace events
+{
+    struct iteration
+    {
+        std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
+        double elapsed_s = 0;
+    };
+};
+
 struct fsm_context
 {
     libdb::database& database;

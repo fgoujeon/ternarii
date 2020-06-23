@@ -36,16 +36,20 @@ class playing final: public libutil::fsm::state
     public:
         playing(fsm& f, screen_transition trans, libgame::data_types::stage stage);
 
+        void handle_event(const std::any& event) override
+        {
+            if(const auto pevent = std::any_cast<events::iteration>(&event))
+            {
+                pgame_->advance(pevent->elapsed_s);
+                pscreen_->set_time_s(pgame_->get_state().time_s);
+            }
+        }
+
     //Game event handlers
     private:
         void handle_game_event(const libgame::events::start&)
         {
             pscreen_->clear();
-        }
-
-        void handle_game_event(const libgame::events::start_time_change& event)
-        {
-            pscreen_->set_start_time(event.value);
         }
 
         void handle_game_event(const libgame::events::move_count_change& event)

@@ -185,15 +185,13 @@ namespace libgame::data_types
             from.at("moveCount").get_to(to.move_count);
         }
 
-        if(from.contains("startTime"))
+        if(from.contains("time_s"))
         {
-            std::time_t time = 0;
-            from.at("startTime").get_to(time);
-            to.start_time = std::chrono::system_clock::from_time_t(time);
+            from.at("time_s").get_to(to.time_s);
         }
         else
         {
-            to.start_time = std::chrono::system_clock::now();
+            to.time_s = 0;
         }
     }
 
@@ -204,7 +202,7 @@ namespace libgame::data_types
         to["nextInputTiles"] = from.next_input_tiles.data;
         to["inputTiles"]     = from.input_tiles.data;
         to["boardTiles"]     = from.board_tiles.data;
-        to["startTime"]      = std::chrono::system_clock::to_time_t(from.start_time);
+        to["time_s"]         = from.time_s;
     }
 }
 

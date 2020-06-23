@@ -73,7 +73,7 @@ class game: public object2d, public features::animable, public features::key_eve
 
         void set_hi_score(const int value);
 
-        void set_start_time(const std::chrono::system_clock::time_point& value);
+        void set_time_s(const int value);
 
         void set_move_count(const int value);
 

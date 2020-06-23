@@ -352,9 +352,9 @@ void game::set_move_count(const int value)
     pimpl_->ctx.move_count = value;
 }
 
-void game::set_start_time(const std::chrono::system_clock::time_point& value)
+void game::set_time_s(const int value)
 {
-    pimpl_->ctx.start_time = value;
+    pimpl_->ctx.time_s = value;
 }
 
 void game::create_next_input(const data_types::input_tile_matrix& tiles)

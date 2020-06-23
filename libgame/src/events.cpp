@@ -96,15 +96,6 @@ std::ostream& operator<<(std::ostream& l, const hi_score_change& r)
     return l;
 }
 
-std::ostream& operator<<(std::ostream& l, const start_time_change& r)
-{
-    l << "start_time_change";
-    l << "{";
-    l << "value: " << libutil::streamable{r.value};
-    l << "}";
-    return l;
-}
-
 std::ostream& operator<<(std::ostream& l, const move_count_change& r)
 {
     l << "move_count_change";
