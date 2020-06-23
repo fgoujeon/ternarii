@@ -159,8 +159,13 @@ void game::drop_input_tiles
     }
 }
 
-void game::advance(double elapsed_s)
+void game::advance(const double elapsed_s)
 {
+    if(is_over())
+    {
+        return;
+    }
+
     pimpl_->state.time_s += elapsed_s;
 }
 
