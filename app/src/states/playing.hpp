@@ -36,6 +36,11 @@ class playing final: public libutil::fsm::state
     public:
         playing(fsm& f, screen_transition trans, libgame::data_types::stage stage);
 
+        ~playing()
+        {
+            save_game();
+        }
+
         void handle_event(const std::any& event) override
         {
             if(const auto pevent = std::any_cast<events::iteration>(&event))
@@ -76,7 +81,7 @@ class playing final: public libutil::fsm::state
         {
             pscreen_->insert_next_input();
             mark_tiles_for_nullification();
-            fsm_.get_context().database.set_stage_state(stage_, pgame_->get_state());
+            save_game();
         }
 
         void handle_game_event(const libgame::events::input_tile_drop& event)
@@ -102,7 +107,7 @@ class playing final: public libutil::fsm::state
         void handle_game_event(const libgame::events::end_of_game&)
         {
             pscreen_->set_game_over_overlay_visible(true);
-            fsm_.get_context().database.set_stage_state(stage_, pgame_->get_state());
+            save_game();
         }
 
         void handle_game_events(const libgame::event_list& events)
@@ -144,6 +149,11 @@ class playing final: public libutil::fsm::state
             targeted_tiles_.clear();
             pgame_->get_targeted_tiles(pscreen_->get_input_layout(), targeted_tiles_);
             pscreen_->mark_tiles_for_nullification(targeted_tiles_);
+        }
+
+        void save_game()
+        {
+            fsm_.get_context().database.set_stage_state(stage_, pgame_->get_state());
         }
 
     private:
