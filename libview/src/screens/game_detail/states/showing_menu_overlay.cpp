@@ -31,7 +31,6 @@ showing_menu_overlay::showing_menu_overlay(fsm& fsm):
         (
             fsm_.get_context().screen,
             fsm_.get_context().feature_groups.drawables,
-            fsm_.get_context().feature_groups.animables,
             fsm_.get_context().feature_groups.clickables,
             objects::game_menu_overlay::callback_set
             {
@@ -51,7 +50,7 @@ showing_menu_overlay::showing_menu_overlay(fsm& fsm):
 
     pmenu_overlay_->setTranslation({0.0f, 3.5f});
     pmenu_overlay_->set_alpha(0);
-    pmenu_overlay_->set_start_time(fsm_.get_context().start_time);
+    pmenu_overlay_->set_time_s(fsm_.get_context().time_s);
     pmenu_overlay_->set_move_count(fsm_.get_context().move_count);
     pmenu_overlay_->set_hi_score(fsm_.get_context().hi_score);
 
@@ -110,6 +109,10 @@ void showing_menu_overlay::handle_event(const std::any& event)
     if(std::any_cast<events::pause_request>(&event))
     {
         fsm_.set_state<playing>();
+    }
+    else if(std::any_cast<events::iteration>(&event))
+    {
+        pmenu_overlay_->set_time_s(fsm_.get_context().time_s);
     }
 }
 

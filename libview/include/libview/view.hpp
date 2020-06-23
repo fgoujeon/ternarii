@@ -79,6 +79,12 @@ class view
 
     //Magnum event handling
     public:
+        void advance
+        (
+            const std::chrono::steady_clock::time_point& now,
+            float elapsed_s
+        );
+
         void draw();
 
         void set_viewport(const Magnum::Vector2i& size);

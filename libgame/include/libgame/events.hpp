@@ -107,15 +107,6 @@ namespace events
 
 
 
-    struct start_time_change
-    {
-        std::chrono::system_clock::time_point value = std::chrono::system_clock::now();
-    };
-
-    std::ostream& operator<<(std::ostream& l, const start_time_change& r);
-
-
-
     struct move_count_change
     {
         int value = 0;
@@ -141,7 +132,6 @@ using event = std::variant
     events::tile_merge,
     events::score_change,
     events::hi_score_change,
-    events::start_time_change,
     events::move_count_change,
     events::end_of_game
 >;

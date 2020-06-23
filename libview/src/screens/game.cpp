@@ -21,7 +21,6 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include "game_detail/states/playing.hpp"
 #include "game_detail/states/showing_game_over_overlay.hpp"
 #include "game_detail/fsm.hpp"
-#include "game_detail/events.hpp"
 #include "../objects/shine.hpp"
 #include "../objects/game_over_overlay.hpp"
 #include "../objects/sdf_image_button.hpp"
@@ -278,6 +277,7 @@ game::~game() = default;
 
 void game::advance(const std::chrono::steady_clock::time_point& now, const float /*elapsed_s*/)
 {
+    pimpl_->fsm.handle_event(game_detail::events::iteration{});
     pimpl_->animator.advance(now);
     pimpl_->pause_animator.advance(now);
 }
@@ -352,9 +352,9 @@ void game::set_move_count(const int value)
     pimpl_->ctx.move_count = value;
 }
 
-void game::set_start_time(const std::chrono::system_clock::time_point& value)
+void game::set_time_s(const int value)
 {
-    pimpl_->ctx.start_time = value;
+    pimpl_->ctx.time_s = value;
 }
 
 void game::create_next_input(const data_types::input_tile_matrix& tiles)

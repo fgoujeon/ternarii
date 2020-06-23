@@ -85,13 +85,9 @@ struct view::impl final
         }
     }
 
-    void draw()
+    void advance(const std::chrono::steady_clock::time_point& now, float elapsed_s)
     {
-        const auto now = std::chrono::steady_clock::now();
-        const auto elapsed_s = std::chrono::duration<double>{now - previous_frame_time}.count();
-        previous_frame_time = now;
-
-        //advance animations
+        //Advance animations
         screen_transition_animator.advance(now);
         for(std::size_t i = 0; i < feature_groups.animables.size(); ++i)
         {
@@ -116,7 +112,10 @@ struct view::impl final
                 ++fps_measure_count;
             }
         }
+    }
 
+    void draw()
+    {
         camera.draw(feature_groups.drawables);
     }
 
@@ -268,8 +267,6 @@ struct view::impl final
     scene scene;
     object2d camera_object;
     camera camera;
-
-    std::chrono::steady_clock::time_point previous_frame_time = std::chrono::steady_clock::now();
 
     feature_group_set feature_groups;
 
@@ -505,6 +502,15 @@ void view::show_screen
 
     //Save new screen for future transition
     pimpl_->pscreen = pscreen;
+}
+
+void view::advance
+(
+    const std::chrono::steady_clock::time_point& now,
+    float elapsed_s
+)
+{
+    pimpl_->advance(now, elapsed_s);
 }
 
 void view::draw()
