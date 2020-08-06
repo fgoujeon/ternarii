@@ -74,7 +74,7 @@ void rounded_rectangle::draw(const Magnum::Matrix3& transformation_matrix, camer
     get_shader().set_smoothness(style_.smoothness_factor * 0.03f / transformation_matrix.scaling().x());
     get_shader().set_outline_color(style_.outline_color * absolute_alpha);
     get_shader().set_outline_thickness(style_.outline_thickness);
-    get_mesh().draw(get_shader());
+    get_shader().draw(get_mesh());
 }
 
 } //namespace

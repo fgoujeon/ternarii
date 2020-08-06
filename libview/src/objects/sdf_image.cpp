@@ -40,7 +40,7 @@ namespace
         (
             Magnum::Primitives::squareSolid
             (
-                Magnum::Primitives::SquareTextureCoords::Generate
+                Magnum::Primitives::SquareFlag::TextureCoordinates
             )
         );
         return mesh;
@@ -115,7 +115,7 @@ void sdf_image::draw(const Magnum::Matrix3& transformation_matrix, camera& camer
     get_shader().setSmoothness(0.15f / transformation_matrix.uniformScaling());
     get_shader().setOutlineColor(style_.outline_color * absolute_alpha);
     get_shader().setOutlineRange(style_.outline_range[0], style_.outline_range[1]);
-    get_mesh().draw(get_shader());
+    get_shader().draw(get_mesh());
 }
 
 } //namespace

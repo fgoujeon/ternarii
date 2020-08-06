@@ -52,8 +52,7 @@ void score_display::draw(const Magnum::Matrix3& transformation_matrix, camera& c
     text::get_shader().setSmoothness(0.035f / transformation_matrix.uniformScaling());
     text::get_shader().setOutlineColor(colors::dark_gray * absolute_alpha);
     text::get_shader().setOutlineRange(0.47, 0.40);
-
-    renderer_.mesh().draw(text::get_shader());
+    text::get_shader().draw(renderer_.mesh());
 }
 
 } //namespace

@@ -62,7 +62,7 @@ void square::draw(const Magnum::Matrix3& transformation_matrix, camera& camera)
         camera.projectionMatrix() *
         transformation_matrix
     );
-    get_mesh().draw(get_shader());
+    get_shader().draw(get_mesh());
 }
 
 } //namespace

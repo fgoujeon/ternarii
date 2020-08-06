@@ -46,7 +46,7 @@ set(TERNARII_SDF_IMAGE_RADIUS 32) #SDF radius
 set(TERNARII_SDF_IMAGE_PNG_SIZE 960) #width and height of PNG image directly generated from SVG
 
 find_package(
-    Magnum 2019.10 REQUIRED
+    Magnum 2020.06 REQUIRED
     GL
     MagnumFont
     MeshTools

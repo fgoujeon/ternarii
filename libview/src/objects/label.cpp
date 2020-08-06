@@ -69,8 +69,7 @@ void label::draw(const Magnum::Matrix3& transformation_matrix, camera& camera)
         text::get_shader().setSmoothness(0.035f / (transformation_matrix.uniformScaling() * style_.font_size));
         text::get_shader().setOutlineColor(style_.outline_color * absolute_alpha);
         text::get_shader().setOutlineRange(style_.outline_range[0], style_.outline_range[1]);
-
-        renderer_.mesh().draw(text::get_shader());
+        text::get_shader().draw(renderer_.mesh());
     }
 }
 

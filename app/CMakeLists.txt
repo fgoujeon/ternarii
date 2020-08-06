@@ -32,9 +32,9 @@ set_target_properties(
 target_link_options(
     app
     PRIVATE
-        "-s WASM=1"
-        "-s FORCE_FILESYSTEM=1"
-        "-s DISABLE_EXCEPTION_CATCHING=0"
+        "-sWASM=1"
+        "-sFORCE_FILESYSTEM=1"
+        "-sDISABLE_EXCEPTION_CATCHING=0"
 )
 
 target_link_libraries(

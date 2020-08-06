@@ -69,7 +69,7 @@ void shine::draw(const Magnum::Matrix3& transformation_matrix, camera& camera)
     get_shader().set_ray_count(style_.ray_count);
     get_shader().set_ray_width(style_.ray_width);
     get_shader().set_smoothness(0.045f / transformation_matrix.uniformScaling());
-    get_mesh().draw(get_shader());
+    get_shader().draw(get_mesh());
 }
 
 void shine::advance(const std::chrono::steady_clock::time_point& /*now*/, const float elapsed_s)
