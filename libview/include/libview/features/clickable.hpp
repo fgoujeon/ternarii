@@ -44,7 +44,8 @@ class clickable: public Magnum::SceneGraph::AbstractGroupedFeature2D<clickable>
 
                 if(pressed_)
                 {
-                    handle_mouse_release();
+                    do_handle_mouse_release();
+                    pressed_ = false;
                 }
             }
 
@@ -53,14 +54,21 @@ class clickable: public Magnum::SceneGraph::AbstractGroupedFeature2D<clickable>
 
         void handle_mouse_press()
         {
-            pressed_ = true;
             do_handle_mouse_press();
+
+            pressed_ = true;
         }
 
         void handle_mouse_release()
         {
-            pressed_ = false;
             do_handle_mouse_release();
+
+            if(pressed_)
+            {
+                do_handle_mouse_click();
+            }
+
+            pressed_ = false;
         }
 
     protected:
@@ -71,6 +79,8 @@ class clickable: public Magnum::SceneGraph::AbstractGroupedFeature2D<clickable>
         virtual void do_handle_mouse_press(){}
 
         virtual void do_handle_mouse_release(){}
+
+        virtual void do_handle_mouse_click(){}
 
     private:
         bool is_inside_ = false;

@@ -81,7 +81,7 @@ game_menu_overlay::game_menu_overlay
         "RESUME",
         objects::label_button::callback_set
         {
-            .mouse_release_callback = callbacks.handle_resume_request
+            .mouse_click_callback = callbacks.handle_resume_request
         }
     ),
     exit_button_
@@ -93,7 +93,7 @@ game_menu_overlay::game_menu_overlay
         "EXIT",
         objects::label_button::callback_set
         {
-            .mouse_release_callback = callbacks.handle_exit_request
+            .mouse_click_callback = callbacks.handle_exit_request
         }
     ),
     save_note_label_
