@@ -73,7 +73,7 @@ struct title::impl
             "PLAY",
             objects::label_button::callback_set
             {
-                .mouse_release_callback = [this]{this->callbacks.play_request();}
+                .mouse_click_callback = [this]{this->callbacks.play_request();}
             }
         ),
         about_button
@@ -85,7 +85,7 @@ struct title::impl
             "ABOUT",
             objects::label_button::callback_set
             {
-                .mouse_release_callback = [this]{this->callbacks.about_request();}
+                .mouse_click_callback = [this]{this->callbacks.about_request();}
             }
         )
     {

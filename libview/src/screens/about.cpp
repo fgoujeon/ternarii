@@ -97,7 +97,7 @@ struct about::impl
             "BACK",
             objects::label_button::callback_set
             {
-                .mouse_release_callback = [this]{this->callbacks.back_request();}
+                .mouse_click_callback = [this]{this->callbacks.back_request();}
             }
         )
     {

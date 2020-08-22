@@ -63,24 +63,24 @@ bool sdf_image_button::is_inside(const Magnum::Vector2& model_space_position) co
     return squared_distance <= 1;
 }
 
-void sdf_image_button::handle_mouse_press()
+void sdf_image_button::do_handle_mouse_press()
 {
     image_.set_color(colors::white);
     callbacks_.handle_mouse_press();
 }
 
-void sdf_image_button::handle_mouse_release()
+void sdf_image_button::do_handle_mouse_release()
 {
     image_.set_color(colors::light_gray);
     callbacks_.handle_mouse_release();
 }
 
-void sdf_image_button::handle_mouse_enter()
+void sdf_image_button::do_handle_mouse_enter()
 {
     image_.set_color(colors::white);
 }
 
-void sdf_image_button::handle_mouse_leave()
+void sdf_image_button::do_handle_mouse_leave()
 {
     image_.set_color(colors::light_gray);
 }

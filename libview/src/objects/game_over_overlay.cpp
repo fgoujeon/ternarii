@@ -75,7 +75,7 @@ game_over_overlay::game_over_overlay
         "EXIT",
         objects::label_button::callback_set
         {
-            .mouse_release_callback = callbacks.handle_exit_button_press
+            .mouse_click_callback = callbacks.handle_exit_button_press
         }
     ),
     new_game_button_
@@ -87,7 +87,7 @@ game_over_overlay::game_over_overlay
         "NEW GAME",
         objects::label_button::callback_set
         {
-            .mouse_release_callback = callbacks.handle_new_game_button_press
+            .mouse_click_callback = callbacks.handle_new_game_button_press
         }
     )
 {

@@ -71,26 +71,31 @@ bool blank_button::is_inside(const Magnum::Vector2& model_space_position) const
     return -xs <= x && x <= xs && -ys <= y && y <= ys;
 }
 
-void blank_button::handle_mouse_press()
+void blank_button::do_handle_mouse_enter()
+{
+    background_rectangle_.set_color(style_.highlight_color);
+}
+
+void blank_button::do_handle_mouse_leave()
+{
+    background_rectangle_.set_color(style_.color);
+}
+
+void blank_button::do_handle_mouse_press()
 {
     background_rectangle_.set_color(style_.highlight_color);
     callbacks_.mouse_press_callback();
 }
 
-void blank_button::handle_mouse_release()
+void blank_button::do_handle_mouse_release()
 {
     background_rectangle_.set_color(style_.color);
     callbacks_.mouse_release_callback();
 }
 
-void blank_button::handle_mouse_enter()
+void blank_button::do_handle_mouse_click()
 {
-    background_rectangle_.set_color(style_.highlight_color);
-}
-
-void blank_button::handle_mouse_leave()
-{
-    background_rectangle_.set_color(style_.color);
+    callbacks_.mouse_click_callback();
 }
 
 } //namespace
