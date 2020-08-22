@@ -32,31 +32,49 @@ class clickable: public Magnum::SceneGraph::AbstractGroupedFeature2D<clickable>
 
         virtual bool is_inside(const Magnum::Vector2& model_space_position) const = 0;
 
-        virtual void handle_mouse_press(){}
-
-        virtual void handle_mouse_release(){}
-
         void handle_mouse_move(const bool is_inside)
         {
-            if(!was_inside_ && is_inside)
+            if(!is_inside_ && is_inside)
             {
-                handle_mouse_enter();
+                do_handle_mouse_enter();
             }
-            else if(was_inside_ && !is_inside)
+            else if(is_inside_ && !is_inside)
             {
-                handle_mouse_leave();
+                do_handle_mouse_leave();
+
+                if(pressed_)
+                {
+                    handle_mouse_release();
+                }
             }
 
-            was_inside_ = is_inside;
+            is_inside_ = is_inside;
+        }
+
+        void handle_mouse_press()
+        {
+            pressed_ = true;
+            do_handle_mouse_press();
+        }
+
+        void handle_mouse_release()
+        {
+            pressed_ = false;
+            do_handle_mouse_release();
         }
 
     protected:
-        virtual void handle_mouse_enter(){}
+        virtual void do_handle_mouse_enter(){}
 
-        virtual void handle_mouse_leave(){}
+        virtual void do_handle_mouse_leave(){}
+
+        virtual void do_handle_mouse_press(){}
+
+        virtual void do_handle_mouse_release(){}
 
     private:
-        bool was_inside_ = false;
+        bool is_inside_ = false;
+        bool pressed_ = false;
 };
 
 using clickable_group = Magnum::SceneGraph::FeatureGroup2D<clickable>;

@@ -50,13 +50,13 @@ class sdf_image_button: public object2d, public features::clickable
     private:
         bool is_inside(const Magnum::Vector2& model_space_position) const override;
 
-        void handle_mouse_press() override;
+        void do_handle_mouse_press() override;
 
-        void handle_mouse_release() override;
+        void do_handle_mouse_release() override;
 
-        void handle_mouse_enter() override;
+        void do_handle_mouse_enter() override;
 
-        void handle_mouse_leave() override;
+        void do_handle_mouse_leave() override;
 
     private:
         callback_set callbacks_;
