@@ -176,14 +176,9 @@ struct view::impl final
         handle_mouse_event
         (
             event,
-            [](features::clickable& clickable, const bool is_inside)
+            [](features::clickable& clickable, const Magnum::Vector2& clickable_space_position)
             {
-                if(is_inside)
-                {
-                    clickable.handle_mouse_press();
-                }
-
-                return !is_inside;
+                clickable.handle_mouse_press(clickable_space_position);
             }
         );
     }
@@ -204,14 +199,9 @@ struct view::impl final
         handle_mouse_event
         (
             event,
-            [](features::clickable& clickable, const bool is_inside)
+            [](features::clickable& clickable, const Magnum::Vector2& clickable_space_position)
             {
-                if(is_inside)
-                {
-                    clickable.handle_mouse_release();
-                }
-
-                return !is_inside;
+                clickable.handle_mouse_release(clickable_space_position);
             }
         );
     }
@@ -226,10 +216,9 @@ struct view::impl final
         handle_mouse_event
         (
             event,
-            [](features::clickable& clickable, const bool is_inside)
+            [](features::clickable& clickable, const Magnum::Vector2& clickable_space_position)
             {
-                clickable.handle_mouse_move(is_inside);
-                return true;
+                clickable.handle_mouse_move(clickable_space_position);
             }
         );
     }
@@ -247,18 +236,14 @@ struct view::impl final
             * camera.projectionSize()
         ;
 
-        auto keep_iterating = true;
-        for(std::size_t i = 0; i < feature_groups.clickables.size() && keep_iterating; ++i)
+        for(std::size_t i = 0; i < feature_groups.clickables.size(); ++i)
         {
             auto& clickable = feature_groups.clickables[i];
 
             //Convert to model-space coordinates of clickable
             const auto clickable_space_position = clickable.object().absoluteTransformationMatrix().inverted().transformPoint(world_space_position);
 
-            //Check if click position is inside clickable
-            const auto is_inside = clickable.is_inside(clickable_space_position);
-
-            keep_iterating = f(clickable, is_inside);
+            f(clickable, clickable_space_position);
         }
     }
 

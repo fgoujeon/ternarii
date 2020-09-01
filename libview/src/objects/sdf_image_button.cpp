@@ -55,7 +55,7 @@ sdf_image_button::sdf_image_button
 {
 }
 
-bool sdf_image_button::is_inside(const Magnum::Vector2& model_space_position) const
+bool sdf_image_button::do_is_inside(const Magnum::Vector2& model_space_position) const
 {
     const auto x = model_space_position.x();
     const auto y = model_space_position.y();

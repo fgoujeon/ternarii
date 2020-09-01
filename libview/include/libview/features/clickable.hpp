@@ -30,15 +30,16 @@ class clickable: public Magnum::SceneGraph::AbstractGroupedFeature2D<clickable>
     public:
         using Magnum::SceneGraph::AbstractGroupedFeature2D<clickable>::AbstractGroupedFeature2D;
 
-        virtual bool is_inside(const Magnum::Vector2& model_space_position) const = 0;
-
-        void handle_mouse_move(const bool is_inside)
+        void handle_mouse_move(const Magnum::Vector2& model_space_position)
         {
-            if(!is_inside_ && is_inside)
+            const auto was_inside = is_inside_;
+            is_inside_ = do_is_inside(model_space_position);
+
+            if(!was_inside && is_inside_)
             {
                 do_handle_mouse_enter();
             }
-            else if(is_inside_ && !is_inside)
+            else if(was_inside && !is_inside_)
             {
                 do_handle_mouse_leave();
 
@@ -48,30 +49,40 @@ class clickable: public Magnum::SceneGraph::AbstractGroupedFeature2D<clickable>
                     pressed_ = false;
                 }
             }
-
-            is_inside_ = is_inside;
         }
 
-        void handle_mouse_press()
+        void handle_mouse_press(const Magnum::Vector2& model_space_position)
         {
-            do_handle_mouse_press();
+            is_inside_ = do_is_inside(model_space_position);
 
-            pressed_ = true;
-        }
-
-        void handle_mouse_release()
-        {
-            do_handle_mouse_release();
-
-            if(pressed_)
+            if(is_inside_)
             {
-                do_handle_mouse_click();
-            }
+                pressed_ = true;
 
-            pressed_ = false;
+                do_handle_mouse_press();
+            }
+        }
+
+        void handle_mouse_release(const Magnum::Vector2& model_space_position)
+        {
+            is_inside_ = do_is_inside(model_space_position);
+
+            if(is_inside_)
+            {
+                do_handle_mouse_release();
+
+                if(pressed_)
+                {
+                    do_handle_mouse_click();
+                }
+
+                pressed_ = false;
+            }
         }
 
     protected:
+        virtual bool do_is_inside(const Magnum::Vector2& model_space_position) const = 0;
+
         virtual void do_handle_mouse_enter(){}
 
         virtual void do_handle_mouse_leave(){}

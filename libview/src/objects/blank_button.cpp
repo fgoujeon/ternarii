@@ -57,7 +57,7 @@ void blank_button::set_enabled(const bool enabled)
     enabled_ = enabled;
 }
 
-bool blank_button::is_inside(const Magnum::Vector2& model_space_position) const
+bool blank_button::do_is_inside(const Magnum::Vector2& model_space_position) const
 {
     if(!enabled_)
     {
