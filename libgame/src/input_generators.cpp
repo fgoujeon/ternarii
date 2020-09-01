@@ -242,34 +242,18 @@ namespace
                         libcommon::constants::board_authorized_cell_count
                     ;
 
+                    const auto sd_max = 4.0; //SD of empty board
+                    const auto sd_min = 1.8; //SD of full board
+                    const auto sd_variable_part = sd_max - sd_min;
+
                     /*
-                    Value of the SD when the board is not too empty and not too
+                    The higher the exponent is, the "longer" the SD stays at max value.
+                    We only want the SD to significantly decrease when the board is 3/4
                     full.
                     */
-                    const auto nominal_sd = 4.0;
+                    const auto fill_rate_pow = std::pow(fill_rate, 6);
 
-                    /*
-                    The higher this value is, the narrower the nominal range
-                    (i.e. the range where SD stays at nominal value) is.
-                    We only want the SD to:
-                    - significantly increase when the board is 3/4 empty;
-                    - significantly decrease when the board is 3/4 full.
-                    */
-                    const auto nominal_range_narrowness = 70;
-
-                    /*
-                    This value must be an odd integer.
-                    The highest this value is:
-                    - the highest the max SD is;
-                    - the lowest the min SD is.
-                    */
-                    const auto sd_range = 5;
-
-                    return
-                        nominal_sd -
-                        nominal_range_narrowness *
-                        std::pow(fill_rate - 0.5, sd_range)
-                    ;
+                    return sd_min + sd_variable_part * (1.0 - fill_rate_pow);
                 }();
 
                 const auto r = dis_(rng_.engine);
