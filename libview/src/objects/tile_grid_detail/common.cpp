@@ -40,19 +40,19 @@ std::shared_ptr<object2d> make_tile_object
     (
         libutil::overload
         {
-            [&](const data_types::number_tile& tile) -> result_t
+            [&](const data_types::tiles::number& tile) -> result_t
             {
                 return std::make_shared<number_tile>(parent, drawables, animables, tile.value);
             },
-            [&](const data_types::column_nullifier_tile&) -> result_t
+            [&](const data_types::tiles::column_nullifier&) -> result_t
             {
                 return std::make_shared<sdf_image_tile>(parent, drawables, libres::images::column_nullifier);
             },
-            [&](const data_types::row_nullifier_tile&) -> result_t
+            [&](const data_types::tiles::row_nullifier&) -> result_t
             {
                 return std::make_shared<sdf_image_tile>(parent, drawables, libres::images::row_nullifier);
             },
-            [&](const data_types::number_nullifier_tile&) -> result_t
+            [&](const data_types::tiles::number_nullifier&) -> result_t
             {
                 return std::make_shared<sdf_image_tile>(parent, drawables, libres::images::number_nullifier);
             }

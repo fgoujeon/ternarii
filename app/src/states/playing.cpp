@@ -98,7 +98,7 @@ playing::playing(fsm& f, const screen_transition trans, const libgame::data_type
         pgame_ = std::make_unique<libgame::game>(stage, stage_state);
 
         //Initialize view
-        pscreen_->set_score(get_score(board_tiles));
+        pscreen_->set_score(libcommon::data_types::get_score(board_tiles));
         pscreen_->set_time_s(stage_state.time_s);
         pscreen_->set_hi_score(stage_state.hi_score);
         pscreen_->set_move_count(stage_state.move_count);
@@ -107,7 +107,7 @@ playing::playing(fsm& f, const screen_transition trans, const libgame::data_type
         pscreen_->create_next_input(stage_state.next_input_tiles);
         pscreen_->set_board_tiles(board_tiles);
         mark_tiles_for_nullification();
-        pscreen_->set_game_over_overlay_visible(is_overflowed(board_tiles));
+        pscreen_->set_game_over_overlay_visible(libcommon::data_types::is_overflowed(board_tiles));
     }
     else
     {

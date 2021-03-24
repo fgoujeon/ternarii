@@ -23,28 +23,31 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libcommon::data_types
 {
 
-std::ostream& operator<<(std::ostream& l, const number_tile& r)
+namespace tiles
 {
-    l << "number_tile";
-    l << "{";
-    l << "value: " << r.value;
-    l << "}";
-    return l;
-}
+    std::ostream& operator<<(std::ostream& l, const number& r)
+    {
+        l << "number";
+        l << "{";
+        l << "value: " << r.value;
+        l << "}";
+        return l;
+    }
 
-std::ostream& operator<<(std::ostream& l, const column_nullifier_tile& r)
-{
-    return l << "column_nullifier_tile{}";
-}
+    std::ostream& operator<<(std::ostream& l, const column_nullifier& r)
+    {
+        return l << "column_nullifier{}";
+    }
 
-std::ostream& operator<<(std::ostream& l, const row_nullifier_tile& r)
-{
-    return l << "row_nullifier_tile{}";
-}
+    std::ostream& operator<<(std::ostream& l, const row_nullifier& r)
+    {
+        return l << "row_nullifier{}";
+    }
 
-std::ostream& operator<<(std::ostream& l, const number_nullifier_tile& r)
-{
-    return l << "number_nullifier_tile{}";
+    std::ostream& operator<<(std::ostream& l, const number_nullifier& r)
+    {
+        return l << "number_nullifier{}";
+    }
 }
 
 
@@ -73,7 +76,7 @@ int get_highest_tile_value(const board_tile_matrix& tiles)
     {
         if(opt_tile)
         {
-            if(const auto pnum_tile = std::get_if<data_types::number_tile>(&*opt_tile))
+            if(const auto pnum_tile = std::get_if<data_types::tiles::number>(&*opt_tile))
             {
                 value = std::max(value, pnum_tile->value);
             }
@@ -89,7 +92,7 @@ int get_score(const board_tile_matrix& tiles)
     {
         if(opt_tile)
         {
-            if(const auto pnum_tile = std::get_if<data_types::number_tile>(&*opt_tile))
+            if(const auto pnum_tile = std::get_if<data_types::tiles::number>(&*opt_tile))
             {
                 score += std::pow(3, pnum_tile->value);
             }

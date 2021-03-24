@@ -129,39 +129,39 @@ namespace nlohmann
     };
 }
 
-namespace libcommon::data_types
+namespace libcommon::data_types::tiles
 {
-    void from_json(const nlohmann::json& from, number_tile& to)
+    void from_json(const nlohmann::json& from, number& to)
     {
         to.value = from.get<int>();
     }
 
-    void to_json(nlohmann::json& to, const number_tile& from)
+    void to_json(nlohmann::json& to, const number& from)
     {
         to = from.value;
     }
 
-    void from_json(const nlohmann::json&, column_nullifier_tile&)
+    void from_json(const nlohmann::json&, column_nullifier&)
     {
     }
 
-    void to_json(nlohmann::json&, const column_nullifier_tile&)
+    void to_json(nlohmann::json&, const column_nullifier&)
     {
     }
 
-    void from_json(const nlohmann::json&, row_nullifier_tile&)
+    void from_json(const nlohmann::json&, row_nullifier&)
     {
     }
 
-    void to_json(nlohmann::json&, const row_nullifier_tile&)
+    void to_json(nlohmann::json&, const row_nullifier&)
     {
     }
 
-    void from_json(const nlohmann::json&, number_nullifier_tile&)
+    void from_json(const nlohmann::json&, number_nullifier&)
     {
     }
 
-    void to_json(nlohmann::json&, const number_nullifier_tile&)
+    void to_json(nlohmann::json&, const number_nullifier&)
     {
     }
 }
@@ -247,8 +247,8 @@ namespace libdb
             {
                 auto tile_values = std::array<int, 2>{};
                 from.get_to(tile_values);
-                to.data[0] = libgame::data_types::number_tile{from[0]};
-                to.data[2] = libgame::data_types::number_tile{from[1]};
+                to.data[0] = libgame::data_types::tiles::number{from[0]};
+                to.data[2] = libgame::data_types::tiles::number{from[1]};
             };
 
             from_tile_array1d(from.at("nextInputTiles"), state.next_input_tiles);
@@ -269,7 +269,7 @@ namespace libdb
                 {
                     if(tile_values[col][row].has_value())
                     {
-                        tile = libgame::data_types::number_tile{tile_values[col][row].value()};
+                        tile = libgame::data_types::tiles::number{tile_values[col][row].value()};
                     }
                 },
                 state.board_tiles

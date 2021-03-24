@@ -36,32 +36,35 @@ namespace libcommon::data_types
 Tile types
 */
 
-struct number_tile
+namespace tiles
 {
-    int value = 0;
-};
+    struct number
+    {
+        int value = 0;
+    };
 
-//Nullifies all the tiles of a column
-struct column_nullifier_tile{};
+    //Nullifies all the tiles of a column
+    struct column_nullifier{};
 
-//Nullifies all the tiles of a row
-struct row_nullifier_tile{};
+    //Nullifies all the tiles of a row
+    struct row_nullifier{};
 
-//Nullifies all the number tiles that have the same value than the one
-//placed below
-struct number_nullifier_tile{};
+    //Nullifies all the number tiles that have the same value than the one
+    //placed below
+    struct number_nullifier{};
 
-std::ostream& operator<<(std::ostream& l, const number_tile& r);
-std::ostream& operator<<(std::ostream& l, const column_nullifier_tile& r);
-std::ostream& operator<<(std::ostream& l, const row_nullifier_tile& r);
-std::ostream& operator<<(std::ostream& l, const number_nullifier_tile& r);
+    std::ostream& operator<<(std::ostream& l, const number& r);
+    std::ostream& operator<<(std::ostream& l, const column_nullifier& r);
+    std::ostream& operator<<(std::ostream& l, const row_nullifier& r);
+    std::ostream& operator<<(std::ostream& l, const number_nullifier& r);
+}
 
 using tile = std::variant
 <
-    number_tile,
-    column_nullifier_tile,
-    row_nullifier_tile,
-    number_nullifier_tile
+    tiles::number,
+    tiles::column_nullifier,
+    tiles::row_nullifier,
+    tiles::number_nullifier
 >;
 
 

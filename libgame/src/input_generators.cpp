@@ -46,7 +46,7 @@ namespace
 
         public:
             //return random value from 0 to max
-            data_types::number_tile generate
+            data_types::tiles::number generate
             (
                 const int max,
                 const double standard_deviation
@@ -68,7 +68,7 @@ namespace
                 //stay inside [0, max]
                 const auto final_val = natural_val % (max + 1);
 
-                return data_types::number_tile{final_val};
+                return data_types::tiles::number{final_val};
             }
 
         private:
@@ -293,10 +293,10 @@ namespace
         static auto generator = random_input_generator
         (
             {
-                {get_random_number_tile_pair_generator(),                         300},
-                {get_simple_input_generator<data_types::column_nullifier_tile>(), 1},
-                {get_simple_input_generator<data_types::row_nullifier_tile>(),    1},
-                {get_simple_input_generator<data_types::number_nullifier_tile>(), 1},
+                {get_random_number_tile_pair_generator(), 300},
+                {get_simple_input_generator<data_types::tiles::column_nullifier>(), 1},
+                {get_simple_input_generator<data_types::tiles::row_nullifier>(), 1},
+                {get_simple_input_generator<data_types::tiles::number_nullifier>(), 1},
             }
         );
         return generator;
@@ -307,11 +307,11 @@ namespace
         static auto generator = random_input_generator
         (
             {
-                {get_random_number_tile_pair_generator(),                         225},
-                {get_random_number_tile_triple_generator(),                       75},
-                {get_simple_input_generator<data_types::column_nullifier_tile>(), 1},
-                {get_simple_input_generator<data_types::row_nullifier_tile>(),    1},
-                {get_simple_input_generator<data_types::number_nullifier_tile>(), 1},
+                {get_random_number_tile_pair_generator(), 225},
+                {get_random_number_tile_triple_generator(), 75},
+                {get_simple_input_generator<data_types::tiles::column_nullifier>(), 1},
+                {get_simple_input_generator<data_types::tiles::row_nullifier>(), 1},
+                {get_simple_input_generator<data_types::tiles::number_nullifier>(), 1},
             }
         );
         return generator;

@@ -270,7 +270,7 @@ void tile_grid::merge_tiles(const data_types::tile_merge_list& merges)
         }
 
         //create destination tile
-        auto pdst_tile = make_tile(data_types::number_tile{merge.dst_tile_value}, dst_position);
+        auto pdst_tile = make_tile(data_types::tiles::number{merge.dst_tile_value}, dst_position);
         pdst_tile->set_alpha(0);
         at(board_tiles_, merge.dst_tile_coordinate) = pdst_tile;
 
