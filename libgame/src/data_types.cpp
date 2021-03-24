@@ -34,19 +34,28 @@ namespace tiles
         return l;
     }
 
-    std::ostream& operator<<(std::ostream& l, const column_nullifier& r)
+    std::ostream& operator<<(std::ostream& l, const column_nullifier&)
     {
         return l << "column_nullifier{}";
     }
 
-    std::ostream& operator<<(std::ostream& l, const row_nullifier& r)
+    std::ostream& operator<<(std::ostream& l, const row_nullifier&)
     {
         return l << "row_nullifier{}";
     }
 
-    std::ostream& operator<<(std::ostream& l, const number_nullifier& r)
+    std::ostream& operator<<(std::ostream& l, const number_nullifier&)
     {
         return l << "number_nullifier{}";
+    }
+
+    std::ostream& operator<<(std::ostream& l, const granite& r)
+    {
+        l << "granite";
+        l << "{";
+        l << "thickness: " << r.thickness;
+        l << "}";
+        return l;
     }
 }
 

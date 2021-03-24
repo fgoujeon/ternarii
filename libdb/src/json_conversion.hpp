@@ -166,6 +166,16 @@ namespace libgame::data_types
         void to_json(nlohmann::json&, const number_nullifier&)
         {
         }
+
+        void from_json(const nlohmann::json& from, granite& to)
+        {
+            to.thickness = from.get<int>();
+        }
+
+        void to_json(nlohmann::json& to, const granite& from)
+        {
+            to = from.thickness;
+        }
     }
 
     void from_json(const nlohmann::json& from, stage& to)

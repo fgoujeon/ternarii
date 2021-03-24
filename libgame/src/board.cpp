@@ -123,6 +123,8 @@ namespace
                     {
                         [&](const data_types::tiles::number&){},
 
+                        [&](const data_types::tiles::granite&){},
+
                         [&](const data_types::tiles::column_nullifier&)
                         {
                             //Remove all tiles from current column
