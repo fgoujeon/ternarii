@@ -1,5 +1,5 @@
 /*
-Copyright 2018 - 2020 Florian Goujeon
+Copyright 2018 - 2021 Florian Goujeon
 
 This file is part of Ternarii.
 
@@ -62,7 +62,7 @@ If not, see https://www.gnu.org/licenses/.
 Official website: http://ternarii.com
 Source code: https://github.com/fgoujeon/ternarii
 
-Copyright 2018 - 2020 Florian Goujeon)^";
+Copyright 2018 - 2021 Florian Goujeon)^";
 }
 
 struct about::impl

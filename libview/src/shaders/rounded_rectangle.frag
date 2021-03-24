@@ -1,5 +1,5 @@
 R"^(/*
-Copyright 2018 - 2020 Florian Goujeon
+Copyright 2018 - 2021 Florian Goujeon
 
 This file is part of Ternarii.
 
