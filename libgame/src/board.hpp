@@ -22,7 +22,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 
 #include <libgame/events.hpp>
 #include <libgame/data_types.hpp>
-#include <libcommon/constants.hpp>
+#include <libgame/constants.hpp>
 #include <vector>
 #include <memory>
 
@@ -32,11 +32,11 @@ namespace libgame
 class board
 {
     public:
-        static constexpr auto total_column_count      = libcommon::constants::board_column_count;
-        static constexpr auto total_row_count         = libcommon::constants::board_row_count;
-        static constexpr auto authorized_column_count = libcommon::constants::board_authorized_column_count;
-        static constexpr auto authorized_row_count    = libcommon::constants::board_authorized_row_count;
-        static constexpr auto authorized_cell_count   = libcommon::constants::board_authorized_cell_count;
+        static constexpr auto total_column_count      = constants::board_column_count;
+        static constexpr auto total_row_count         = constants::board_row_count;
+        static constexpr auto authorized_column_count = constants::board_authorized_column_count;
+        static constexpr auto authorized_row_count    = constants::board_authorized_row_count;
+        static constexpr auto authorized_cell_count   = constants::board_authorized_cell_count;
 
     public:
         board(data_types::board_tile_matrix& tiles);

@@ -43,8 +43,8 @@ struct game::impl
 
     events::next_input_creation generate_next_input()
     {
-        const auto board_highest_tile_value = libcommon::data_types::get_highest_tile_value(state.board_tiles);
-        const auto board_tile_count = libcommon::data_types::get_tile_count(state.board_tiles);
+        const auto board_highest_tile_value = data_types::get_highest_tile_value(state.board_tiles);
+        const auto board_tile_count = data_types::get_tile_count(state.board_tiles);
 
         //Generate a new input
         state.next_input_tiles = input_gen.generate
@@ -92,7 +92,7 @@ void game::get_targeted_tiles
 
 bool game::is_over() const
 {
-    return libcommon::data_types::is_overflowed(pimpl_->state.board_tiles);
+    return data_types::is_overflowed(pimpl_->state.board_tiles);
 }
 
 void game::start(event_list& events)
@@ -140,7 +140,7 @@ void game::drop_input_tiles
         events.push_back(events::end_of_game{});
 
         //Save hi-score
-        const auto score = libcommon::data_types::get_score(pimpl_->state.board_tiles);
+        const auto score = data_types::get_score(pimpl_->state.board_tiles);
         auto& hi_score = pimpl_->state.hi_score;
         if(hi_score < score)
         {

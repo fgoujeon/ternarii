@@ -17,10 +17,10 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#include <libcommon/data_types.hpp>
+#include <libgame/data_types.hpp>
 #include <libutil/streamable.hpp>
 
-namespace libcommon::data_types
+namespace libgame::data_types
 {
 
 namespace tiles

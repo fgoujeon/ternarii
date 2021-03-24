@@ -129,45 +129,45 @@ namespace nlohmann
     };
 }
 
-namespace libcommon::data_types::tiles
-{
-    void from_json(const nlohmann::json& from, number& to)
-    {
-        to.value = from.get<int>();
-    }
-
-    void to_json(nlohmann::json& to, const number& from)
-    {
-        to = from.value;
-    }
-
-    void from_json(const nlohmann::json&, column_nullifier&)
-    {
-    }
-
-    void to_json(nlohmann::json&, const column_nullifier&)
-    {
-    }
-
-    void from_json(const nlohmann::json&, row_nullifier&)
-    {
-    }
-
-    void to_json(nlohmann::json&, const row_nullifier&)
-    {
-    }
-
-    void from_json(const nlohmann::json&, number_nullifier&)
-    {
-    }
-
-    void to_json(nlohmann::json&, const number_nullifier&)
-    {
-    }
-}
-
 namespace libgame::data_types
 {
+    namespace tiles
+    {
+        void from_json(const nlohmann::json& from, number& to)
+        {
+            to.value = from.get<int>();
+        }
+
+        void to_json(nlohmann::json& to, const number& from)
+        {
+            to = from.value;
+        }
+
+        void from_json(const nlohmann::json&, column_nullifier&)
+        {
+        }
+
+        void to_json(nlohmann::json&, const column_nullifier&)
+        {
+        }
+
+        void from_json(const nlohmann::json&, row_nullifier&)
+        {
+        }
+
+        void to_json(nlohmann::json&, const row_nullifier&)
+        {
+        }
+
+        void from_json(const nlohmann::json&, number_nullifier&)
+        {
+        }
+
+        void to_json(nlohmann::json&, const number_nullifier&)
+        {
+        }
+    }
+
     void from_json(const nlohmann::json& from, stage& to)
     {
         to = static_cast<stage>(from.get<int>());

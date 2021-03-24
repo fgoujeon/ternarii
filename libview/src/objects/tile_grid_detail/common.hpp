@@ -30,8 +30,8 @@ namespace libview::objects::tile_grid_detail
 using input_tile_object_matrix = libutil::matrix
 <
     std::shared_ptr<object2d>,
-    libcommon::constants::input_column_count,
-    libcommon::constants::input_row_count
+    libgame::constants::input_column_count,
+    libgame::constants::input_row_count
 >;
 
 std::shared_ptr<object2d> make_tile_object

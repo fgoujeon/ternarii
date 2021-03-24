@@ -61,7 +61,6 @@ find_package(
 find_package(nlohmann_json 3.2.0 REQUIRED)
 
 add_subdirectory(app)
-add_subdirectory(libcommon)
 add_subdirectory(libdb)
 add_subdirectory(libgame)
 add_subdirectory(libres)

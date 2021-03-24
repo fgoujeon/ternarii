@@ -25,10 +25,10 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include "../../animation.hpp"
 #include "../../common.hpp"
 #include <libview/data_types.hpp>
-#include <libcommon/constants.hpp>
+#include <libgame/constants.hpp>
 #include <libutil/matrix.hpp>
-#include <chrono>
 #include <libutil/void_function.hpp>
+#include <chrono>
 #include <memory>
 
 namespace libview::objects::tile_grid_detail

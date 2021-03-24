@@ -64,7 +64,7 @@ namespace
                         return;
                     }
 
-                    const auto opt_dst_row = libcommon::data_types::get_lowest_empty_cell
+                    const auto opt_dst_row = data_types::get_lowest_empty_cell
                     (
                         board_tiles,
                         coord.col
@@ -292,7 +292,7 @@ void board::drop_input_tiles
         }
     } while(old_event_count != events.size());
 
-    events.push_back(events::score_change{libcommon::data_types::get_score(tiles_)});
+    events.push_back(events::score_change{data_types::get_score(tiles_)});
 }
 
 data_types::board_tile_drop_list board::make_tiles_fall()

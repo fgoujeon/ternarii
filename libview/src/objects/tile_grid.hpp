@@ -28,12 +28,12 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include "../animation.hpp"
 #include "../common.hpp"
 #include <libview/data_types.hpp>
-#include <libcommon/constants.hpp>
+#include <libgame/constants.hpp>
 #include <libutil/matrix.hpp>
-#include <chrono>
 #include <Magnum/Animation/Player.h>
 #include <Magnum/GL/Mesh.h>
 #include <Magnum/Shaders/VertexColor.h>
+#include <chrono>
 #include <memory>
 
 namespace libview::objects
@@ -49,15 +49,15 @@ class tile_grid: public object2d, public features::animable
         using input_tile_matrix = libutil::matrix
         <
             std::shared_ptr<object2d>,
-            libcommon::constants::input_column_count,
-            libcommon::constants::input_row_count
+            libgame::constants::input_column_count,
+            libgame::constants::input_row_count
         >;
 
         using board_tile_matrix = libutil::matrix
         <
             std::shared_ptr<object2d>,
-            libcommon::constants::board_column_count,
-            libcommon::constants::board_row_count
+            libgame::constants::board_column_count,
+            libgame::constants::board_row_count
         >;
 
     public:

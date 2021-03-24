@@ -239,7 +239,7 @@ namespace
                     */
                     const auto fill_rate =
                         static_cast<double>(board_tile_count) /
-                        libcommon::constants::board_authorized_cell_count
+                        constants::board_authorized_cell_count
                     ;
 
                     const auto sd_max = 4.0; //SD of empty board

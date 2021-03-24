@@ -17,10 +17,10 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef LIBCOMMON_CONSTANTS_HPP
-#define LIBCOMMON_CONSTANTS_HPP
+#ifndef LIBGAME_CONSTANTS_HPP
+#define LIBGAME_CONSTANTS_HPP
 
-namespace libcommon::constants
+namespace libgame::constants
 {
 
 //Dimensions of the zone, starting from the bottom of the board, that can
