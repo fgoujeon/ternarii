@@ -251,7 +251,8 @@ enum class stage
 {
     purity_chapel,
     nullifier_room,
-    triplet_pines_mall
+    triplet_pines_mall,
+    granite_cave
 };
 
 

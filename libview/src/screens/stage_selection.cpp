@@ -230,6 +230,43 @@ struct stage_selection::impl
             libres::images::number_nullifier
         ),
 
+        //Granite cave
+        granite_cave_button
+        (
+            self,
+            feature_groups,
+            data_types::stage::granite_cave,
+            callbacks
+        ),
+        granite_cave_granite
+        (
+            granite_cave_button,
+            feature_groups.drawables,
+            libres::images::granite,
+            objects::sdf_image::style
+            {
+                .color = colors::black
+            }
+        ),
+        granite_cave_special_tile_0
+        (
+            granite_cave_button,
+            feature_groups.drawables,
+            libres::images::row_nullifier
+        ),
+        granite_cave_special_tile_1
+        (
+            granite_cave_button,
+            feature_groups.drawables,
+            libres::images::column_nullifier
+        ),
+        granite_cave_special_tile_2
+        (
+            granite_cave_button,
+            feature_groups.drawables,
+            libres::images::number_nullifier
+        ),
+
         back_button
         (
             self,
@@ -246,13 +283,13 @@ struct stage_selection::impl
         title_label.setTranslation({0.0f, 7.0f});
 
         {
-            purity_chapel_button.setTranslation({0.0f, 3.0f});
+            purity_chapel_button.setTranslation({0.0f, 4.5f});
 
             purity_chapel_description_label.setTranslation({0.75f, -0.4f});
         }
 
         {
-            nullifier_room_button.setTranslation({0.0f, 0.0f});
+            nullifier_room_button.setTranslation({0.0f, 1.5f});
 
             nullifier_room_special_tile_0.setScaling({0.4f, 0.4f});
             nullifier_room_special_tile_0.setTranslation({-0.25f, -0.4f});
@@ -265,7 +302,7 @@ struct stage_selection::impl
         }
 
         {
-            triplet_pines_mall_button.setTranslation({0.0f, -3.0f});
+            triplet_pines_mall_button.setTranslation({0.0f, -1.5f});
 
             triplet_pines_mall_tile_triplet.setScaling({0.4f, 0.4f});
             triplet_pines_mall_tile_triplet.setTranslation({-0.75f, -0.4f});
@@ -278,6 +315,22 @@ struct stage_selection::impl
 
             triplet_pines_mall_special_tile_2.setScaling({0.4f, 0.4f});
             triplet_pines_mall_special_tile_2.setTranslation({2.25f, -0.4f});
+        }
+
+        {
+            granite_cave_button.setTranslation({0.0f, -4.5f});
+
+            granite_cave_granite.setScaling({0.4f, 0.4f});
+            granite_cave_granite.setTranslation({-0.75f, -0.4f});
+
+            granite_cave_special_tile_0.setScaling({0.4f, 0.4f});
+            granite_cave_special_tile_0.setTranslation({0.25f, -0.4f});
+
+            granite_cave_special_tile_1.setScaling({0.4f, 0.4f});
+            granite_cave_special_tile_1.setTranslation({1.25f, -0.4f});
+
+            granite_cave_special_tile_2.setScaling({0.4f, 0.4f});
+            granite_cave_special_tile_2.setTranslation({2.25f, -0.4f});
         }
 
         back_button.setScaling({2.0f, 2.0f});
@@ -301,6 +354,12 @@ struct stage_selection::impl
     objects::sdf_image_tile triplet_pines_mall_special_tile_0;
     objects::sdf_image_tile triplet_pines_mall_special_tile_1;
     objects::sdf_image_tile triplet_pines_mall_special_tile_2;
+
+    selection_button granite_cave_button;
+    objects::sdf_image granite_cave_granite;
+    objects::sdf_image_tile granite_cave_special_tile_0;
+    objects::sdf_image_tile granite_cave_special_tile_1;
+    objects::sdf_image_tile granite_cave_special_tile_2;
 
     objects::label_button back_button;
 };

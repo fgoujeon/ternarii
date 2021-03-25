@@ -78,6 +78,21 @@ namespace
 
 
 
+    class random_granite_tile_generator
+    {
+        public:
+            data_types::tiles::granite generate()
+            {
+                return data_types::tiles::granite{dis_(rng_.engine) + 1};
+            }
+
+        private:
+            libutil::rng rng_;
+            std::discrete_distribution<int> dis_{5, 8, 5};
+    };
+
+
+
     class simple_input_generator: public abstract_input_subgenerator
     {
         public:
@@ -164,6 +179,37 @@ namespace
     abstract_input_subgenerator& get_random_number_tile_triple_generator()
     {
         static auto generator = random_number_tile_triple_generator{};
+        return generator;
+    }
+
+
+
+    class random_number_and_granite_tile_generator: public abstract_input_subgenerator
+    {
+        public:
+            data_types::input_tile_matrix generate
+            (
+                const int max,
+                const double standard_deviation
+            ) override
+            {
+                return
+                {
+                    number_gen_.generate(max, standard_deviation),
+                    std::nullopt,
+                    granite_gen_.generate(),
+                    std::nullopt
+                };
+            }
+
+        private:
+            random_number_tile_generator number_gen_;
+            random_granite_tile_generator granite_gen_;
+    };
+
+    abstract_input_subgenerator& get_random_number_and_granite_tile_generator()
+    {
+        static auto generator = random_number_and_granite_tile_generator{};
         return generator;
     }
 
@@ -316,6 +362,21 @@ namespace
         );
         return generator;
     }
+
+    abstract_input_generator& get_granite_cave_input_generator()
+    {
+        static auto generator = random_input_generator
+        (
+            {
+                {get_random_number_tile_pair_generator(), 1900},
+                {get_random_number_and_granite_tile_generator(), 560},
+                {get_simple_input_generator<data_types::tiles::column_nullifier>(), 45},
+                {get_simple_input_generator<data_types::tiles::row_nullifier>(), 30},
+                {get_simple_input_generator<data_types::tiles::number_nullifier>(), 10},
+            }
+        );
+        return generator;
+    }
 }
 
 abstract_input_generator& get_input_generator(data_types::stage stage)
@@ -330,6 +391,7 @@ abstract_input_generator& get_input_generator(data_types::stage stage)
         CASE(purity_chapel);
         CASE(nullifier_room);
         CASE(triplet_pines_mall);
+        CASE(granite_cave);
     }
 
 #undef CASE

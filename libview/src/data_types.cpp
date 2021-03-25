@@ -33,6 +33,8 @@ std::string_view get_pretty_name(const stage s)
             return "NULLIFIER ROOM";
         case stage::triplet_pines_mall:
             return "TRIPLET PINES MALL";
+        case stage::granite_cave:
+            return "GRANITE CAVE";
     }
     return "";
 }
@@ -47,6 +49,8 @@ std::optional<std::filesystem::path> get_image(const stage s)
             return libres::images::background_nullifier_room;
         case stage::triplet_pines_mall:
             return libres::images::background_triplet_pines_mall;
+        case stage::granite_cave:
+            return libres::images::background_granite_cave;
     }
     return std::nullopt;
 }
