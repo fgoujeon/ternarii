@@ -20,6 +20,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include "tile_grid.hpp"
 #include "tile_grid_detail/common.hpp"
 #include "number_tile.hpp"
+#include "granite_tile.hpp"
 #include "sdf_image.hpp"
 #include "../colors.hpp"
 #include <libres.hpp>
@@ -230,10 +231,54 @@ void tile_grid::nullify_tiles(const libutil::matrix_coordinate_list& nullified_t
     animator_.push(animation::tracks::closure{[this]{next_input_.resume();}});
 }
 
-void tile_grid::merge_tiles(const data_types::tile_merge_list& merges)
+void tile_grid::merge_tiles
+(
+    const data_types::tile_merge_list& merges,
+    const data_types::granite_erosion_list& granite_erosions
+)
 {
     auto anim0 = animation::animation{};
     auto anim1 = animation::animation{};
+
+    for(const auto& granite_erosion: granite_erosions)
+    {
+        auto& ptile = at(board_tiles_, granite_erosion.coordinate);
+
+        anim0.add
+        (
+            animation::tracks::alpha_transition
+            {
+                .pobj = ptile,
+                .finish_alpha = 0,
+                .duration_s = 0.2
+            }
+        );
+
+        if(granite_erosion.new_thickness <= 0)
+        {
+            ptile = nullptr;
+        }
+        else
+        {
+            const auto dst_position = tile_coordinate_to_position(granite_erosion.coordinate);
+            ptile = make_tile
+            (
+                data_types::tiles::granite{granite_erosion.new_thickness},
+                dst_position
+            );
+            ptile->set_alpha(0);
+
+            anim0.add
+            (
+                animation::tracks::alpha_transition
+                {
+                    .pobj = ptile,
+                    .finish_alpha = 1,
+                    .duration_s = 0.2
+                }
+            );
+        }
+    }
 
     for(const auto& merge: merges)
     {

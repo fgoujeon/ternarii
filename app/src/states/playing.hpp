@@ -101,7 +101,11 @@ class playing final: public libutil::fsm::state
 
         void handle_game_event(const libgame::events::tile_merge& event)
         {
-            pscreen_->merge_tiles(event.merges);
+            pscreen_->merge_tiles
+            (
+                event.merges,
+                event.granite_erosions
+            );
         }
 
         void handle_game_event(const libgame::events::end_of_game&)

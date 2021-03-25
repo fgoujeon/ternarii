@@ -20,6 +20,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include "common.hpp"
 #include "../number_tile.hpp"
 #include "../sdf_image_tile.hpp"
+#include "../granite_tile.hpp"
 #include <libres.hpp>
 #include <libutil/overload.hpp>
 
@@ -55,6 +56,10 @@ std::shared_ptr<object2d> make_tile_object
             [&](const data_types::tiles::number_nullifier&) -> result_t
             {
                 return std::make_shared<sdf_image_tile>(parent, drawables, libres::images::number_nullifier);
+            },
+            [&](const data_types::tiles::granite& tile) -> result_t
+            {
+                return std::make_shared<granite_tile>(parent, drawables, tile.thickness);
             }
         },
         tile

@@ -34,19 +34,28 @@ namespace tiles
         return l;
     }
 
-    std::ostream& operator<<(std::ostream& l, const column_nullifier& r)
+    std::ostream& operator<<(std::ostream& l, const column_nullifier&)
     {
         return l << "column_nullifier{}";
     }
 
-    std::ostream& operator<<(std::ostream& l, const row_nullifier& r)
+    std::ostream& operator<<(std::ostream& l, const row_nullifier&)
     {
         return l << "row_nullifier{}";
     }
 
-    std::ostream& operator<<(std::ostream& l, const number_nullifier& r)
+    std::ostream& operator<<(std::ostream& l, const number_nullifier&)
     {
         return l << "number_nullifier{}";
+    }
+
+    std::ostream& operator<<(std::ostream& l, const granite& r)
+    {
+        l << "granite";
+        l << "{";
+        l << "thickness: " << r.thickness;
+        l << "}";
+        return l;
     }
 }
 
@@ -197,6 +206,18 @@ std::ostream& operator<<(std::ostream& l, const tile_merge& r)
     l << "src_tile_coordinates: " << libutil::streamable{r.src_tile_coordinates} << ", ";
     l << "dst_tile_coordinate: " << libutil::streamable{r.dst_tile_coordinate} << ", ";
     l << "dst_tile_value: " << r.dst_tile_value;
+    l << "}";
+    return l;
+}
+
+
+
+std::ostream& operator<<(std::ostream& l, const granite_erosion& r)
+{
+    l << "granite_erosion";
+    l << "{";
+    l << "coordinate: " << libutil::streamable{r.coordinate} << ", ";
+    l << "new_thickness: " << r.new_thickness;
     l << "}";
     return l;
 }

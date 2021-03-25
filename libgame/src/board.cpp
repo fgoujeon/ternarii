@@ -123,6 +123,8 @@ namespace
                     {
                         [&](const data_types::tiles::number&){},
 
+                        [&](const data_types::tiles::granite&){},
+
                         [&](const data_types::tiles::column_nullifier&)
                         {
                             //Remove all tiles from current column
@@ -233,6 +235,87 @@ namespace
 
         return tiles;
     }
+
+    struct apply_merges_on_granites_result
+    {
+        data_types::board_tile_matrix tiles;
+        data_types::granite_erosion_list granite_erosions;
+    };
+
+    /*
+    Decrement the thickness of granites whose adjacent tiles contain a number
+    tile involved in a merge.
+    */
+    apply_merges_on_granites_result apply_merges_on_granites
+    (
+        const data_types::board_tile_matrix& tiles,
+        const data_types::tile_merge_list& merges
+    )
+    {
+        auto result = apply_merges_on_granites_result{};
+        result.tiles = tiles;
+
+        libutil::for_each_colrow
+        (
+            [&](auto& opt_tile, const int col, const int row)
+            {
+                if(!opt_tile)
+                {
+                    return;
+                }
+                auto& tile = *opt_tile;
+
+                if(const auto pgranite = std::get_if<data_types::tiles::granite>(&tile))
+                {
+                    auto& granite = *pgranite;
+
+                    const auto must_erode = [&]
+                    {
+                        for(const auto& merge: merges)
+                        {
+                            for(const auto& src_tile_coordinate: merge.src_tile_coordinates)
+                            {
+                                if
+                                (
+                                    src_tile_coordinate == libutil::matrix_coordinate{col - 1, row} ||
+                                    src_tile_coordinate == libutil::matrix_coordinate{col + 1, row} ||
+                                    src_tile_coordinate == libutil::matrix_coordinate{col, row - 1} ||
+                                    src_tile_coordinate == libutil::matrix_coordinate{col, row + 1}
+                                )
+                                {
+                                    return true;
+                                }
+                            }
+                        }
+
+                        return false;
+                    }();
+
+                    if(must_erode)
+                    {
+                        --granite.thickness;
+
+                        if(granite.thickness <= 0)
+                        {
+                            opt_tile = std::nullopt;
+                        }
+
+                        result.granite_erosions.push_back
+                        (
+                            data_types::granite_erosion
+                            {
+                                .coordinate = {col, row},
+                                .new_thickness = granite.thickness
+                            }
+                        );
+                    }
+                }
+            },
+            result.tiles
+        );
+
+        return result;
+    }
 }
 
 board::board(data_types::board_tile_matrix& tiles):
@@ -270,6 +353,7 @@ void board::drop_input_tiles
     {
         old_event_count = events.size();
 
+        //Apply nullifier tiles
         {
             auto nullified_tiles = libutil::matrix_coordinate_list{};
             tiles_ = apply_nullifiers(tiles_, nullified_tiles);
@@ -279,12 +363,27 @@ void board::drop_input_tiles
             }
         }
 
+        //Merge number tiles
         const auto merges = merge_tiles();
+
+        //Decrease thickness of granite tiles
         if(!merges.empty())
         {
-            events.push_back(events::tile_merge{merges});
+            const auto result = apply_merges_on_granites(tiles_, merges);
+
+            tiles_ = result.tiles;
+
+            events.push_back
+            (
+                events::tile_merge
+                {
+                    .merges = merges,
+                    .granite_erosions = result.granite_erosions
+                }
+            );
         }
 
+        //Apply gravity
         const auto drops = make_tiles_fall();
         if(!drops.empty())
         {

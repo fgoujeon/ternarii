@@ -55,10 +55,16 @@ namespace tiles
     //placed below
     struct number_nullifier{};
 
+    struct granite
+    {
+        int thickness = 0;
+    };
+
     std::ostream& operator<<(std::ostream& l, const number& r);
     std::ostream& operator<<(std::ostream& l, const column_nullifier& r);
     std::ostream& operator<<(std::ostream& l, const row_nullifier& r);
     std::ostream& operator<<(std::ostream& l, const number_nullifier& r);
+    std::ostream& operator<<(std::ostream& l, const granite& r);
 }
 
 using tile = std::variant
@@ -66,7 +72,8 @@ using tile = std::variant
     tiles::number,
     tiles::column_nullifier,
     tiles::row_nullifier,
-    tiles::number_nullifier
+    tiles::number_nullifier,
+    tiles::granite
 >;
 
 
@@ -225,6 +232,18 @@ struct tile_merge
 using tile_merge_list = std::vector<tile_merge>;
 
 std::ostream& operator<<(std::ostream& l, const tile_merge& r);
+
+
+
+struct granite_erosion
+{
+    libutil::matrix_coordinate coordinate;
+    int new_thickness = 0;
+};
+
+using granite_erosion_list = std::vector<granite_erosion>;
+
+std::ostream& operator<<(std::ostream& l, const granite_erosion& r);
 
 
 

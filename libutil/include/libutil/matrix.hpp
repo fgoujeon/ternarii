@@ -43,6 +43,8 @@ struct matrix_coordinate
 {
     int col = 0;
     int row = 0;
+
+    bool operator==(const matrix_coordinate&) const = default;
 };
 
 using matrix_coordinate_list = std::vector<matrix_coordinate>;
