@@ -58,7 +58,7 @@ namespace
     )
     {
         auto squares = std::vector<std::unique_ptr<rounded_rectangle>>{};
-        for(auto i = 0; i < thickness; ++i)
+        for(auto i = 0; i < thickness - 1; ++i)
         {
             squares.push_back(make_inner_square(parent, drawables, i));
         }
