@@ -235,6 +235,18 @@ std::ostream& operator<<(std::ostream& l, const tile_merge& r);
 
 
 
+struct granite_erosion
+{
+    libutil::matrix_coordinate coordinate;
+    int new_thickness = 0;
+};
+
+using granite_erosion_list = std::vector<granite_erosion>;
+
+std::ostream& operator<<(std::ostream& l, const granite_erosion& r);
+
+
+
 enum class stage
 {
     purity_chapel,

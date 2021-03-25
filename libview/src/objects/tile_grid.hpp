@@ -87,7 +87,11 @@ class tile_grid: public object2d, public features::animable
 
         void nullify_tiles(const libutil::matrix_coordinate_list& nullified_tile_coordinates);
 
-        void merge_tiles(const data_types::tile_merge_list& merges);
+        void merge_tiles
+        (
+            const data_types::tile_merge_list& merges,
+            const data_types::granite_erosion_list& granite_erosions
+        );
 
         void mark_tiles_for_nullification(const libutil::matrix_coordinate_list& tile_coordinates);
 

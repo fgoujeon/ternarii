@@ -32,9 +32,45 @@ namespace libgame
 
 namespace events
 {
-    struct start{};
+    struct board_tile_drop
+    {
+        data_types::board_tile_drop_list drops;
+    };
 
-    std::ostream& operator<<(std::ostream& l, const start&);
+    std::ostream& operator<<(std::ostream& l, const board_tile_drop& r);
+
+
+
+    struct end_of_game{};
+
+    std::ostream& operator<<(std::ostream& l, const end_of_game&);
+
+
+
+    struct hi_score_change
+    {
+        int score = 0;
+    };
+
+    std::ostream& operator<<(std::ostream& l, const hi_score_change& r);
+
+
+
+    struct input_tile_drop
+    {
+        data_types::input_tile_drop_list drops;
+    };
+
+    std::ostream& operator<<(std::ostream& l, const input_tile_drop& r);
+
+
+
+    struct move_count_change
+    {
+        int value = 0;
+    };
+
+    std::ostream& operator<<(std::ostream& l, const move_count_change& r);
 
 
 
@@ -53,21 +89,22 @@ namespace events
 
 
 
-    struct input_tile_drop
+    struct score_change
     {
-        data_types::input_tile_drop_list drops;
+        int score = 0;
     };
 
-    std::ostream& operator<<(std::ostream& l, const input_tile_drop& r);
+    std::ostream& operator<<(std::ostream& l, const score_change& r);
 
 
 
-    struct board_tile_drop
+    struct tile_merge
     {
-        data_types::board_tile_drop_list drops;
+        data_types::tile_merge_list merges;
+        data_types::granite_erosion_list granite_erosions;
     };
 
-    std::ostream& operator<<(std::ostream& l, const board_tile_drop& r);
+    std::ostream& operator<<(std::ostream& l, const tile_merge& r);
 
 
 
@@ -80,60 +117,24 @@ namespace events
 
 
 
-    struct tile_merge
-    {
-        data_types::tile_merge_list merges;
-    };
+    struct start{};
 
-    std::ostream& operator<<(std::ostream& l, const tile_merge& r);
-
-
-
-    struct score_change
-    {
-        int score = 0;
-    };
-
-    std::ostream& operator<<(std::ostream& l, const score_change& r);
-
-
-
-    struct hi_score_change
-    {
-        int score = 0;
-    };
-
-    std::ostream& operator<<(std::ostream& l, const hi_score_change& r);
-
-
-
-    struct move_count_change
-    {
-        int value = 0;
-    };
-
-    std::ostream& operator<<(std::ostream& l, const move_count_change& r);
-
-
-
-    struct end_of_game{};
-
-    std::ostream& operator<<(std::ostream& l, const end_of_game&);
+    std::ostream& operator<<(std::ostream& l, const start&);
 }
 
 using event = std::variant
 <
-    events::start,
+    events::board_tile_drop,
+    events::end_of_game,
+    events::hi_score_change,
+    events::input_tile_drop,
+    events::move_count_change,
     events::next_input_creation,
     events::next_input_insertion,
-    events::input_tile_drop,
-    events::board_tile_drop,
-    events::tile_nullification,
-    events::tile_merge,
     events::score_change,
-    events::hi_score_change,
-    events::move_count_change,
-    events::end_of_game
+    events::start,
+    events::tile_merge,
+    events::tile_nullification
 >;
 
 using event_list = std::vector<event>;

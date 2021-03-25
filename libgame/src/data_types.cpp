@@ -210,4 +210,16 @@ std::ostream& operator<<(std::ostream& l, const tile_merge& r)
     return l;
 }
 
+
+
+std::ostream& operator<<(std::ostream& l, const granite_erosion& r)
+{
+    l << "granite_erosion";
+    l << "{";
+    l << "coordinate: " << libutil::streamable{r.coordinate} << ", ";
+    l << "new_thickness: " << r.new_thickness;
+    l << "}";
+    return l;
+}
+
 } //namespace

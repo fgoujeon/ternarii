@@ -23,9 +23,45 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libgame::events
 {
 
-std::ostream& operator<<(std::ostream& l, const start&)
+std::ostream& operator<<(std::ostream& l, const board_tile_drop& r)
 {
-    return l << "start{}";
+    l << "board_tile_drop";
+    l << "{";
+    l << "drops: " << libutil::streamable{r.drops};
+    l << "}";
+    return l;
+}
+
+std::ostream& operator<<(std::ostream& l, const end_of_game&)
+{
+    return l << "end_of_game{}";
+}
+
+std::ostream& operator<<(std::ostream& l, const hi_score_change& r)
+{
+    l << "hi_score_change";
+    l << "{";
+    l << "score: " << r.score;
+    l << "}";
+    return l;
+}
+
+std::ostream& operator<<(std::ostream& l, const input_tile_drop& r)
+{
+    l << "input_tile_drop";
+    l << "{";
+    l << "drops: " << libutil::streamable{r.drops};
+    l << "}";
+    return l;
+}
+
+std::ostream& operator<<(std::ostream& l, const move_count_change& r)
+{
+    l << "move_count_change";
+    l << "{";
+    l << "value: " << r.value;
+    l << "}";
+    return l;
 }
 
 std::ostream& operator<<(std::ostream& l, const next_input_creation& r)
@@ -42,20 +78,12 @@ std::ostream& operator<<(std::ostream& l, const next_input_insertion& r)
     return l << "next_input_insertion{}";
 }
 
-std::ostream& operator<<(std::ostream& l, const input_tile_drop& r)
+std::ostream& operator<<(std::ostream& l, const tile_merge& r)
 {
-    l << "input_tile_drop";
+    l << "tile_merge";
     l << "{";
-    l << "drops: " << libutil::streamable{r.drops};
-    l << "}";
-    return l;
-}
-
-std::ostream& operator<<(std::ostream& l, const board_tile_drop& r)
-{
-    l << "board_tile_drop";
-    l << "{";
-    l << "drops: " << libutil::streamable{r.drops};
+    l << "merges: " << libutil::streamable{r.merges} << ", ";
+    l << "granite_erosions: " << libutil::streamable{r.granite_erosions};
     l << "}";
     return l;
 }
@@ -69,15 +97,6 @@ std::ostream& operator<<(std::ostream& l, const tile_nullification& r)
     return l;
 }
 
-std::ostream& operator<<(std::ostream& l, const tile_merge& r)
-{
-    l << "tile_merge";
-    l << "{";
-    l << "merges: " << libutil::streamable{r.merges};
-    l << "}";
-    return l;
-}
-
 std::ostream& operator<<(std::ostream& l, const score_change& r)
 {
     l << "score_change";
@@ -87,27 +106,9 @@ std::ostream& operator<<(std::ostream& l, const score_change& r)
     return l;
 }
 
-std::ostream& operator<<(std::ostream& l, const hi_score_change& r)
+std::ostream& operator<<(std::ostream& l, const start&)
 {
-    l << "hi_score_change";
-    l << "{";
-    l << "score: " << r.score;
-    l << "}";
-    return l;
-}
-
-std::ostream& operator<<(std::ostream& l, const move_count_change& r)
-{
-    l << "move_count_change";
-    l << "{";
-    l << "value: " << r.value;
-    l << "}";
-    return l;
-}
-
-std::ostream& operator<<(std::ostream& l, const end_of_game&)
-{
-    return l << "end_of_game{}";
+    return l << "start{}";
 }
 
 } //namespace
