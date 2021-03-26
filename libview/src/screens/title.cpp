@@ -87,6 +87,18 @@ struct title::impl
             {
                 .mouse_click_callback = [this]{this->callbacks.about_request();}
             }
+        ),
+        versus_button
+        (
+            self,
+            feature_groups.drawables,
+            feature_groups.clickables,
+            styles::white_label_button,
+            "VERSUS",
+            objects::label_button::callback_set
+            {
+                .mouse_click_callback = [this]{this->callbacks.versus_request();}
+            }
         )
     {
         logo.set_color(colors::light_gray);
@@ -104,6 +116,9 @@ struct title::impl
 
         about_button.scale({2.8f, 2.8f});
         about_button.translate({0.0f, -2.5f});
+
+        versus_button.scale({2.8f, 2.8f});
+        versus_button.translate({0.0f, -4.0f});
     }
 
     callback_set callbacks;
@@ -112,6 +127,7 @@ struct title::impl
     objects::sdf_image logo_text;
     objects::label_button play_button;
     objects::label_button about_button;
+    objects::label_button versus_button;
 };
 
 title::title

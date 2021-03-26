@@ -37,6 +37,7 @@ class title: public object2d
         {
             libutil::void_function<> play_request;
             libutil::void_function<> about_request;
+            libutil::void_function<> versus_request;
         };
 
     public:
