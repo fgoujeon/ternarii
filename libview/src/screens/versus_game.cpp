@@ -176,8 +176,8 @@ struct versus_game::impl
             feature_groups.drawables,
             feature_groups.animables,
             animator,
-            callbacks.handle_drop_request,
-            callbacks.handle_input_layout_change
+            callbacks.handle_p1_drop_request,
+            callbacks.handle_p1_input_layout_change
         ),
         MOVE_BUTTON_INITIALIZER(libres::images::move_button,   1, left_shift),
         MOVE_BUTTON_INITIALIZER(libres::images::move_button,   1, right_shift),
@@ -204,8 +204,8 @@ struct versus_game::impl
             feature_groups.drawables,
             feature_groups.animables,
             animator,
-            callbacks.handle_drop_request,
-            callbacks.handle_input_layout_change
+            callbacks.handle_p2_drop_request,
+            callbacks.handle_p2_input_layout_change
         ),
         MOVE_BUTTON_INITIALIZER(libres::images::move_button,   2, left_shift),
         MOVE_BUTTON_INITIALIZER(libres::images::move_button,   2, right_shift),
@@ -387,63 +387,84 @@ void versus_game::handle_key_release(key_event& event)
     }
 }
 
-const data_types::input_layout& versus_game::get_input_layout() const
+const data_types::input_layout& versus_game::get_p1_input_layout() const
 {
     return pimpl_->p1_tile_grid.get_input_layout();
+}
+
+const data_types::input_layout& versus_game::get_p2_input_layout() const
+{
+    return pimpl_->p2_tile_grid.get_input_layout();
 }
 
 void versus_game::clear()
 {
     pimpl_->p1_tile_grid.clear();
+    pimpl_->p2_tile_grid.clear();
     set_game_over_overlay_visible(false);
 }
 
-void versus_game::set_score(const int value)
+void versus_game::set_p1_score(const int value)
 {
     pimpl_->p1_score_display.set_score(value);
 }
 
-void versus_game::set_hi_score(const int value)
+void versus_game::set_p2_score(const int value)
 {
-    pimpl_->ctx.hi_score = value;
+    pimpl_->p2_score_display.set_score(value);
 }
 
-void versus_game::set_move_count(const int value)
-{
-    pimpl_->ctx.move_count = value;
-}
-
-void versus_game::set_time_s(const int value)
-{
-    pimpl_->ctx.time_s = value;
-}
-
-void versus_game::create_next_input(const data_types::input_tile_matrix& tiles)
+void versus_game::create_p1_next_input(const data_types::input_tile_matrix& tiles)
 {
     pimpl_->p1_tile_grid.create_next_input(tiles);
 }
 
-void versus_game::insert_next_input()
+void versus_game::create_p2_next_input(const data_types::input_tile_matrix& tiles)
+{
+    pimpl_->p2_tile_grid.create_next_input(tiles);
+}
+
+void versus_game::insert_p1_next_input()
 {
     pimpl_->p1_tile_grid.insert_next_input();
 }
 
-void versus_game::drop_input_tiles(const data_types::input_tile_drop_list& drops)
+void versus_game::insert_p2_next_input()
+{
+    pimpl_->p2_tile_grid.insert_next_input();
+}
+
+void versus_game::drop_p1_input_tiles(const data_types::input_tile_drop_list& drops)
 {
     pimpl_->p1_tile_grid.drop_input_tiles(drops);
 }
 
-void versus_game::drop_board_tiles(const data_types::board_tile_drop_list& drops)
+void versus_game::drop_p2_input_tiles(const data_types::input_tile_drop_list& drops)
+{
+    pimpl_->p2_tile_grid.drop_input_tiles(drops);
+}
+
+void versus_game::drop_p1_board_tiles(const data_types::board_tile_drop_list& drops)
 {
     pimpl_->p1_tile_grid.drop_board_tiles(drops);
 }
 
-void versus_game::nullify_tiles(const libutil::matrix_coordinate_list& nullified_tile_coordinates)
+void versus_game::drop_p2_board_tiles(const data_types::board_tile_drop_list& drops)
+{
+    pimpl_->p2_tile_grid.drop_board_tiles(drops);
+}
+
+void versus_game::nullify_p1_tiles(const libutil::matrix_coordinate_list& nullified_tile_coordinates)
 {
     pimpl_->p1_tile_grid.nullify_tiles(nullified_tile_coordinates);
 }
 
-void versus_game::merge_tiles
+void versus_game::nullify_p2_tiles(const libutil::matrix_coordinate_list& nullified_tile_coordinates)
+{
+    pimpl_->p2_tile_grid.nullify_tiles(nullified_tile_coordinates);
+}
+
+void versus_game::merge_p1_tiles
 (
     const data_types::tile_merge_list& merges,
     const data_types::granite_erosion_list& granite_erosions
@@ -452,14 +473,23 @@ void versus_game::merge_tiles
     pimpl_->p1_tile_grid.merge_tiles(merges, granite_erosions);
 }
 
-void versus_game::mark_tiles_for_nullification(const libutil::matrix_coordinate_list& tile_coordinates)
+void versus_game::merge_p2_tiles
+(
+    const data_types::tile_merge_list& merges,
+    const data_types::granite_erosion_list& granite_erosions
+)
+{
+    pimpl_->p2_tile_grid.merge_tiles(merges, granite_erosions);
+}
+
+void versus_game::mark_p1_tiles_for_nullification(const libutil::matrix_coordinate_list& tile_coordinates)
 {
     pimpl_->p1_tile_grid.mark_tiles_for_nullification(tile_coordinates);
 }
 
-void versus_game::set_board_tiles(const data_types::board_tile_matrix& tiles)
+void versus_game::mark_p2_tiles_for_nullification(const libutil::matrix_coordinate_list& tile_coordinates)
 {
-    pimpl_->p1_tile_grid.set_board_tiles(tiles);
+    pimpl_->p2_tile_grid.mark_tiles_for_nullification(tile_coordinates);
 }
 
 void versus_game::set_game_over_overlay_visible(const bool visible)

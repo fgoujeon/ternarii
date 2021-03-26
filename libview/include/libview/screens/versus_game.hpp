@@ -38,9 +38,11 @@ class versus_game: public object2d, public features::animable, public features::
         struct callback_set
         {
             libutil::void_function<> handle_clear_request;
-            libutil::void_function<const data_types::input_layout&> handle_drop_request;
             libutil::void_function<> handle_exit_request;
-            libutil::void_function<const data_types::input_layout&> handle_input_layout_change;
+            libutil::void_function<const data_types::input_layout&> handle_p1_drop_request;
+            libutil::void_function<const data_types::input_layout&> handle_p1_input_layout_change;
+            libutil::void_function<const data_types::input_layout&> handle_p2_drop_request;
+            libutil::void_function<const data_types::input_layout&> handle_p2_input_layout_change;
         };
 
     public:
@@ -65,37 +67,51 @@ class versus_game: public object2d, public features::animable, public features::
         void handle_key_release(key_event& event) override;
 
     public:
-        const data_types::input_layout& get_input_layout() const;
+        const data_types::input_layout& get_p1_input_layout() const;
+
+        const data_types::input_layout& get_p2_input_layout() const;
 
         void clear();
 
-        void set_score(const int value);
+        void set_p1_score(const int value);
 
-        void set_hi_score(const int value);
+        void set_p2_score(const int value);
 
-        void set_time_s(const int value);
+        void create_p1_next_input(const data_types::input_tile_matrix& tiles);
 
-        void set_move_count(const int value);
+        void create_p2_next_input(const data_types::input_tile_matrix& tiles);
 
-        void create_next_input(const data_types::input_tile_matrix& tiles);
+        void insert_p1_next_input();
 
-        void insert_next_input();
+        void insert_p2_next_input();
 
-        void drop_input_tiles(const data_types::input_tile_drop_list& drops);
+        void drop_p1_input_tiles(const data_types::input_tile_drop_list& drops);
 
-        void drop_board_tiles(const data_types::board_tile_drop_list& drops);
+        void drop_p2_input_tiles(const data_types::input_tile_drop_list& drops);
 
-        void nullify_tiles(const libutil::matrix_coordinate_list& nullified_tile_coordinates);
+        void drop_p1_board_tiles(const data_types::board_tile_drop_list& drops);
 
-        void merge_tiles
+        void drop_p2_board_tiles(const data_types::board_tile_drop_list& drops);
+
+        void nullify_p1_tiles(const libutil::matrix_coordinate_list& nullified_tile_coordinates);
+
+        void nullify_p2_tiles(const libutil::matrix_coordinate_list& nullified_tile_coordinates);
+
+        void merge_p1_tiles
         (
             const data_types::tile_merge_list& merges,
             const data_types::granite_erosion_list& granite_erosions
         );
 
-        void mark_tiles_for_nullification(const libutil::matrix_coordinate_list& tile_coordinates);
+        void merge_p2_tiles
+        (
+            const data_types::tile_merge_list& merges,
+            const data_types::granite_erosion_list& granite_erosions
+        );
 
-        void set_board_tiles(const data_types::board_tile_matrix& tiles);
+        void mark_p1_tiles_for_nullification(const libutil::matrix_coordinate_list& tile_coordinates);
+
+        void mark_p2_tiles_for_nullification(const libutil::matrix_coordinate_list& tile_coordinates);
 
         void set_game_over_overlay_visible(const bool visible);
 

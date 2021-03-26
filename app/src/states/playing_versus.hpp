@@ -44,7 +44,6 @@ class playing_versus final: public libutil::fsm::state
 
         ~playing_versus()
         {
-            save_game();
         }
 
         void handle_event(const std::any& event) override
@@ -52,7 +51,6 @@ class playing_versus final: public libutil::fsm::state
             if(const auto pevent = std::any_cast<events::iteration>(&event))
             {
                 pgame_->advance(pevent->elapsed_s);
-                pscreen_->set_time_s(pgame_->get_state().time_s);
             }
         }
 
@@ -63,51 +61,48 @@ class playing_versus final: public libutil::fsm::state
             pscreen_->clear();
         }
 
-        void handle_game_event(const libgame::events::move_count_change& event)
+        void handle_game_event(const libgame::events::move_count_change&)
         {
-            pscreen_->set_move_count(event.value);
         }
 
         void handle_game_event(const libgame::events::score_change& event)
         {
-            pscreen_->set_score(event.score);
+            pscreen_->set_p1_score(event.score);
         }
 
-        void handle_game_event(const libgame::events::hi_score_change& event)
+        void handle_game_event(const libgame::events::hi_score_change&)
         {
-            pscreen_->set_hi_score(event.score);
         }
 
         void handle_game_event(const libgame::events::next_input_creation& event)
         {
-            pscreen_->create_next_input(event.tiles);
+            pscreen_->create_p1_next_input(event.tiles);
         }
 
         void handle_game_event(const libgame::events::next_input_insertion&)
         {
-            pscreen_->insert_next_input();
-            mark_tiles_for_nullification();
-            save_game();
+            pscreen_->insert_p1_next_input();
+            mark_p1_tiles_for_nullification();
         }
 
         void handle_game_event(const libgame::events::input_tile_drop& event)
         {
-            pscreen_->drop_input_tiles(event.drops);
+            pscreen_->drop_p1_input_tiles(event.drops);
         }
 
         void handle_game_event(const libgame::events::board_tile_drop& event)
         {
-            pscreen_->drop_board_tiles(event.drops);
+            pscreen_->drop_p1_board_tiles(event.drops);
         }
 
         void handle_game_event(const libgame::events::tile_nullification& event)
         {
-            pscreen_->nullify_tiles(event.nullified_tile_coordinates);
+            pscreen_->nullify_p1_tiles(event.nullified_tile_coordinates);
         }
 
         void handle_game_event(const libgame::events::tile_merge& event)
         {
-            pscreen_->merge_tiles
+            pscreen_->merge_p1_tiles
             (
                 event.merges,
                 event.granite_erosions
@@ -117,7 +112,6 @@ class playing_versus final: public libutil::fsm::state
         void handle_game_event(const libgame::events::end_of_game&)
         {
             pscreen_->set_game_over_overlay_visible(true);
-            save_game();
         }
 
         void handle_game_events(const libgame::event_list& events)
@@ -144,39 +138,38 @@ class playing_versus final: public libutil::fsm::state
         template<class Fn, class... Args>
         void modify_game(Fn&& fn, Args&&... args)
         {
+            static auto game_events = libgame::event_list{};
+
             if(!pgame_)
             {
                 return;
             }
 
-            game_events_.clear();
-            std::invoke(fn, *pgame_, std::forward<Args>(args)..., game_events_);
-            handle_game_events(game_events_);
+            game_events.clear();
+            std::invoke(fn, *pgame_, std::forward<Args>(args)..., game_events);
+            handle_game_events(game_events);
         }
 
-        void mark_tiles_for_nullification()
+        void mark_p1_tiles_for_nullification()
         {
-            targeted_tiles_.clear();
-            pgame_->get_targeted_tiles(pscreen_->get_input_layout(), targeted_tiles_);
-            pscreen_->mark_tiles_for_nullification(targeted_tiles_);
+            static auto targeted_tiles = libutil::matrix_coordinate_list{};
+            targeted_tiles.clear();
+            pgame_->get_targeted_tiles(pscreen_->get_p1_input_layout(), targeted_tiles);
+            pscreen_->mark_p1_tiles_for_nullification(targeted_tiles);
         }
 
-        void save_game()
+        void mark_p2_tiles_for_nullification()
         {
-            fsm_.get_context().database.set_stage_state(stage_, pgame_->get_state());
+            static auto targeted_tiles = libutil::matrix_coordinate_list{};
+            targeted_tiles.clear();
+            pgame_->get_targeted_tiles(pscreen_->get_p2_input_layout(), targeted_tiles);
+            pscreen_->mark_p2_tiles_for_nullification(targeted_tiles);
         }
 
     private:
         fsm& fsm_;
-        const libgame::data_types::stage stage_;
         std::shared_ptr<screen> pscreen_;
         std::unique_ptr<libgame::game> pgame_;
-
-        //used by modify_game()
-        libgame::event_list game_events_;
-
-        //used by mark_tiles_for_nullification()
-        libutil::matrix_coordinate_list targeted_tiles_;
 };
 
 } //namespace
