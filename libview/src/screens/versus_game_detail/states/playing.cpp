@@ -26,13 +26,21 @@ namespace libview::screens::versus_game_detail::states
 
 void playing::handle_event(const std::any& event)
 {
-    if(const auto pevent = std::any_cast<events::button_press>(&event))
+    if(const auto pevent = std::any_cast<events::p1_button_press>(&event))
     {
-        fsm_.get_context().tile_grid.handle_button_press(pevent->button);
+        fsm_.get_context().p1_tile_grid.handle_button_press(pevent->button);
     }
-    else if(const auto pevent = std::any_cast<events::button_release>(&event))
+    else if(const auto pevent = std::any_cast<events::p2_button_press>(&event))
     {
-        fsm_.get_context().tile_grid.handle_button_release(pevent->button);
+        fsm_.get_context().p2_tile_grid.handle_button_press(pevent->button);
+    }
+    else if(const auto pevent = std::any_cast<events::p1_button_release>(&event))
+    {
+        fsm_.get_context().p1_tile_grid.handle_button_release(pevent->button);
+    }
+    else if(const auto pevent = std::any_cast<events::p2_button_release>(&event))
+    {
+        fsm_.get_context().p2_tile_grid.handle_button_release(pevent->button);
     }
     else if(std::any_cast<events::game_over>(&event))
     {

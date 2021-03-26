@@ -33,12 +33,22 @@ namespace libview::screens::versus_game_detail
 //Events sent to states
 namespace events
 {
-    struct button_press
+    struct p1_button_press
     {
         data_types::move_button button;
     };
 
-    struct button_release
+    struct p2_button_press
+    {
+        data_types::move_button button;
+    };
+
+    struct p1_button_release
+    {
+        data_types::move_button button;
+    };
+
+    struct p2_button_release
     {
         data_types::move_button button;
     };
@@ -59,7 +69,8 @@ struct fsm_context
     versus_game::callback_set& callbacks;
     animation::animator& animator;
     animation::animator& pause_animator;
-    objects::tile_grid& tile_grid;
+    objects::tile_grid& p1_tile_grid;
+    objects::tile_grid& p2_tile_grid;
 
     int time_s = 0;
     int move_count = 0;

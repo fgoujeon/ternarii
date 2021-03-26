@@ -31,6 +31,8 @@ playing_versus::playing_versus
     const libgame::data_types::stage stage
 ):
     fsm_(f),
+    p1_game_(stage),
+    p2_game_(stage),
     pscreen_
     (
         fsm_.get_context().view.make_screen<screen>
@@ -41,7 +43,8 @@ playing_versus::playing_versus
                 .handle_clear_request = [this]
                 {
                     libutil::log::info("[fsm <- screen] Clear request");
-                    modify_game(&libgame::game::start);
+                    modify_p1_game(&libgame::game::start);
+                    modify_p2_game(&libgame::game::start);
                 },
                 .handle_exit_request = [this]
                 {
@@ -51,7 +54,7 @@ playing_versus::playing_versus
                 .handle_p1_drop_request = [this](const libview::data_types::input_layout input_layout)
                 {
                     libutil::log::info("[fsm <- screen] (P1) Drop request with layout: ", input_layout);
-                    modify_game(&libgame::game::drop_input_tiles, input_layout);
+                    modify_p1_game(&libgame::game::drop_input_tiles, input_layout);
                 },
                 .handle_p1_input_layout_change = [this](const libview::data_types::input_layout input_layout)
                 {
@@ -61,7 +64,7 @@ playing_versus::playing_versus
                 .handle_p2_drop_request = [this](const libview::data_types::input_layout input_layout)
                 {
                     libutil::log::info("[fsm <- screen] (P2) Drop request with layout: ", input_layout);
-                    modify_game(&libgame::game::drop_input_tiles, input_layout);
+                    modify_p2_game(&libgame::game::drop_input_tiles, input_layout);
                 },
                 .handle_p2_input_layout_change = [this](const libview::data_types::input_layout input_layout)
                 {
@@ -72,8 +75,8 @@ playing_versus::playing_versus
         )
     )
 {
-    pgame_ = std::make_unique<libgame::game>(stage);
-    modify_game(&libgame::game::start);
+    modify_p1_game(&libgame::game::start);
+    modify_p2_game(&libgame::game::start);
 
     fsm_.get_context().view.show_screen(pscreen_, trans);
 }

@@ -84,11 +84,11 @@ namespace
         { \
             .handle_mouse_press = [this] \
             { \
-                fsm.handle_event(versus_game_detail::events::button_press{data_types::move_button::MOVE}); \
+                fsm.handle_event(versus_game_detail::events::p##PLAYER##_button_press{data_types::move_button::MOVE}); \
             }, \
             .handle_mouse_release = [this] \
             { \
-                fsm.handle_event(versus_game_detail::events::button_release{data_types::move_button::MOVE}); \
+                fsm.handle_event(versus_game_detail::events::p##PLAYER##_button_release{data_types::move_button::MOVE}); \
             } \
         } \
     )
@@ -306,7 +306,8 @@ struct versus_game::impl
         callbacks,
         animator,
         pause_animator,
-        p1_tile_grid
+        p1_tile_grid,
+        p2_tile_grid
     };
     versus_game_detail::fsm fsm{ctx};
 };
@@ -347,19 +348,32 @@ void versus_game::handle_key_press(key_event& event)
 {
     switch(event.key())
     {
+        case key_event::Key::A:
+            pimpl_->fsm.handle_event(versus_game_detail::events::p1_button_press{data_types::move_button::left_shift});
+            break;
+        case key_event::Key::D:
+            pimpl_->fsm.handle_event(versus_game_detail::events::p1_button_press{data_types::move_button::right_shift});
+            break;
+        case key_event::Key::W:
+            pimpl_->fsm.handle_event(versus_game_detail::events::p1_button_press{data_types::move_button::clockwise_rotation});
+            break;
+        case key_event::Key::S:
+            pimpl_->fsm.handle_event(versus_game_detail::events::p1_button_press{data_types::move_button::drop});
+            break;
+
         case key_event::Key::Left:
-            pimpl_->fsm.handle_event(versus_game_detail::events::button_press{data_types::move_button::left_shift});
+            pimpl_->fsm.handle_event(versus_game_detail::events::p2_button_press{data_types::move_button::left_shift});
             break;
         case key_event::Key::Right:
-            pimpl_->fsm.handle_event(versus_game_detail::events::button_press{data_types::move_button::right_shift});
+            pimpl_->fsm.handle_event(versus_game_detail::events::p2_button_press{data_types::move_button::right_shift});
             break;
         case key_event::Key::Up:
-        case key_event::Key::Space:
-            pimpl_->fsm.handle_event(versus_game_detail::events::button_press{data_types::move_button::clockwise_rotation});
+            pimpl_->fsm.handle_event(versus_game_detail::events::p2_button_press{data_types::move_button::clockwise_rotation});
             break;
         case key_event::Key::Down:
-            pimpl_->fsm.handle_event(versus_game_detail::events::button_press{data_types::move_button::drop});
+            pimpl_->fsm.handle_event(versus_game_detail::events::p2_button_press{data_types::move_button::drop});
             break;
+
         default:
             break;
     }
@@ -369,18 +383,30 @@ void versus_game::handle_key_release(key_event& event)
 {
     switch(event.key())
     {
+        case key_event::Key::A:
+            pimpl_->fsm.handle_event(versus_game_detail::events::p1_button_release{data_types::move_button::left_shift});
+            break;
+        case key_event::Key::D:
+            pimpl_->fsm.handle_event(versus_game_detail::events::p1_button_release{data_types::move_button::right_shift});
+            break;
+        case key_event::Key::W:
+            pimpl_->fsm.handle_event(versus_game_detail::events::p1_button_release{data_types::move_button::clockwise_rotation});
+            break;
+        case key_event::Key::S:
+            pimpl_->fsm.handle_event(versus_game_detail::events::p1_button_release{data_types::move_button::drop});
+            break;
+
         case key_event::Key::Left:
-            pimpl_->fsm.handle_event(versus_game_detail::events::button_release{data_types::move_button::left_shift});
+            pimpl_->fsm.handle_event(versus_game_detail::events::p2_button_release{data_types::move_button::left_shift});
             break;
         case key_event::Key::Right:
-            pimpl_->fsm.handle_event(versus_game_detail::events::button_release{data_types::move_button::right_shift});
+            pimpl_->fsm.handle_event(versus_game_detail::events::p2_button_release{data_types::move_button::right_shift});
             break;
         case key_event::Key::Up:
-        case key_event::Key::Space:
-            pimpl_->fsm.handle_event(versus_game_detail::events::button_release{data_types::move_button::clockwise_rotation});
+            pimpl_->fsm.handle_event(versus_game_detail::events::p2_button_release{data_types::move_button::clockwise_rotation});
             break;
         case key_event::Key::Down:
-            pimpl_->fsm.handle_event(versus_game_detail::events::button_release{data_types::move_button::drop});
+            pimpl_->fsm.handle_event(versus_game_detail::events::p2_button_release{data_types::move_button::drop});
             break;
         default:
             break;
