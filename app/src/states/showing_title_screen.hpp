@@ -22,6 +22,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "showing_stage_selection_screen.hpp"
 #include "showing_about_screen.hpp"
+#include "playing_versus.hpp"
 #include "../fsm.hpp"
 #include <libview/screens/title.hpp>
 
@@ -43,8 +44,28 @@ class showing_title_screen final: public libutil::fsm::state
                 (
                     screen::callback_set
                     {
-                        .play_request  = [this]{fsm_.set_state<showing_stage_selection_screen>(screen_transition::right_to_left);},
-                        .about_request = [this]{fsm_.set_state<showing_about_screen>(screen_transition::right_to_left);}
+                        .play_request  = [this]
+                        {
+                            fsm_.set_state<showing_stage_selection_screen>
+                            (
+                                screen_transition::right_to_left
+                            );
+                        },
+                        .about_request = [this]
+                        {
+                            fsm_.set_state<showing_about_screen>
+                            (
+                                screen_transition::right_to_left
+                            );
+                        },
+                        .versus_request = [this]
+                        {
+                            fsm_.set_state<playing_versus>
+                            (
+                                screen_transition::right_to_left,
+                                libview::data_types::stage::nullifier_room
+                            );
+                        }
                     }
                 )
             )
