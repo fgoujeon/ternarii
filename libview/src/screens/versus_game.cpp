@@ -73,8 +73,8 @@ namespace
     }
 }
 
-#define MOVE_BUTTON_INITIALIZER(IMAGE, MOVE) \
-    MOVE##_button \
+#define MOVE_BUTTON_INITIALIZER(IMAGE, PLAYER, MOVE) \
+    p##PLAYER##_##MOVE##_button \
     ( \
         self, \
         feature_groups.drawables, \
@@ -141,29 +141,6 @@ struct versus_game::impl
                 }
             }
         ),
-        score_name_label
-        (
-            self,
-            feature_groups.drawables,
-            objects::label::style
-            {
-                .alignment = Magnum::Text::Alignment::MiddleRight,
-                .color = colors::light_gray,
-                .font_size = 0.28f,
-                .outline_range = {0.5f, 1.0f}
-            },
-            "SCORE"
-        ),
-        score_display(self, feature_groups.drawables),
-        tile_grid
-        (
-            self,
-            feature_groups.drawables,
-            feature_groups.animables,
-            animator,
-            callbacks.handle_drop_request,
-            callbacks.handle_input_layout_change
-        ),
         stage_name_label
         (
             self,
@@ -178,41 +155,116 @@ struct versus_game::impl
             },
             data_types::get_pretty_name(stage)
         ),
-        MOVE_BUTTON_INITIALIZER(libres::images::move_button,   left_shift),
-        MOVE_BUTTON_INITIALIZER(libres::images::move_button,   right_shift),
-        MOVE_BUTTON_INITIALIZER(libres::images::move_button,   drop),
-        MOVE_BUTTON_INITIALIZER(libres::images::rotate_button, clockwise_rotation)
+
+        p1_score_name_label
+        (
+            self,
+            feature_groups.drawables,
+            objects::label::style
+            {
+                .alignment = Magnum::Text::Alignment::MiddleRight,
+                .color = colors::light_gray,
+                .font_size = 0.28f,
+                .outline_range = {0.5f, 1.0f}
+            },
+            "SCORE"
+        ),
+        p1_score_display(self, feature_groups.drawables),
+        p1_tile_grid
+        (
+            self,
+            feature_groups.drawables,
+            feature_groups.animables,
+            animator,
+            callbacks.handle_drop_request,
+            callbacks.handle_input_layout_change
+        ),
+        MOVE_BUTTON_INITIALIZER(libres::images::move_button,   1, left_shift),
+        MOVE_BUTTON_INITIALIZER(libres::images::move_button,   1, right_shift),
+        MOVE_BUTTON_INITIALIZER(libres::images::move_button,   1, drop),
+        MOVE_BUTTON_INITIALIZER(libres::images::rotate_button, 1, clockwise_rotation),
+
+        p2_score_name_label
+        (
+            self,
+            feature_groups.drawables,
+            objects::label::style
+            {
+                .alignment = Magnum::Text::Alignment::MiddleRight,
+                .color = colors::light_gray,
+                .font_size = 0.28f,
+                .outline_range = {0.5f, 1.0f}
+            },
+            "SCORE"
+        ),
+        p2_score_display(self, feature_groups.drawables),
+        p2_tile_grid
+        (
+            self,
+            feature_groups.drawables,
+            feature_groups.animables,
+            animator,
+            callbacks.handle_drop_request,
+            callbacks.handle_input_layout_change
+        ),
+        MOVE_BUTTON_INITIALIZER(libres::images::move_button,   2, left_shift),
+        MOVE_BUTTON_INITIALIZER(libres::images::move_button,   2, right_shift),
+        MOVE_BUTTON_INITIALIZER(libres::images::move_button,   2, drop),
+        MOVE_BUTTON_INITIALIZER(libres::images::rotate_button, 2, clockwise_rotation)
     {
-        menu_label.setTranslation({-2.85f, 7.25f});
+        menu_label.setTranslation({-7.85f, 7.25f});
         menu_button.scale({0.5f, 0.5f});
-        menu_button.translate({-2.85f, 6.75f});
-
-        score_name_label.setTranslation({3.25f, 7.25f});
-        score_display.setScaling({0.75f, 0.75f});
-        score_display.setTranslation({3.4f, 7.2f});
-
-        tile_grid.translate({0.0f, 1.0f});
+        menu_button.translate({-7.85f, 6.75f});
 
         stage_name_label.translate({0.0f, -4.68f});
 
-        //Move buttons
+        p1_score_name_label.setTranslation({-1.75f, 7.25f});
+        p1_score_display.setScaling({0.75f, 0.75f});
+        p1_score_display.setTranslation({-1.6f, 7.2f});
+        p1_tile_grid.translate({-5.0f, 1.0f});
+
+        //Player 1 move buttons
         {
             const auto move_button_scaling = 0.95f;
 
-            left_shift_button.scale({move_button_scaling, move_button_scaling});
-            left_shift_button.translate({-3.25f, -5.85f});
+            p1_left_shift_button.scale({move_button_scaling, move_button_scaling});
+            p1_left_shift_button.translate({-8.25f, -5.85f});
 
-            right_shift_button.rotate(180.0_degf);
-            right_shift_button.scale({move_button_scaling, move_button_scaling});
-            right_shift_button.translate({-1.4f, -6.75f});
+            p1_right_shift_button.rotate(180.0_degf);
+            p1_right_shift_button.scale({move_button_scaling, move_button_scaling});
+            p1_right_shift_button.translate({-6.4f, -6.75f});
 
-            drop_button.rotate(90.0_degf);
-            drop_button.scale({move_button_scaling, move_button_scaling});
-            drop_button.translate({1.4f, -6.75f});
+            p1_drop_button.rotate(90.0_degf);
+            p1_drop_button.scale({move_button_scaling, move_button_scaling});
+            p1_drop_button.translate({-3.6f, -6.75f});
 
-            clockwise_rotation_button.scale({move_button_scaling, move_button_scaling});
-            clockwise_rotation_button.translate({3.25f, -5.85f});
+            p1_clockwise_rotation_button.scale({move_button_scaling, move_button_scaling});
+            p1_clockwise_rotation_button.translate({-1.75f, -5.85f});
         }
+
+        //Player 2 move buttons
+        {
+            const auto move_button_scaling = 0.95f;
+
+            p2_left_shift_button.scale({move_button_scaling, move_button_scaling});
+            p2_left_shift_button.translate({1.75f, -5.85f});
+
+            p2_right_shift_button.rotate(180.0_degf);
+            p2_right_shift_button.scale({move_button_scaling, move_button_scaling});
+            p2_right_shift_button.translate({3.6f, -6.75f});
+
+            p2_drop_button.rotate(90.0_degf);
+            p2_drop_button.scale({move_button_scaling, move_button_scaling});
+            p2_drop_button.translate({6.4f, -6.75f});
+
+            p2_clockwise_rotation_button.scale({move_button_scaling, move_button_scaling});
+            p2_clockwise_rotation_button.translate({8.25f, -5.85f});
+        }
+
+        p2_score_name_label.setTranslation({8.25f, 7.25f});
+        p2_score_display.setScaling({0.75f, 0.75f});
+        p2_score_display.setTranslation({8.4f, 7.2f});
+        p2_tile_grid.translate({5.0f, 1.0f});
 
         fsm.set_state<versus_game_detail::states::playing>();
     }
@@ -229,14 +281,23 @@ struct versus_game::impl
     std::unique_ptr<objects::sdf_image> pbackground_image;
     objects::label menu_label;
     objects::sdf_image_button menu_button;
-    objects::label score_name_label;
-    objects::score_display score_display;
-    objects::tile_grid tile_grid;
     objects::label stage_name_label;
-    objects::sdf_image_button left_shift_button;
-    objects::sdf_image_button right_shift_button;
-    objects::sdf_image_button drop_button;
-    objects::sdf_image_button clockwise_rotation_button;
+
+    objects::label p1_score_name_label;
+    objects::score_display p1_score_display;
+    objects::tile_grid p1_tile_grid;
+    objects::sdf_image_button p1_left_shift_button;
+    objects::sdf_image_button p1_right_shift_button;
+    objects::sdf_image_button p1_drop_button;
+    objects::sdf_image_button p1_clockwise_rotation_button;
+
+    objects::label p2_score_name_label;
+    objects::score_display p2_score_display;
+    objects::tile_grid p2_tile_grid;
+    objects::sdf_image_button p2_left_shift_button;
+    objects::sdf_image_button p2_right_shift_button;
+    objects::sdf_image_button p2_drop_button;
+    objects::sdf_image_button p2_clockwise_rotation_button;
 
     versus_game_detail::fsm_context ctx
     {
@@ -245,7 +306,7 @@ struct versus_game::impl
         callbacks,
         animator,
         pause_animator,
-        tile_grid
+        p1_tile_grid
     };
     versus_game_detail::fsm fsm{ctx};
 };
@@ -328,18 +389,18 @@ void versus_game::handle_key_release(key_event& event)
 
 const data_types::input_layout& versus_game::get_input_layout() const
 {
-    return pimpl_->tile_grid.get_input_layout();
+    return pimpl_->p1_tile_grid.get_input_layout();
 }
 
 void versus_game::clear()
 {
-    pimpl_->tile_grid.clear();
+    pimpl_->p1_tile_grid.clear();
     set_game_over_overlay_visible(false);
 }
 
 void versus_game::set_score(const int value)
 {
-    pimpl_->score_display.set_score(value);
+    pimpl_->p1_score_display.set_score(value);
 }
 
 void versus_game::set_hi_score(const int value)
@@ -359,27 +420,27 @@ void versus_game::set_time_s(const int value)
 
 void versus_game::create_next_input(const data_types::input_tile_matrix& tiles)
 {
-    pimpl_->tile_grid.create_next_input(tiles);
+    pimpl_->p1_tile_grid.create_next_input(tiles);
 }
 
 void versus_game::insert_next_input()
 {
-    pimpl_->tile_grid.insert_next_input();
+    pimpl_->p1_tile_grid.insert_next_input();
 }
 
 void versus_game::drop_input_tiles(const data_types::input_tile_drop_list& drops)
 {
-    pimpl_->tile_grid.drop_input_tiles(drops);
+    pimpl_->p1_tile_grid.drop_input_tiles(drops);
 }
 
 void versus_game::drop_board_tiles(const data_types::board_tile_drop_list& drops)
 {
-    pimpl_->tile_grid.drop_board_tiles(drops);
+    pimpl_->p1_tile_grid.drop_board_tiles(drops);
 }
 
 void versus_game::nullify_tiles(const libutil::matrix_coordinate_list& nullified_tile_coordinates)
 {
-    pimpl_->tile_grid.nullify_tiles(nullified_tile_coordinates);
+    pimpl_->p1_tile_grid.nullify_tiles(nullified_tile_coordinates);
 }
 
 void versus_game::merge_tiles
@@ -388,17 +449,17 @@ void versus_game::merge_tiles
     const data_types::granite_erosion_list& granite_erosions
 )
 {
-    pimpl_->tile_grid.merge_tiles(merges, granite_erosions);
+    pimpl_->p1_tile_grid.merge_tiles(merges, granite_erosions);
 }
 
 void versus_game::mark_tiles_for_nullification(const libutil::matrix_coordinate_list& tile_coordinates)
 {
-    pimpl_->tile_grid.mark_tiles_for_nullification(tile_coordinates);
+    pimpl_->p1_tile_grid.mark_tiles_for_nullification(tile_coordinates);
 }
 
 void versus_game::set_board_tiles(const data_types::board_tile_matrix& tiles)
 {
-    pimpl_->tile_grid.set_board_tiles(tiles);
+    pimpl_->p1_tile_grid.set_board_tiles(tiles);
 }
 
 void versus_game::set_game_over_overlay_visible(const bool visible)

@@ -21,6 +21,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #define STATES_PLAYING_VERSUS_HPP
 
 #include "../fsm.hpp"
+#include <libview/screens/versus_game.hpp>
 #include <libgame/game.hpp>
 #include <libutil/log.hpp>
 
@@ -30,7 +31,7 @@ namespace states
 class playing_versus final: public libutil::fsm::state
 {
     public:
-        using screen = libview::screens::game;
+        using screen = libview::screens::versus_game;
         using screen_transition = libview::view::screen_transition;
 
     public:
@@ -168,7 +169,7 @@ class playing_versus final: public libutil::fsm::state
     private:
         fsm& fsm_;
         const libgame::data_types::stage stage_;
-        std::shared_ptr<libview::screens::game> pscreen_;
+        std::shared_ptr<screen> pscreen_;
         std::unique_ptr<libgame::game> pgame_;
 
         //used by modify_game()
