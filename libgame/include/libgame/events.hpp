@@ -122,23 +122,6 @@ namespace events
     std::ostream& operator<<(std::ostream& l, const start&);
 }
 
-using event = std::variant
-<
-    events::board_tile_drop,
-    events::end_of_game,
-    events::hi_score_change,
-    events::input_tile_drop,
-    events::move_count_change,
-    events::next_input_creation,
-    events::next_input_insertion,
-    events::score_change,
-    events::start,
-    events::tile_merge,
-    events::tile_nullification
->;
-
-using event_list = std::vector<event>;
-
 } //namespace
 
 #endif

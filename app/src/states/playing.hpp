@@ -114,7 +114,7 @@ class playing final: public libutil::fsm::state
             save_game();
         }
 
-        void handle_game_events(const libgame::event_list& events)
+        void handle_game_events(const libgame::game::event_list& events)
         {
             for(const auto& event: events)
             {
@@ -167,7 +167,7 @@ class playing final: public libutil::fsm::state
         std::unique_ptr<libgame::game> pgame_;
 
         //used by modify_game()
-        libgame::event_list game_events_;
+        libgame::game::event_list game_events_;
 
         //used by mark_tiles_for_nullification()
         libutil::matrix_coordinate_list targeted_tiles_;

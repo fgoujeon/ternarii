@@ -115,7 +115,7 @@ class playing_versus final: public libutil::fsm::state
             pscreen_->set_game_over_overlay_visible(true);
         }
 
-        void handle_p1_game_events(const libgame::event_list& events)
+        void handle_p1_game_events(const libgame::game::event_list& events)
         {
             for(const auto& event: events)
             {
@@ -191,7 +191,7 @@ class playing_versus final: public libutil::fsm::state
             pscreen_->set_game_over_overlay_visible(true);
         }
 
-        void handle_p2_game_events(const libgame::event_list& events)
+        void handle_p2_game_events(const libgame::game::event_list& events)
         {
             for(const auto& event: events)
             {
@@ -215,7 +215,7 @@ class playing_versus final: public libutil::fsm::state
         template<class Fn, class... Args>
         void modify_p1_game(Fn&& fn, Args&&... args)
         {
-            static auto game_events = libgame::event_list{};
+            static auto game_events = libgame::game::event_list{};
             game_events.clear();
             std::invoke(fn, p1_game_, std::forward<Args>(args)..., game_events);
             handle_p1_game_events(game_events);
@@ -228,7 +228,7 @@ class playing_versus final: public libutil::fsm::state
         template<class Fn, class... Args>
         void modify_p2_game(Fn&& fn, Args&&... args)
         {
-            static auto game_events = libgame::event_list{};
+            static auto game_events = libgame::game::event_list{};
             game_events.clear();
             std::invoke(fn, p2_game_, std::forward<Args>(args)..., game_events);
             handle_p2_game_events(game_events);
