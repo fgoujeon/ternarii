@@ -122,6 +122,52 @@ namespace events
     std::ostream& operator<<(std::ostream& l, const start&);
 }
 
+//PvP game events
+namespace events
+{
+    struct pvp_board_tile_drop
+    {
+        int player_index = 0;
+        data_types::board_tile_drop_list drops;
+    };
+
+    struct pvp_input_tile_drop
+    {
+        int player_index = 0;
+        data_types::input_tile_drop_list drops;
+    };
+
+    struct pvp_next_input_creation
+    {
+        int player_index = 0;
+        data_types::input_tile_matrix tiles;
+    };
+
+    struct pvp_next_input_insertion
+    {
+        int player_index = 0;
+    };
+
+    struct pvp_score_change
+    {
+        int player_index = 0;
+        int score = 0;
+    };
+
+    struct pvp_tile_merge
+    {
+        int player_index = 0;
+        data_types::tile_merge_list merges;
+        data_types::granite_erosion_list granite_erosions;
+    };
+
+    struct pvp_tile_nullification
+    {
+        int player_index = 0;
+        libutil::matrix_coordinate_list nullified_tile_coordinates;
+    };
+}
+
 } //namespace
 
 #endif

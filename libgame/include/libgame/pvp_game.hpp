@@ -17,8 +17,8 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef LIBGAME_GAME_HPP
-#define LIBGAME_GAME_HPP
+#ifndef LIBGAME_PVP_GAME_HPP
+#define LIBGAME_PVP_GAME_HPP
 
 #include "events.hpp"
 #include "data_types.hpp"
@@ -27,51 +27,47 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libgame
 {
 
-struct game
+struct pvp_game
 {
     public:
         using event = std::variant
         <
-            events::board_tile_drop,
             events::end_of_game,
-            events::hi_score_change,
-            events::input_tile_drop,
-            events::move_count_change,
-            events::next_input_creation,
-            events::next_input_insertion,
-            events::score_change,
-            events::start,
-            events::tile_merge,
-            events::tile_nullification
+            events::pvp_board_tile_drop,
+            events::pvp_input_tile_drop,
+            events::pvp_next_input_creation,
+            events::pvp_next_input_insertion,
+            events::pvp_score_change,
+            events::pvp_tile_merge,
+            events::pvp_tile_nullification,
+            events::start
         >;
 
         using event_list = std::vector<event>;
 
-        game(data_types::stage stage);
+        pvp_game(int player_count, data_types::stage stage);
 
-        game(data_types::stage stage, const data_types::stage_state& state);
-
-        ~game();
-
-        const data_types::stage_state& get_state() const;
+        ~pvp_game();
 
         void get_targeted_tiles
         (
+            const int player_index,
             const data_types::input_layout& input_layout,
             libutil::matrix_coordinate_list& coords
         ) const;
 
         bool is_over() const;
 
+        bool is_over(const int player_index) const;
+
         void start(event_list& events);
 
         void drop_input_tiles
         (
+            const int player_index,
             const data_types::input_layout& layout,
             event_list& events
         );
-
-        void advance(double elapsed_s);
 
     private:
         struct impl;

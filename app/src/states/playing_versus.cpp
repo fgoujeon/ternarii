@@ -31,8 +31,7 @@ playing_versus::playing_versus
     const libgame::data_types::stage stage
 ):
     fsm_(f),
-    p1_game_(stage),
-    p2_game_(stage),
+    game_(2, stage),
     pscreen_
     (
         fsm_.get_context().view.make_screen<screen>
@@ -43,8 +42,7 @@ playing_versus::playing_versus
                 .handle_clear_request = [this]
                 {
                     libutil::log::info("[fsm <- screen] Clear request");
-                    modify_p1_game(&libgame::game::start);
-                    modify_p2_game(&libgame::game::start);
+                    modify_game(&libgame::pvp_game::start);
                 },
                 .handle_exit_request = [this]
                 {
@@ -54,29 +52,28 @@ playing_versus::playing_versus
                 .handle_p1_drop_request = [this](const libview::data_types::input_layout input_layout)
                 {
                     libutil::log::info("[fsm <- screen] (P1) Drop request with layout: ", input_layout);
-                    modify_p1_game(&libgame::game::drop_input_tiles, input_layout);
+                    modify_game(&libgame::pvp_game::drop_input_tiles, 0, input_layout);
                 },
                 .handle_p1_input_layout_change = [this](const libview::data_types::input_layout input_layout)
                 {
                     libutil::log::info("[fsm <- screen] (P1) Input layout change: ", input_layout);
-                    mark_p1_tiles_for_nullification();
+                    mark_tiles_for_nullification(0);
                 },
                 .handle_p2_drop_request = [this](const libview::data_types::input_layout input_layout)
                 {
                     libutil::log::info("[fsm <- screen] (P2) Drop request with layout: ", input_layout);
-                    modify_p2_game(&libgame::game::drop_input_tiles, input_layout);
+                    modify_game(&libgame::pvp_game::drop_input_tiles, 1, input_layout);
                 },
                 .handle_p2_input_layout_change = [this](const libview::data_types::input_layout input_layout)
                 {
                     libutil::log::info("[fsm <- screen] (P2) Input layout change: ", input_layout);
-                    mark_p2_tiles_for_nullification();
+                    mark_tiles_for_nullification(1);
                 }
             }
         )
     )
 {
-    modify_p1_game(&libgame::game::start);
-    modify_p2_game(&libgame::game::start);
+    modify_game(&libgame::pvp_game::start);
 
     fsm_.get_context().view.show_screen(pscreen_, trans);
 }
