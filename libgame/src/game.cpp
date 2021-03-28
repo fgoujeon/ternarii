@@ -62,6 +62,9 @@ struct game::impl
     abstract_input_generator& input_gen;
     data_types::stage_state state;
     board board_{state.board_tiles};
+
+    //used by drop_input_tiles()
+    board::event_list board_events;
 };
 
 game::game(const data_types::stage stage):
@@ -95,7 +98,7 @@ bool game::is_over() const
     return data_types::is_overflowed(pimpl_->state.board_tiles);
 }
 
-void game::start(event_list& events)
+void game::start(event_list& evts)
 {
     //Clear data
     pimpl_->state.next_input_tiles = {};
@@ -104,23 +107,23 @@ void game::start(event_list& events)
     pimpl_->state.move_count = 0;
     pimpl_->state.time_s = 0;
 
-    events.push_back(events::start{});
-    events.push_back(events::score_change{0});
-    events.push_back(events::move_count_change{pimpl_->state.move_count});
+    evts.push_back(events::start{});
+    evts.push_back(events::score_change{0});
+    evts.push_back(events::move_count_change{pimpl_->state.move_count});
 
-    events.push_back(pimpl_->generate_next_input());
+    evts.push_back(pimpl_->generate_next_input());
 
     //insert next input
     pimpl_->state.input_tiles = pimpl_->state.next_input_tiles;
-    events.push_back(events::next_input_insertion{});
+    evts.push_back(events::next_input_insertion{});
 
-    events.push_back(pimpl_->generate_next_input());
+    evts.push_back(pimpl_->generate_next_input());
 }
 
 void game::drop_input_tiles
 (
     const data_types::input_layout& layout,
-    event_list& events
+    event_list& evts
 )
 {
     if(is_over())
@@ -129,15 +132,32 @@ void game::drop_input_tiles
     }
 
     //drop the input
-    pimpl_->board_.drop_input_tiles(pimpl_->state.input_tiles, layout, events);
+    pimpl_->board_events.clear();
+    pimpl_->board_.drop_input_tiles
+    (
+        pimpl_->state.input_tiles,
+        layout,
+        pimpl_->board_events
+    );
+    for(const auto& board_event: pimpl_->board_events)
+    {
+        std::visit
+        (
+            [&](const auto& evt)
+            {
+                evts.push_back(evt);
+            },
+            board_event
+        );
+    }
 
     auto& move_count = pimpl_->state.move_count;
     ++move_count;
-    events.push_back(events::move_count_change{move_count});
+    evts.push_back(events::move_count_change{move_count});
 
     if(is_over())
     {
-        events.push_back(events::end_of_game{});
+        evts.push_back(events::end_of_game{});
 
         //Save hi-score
         const auto score = data_types::get_score(pimpl_->state.board_tiles);
@@ -145,17 +165,17 @@ void game::drop_input_tiles
         if(hi_score < score)
         {
             hi_score = score;
-            events.push_back(events::hi_score_change{hi_score});
+            evts.push_back(events::hi_score_change{hi_score});
         }
     }
     else
     {
         //move the next input into the input
         pimpl_->state.input_tiles = pimpl_->state.next_input_tiles;
-        events.push_back(events::next_input_insertion{});
+        evts.push_back(events::next_input_insertion{});
 
         //create a new next input
-        events.push_back(pimpl_->generate_next_input());
+        evts.push_back(pimpl_->generate_next_input());
     }
 }
 

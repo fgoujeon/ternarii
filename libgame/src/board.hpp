@@ -32,13 +32,23 @@ namespace libgame
 class board
 {
     public:
+        using event = std::variant
+        <
+            events::board_tile_drop,
+            events::input_tile_drop,
+            events::score_change,
+            events::tile_merge,
+            events::tile_nullification
+        >;
+
+        using event_list = std::vector<event>;
+
         static constexpr auto total_column_count      = constants::board_column_count;
         static constexpr auto total_row_count         = constants::board_row_count;
         static constexpr auto authorized_column_count = constants::board_authorized_column_count;
         static constexpr auto authorized_row_count    = constants::board_authorized_row_count;
         static constexpr auto authorized_cell_count   = constants::board_authorized_cell_count;
 
-    public:
         board(data_types::board_tile_matrix& tiles);
 
         const data_types::board_tile_matrix& tile_array() const
@@ -83,7 +93,6 @@ class board
             int& selection_size
         );
 
-    private:
         data_types::board_tile_matrix& tiles_;
 };
 
