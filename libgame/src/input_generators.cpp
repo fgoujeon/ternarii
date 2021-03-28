@@ -339,10 +339,10 @@ namespace
         static auto generator = random_input_generator
         (
             {
-                {get_random_number_tile_pair_generator(), 300},
-                {get_simple_input_generator<data_types::tiles::column_nullifier>(), 1},
-                {get_simple_input_generator<data_types::tiles::row_nullifier>(), 1},
-                {get_simple_input_generator<data_types::tiles::number_nullifier>(), 1},
+                {get_random_number_tile_pair_generator(), 5000},
+                {get_simple_input_generator<data_types::tiles::column_nullifier>(), 15},
+                {get_simple_input_generator<data_types::tiles::row_nullifier>(), 30},
+                {get_simple_input_generator<data_types::tiles::number_nullifier>(), 20},
             }
         );
         return generator;
@@ -353,11 +353,11 @@ namespace
         static auto generator = random_input_generator
         (
             {
-                {get_random_number_tile_pair_generator(), 225},
-                {get_random_number_tile_triple_generator(), 75},
-                {get_simple_input_generator<data_types::tiles::column_nullifier>(), 1},
-                {get_simple_input_generator<data_types::tiles::row_nullifier>(), 1},
-                {get_simple_input_generator<data_types::tiles::number_nullifier>(), 1},
+                {get_random_number_tile_pair_generator(), 3700},
+                {get_random_number_tile_triple_generator(), 1300},
+                {get_simple_input_generator<data_types::tiles::column_nullifier>(), 22},
+                {get_simple_input_generator<data_types::tiles::row_nullifier>(), 37},
+                {get_simple_input_generator<data_types::tiles::number_nullifier>(), 17},
             }
         );
         return generator;
@@ -368,8 +368,8 @@ namespace
         static auto generator = random_input_generator
         (
             {
-                {get_random_number_tile_pair_generator(), 1900},
-                {get_random_number_and_granite_tile_generator(), 560},
+                {get_random_number_tile_pair_generator(), 4000},
+                {get_random_number_and_granite_tile_generator(), 1000},
                 {get_simple_input_generator<data_types::tiles::column_nullifier>(), 45},
                 {get_simple_input_generator<data_types::tiles::row_nullifier>(), 30},
                 {get_simple_input_generator<data_types::tiles::number_nullifier>(), 10},
