@@ -29,6 +29,17 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libgame
 {
 
+namespace
+{
+    struct player_state
+    {
+        int granite_queue_size = 0;
+        data_types::input_tile_matrix next_input_tiles;
+        data_types::input_tile_matrix input_tiles;
+        data_types::board_tile_matrix board_tiles;
+    };
+}
+
 struct pvp_game::impl
 {
     impl(const int player_count, const data_types::stage stage):
@@ -44,31 +55,129 @@ struct pvp_game::impl
 
     events::pvp_next_input_creation generate_next_input(const int player_index)
     {
-        const auto board_highest_tile_value =
-            data_types::get_highest_tile_value(states[player_index].board_tiles)
-        ;
-        const auto board_tile_count = data_types::get_tile_count
-        (
-            states[player_index].board_tiles
-        );
+        auto& state = states[player_index];
 
-        //Generate a new input
-        states[player_index].next_input_tiles = input_gen.generate
-        (
-            board_highest_tile_value,
-            board_tile_count
-        );
-
-        return events::pvp_next_input_creation
+        if(state.granite_queue_size <= 0)
         {
-            player_index,
-            states[player_index].next_input_tiles
-        };
+            const auto board_highest_tile_value =
+                data_types::get_highest_tile_value(state.board_tiles)
+            ;
+            const auto board_tile_count = data_types::get_tile_count
+            (
+                state.board_tiles
+            );
+
+            //Generate a new input
+            state.next_input_tiles = input_gen.generate
+            (
+                board_highest_tile_value,
+                board_tile_count
+            );
+
+            return events::pvp_next_input_creation
+            {
+                player_index,
+                state.next_input_tiles
+            };
+        }
+        else
+        {
+            const auto new_tiles = [&]
+            {
+                if(state.granite_queue_size == 1)
+                {
+                    return data_types::input_tile_matrix
+                    {
+                        data_types::tiles::granite{1},
+                        std::nullopt,
+                        std::nullopt,
+                        std::nullopt
+                    };
+                }
+
+                if(state.granite_queue_size == 2)
+                {
+                    return data_types::input_tile_matrix
+                    {
+                        data_types::tiles::granite{1},
+                        std::nullopt,
+                        data_types::tiles::granite{1},
+                        std::nullopt
+                    };
+                }
+
+                if(state.granite_queue_size == 3)
+                {
+                    return data_types::input_tile_matrix
+                    {
+                        data_types::tiles::granite{2},
+                        std::nullopt,
+                        data_types::tiles::granite{1},
+                        std::nullopt
+                    };
+                }
+
+                if(state.granite_queue_size == 4)
+                {
+                    return data_types::input_tile_matrix
+                    {
+                        data_types::tiles::granite{2},
+                        std::nullopt,
+                        data_types::tiles::granite{2},
+                        std::nullopt
+                    };
+                }
+
+                if(state.granite_queue_size == 5)
+                {
+                    return data_types::input_tile_matrix
+                    {
+                        data_types::tiles::granite{3},
+                        std::nullopt,
+                        data_types::tiles::granite{2},
+                        std::nullopt
+                    };
+                }
+
+                return data_types::input_tile_matrix
+                {
+                    data_types::tiles::granite{3},
+                    std::nullopt,
+                    data_types::tiles::granite{3},
+                    std::nullopt
+                };
+            }();
+
+            const auto granite_count = [&]
+            {
+                auto sum = 0;
+                for(const auto& opt_tile: new_tiles)
+                {
+                    if(opt_tile.has_value())
+                    {
+                        if(const auto* pgranite_tile = std::get_if<data_types::tiles::granite>(&opt_tile.value()))
+                        {
+                            sum += pgranite_tile->thickness;
+                        }
+                    }
+                }
+                return sum;
+            }();
+
+            state.granite_queue_size -= granite_count;
+            state.next_input_tiles = new_tiles;
+
+            return events::pvp_next_input_creation
+            {
+                player_index,
+                new_tiles
+            };
+        }
     }
 
     const int player_count;
     abstract_input_generator& input_gen;
-    std::vector<data_types::stage_state> states;
+    std::vector<player_state> states;
     std::vector<board> boards;
 
     //used by drop_input_tiles()
@@ -160,6 +269,8 @@ void pvp_game::drop_input_tiles
         layout,
         pimpl_->board_events
     );
+
+    auto merge_count = 0;
     for(const auto board_event: pimpl_->board_events)
     {
         std::visit
@@ -210,6 +321,7 @@ void pvp_game::drop_input_tiles
                             evt.granite_erosions
                         }
                     );
+                    ++merge_count;
                 },
                 [&](const events::tile_nullification& evt)
                 {
@@ -225,6 +337,11 @@ void pvp_game::drop_input_tiles
             },
             board_event
         );
+    }
+
+    if(merge_count > 1)
+    {
+        pimpl_->states[(player_index + 1) % pimpl_->player_count].granite_queue_size += std::pow(2, merge_count - 1);
     }
 
     if(is_over())
