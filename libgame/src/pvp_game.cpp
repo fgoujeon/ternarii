@@ -361,8 +361,27 @@ void pvp_game::drop_input_tiles
     if(merge_count > 1)
     {
         const auto next_player_index = (player_index + 1) % pimpl_->player_count;
+
+        auto& player_granite_counter = pimpl_->states[player_index].granite_counter;
         auto& next_player_granite_counter = pimpl_->states[next_player_index].granite_counter;
-        next_player_granite_counter += std::pow(2, merge_count - 1);
+
+        player_granite_counter -= std::pow(2, merge_count - 1);
+
+        if(player_granite_counter < 0)
+        {
+            next_player_granite_counter += -player_granite_counter;
+            player_granite_counter = 0;
+        }
+
+        evts.push_back
+        (
+            events::pvp_granite_counter_change
+            {
+                player_index,
+                player_granite_counter
+            }
+        );
+
         evts.push_back
         (
             events::pvp_granite_counter_change
