@@ -77,6 +77,10 @@ class versus_game: public object2d, public features::animable, public features::
 
         void set_p2_score(const int value);
 
+        void set_p1_granite_counter(const int value);
+
+        void set_p2_granite_counter(const int value);
+
         void create_p1_next_input(const data_types::input_tile_matrix& tiles);
 
         void create_p2_next_input(const data_types::input_tile_matrix& tiles);

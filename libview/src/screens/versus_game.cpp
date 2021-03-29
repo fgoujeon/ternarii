@@ -170,6 +170,20 @@ struct versus_game::impl
             "SCORE"
         ),
         p1_score_display(self, feature_groups.drawables),
+        p1_granite_counter_name_label
+        (
+            self,
+            feature_groups.drawables,
+            objects::label::style
+            {
+                .alignment = Magnum::Text::Alignment::MiddleLeft,
+                .color = colors::light_gray,
+                .font_size = 0.28f,
+                .outline_range = {0.5f, 1.0f}
+            },
+            "GRANITE COUNTER"
+        ),
+        p1_granite_counter(self, feature_groups.drawables),
         p1_tile_grid
         (
             self,
@@ -198,6 +212,20 @@ struct versus_game::impl
             "SCORE"
         ),
         p2_score_display(self, feature_groups.drawables),
+        p2_granite_counter_name_label
+        (
+            self,
+            feature_groups.drawables,
+            objects::label::style
+            {
+                .alignment = Magnum::Text::Alignment::MiddleLeft,
+                .color = colors::light_gray,
+                .font_size = 0.28f,
+                .outline_range = {0.5f, 1.0f}
+            },
+            "GRANITE COUNTER"
+        ),
+        p2_granite_counter(self, feature_groups.drawables),
         p2_tile_grid
         (
             self,
@@ -212,12 +240,16 @@ struct versus_game::impl
         MOVE_BUTTON_INITIALIZER(libres::images::move_button,   2, drop),
         MOVE_BUTTON_INITIALIZER(libres::images::rotate_button, 2, clockwise_rotation)
     {
-        menu_label.setTranslation({-7.85f, 7.25f});
+        menu_label.setTranslation({0.0f, 7.25f});
         menu_button.scale({0.5f, 0.5f});
-        menu_button.translate({-7.85f, 6.75f});
+        menu_button.translate({0.0f, 6.75f});
 
         stage_name_label.translate({0.0f, -4.68f});
 
+        p1_granite_counter_name_label.setScaling({0.75f, 0.75f});
+        p1_granite_counter_name_label.setTranslation({-7.85f, 7.25f});
+        p1_granite_counter.setScaling({0.75f, 0.75f});
+        p1_granite_counter.setTranslation({-7.85f, 7.25f});
         p1_score_name_label.setTranslation({-1.75f, 7.25f});
         p1_score_display.setScaling({0.75f, 0.75f});
         p1_score_display.setTranslation({-1.6f, 7.2f});
@@ -242,6 +274,15 @@ struct versus_game::impl
             p1_clockwise_rotation_button.translate({-1.75f, -5.85f});
         }
 
+        p2_granite_counter_name_label.setScaling({0.75f, 0.75f});
+        p2_granite_counter_name_label.setTranslation({2.0f, 7.25f});
+        p2_granite_counter.setScaling({0.75f, 0.75f});
+        p2_granite_counter.setTranslation({2.0f, 7.25f});
+        p2_score_name_label.setTranslation({8.25f, 7.25f});
+        p2_score_display.setScaling({0.75f, 0.75f});
+        p2_score_display.setTranslation({8.4f, 7.2f});
+        p2_tile_grid.translate({5.0f, 1.0f});
+
         //Player 2 move buttons
         {
             const auto move_button_scaling = 0.95f;
@@ -260,11 +301,6 @@ struct versus_game::impl
             p2_clockwise_rotation_button.scale({move_button_scaling, move_button_scaling});
             p2_clockwise_rotation_button.translate({8.25f, -5.85f});
         }
-
-        p2_score_name_label.setTranslation({8.25f, 7.25f});
-        p2_score_display.setScaling({0.75f, 0.75f});
-        p2_score_display.setTranslation({8.4f, 7.2f});
-        p2_tile_grid.translate({5.0f, 1.0f});
 
         fsm.set_state<versus_game_detail::states::playing>();
     }
@@ -285,6 +321,8 @@ struct versus_game::impl
 
     objects::label p1_score_name_label;
     objects::score_display p1_score_display;
+    objects::label p1_granite_counter_name_label;
+    objects::score_display p1_granite_counter;
     objects::tile_grid p1_tile_grid;
     objects::sdf_image_button p1_left_shift_button;
     objects::sdf_image_button p1_right_shift_button;
@@ -293,6 +331,8 @@ struct versus_game::impl
 
     objects::label p2_score_name_label;
     objects::score_display p2_score_display;
+    objects::label p2_granite_counter_name_label;
+    objects::score_display p2_granite_counter;
     objects::tile_grid p2_tile_grid;
     objects::sdf_image_button p2_left_shift_button;
     objects::sdf_image_button p2_right_shift_button;
@@ -438,6 +478,16 @@ void versus_game::set_p1_score(const int value)
 void versus_game::set_p2_score(const int value)
 {
     pimpl_->p2_score_display.set_score(value);
+}
+
+void versus_game::set_p1_granite_counter(const int value)
+{
+    pimpl_->p1_granite_counter.set_score(value);
+}
+
+void versus_game::set_p2_granite_counter(const int value)
+{
+    pimpl_->p2_granite_counter.set_score(value);
 }
 
 void versus_game::create_p1_next_input(const data_types::input_tile_matrix& tiles)

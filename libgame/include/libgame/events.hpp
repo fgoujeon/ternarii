@@ -131,6 +131,12 @@ namespace events
         data_types::board_tile_drop_list drops;
     };
 
+    struct pvp_granite_counter_change
+    {
+        int player_index = 0;
+        int granite_counter = 0;
+    };
+
     struct pvp_input_tile_drop
     {
         int player_index = 0;

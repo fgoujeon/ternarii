@@ -34,6 +34,7 @@ struct pvp_game
         <
             events::end_of_game,
             events::pvp_board_tile_drop,
+            events::pvp_granite_counter_change,
             events::pvp_input_tile_drop,
             events::pvp_next_input_creation,
             events::pvp_next_input_insertion,

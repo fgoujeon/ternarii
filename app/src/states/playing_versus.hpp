@@ -52,20 +52,46 @@ class playing_versus final: public libutil::fsm::state
 
     //Game event handlers
     private:
-        void handle_game_event(const libgame::events::start&)
+        void handle_game_event(const libgame::events::end_of_game&)
         {
-            pscreen_->clear();
+            pscreen_->set_game_over_overlay_visible(true);
         }
 
-        void handle_game_event(const libgame::events::pvp_score_change& event)
+        void handle_game_event(const libgame::events::pvp_board_tile_drop& event)
         {
             switch(event.player_index)
             {
                 case 0:
-                    pscreen_->set_p1_score(event.score);
+                    pscreen_->drop_p1_board_tiles(event.drops);
                     break;
                 case 1:
-                    pscreen_->set_p2_score(event.score);
+                    pscreen_->drop_p2_board_tiles(event.drops);
+                    break;
+            }
+        }
+
+        void handle_game_event(const libgame::events::pvp_granite_counter_change& event)
+        {
+            switch(event.player_index)
+            {
+                case 0:
+                    pscreen_->set_p1_granite_counter(event.granite_counter);
+                    break;
+                case 1:
+                    pscreen_->set_p2_granite_counter(event.granite_counter);
+                    break;
+            }
+        }
+
+        void handle_game_event(const libgame::events::pvp_input_tile_drop& event)
+        {
+            switch(event.player_index)
+            {
+                case 0:
+                    pscreen_->drop_p1_input_tiles(event.drops);
+                    break;
+                case 1:
+                    pscreen_->drop_p2_input_tiles(event.drops);
                     break;
             }
         }
@@ -97,28 +123,15 @@ class playing_versus final: public libutil::fsm::state
             mark_tiles_for_nullification(event.player_index);
         }
 
-        void handle_game_event(const libgame::events::pvp_input_tile_drop& event)
+        void handle_game_event(const libgame::events::pvp_score_change& event)
         {
             switch(event.player_index)
             {
                 case 0:
-                    pscreen_->drop_p1_input_tiles(event.drops);
+                    pscreen_->set_p1_score(event.score);
                     break;
                 case 1:
-                    pscreen_->drop_p2_input_tiles(event.drops);
-                    break;
-            }
-        }
-
-        void handle_game_event(const libgame::events::pvp_board_tile_drop& event)
-        {
-            switch(event.player_index)
-            {
-                case 0:
-                    pscreen_->drop_p1_board_tiles(event.drops);
-                    break;
-                case 1:
-                    pscreen_->drop_p2_board_tiles(event.drops);
+                    pscreen_->set_p2_score(event.score);
                     break;
             }
         }
@@ -157,9 +170,9 @@ class playing_versus final: public libutil::fsm::state
             }
         }
 
-        void handle_game_event(const libgame::events::end_of_game&)
+        void handle_game_event(const libgame::events::start&)
         {
-            pscreen_->set_game_over_overlay_visible(true);
+            pscreen_->clear();
         }
 
         void handle_game_events(const libgame::pvp_game::event_list& events)

@@ -33,7 +33,7 @@ namespace
 {
     struct player_state
     {
-        int granite_queue_size = 0;
+        int granite_counter = 0;
         data_types::input_tile_matrix next_input_tiles;
         data_types::input_tile_matrix input_tiles;
         data_types::board_tile_matrix board_tiles;
@@ -53,11 +53,15 @@ struct pvp_game::impl
         }
     }
 
-    events::pvp_next_input_creation generate_next_input(const int player_index)
+    void generate_next_input
+    (
+        const int player_index,
+        event_list& evts
+    )
     {
         auto& state = states[player_index];
 
-        if(state.granite_queue_size <= 0)
+        if(state.granite_counter <= 0)
         {
             const auto board_highest_tile_value =
                 data_types::get_highest_tile_value(state.board_tiles)
@@ -74,17 +78,20 @@ struct pvp_game::impl
                 board_tile_count
             );
 
-            return events::pvp_next_input_creation
-            {
-                player_index,
-                state.next_input_tiles
-            };
+            evts.push_back
+            (
+                events::pvp_next_input_creation
+                {
+                    player_index,
+                    state.next_input_tiles
+                }
+            );
         }
         else
         {
             const auto new_tiles = [&]
             {
-                if(state.granite_queue_size == 1)
+                if(state.granite_counter == 1)
                 {
                     return data_types::input_tile_matrix
                     {
@@ -95,7 +102,7 @@ struct pvp_game::impl
                     };
                 }
 
-                if(state.granite_queue_size == 2)
+                if(state.granite_counter == 2)
                 {
                     return data_types::input_tile_matrix
                     {
@@ -106,29 +113,29 @@ struct pvp_game::impl
                     };
                 }
 
-                if(state.granite_queue_size == 3)
-                {
-                    return data_types::input_tile_matrix
-                    {
-                        data_types::tiles::granite{2},
-                        std::nullopt,
-                        data_types::tiles::granite{1},
-                        std::nullopt
-                    };
-                }
-
-                if(state.granite_queue_size == 4)
+                if(state.granite_counter == 3)
                 {
                     return data_types::input_tile_matrix
                     {
                         data_types::tiles::granite{2},
                         std::nullopt,
+                        data_types::tiles::granite{1},
+                        std::nullopt
+                    };
+                }
+
+                if(state.granite_counter == 4)
+                {
+                    return data_types::input_tile_matrix
+                    {
+                        data_types::tiles::granite{2},
+                        std::nullopt,
                         data_types::tiles::granite{2},
                         std::nullopt
                     };
                 }
 
-                if(state.granite_queue_size == 5)
+                if(state.granite_counter == 5)
                 {
                     return data_types::input_tile_matrix
                     {
@@ -164,14 +171,26 @@ struct pvp_game::impl
                 return sum;
             }();
 
-            state.granite_queue_size -= granite_count;
+            state.granite_counter -= granite_count;
             state.next_input_tiles = new_tiles;
 
-            return events::pvp_next_input_creation
-            {
-                player_index,
-                new_tiles
-            };
+            evts.push_back
+            (
+                events::pvp_granite_counter_change
+                {
+                    player_index,
+                    state.granite_counter
+                }
+            );
+
+            evts.push_back
+            (
+                events::pvp_next_input_creation
+                {
+                    player_index,
+                    new_tiles
+                }
+            );
         }
     }
 
@@ -237,13 +256,13 @@ void pvp_game::start(event_list& evts)
 
         evts.push_back(events::pvp_score_change{player_index, 0});
 
-        evts.push_back(pimpl_->generate_next_input(player_index));
+        pimpl_->generate_next_input(player_index, evts);
 
         //Insert next input
         state.input_tiles = state.next_input_tiles;
         evts.push_back(events::pvp_next_input_insertion{player_index});
 
-        evts.push_back(pimpl_->generate_next_input(player_index));
+        pimpl_->generate_next_input(player_index, evts);
 
         ++player_index;
     }
@@ -341,7 +360,17 @@ void pvp_game::drop_input_tiles
 
     if(merge_count > 1)
     {
-        pimpl_->states[(player_index + 1) % pimpl_->player_count].granite_queue_size += std::pow(2, merge_count - 1);
+        const auto next_player_index = (player_index + 1) % pimpl_->player_count;
+        auto& next_player_granite_counter = pimpl_->states[next_player_index].granite_counter;
+        next_player_granite_counter += std::pow(2, merge_count - 1);
+        evts.push_back
+        (
+            events::pvp_granite_counter_change
+            {
+                next_player_index,
+                next_player_granite_counter
+            }
+        );
     }
 
     if(is_over())
@@ -357,7 +386,7 @@ void pvp_game::drop_input_tiles
         evts.push_back(events::pvp_next_input_insertion{player_index});
 
         //create a new next input
-        evts.push_back(pimpl_->generate_next_input(player_index));
+        pimpl_->generate_next_input(player_index, evts);
     }
 }
 
