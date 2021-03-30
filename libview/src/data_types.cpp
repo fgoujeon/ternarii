@@ -44,7 +44,7 @@ std::optional<std::filesystem::path> get_image(const stage s)
     switch(s)
     {
         case stage::purity_chapel:
-            return std::nullopt;
+            return libres::images::background_purity_chapel;
         case stage::nullifier_room:
             return libres::images::background_nullifier_room;
         case stage::triplet_pines_mall:
