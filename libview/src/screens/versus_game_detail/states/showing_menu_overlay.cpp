@@ -46,7 +46,7 @@ showing_menu_overlay::showing_menu_overlay(fsm& fsm):
         )
     )
 {
-    fsm_.get_context().animator.pause();
+    fsm_.get_context().p1_animator.pause();
 
     pmenu_overlay_->setTranslation({0.0f, 3.5f});
     pmenu_overlay_->set_alpha(0);
@@ -101,7 +101,7 @@ showing_menu_overlay::~showing_menu_overlay()
     );
     fsm_.get_context().pause_animator.push(std::move(anim));
 
-    fsm_.get_context().animator.resume();
+    fsm_.get_context().p1_animator.resume();
 }
 
 void showing_menu_overlay::handle_event(const std::any& event)

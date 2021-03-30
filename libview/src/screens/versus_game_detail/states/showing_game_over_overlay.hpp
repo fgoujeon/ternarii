@@ -79,7 +79,7 @@ class showing_game_over_overlay: public libutil::fsm::state
                     .duration_s = 0.5f
                 }
             );
-            fsm_.get_context().animator.push(std::move(anim));
+            fsm_.get_context().p1_animator.push(std::move(anim));
         }
 
         ~showing_game_over_overlay()
@@ -104,7 +104,7 @@ class showing_game_over_overlay: public libutil::fsm::state
                     .duration_s = 0.5f
                 }
             );
-            fsm_.get_context().animator.push(std::move(anim));
+            fsm_.get_context().p1_animator.push(std::move(anim));
         }
 
         void handle_event(const std::any& event)

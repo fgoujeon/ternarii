@@ -189,7 +189,7 @@ struct versus_game::impl
             self,
             feature_groups.drawables,
             feature_groups.animables,
-            animator,
+            p1_animator,
             callbacks.handle_p1_drop_request,
             callbacks.handle_p1_input_layout_change
         ),
@@ -231,7 +231,7 @@ struct versus_game::impl
             self,
             feature_groups.drawables,
             feature_groups.animables,
-            animator,
+            p2_animator,
             callbacks.handle_p2_drop_request,
             callbacks.handle_p2_input_layout_change
         ),
@@ -311,7 +311,8 @@ struct versus_game::impl
 
     callback_set callbacks;
 
-    animation::animator animator;
+    animation::animator p1_animator;
+    animation::animator p2_animator;
     animation::animator pause_animator;
 
     std::unique_ptr<objects::sdf_image> pbackground_image;
@@ -344,7 +345,8 @@ struct versus_game::impl
         self,
         feature_groups,
         callbacks,
-        animator,
+        p1_animator,
+        p2_animator,
         pause_animator,
         p1_tile_grid,
         p2_tile_grid
@@ -380,7 +382,8 @@ versus_game::~versus_game() = default;
 void versus_game::advance(const std::chrono::steady_clock::time_point& now, const float /*elapsed_s*/)
 {
     pimpl_->fsm.handle_event(versus_game_detail::events::iteration{});
-    pimpl_->animator.advance(now);
+    pimpl_->p1_animator.advance(now);
+    pimpl_->p2_animator.advance(now);
     pimpl_->pause_animator.advance(now);
 }
 

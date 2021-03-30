@@ -67,7 +67,8 @@ struct fsm_context
     versus_game& screen;
     feature_group_set& feature_groups;
     versus_game::callback_set& callbacks;
-    animation::animator& animator;
+    animation::animator& p1_animator;
+    animation::animator& p2_animator;
     animation::animator& pause_animator;
     objects::tile_grid& p1_tile_grid;
     objects::tile_grid& p2_tile_grid;
