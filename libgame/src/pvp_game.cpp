@@ -61,16 +61,16 @@ struct pvp_game::impl
     {
         auto& state = states[player_index];
 
+        const auto board_highest_tile_value =
+            data_types::get_highest_tile_value(state.board_tiles)
+        ;
+        const auto board_tile_count = data_types::get_tile_count
+        (
+            state.board_tiles
+        );
+
         if(state.granite_counter <= 0)
         {
-            const auto board_highest_tile_value =
-                data_types::get_highest_tile_value(state.board_tiles)
-            ;
-            const auto board_tile_count = data_types::get_tile_count
-            (
-                state.board_tiles
-            );
-
             //Generate a new input
             state.next_input_tiles = input_gen.generate
             (
@@ -89,106 +89,56 @@ struct pvp_game::impl
         }
         else
         {
-            const auto new_tiles = [&]
+            //Generate next input
+            auto next_input_tiles = input_gen.generate
+            (
+                board_highest_tile_value,
+                board_tile_count
+            );
+
+            //Find a number tile in the generated input
+            const auto pnumber_tile = [&]() -> std::optional<data_types::tile>*
             {
-                if(state.granite_counter == 1)
-                {
-                    return data_types::input_tile_matrix
-                    {
-                        data_types::tiles::granite{1},
-                        std::nullopt,
-                        std::nullopt,
-                        std::nullopt
-                    };
-                }
-
-                if(state.granite_counter == 2)
-                {
-                    return data_types::input_tile_matrix
-                    {
-                        data_types::tiles::granite{1},
-                        std::nullopt,
-                        data_types::tiles::granite{1},
-                        std::nullopt
-                    };
-                }
-
-                if(state.granite_counter == 3)
-                {
-                    return data_types::input_tile_matrix
-                    {
-                        data_types::tiles::granite{2},
-                        std::nullopt,
-                        data_types::tiles::granite{1},
-                        std::nullopt
-                    };
-                }
-
-                if(state.granite_counter == 4)
-                {
-                    return data_types::input_tile_matrix
-                    {
-                        data_types::tiles::granite{2},
-                        std::nullopt,
-                        data_types::tiles::granite{2},
-                        std::nullopt
-                    };
-                }
-
-                if(state.granite_counter == 5)
-                {
-                    return data_types::input_tile_matrix
-                    {
-                        data_types::tiles::granite{3},
-                        std::nullopt,
-                        data_types::tiles::granite{2},
-                        std::nullopt
-                    };
-                }
-
-                return data_types::input_tile_matrix
-                {
-                    data_types::tiles::granite{3},
-                    std::nullopt,
-                    data_types::tiles::granite{3},
-                    std::nullopt
-                };
-            }();
-
-            const auto granite_count = [&]
-            {
-                auto sum = 0;
-                for(const auto& opt_tile: new_tiles)
+                for(auto& opt_tile: next_input_tiles)
                 {
                     if(opt_tile.has_value())
                     {
-                        if(const auto* pgranite_tile = std::get_if<data_types::tiles::granite>(&opt_tile.value()))
+                        if(const auto ptile = std::get_if<data_types::tiles::number>(&opt_tile.value()))
                         {
-                            sum += pgranite_tile->thickness;
+                            return &opt_tile;
                         }
                     }
                 }
-                return sum;
+                return nullptr;
             }();
 
-            state.granite_counter -= granite_count;
-            state.next_input_tiles = new_tiles;
+            //Substitute the number tile with a granite
+            if(pnumber_tile)
+            {
+                const auto granite_thickness = std::min(3, state.granite_counter);
 
-            evts.push_back
-            (
-                events::pvp_granite_counter_change
-                {
-                    player_index,
-                    state.granite_counter
-                }
-            );
+                *pnumber_tile = data_types::tiles::granite{granite_thickness};
+
+                state.granite_counter -= granite_thickness;
+
+                evts.push_back
+                (
+                    events::pvp_granite_counter_change
+                    {
+                        player_index,
+                        state.granite_counter
+                    }
+                );
+            }
+
+            state.next_input_tiles = next_input_tiles;
 
             evts.push_back
             (
                 events::pvp_next_input_creation
                 {
                     player_index,
-                    new_tiles
+                    next_input_tiles
                 }
             );
         }
