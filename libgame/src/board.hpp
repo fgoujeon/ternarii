@@ -49,7 +49,11 @@ class board
         static constexpr auto authorized_row_count    = constants::board_authorized_row_count;
         static constexpr auto authorized_cell_count   = constants::board_authorized_cell_count;
 
-        board(data_types::board_tile_matrix& tiles);
+        board
+        (
+            data_types::board_tile_matrix& tiles,
+            int limit = 0 //<0 = infinity
+        );
 
         const data_types::board_tile_matrix& tile_array() const
         {
@@ -94,6 +98,7 @@ class board
         );
 
         data_types::board_tile_matrix& tiles_;
+        const int limit_;
 };
 
 } //namespace

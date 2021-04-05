@@ -49,7 +49,7 @@ struct pvp_game::impl
     {
         for(auto& state: states)
         {
-            boards.push_back(board{state.board_tiles});
+            boards.push_back(board{state.board_tiles, 6});
         }
     }
 
@@ -177,7 +177,7 @@ void pvp_game::get_targeted_tiles
 
 bool pvp_game::is_over() const
 {
-    return std::all_of
+    return std::any_of
     (
         pimpl_->states.begin(),
         pimpl_->states.end(),
@@ -200,9 +200,7 @@ void pvp_game::start(event_list& evts)
     for(int player_index = 0; auto& state: pimpl_->states)
     {
         //Clear data
-        state.next_input_tiles = {};
-        state.input_tiles = {};
-        state.board_tiles = {};
+        state = player_state{};
 
         evts.push_back(events::pvp_score_change{player_index, 0});
 
@@ -290,7 +288,7 @@ void pvp_game::drop_input_tiles
                             evt.granite_erosions
                         }
                     );
-                    ++merge_count;
+                    merge_count += evt.merges.size();
                 },
                 [&](const events::tile_nullification& evt)
                 {
@@ -315,7 +313,7 @@ void pvp_game::drop_input_tiles
         auto& player_granite_counter = pimpl_->states[player_index].granite_counter;
         auto& next_player_granite_counter = pimpl_->states[next_player_index].granite_counter;
 
-        player_granite_counter -= std::pow(2, merge_count - 1);
+        player_granite_counter -= std::pow(2, merge_count);
 
         if(player_granite_counter < 0)
         {

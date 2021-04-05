@@ -316,10 +316,66 @@ namespace
 
         return result;
     }
+
+    data_types::board_tile_matrix remove_tiles_above_limit
+    (
+        data_types::board_tile_matrix tiles,
+        const int limit,
+        board::event_list& evts
+    )
+    {
+        auto event = events::tile_nullification{};
+
+        libutil::for_each_colrow
+        (
+            [&](auto& opt_tile, const int col, const int row)
+            {
+                //Tile?
+                if(!opt_tile)
+                {
+                    return;
+                }
+                const auto& tile = *opt_tile;
+
+                //Number tile?
+                const auto pnum_tile = std::get_if<data_types::tiles::number>(&tile);
+                if(!pnum_tile)
+                {
+                    return;
+                }
+                const auto& num_tile = *pnum_tile;
+
+                //Above limit?
+                if(num_tile.value <= limit)
+                {
+                    return;
+                }
+
+                opt_tile = std::nullopt;
+                event.nullified_tile_coordinates.push_back
+                (
+                    {col, row}
+                );
+            },
+            tiles
+        );
+
+        if(!event.nullified_tile_coordinates.empty())
+        {
+            evts.push_back(event);
+        }
+
+        return tiles;
+    }
 }
 
-board::board(data_types::board_tile_matrix& tiles):
-    tiles_(tiles)
+board::board
+(
+    data_types::board_tile_matrix& tiles,
+    const int limit
+):
+    tiles_(tiles),
+    limit_(limit)
 {
 }
 
@@ -381,6 +437,12 @@ void board::drop_input_tiles
                     .granite_erosions = result.granite_erosions
                 }
             );
+        }
+
+        //Remove tiles above limit
+        if(limit_ > 0 && !merges.empty())
+        {
+            tiles_ = remove_tiles_above_limit(tiles_, limit_, events);
         }
 
         //Apply gravity
