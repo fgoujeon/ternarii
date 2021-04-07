@@ -88,7 +88,7 @@ namespace
 
         private:
             libutil::rng rng_;
-            std::discrete_distribution<int> dis_{5, 8, 5};
+            std::discrete_distribution<int> dis_{13, 17, 10};
     };
 
 
