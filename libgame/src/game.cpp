@@ -31,12 +31,12 @@ namespace libgame
 struct game::impl
 {
     impl(const data_types::stage stage):
-        pinput_gen(make_input_generator(stage))
+        pinput_gen(make_input_generator(stage, random_device()))
     {
     }
 
     impl(const data_types::stage stage, const data_types::stage_state& s):
-        pinput_gen(make_input_generator(stage)),
+        pinput_gen(make_input_generator(stage, random_device())),
         state(s)
     {
     }
@@ -59,6 +59,7 @@ struct game::impl
         };
     }
 
+    std::random_device random_device;
     std::unique_ptr<abstract_input_generator> pinput_gen;
     data_types::stage_state state;
     board board_{state.board_tiles};

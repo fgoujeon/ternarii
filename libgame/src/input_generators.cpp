@@ -18,8 +18,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 #include "input_generators.hpp"
-#include <libutil/rng.hpp>
-#include <memory>
+#include <random>
 
 namespace libgame
 {
@@ -45,6 +44,11 @@ namespace
             using distribution = std::normal_distribution<double>;
 
         public:
+            random_number_tile_generator(const unsigned int seed):
+                engine_(seed)
+            {
+            }
+
             //return random value from 0 to max
             data_types::tiles::number generate
             (
@@ -55,7 +59,7 @@ namespace
                 //generate random number with normal distribution
                 const auto real_val = dis_
                 (
-                    rng_.engine,
+                    engine_,
                     distribution::param_type{0, standard_deviation}
                 );
 
@@ -72,7 +76,7 @@ namespace
             }
 
         private:
-            libutil::rng rng_;
+            std::mt19937 engine_;
             distribution dis_;
     };
 
@@ -81,13 +85,18 @@ namespace
     class random_granite_tile_generator
     {
         public:
+            random_granite_tile_generator(const unsigned int seed):
+                engine_(seed)
+            {
+            }
+
             data_types::tiles::granite generate()
             {
-                return data_types::tiles::granite{dis_(rng_.engine) + 1};
+                return data_types::tiles::granite{dis_(engine_) + 1};
             }
 
         private:
-            libutil::rng rng_;
+            std::mt19937 engine_;
             std::discrete_distribution<int> dis_{13, 17, 10};
     };
 
@@ -111,7 +120,7 @@ namespace
             }
 
         private:
-            data_types::input_tile_matrix tiles_;
+            const data_types::input_tile_matrix tiles_;
     };
 
     template<class Tile>
@@ -128,6 +137,11 @@ namespace
     class random_number_tile_pair_generator: public abstract_input_subgenerator
     {
         public:
+            random_number_tile_pair_generator(const unsigned int seed):
+                gen_(seed)
+            {
+            }
+
             data_types::input_tile_matrix generate
             (
                 const int max,
@@ -147,16 +161,16 @@ namespace
             random_number_tile_generator gen_;
     };
 
-    std::unique_ptr<abstract_input_subgenerator> make_random_number_tile_pair_generator()
-    {
-        return std::make_unique<random_number_tile_pair_generator>();
-    }
-
 
 
     class random_number_tile_triple_generator: public abstract_input_subgenerator
     {
         public:
+            random_number_tile_triple_generator(const unsigned int seed):
+                gen_(seed)
+            {
+            }
+
             data_types::input_tile_matrix generate
             (
                 const int max,
@@ -176,16 +190,17 @@ namespace
             random_number_tile_generator gen_;
     };
 
-    std::unique_ptr<abstract_input_subgenerator> make_random_number_tile_triple_generator()
-    {
-        return std::make_unique<random_number_tile_triple_generator>();
-    }
-
 
 
     class random_number_and_granite_tile_generator: public abstract_input_subgenerator
     {
         public:
+            random_number_and_granite_tile_generator(const unsigned int seed):
+                number_gen_(seed),
+                granite_gen_(seed)
+            {
+            }
+
             data_types::input_tile_matrix generate
             (
                 const int max,
@@ -205,11 +220,6 @@ namespace
             random_number_tile_generator number_gen_;
             random_granite_tile_generator granite_gen_;
     };
-
-    std::unique_ptr<abstract_input_subgenerator> make_random_number_and_granite_tile_generator()
-    {
-        return std::make_unique<random_number_and_granite_tile_generator>();
-    }
 
 
 
@@ -240,7 +250,12 @@ namespace
     class random_input_generator: public abstract_input_generator
     {
         public:
-            random_input_generator(weighted_input_subgenerator_list&& subgenerators):
+            random_input_generator
+            (
+                weighted_input_subgenerator_list&& subgenerators,
+                const unsigned int seed
+            ):
+                engine_(seed),
                 subgenerators_(std::move(subgenerators)),
                 weights_(get_weigths(subgenerators_)),
                 dis_(weights_.begin(), weights_.end())
@@ -300,7 +315,7 @@ namespace
                     return sd_min + sd_variable_part * (1.0 - fill_rate_pow);
                 }();
 
-                const auto r = dis_(rng_.engine);
+                const auto r = dis_(engine_);
                 return subgenerators_[r].pgenerator->generate
                 (
                     max_value,
@@ -309,7 +324,7 @@ namespace
             }
 
         private:
-            libutil::rng rng_;
+            std::mt19937 engine_;
             weighted_input_subgenerator_list subgenerators_;
             std::vector<double> weights_;
             std::discrete_distribution<int> dis_;
@@ -321,54 +336,67 @@ namespace
     Top-level generators
     */
 
-    std::unique_ptr<abstract_input_generator> make_purity_chapel_input_generator()
+    std::unique_ptr<abstract_input_generator> make_purity_chapel_input_generator
+    (
+        const unsigned int seed
+    )
     {
         auto subs = weighted_input_subgenerator_list{};
-        subs.push_back({make_random_number_tile_pair_generator(), 1});
-        return std::make_unique<random_input_generator>(std::move(subs));
+        subs.push_back({std::make_unique<random_number_tile_pair_generator>(seed), 1});
+        return std::make_unique<random_input_generator>(std::move(subs), seed);
     }
 
-    std::unique_ptr<abstract_input_generator> make_nullifier_room_input_generator()
+    std::unique_ptr<abstract_input_generator> make_nullifier_room_input_generator
+    (
+        const unsigned int seed
+    )
     {
         auto subs = weighted_input_subgenerator_list{};
-        subs.push_back({make_random_number_tile_pair_generator(), 5000});
+        subs.push_back({std::make_unique<random_number_tile_pair_generator>(seed), 5000});
         subs.push_back({make_simple_input_generator<data_types::tiles::column_nullifier>(), 15});
         subs.push_back({make_simple_input_generator<data_types::tiles::row_nullifier>(), 30});
         subs.push_back({make_simple_input_generator<data_types::tiles::number_nullifier>(), 20});
-        return std::make_unique<random_input_generator>(std::move(subs));
+        return std::make_unique<random_input_generator>(std::move(subs), seed);
     }
 
-    std::unique_ptr<abstract_input_generator> make_triplet_pines_mall_input_generator()
+    std::unique_ptr<abstract_input_generator> make_triplet_pines_mall_input_generator
+    (
+        const unsigned int seed
+    )
     {
         auto subs = weighted_input_subgenerator_list{};
-        subs.push_back({make_random_number_tile_pair_generator(), 3700});
-        subs.push_back({make_random_number_tile_triple_generator(), 1300});
+        subs.push_back({std::make_unique<random_number_tile_pair_generator>(seed), 3700});
+        subs.push_back({std::make_unique<random_number_tile_triple_generator>(seed), 1300});
         subs.push_back({make_simple_input_generator<data_types::tiles::column_nullifier>(), 22});
         subs.push_back({make_simple_input_generator<data_types::tiles::row_nullifier>(), 37});
         subs.push_back({make_simple_input_generator<data_types::tiles::number_nullifier>(), 17});
-        return std::make_unique<random_input_generator>(std::move(subs));
+        return std::make_unique<random_input_generator>(std::move(subs), seed);
     }
 
-    std::unique_ptr<abstract_input_generator> make_granite_cave_input_generator()
+    std::unique_ptr<abstract_input_generator> make_granite_cave_input_generator
+    (
+        const unsigned int seed
+    )
     {
         auto subs = weighted_input_subgenerator_list{};
-        subs.push_back({make_random_number_tile_pair_generator(), 4000});
-        subs.push_back({make_random_number_and_granite_tile_generator(), 1000});
+        subs.push_back({std::make_unique<random_number_tile_pair_generator>(seed), 4000});
+        subs.push_back({std::make_unique<random_number_and_granite_tile_generator>(seed), 1000});
         subs.push_back({make_simple_input_generator<data_types::tiles::column_nullifier>(), 45});
         subs.push_back({make_simple_input_generator<data_types::tiles::row_nullifier>(), 30});
         subs.push_back({make_simple_input_generator<data_types::tiles::number_nullifier>(), 10});
-        return std::make_unique<random_input_generator>(std::move(subs));
+        return std::make_unique<random_input_generator>(std::move(subs), seed);
     }
 }
 
 std::unique_ptr<abstract_input_generator> make_input_generator
 (
-    data_types::stage stage
+    data_types::stage stage,
+    const unsigned int seed
 )
 {
 #define CASE(STAGE) \
     case data_types::stage::STAGE: \
-        return make_##STAGE##_input_generator();
+        return make_##STAGE##_input_generator(seed);
 
     switch(stage)
     {

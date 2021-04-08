@@ -21,6 +21,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #define LIBGAME_INPUT_GENERATORS_HPP
 
 #include <libgame/data_types.hpp>
+#include <memory>
 
 namespace libgame
 {
@@ -38,7 +39,8 @@ struct abstract_input_generator
 
 std::unique_ptr<abstract_input_generator> make_input_generator
 (
-    data_types::stage stage
+    data_types::stage stage,
+    unsigned int seed
 );
 
 } //namespace

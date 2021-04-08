@@ -45,7 +45,7 @@ struct pvp_game::impl
 {
     impl(const int player_count, const data_types::stage stage):
         player_count(player_count),
-        pinput_gen(make_input_generator(stage)),
+        pinput_gen(make_input_generator(stage, random_device())),
         states(player_count)
     {
         for(auto& state: states)
@@ -136,6 +136,7 @@ struct pvp_game::impl
         );
     }
 
+    std::random_device random_device;
     const int player_count;
     int move_count = 0;
     std::unique_ptr<abstract_input_generator> pinput_gen;
