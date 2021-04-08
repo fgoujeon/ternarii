@@ -70,27 +70,18 @@ struct pvp_game::impl
             state.board_tiles
         );
 
-        if(state.granite_counter <= 0)
+        //Generate next input
+        state.next_input_tiles = [&]
         {
-            //Generate a new input
-            state.next_input_tiles = input_gen.generate
-            (
-                board_highest_tile_value,
-                board_tile_count
-            );
+            if(state.granite_counter <= 0)
+            {
+                return input_gen.generate
+                (
+                    board_highest_tile_value,
+                    board_tile_count
+                );
+            }
 
-            evts.push_back
-            (
-                events::pvp_next_input_creation
-                {
-                    player_index,
-                    state.next_input_tiles
-                }
-            );
-        }
-        else
-        {
-            //Generate next input
             auto next_input_tiles = input_gen.generate
             (
                 board_highest_tile_value,
@@ -132,17 +123,17 @@ struct pvp_game::impl
                 );
             }
 
-            state.next_input_tiles = next_input_tiles;
+            return next_input_tiles;
+        }();
 
-            evts.push_back
-            (
-                events::pvp_next_input_creation
-                {
-                    player_index,
-                    next_input_tiles
-                }
-            );
-        }
+        evts.push_back
+        (
+            events::pvp_next_input_creation
+            {
+                player_index,
+                state.next_input_tiles
+            }
+        );
     }
 
     const int player_count;
