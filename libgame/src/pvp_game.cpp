@@ -33,7 +33,8 @@ namespace
 {
     struct player_state
     {
-        int granite_counter = 0;
+        double granite_counter = 0;
+        int move_count = 0;
         data_types::input_tile_matrix next_input_tiles;
         data_types::input_tile_matrix input_tiles;
         data_types::board_tile_matrix board_tiles;
@@ -115,7 +116,7 @@ struct pvp_game::impl
             //Substitute the number tile with a granite
             if(pnumber_tile)
             {
-                const auto granite_thickness = std::min(3, state.granite_counter);
+                const auto granite_thickness = std::min(3, static_cast<int>(state.granite_counter));
 
                 *pnumber_tile = data_types::tiles::granite{granite_thickness};
 
@@ -126,7 +127,7 @@ struct pvp_game::impl
                     events::pvp_granite_counter_change
                     {
                         player_index,
-                        state.granite_counter
+                        static_cast<int>(state.granite_counter)
                     }
                 );
             }
@@ -145,6 +146,7 @@ struct pvp_game::impl
     }
 
     const int player_count;
+    int move_count = 0;
     abstract_input_generator& input_gen;
     std::vector<player_state> states;
     std::vector<board> boards;
@@ -200,9 +202,7 @@ void pvp_game::start(event_list& evts)
     for(int player_index = 0; auto& state: pimpl_->states)
     {
         //Clear data
-        state.next_input_tiles = {};
-        state.input_tiles = {};
-        state.board_tiles = {};
+        state = player_state{};
 
         evts.push_back(events::pvp_score_change{player_index, 0});
 
@@ -230,11 +230,14 @@ void pvp_game::drop_input_tiles
         return;
     }
 
+    auto& state = pimpl_->states[player_index];
+    auto& board = pimpl_->boards[player_index];
+
     //drop the input
     pimpl_->board_events.clear();
-    pimpl_->boards[player_index].drop_input_tiles
+    board.drop_input_tiles
     (
-        pimpl_->states[player_index].input_tiles,
+        state.input_tiles,
         layout,
         pimpl_->board_events
     );
@@ -308,21 +311,6 @@ void pvp_game::drop_input_tiles
         );
     }
 
-    if(merge_count > 1)
-    {
-        const auto next_player_index = (player_index + 1) % pimpl_->player_count;
-        auto& next_player_granite_counter = pimpl_->states[next_player_index].granite_counter;
-        next_player_granite_counter += std::pow(2, merge_count - 1);
-        evts.push_back
-        (
-            events::pvp_granite_counter_change
-            {
-                next_player_index,
-                next_player_granite_counter
-            }
-        );
-    }
-
     if(is_over())
     {
         evts.push_back(events::end_of_game{});
@@ -330,13 +318,41 @@ void pvp_game::drop_input_tiles
     else
     {
         //move the next input into the input
-        pimpl_->states[player_index].input_tiles =
-            pimpl_->states[player_index].next_input_tiles
-        ;
+        state.input_tiles = state.next_input_tiles;
         evts.push_back(events::pvp_next_input_insertion{player_index});
 
         //create a new next input
         pimpl_->generate_next_input(player_index, evts);
+    }
+
+    //Update counters
+    const auto average_move_count = 3;
+    const auto malus_strength = 8.0;
+    ++pimpl_->move_count;
+    ++state.move_count;
+    if(pimpl_->move_count == average_move_count * pimpl_->player_count)
+    {
+        for(auto i = 0; i < pimpl_->player_count; ++i)
+        {
+            auto& state = pimpl_->states[i];
+
+            const auto balance = average_move_count - state.move_count;
+            const auto positive_balance = std::max(0, balance);
+            state.granite_counter += malus_strength * positive_balance / pimpl_->player_count;
+
+            evts.push_back
+            (
+                events::pvp_granite_counter_change
+                {
+                    i,
+                    static_cast<int>(state.granite_counter)
+                }
+            );
+
+            state.move_count = 0;
+        }
+
+        pimpl_->move_count = 0;
     }
 }
 
