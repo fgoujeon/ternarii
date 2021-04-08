@@ -31,12 +31,12 @@ namespace libgame
 struct game::impl
 {
     impl(const data_types::stage stage):
-        input_gen(get_input_generator(stage))
+        pinput_gen(make_input_generator(stage))
     {
     }
 
     impl(const data_types::stage stage, const data_types::stage_state& s):
-        input_gen(get_input_generator(stage)),
+        pinput_gen(make_input_generator(stage)),
         state(s)
     {
     }
@@ -47,7 +47,7 @@ struct game::impl
         const auto board_tile_count = data_types::get_tile_count(state.board_tiles);
 
         //Generate a new input
-        state.next_input_tiles = input_gen.generate
+        state.next_input_tiles = pinput_gen->generate
         (
             board_highest_tile_value,
             board_tile_count
@@ -59,7 +59,7 @@ struct game::impl
         };
     }
 
-    abstract_input_generator& input_gen;
+    std::unique_ptr<abstract_input_generator> pinput_gen;
     data_types::stage_state state;
     board board_{state.board_tiles};
 

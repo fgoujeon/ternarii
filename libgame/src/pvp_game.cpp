@@ -45,7 +45,7 @@ struct pvp_game::impl
 {
     impl(const int player_count, const data_types::stage stage):
         player_count(player_count),
-        input_gen(get_input_generator(stage)),
+        pinput_gen(make_input_generator(stage)),
         states(player_count)
     {
         for(auto& state: states)
@@ -75,14 +75,14 @@ struct pvp_game::impl
         {
             if(state.granite_counter <= 0)
             {
-                return input_gen.generate
+                return pinput_gen->generate
                 (
                     board_highest_tile_value,
                     board_tile_count
                 );
             }
 
-            auto next_input_tiles = input_gen.generate
+            auto next_input_tiles = pinput_gen->generate
             (
                 board_highest_tile_value,
                 board_tile_count
@@ -138,7 +138,7 @@ struct pvp_game::impl
 
     const int player_count;
     int move_count = 0;
-    abstract_input_generator& input_gen;
+    std::unique_ptr<abstract_input_generator> pinput_gen;
     std::vector<player_state> states;
     std::vector<board> boards;
 

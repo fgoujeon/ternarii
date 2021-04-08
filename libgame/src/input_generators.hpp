@@ -36,7 +36,10 @@ struct abstract_input_generator
     ) = 0;
 };
 
-abstract_input_generator& get_input_generator(data_types::stage stage);
+std::unique_ptr<abstract_input_generator> make_input_generator
+(
+    data_types::stage stage
+);
 
 } //namespace
 
