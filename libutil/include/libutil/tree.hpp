@@ -26,17 +26,63 @@ namespace libutil
 {
 
 template<class T>
-struct tree
+class tree
 {
-    T value = T{};
-    std::forward_list<tree> children;
+    public:
+        tree() = default;
+
+        tree(const T& value):
+            value_(value)
+        {
+        }
+
+        tree(const tree&) = default;
+
+        tree(tree&&) = default;
+
+        const T& get_value() const
+        {
+            return value_;
+        }
+
+        void set_value(const T& value)
+        {
+            value_ = value;
+        }
+
+        tree* get_parent()
+        {
+            return pparent_;
+        }
+
+        const tree* get_parent() const
+        {
+            return pparent_;
+        }
+
+        const auto& get_children() const
+        {
+            return children_;
+        }
+
+        tree& add_child(const T& value)
+        {
+            auto& child = children_.emplace_front(value);
+            child.pparent_ = this;
+            return child;
+        }
+
+    private:
+        T value_ = T{};
+        tree* pparent_ = nullptr;
+        std::forward_list<tree> children_;
 };
 
 template<class T>
 int get_height(const tree<T>& t)
 {
     int height = 0;
-    for(const auto& child: t.children)
+    for(const auto& child: t.get_children())
         height = std::max(get_height(child) + 1, height);
     return height;
 }
@@ -44,7 +90,7 @@ int get_height(const tree<T>& t)
 template<class T>
 bool contains(const tree<T>& t, const T& value)
 {
-    for(const auto& child: t.children)
+    for(const auto& child: t.get_children())
     {
         if(contains(child, value))
         {

@@ -98,15 +98,12 @@ namespace
             matrix_coordinate_tree* pcurrent_node;
             if(tile_coordinate_info.pparent_node == nullptr)
             {
-                tree.value = current_tile_coordinate;
+                tree.set_value(current_tile_coordinate);
                 pcurrent_node = &tree;
             }
             else
             {
-                auto node = matrix_coordinate_tree{};
-                node.value = current_tile_coordinate;
-                pparent_node->children.push_front(std::move(node));
-                pcurrent_node = &pparent_node->children.front();
+                pcurrent_node = &pparent_node->add_child(current_tile_coordinate);
             }
 
             const auto neighbor_tile_coordinates =

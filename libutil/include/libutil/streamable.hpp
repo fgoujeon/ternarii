@@ -160,7 +160,7 @@ libutil types
 template<class T>
 std::ostream& operator<<(std::ostream& l, const streamable<libutil::tree<T>>& r)
 {
-    return l << "{" << streamable{r.value.value} << ", " << streamable{r.value.children} << "}";
+    return l << "{" << streamable{r.value.get_value()} << ", " << streamable{r.value.get_children()} << "}";
 }
 
 template<class T, int Cols, int Rows>
