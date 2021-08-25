@@ -24,14 +24,19 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include "sdf_image.hpp"
 #include "../colors.hpp"
 #include <libres.hpp>
+#include <libutil/log.hpp>
 #include <libutil/matrix.hpp>
+#include <libutil/tree.hpp>
 #include <libutil/overload.hpp>
+#include <queue>
 
 namespace libview::objects
 {
 
 namespace
 {
+    using matrix_coordinate_tree = libutil::tree<libutil::matrix_coordinate>;
+
     Magnum::Vector2 tile_coordinate_to_position(const libutil::matrix_coordinate& c)
     {
         return
@@ -39,6 +44,116 @@ namespace
             -2.5f + c.col,
             -5.0f + c.row
         };
+    }
+
+    /*
+    Make a tree containing the coordinates of the merged tiles. Edges represent
+    the paths to the destination position.
+
+    For example, with the following board (where tile A to F are identical
+    number tiles)...:
+
+        | A    |
+        |BCD   |
+        |xxEF  |
+        --------
+
+    ... the corresponding coordinate tree is the following:
+
+            E
+           / \
+          D   F
+          |
+          C
+         / \
+        A   B
+    */
+    matrix_coordinate_tree make_merge_tree
+    (
+        const libutil::matrix_coordinate_list& src_tile_coordinates,
+        const libutil::matrix_coordinate& dst_tile_coordinate
+    )
+    {
+        struct coordinate_info
+        {
+            libutil::matrix_coordinate coordinate;
+            matrix_coordinate_tree* pparent_node = nullptr;
+        };
+
+        auto tree = matrix_coordinate_tree{};
+
+        //Breadth-first traversal
+        auto coordinate_queue = std::queue<coordinate_info>{};
+        auto explored_coordinates = std::vector<libutil::matrix_coordinate>{};
+        explored_coordinates.push_back(dst_tile_coordinate);
+        coordinate_queue.push(coordinate_info{dst_tile_coordinate, nullptr});
+        while(!coordinate_queue.empty())
+        {
+            const auto tile_coordinate_info = coordinate_queue.front();
+            const auto& current_tile_coordinate = tile_coordinate_info.coordinate;
+            const auto pparent_node = tile_coordinate_info.pparent_node;
+            coordinate_queue.pop();
+
+            //Add coordinate to merge tree
+            matrix_coordinate_tree* pcurrent_node;
+            if(tile_coordinate_info.pparent_node == nullptr)
+            {
+                tree.value = current_tile_coordinate;
+                pcurrent_node = &tree;
+            }
+            else
+            {
+                auto node = matrix_coordinate_tree{};
+                node.value = current_tile_coordinate;
+                pparent_node->children.push_front(std::move(node));
+                pcurrent_node = &pparent_node->children.front();
+            }
+
+            const auto neighbor_tile_coordinates =
+                std::array
+                {
+                    libutil::matrix_coordinate{current_tile_coordinate.col,     current_tile_coordinate.row + 1}, //above
+                    libutil::matrix_coordinate{current_tile_coordinate.col + 1, current_tile_coordinate.row},     //right
+                    libutil::matrix_coordinate{current_tile_coordinate.col,     current_tile_coordinate.row - 1}, //below
+                    libutil::matrix_coordinate{current_tile_coordinate.col - 1, current_tile_coordinate.row}      //left
+                }
+            ;
+
+            //Explore neighbor coordinates
+            for(const auto& neighbor_tile_coordinate: neighbor_tile_coordinates)
+            {
+                const auto is_src_tile_coordinate = std::find
+                (
+                    src_tile_coordinates.begin(),
+                    src_tile_coordinates.end(),
+                    neighbor_tile_coordinate
+                ) != src_tile_coordinates.end();
+
+                if
+                (
+                    is_src_tile_coordinate &&
+                    std::find
+                    (
+                        explored_coordinates.begin(),
+                        explored_coordinates.end(),
+                        neighbor_tile_coordinate
+                    ) == explored_coordinates.end()
+                )
+                {
+                    explored_coordinates.push_back(neighbor_tile_coordinate);
+                    coordinate_queue.push
+                    (
+                        coordinate_info
+                        {
+                            neighbor_tile_coordinate,
+                            pcurrent_node
+                        }
+                    );
+                }
+            }
+        }
+
+        return tree;
     }
 }
 
@@ -282,6 +397,13 @@ void tile_grid::merge_tiles
 
     for(const auto& merge: merges)
     {
+        const auto merge_tree = make_merge_tree
+        (
+            merge.src_tile_coordinates,
+            merge.dst_tile_coordinate
+        );
+        libutil::log::info(merge_tree);
+
         const auto dst_position = tile_coordinate_to_position(merge.dst_tile_coordinate);
 
         for(const auto& src_tile_coordinate: merge.src_tile_coordinates) //for each source tile
