@@ -153,6 +153,8 @@ namespace
 
         return tree;
     }
+
+    constexpr auto tile_scaling_factor = 0.46f;
 }
 
 tile_grid::tile_grid
@@ -352,7 +354,7 @@ void tile_grid::merge_tiles
 {
     auto animations = std::map<int, animation::animation>{};
 
-    constexpr auto track_duration_s = 0.2f;
+    constexpr auto track_duration_s = 0.17f;
 
     for(const auto& granite_erosion: granite_erosions)
     {
@@ -472,16 +474,30 @@ void tile_grid::merge_tiles
         //create destination tile
         auto pdst_tile = make_tile(data_types::tiles::number{merge.dst_tile_value}, dst_position);
         pdst_tile->set_alpha(0);
+        pdst_tile->setScaling({tile_scaling_factor / 4, tile_scaling_factor / 4});
         at(board_tiles_, merge.dst_tile_coordinate) = pdst_tile;
 
-        //make destination tile appear with a fade in
+        //make destination tile appear with a fade in...
         animations[tree_height].add
         (
             animation::tracks::alpha_transition
             {
                 .pobj = pdst_tile,
                 .finish_alpha = 1,
-                .duration_s = track_duration_s
+                .duration_s = track_duration_s,
+                .interpolator = animation::get_exponential_out_float_interpolator()
+            }
+        );
+
+        //... and a "pop"
+        animations[tree_height].add
+        (
+            animation::tracks::scaling_transition
+            {
+                .pobj = pdst_tile,
+                .finish_scaling = {tile_scaling_factor, tile_scaling_factor},
+                .duration_s = track_duration_s,
+                .interpolator = animation::get_back_out_vector2_interpolator()
             }
         );
     }
@@ -562,7 +578,7 @@ std::shared_ptr<object2d> tile_grid::make_tile
 )
 {
     auto ptile = tile_grid_detail::make_tile_object(*this, drawables_, animables_, tile);
-    ptile->setScaling({0.46f, 0.46f});
+    ptile->setScaling({tile_scaling_factor, tile_scaling_factor});
     ptile->setTranslation(position);
     return ptile;
 }

@@ -67,7 +67,7 @@ class showing_game_over_overlay: public libutil::fsm::state
                     .pobj = pgame_over_overlay_,
                     .finish_position = {0.0f, 4.5f},
                     .duration_s = 0.5f,
-                    .interpolator = animation::get_cubic_out_position_interpolator()
+                    .interpolator = animation::get_cubic_out_vector2_interpolator()
                 }
             );
             anim.add
@@ -92,7 +92,7 @@ class showing_game_over_overlay: public libutil::fsm::state
                     .pobj = pgame_over_overlay_,
                     .finish_position = {0.0f, 5.5f},
                     .duration_s = 0.5f,
-                    .interpolator = animation::get_cubic_out_position_interpolator()
+                    .interpolator = animation::get_cubic_out_vector2_interpolator()
                 }
             );
             anim.add

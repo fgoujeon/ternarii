@@ -62,7 +62,7 @@ showing_menu_overlay::showing_menu_overlay(fsm& fsm):
             .pobj = pmenu_overlay_,
             .finish_position = {0.0f, 3.0f},
             .duration_s = 0.3f,
-            .interpolator = animation::get_cubic_out_position_interpolator()
+            .interpolator = animation::get_cubic_out_vector2_interpolator()
         }
     );
     anim.add
@@ -87,7 +87,7 @@ showing_menu_overlay::~showing_menu_overlay()
             .pobj = pmenu_overlay_,
             .finish_position = {0.0f, 3.5f},
             .duration_s = 0.3f,
-            .interpolator = animation::get_cubic_out_position_interpolator()
+            .interpolator = animation::get_cubic_out_vector2_interpolator()
         }
     );
     anim.add
