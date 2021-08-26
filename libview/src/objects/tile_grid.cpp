@@ -29,6 +29,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include <libutil/tree.hpp>
 #include <libutil/overload.hpp>
 #include <queue>
+#include <map>
 
 namespace libview::objects
 {
@@ -298,7 +299,7 @@ void tile_grid::drop_board_tiles(const data_types::board_tile_drop_list& drops)
             {
                 ptile,
                 dst_position,
-                22
+                15
             }
         );
 
@@ -349,20 +350,21 @@ void tile_grid::merge_tiles
     const data_types::granite_erosion_list& granite_erosions
 )
 {
-    auto anim0 = animation::animation{};
-    auto anim1 = animation::animation{};
+    auto animations = std::map<int, animation::animation>{};
+
+    constexpr auto track_duration_s = 0.2f;
 
     for(const auto& granite_erosion: granite_erosions)
     {
         auto& ptile = at(board_tiles_, granite_erosion.coordinate);
 
-        anim0.add
+        animations[0].add
         (
             animation::tracks::alpha_transition
             {
                 .pobj = ptile,
                 .finish_alpha = 0,
-                .duration_s = 0.2
+                .duration_s = track_duration_s
             }
         );
 
@@ -380,13 +382,13 @@ void tile_grid::merge_tiles
             );
             ptile->set_alpha(0);
 
-            anim0.add
+            animations[0].add
             (
                 animation::tracks::alpha_transition
                 {
                     .pobj = ptile,
                     .finish_alpha = 1,
-                    .duration_s = 0.2
+                    .duration_s = track_duration_s
                 }
             );
         }
@@ -401,37 +403,71 @@ void tile_grid::merge_tiles
         );
         libutil::log::info(merge_tree);
 
-        const auto dst_position = tile_coordinate_to_position(merge.dst_tile_coordinate);
-
-        for(const auto& src_tile_coordinate: merge.src_tile_coordinates) //for each source tile
+        //translate all src tiles but the last one (the one at dst position)
+        const auto tree_height = get_height(merge_tree);
+        for(auto i = tree_height; i > 0; --i)
         {
-            auto& psrc_tile = at(board_tiles_, src_tile_coordinate);
+            const auto animation_index = tree_height - i;
 
-            //first, translate source tile toward position of destination tile
-            anim0.add
+            libutil::for_each_node
             (
-                animation::tracks::fixed_speed_translation
+                merge_tree,
+                [&](const matrix_coordinate_tree& node)
                 {
-                    psrc_tile,
-                    dst_position,
-                    4.5,
-                    animation::get_cubic_out_position_interpolator()
+                    if(get_depth(node) == i)
+                    {
+                        const auto& src_coordinate = node.get_value();
+                        const auto& dst_coordinate = node.get_parent()->get_value();
+                        const auto dst_position = tile_coordinate_to_position(dst_coordinate);
+
+                        auto& ptile = at(board_tiles_, src_coordinate);
+
+                        //translate tile toward position of parent tile
+                        animations[animation_index].add
+                        (
+                            animation::tracks::fixed_duration_translation
+                            {
+                                .pobj = ptile,
+                                .finish_position = dst_position,
+                                .duration_s = track_duration_s
+                            }
+                        );
+
+                        //also, make it disappear with a fade out
+                        animations[animation_index].add
+                        (
+                            animation::tracks::alpha_transition
+                            {
+                                .pobj = ptile,
+                                .finish_alpha = 0,
+                                .duration_s = track_duration_s,
+                                .interpolator = animation::get_exponential_in_float_interpolator()
+                            }
+                        );
+
+                        //remove the tile object from the matrix so that it is
+                        //deleted once the animation ends
+                        ptile = nullptr;
+                    }
                 }
             );
+        }
 
-            //then, make it disappear with a fade out
-            anim1.add
+        //make last tile disappear with a fade out
+        {
+            auto& ptile = at(board_tiles_, merge.dst_tile_coordinate);
+            animations[tree_height].add
             (
                 animation::tracks::alpha_transition
                 {
-                    psrc_tile, 0, 0.2
+                    .pobj = ptile,
+                    .finish_alpha = 0,
+                    .duration_s = track_duration_s
                 }
             );
-
-            //remove the tile object from the matrix so that it is deleted once
-            //the animation ends
-            psrc_tile = nullptr;
         }
+
+        const auto dst_position = tile_coordinate_to_position(merge.dst_tile_coordinate);
 
         //create destination tile
         auto pdst_tile = make_tile(data_types::tiles::number{merge.dst_tile_value}, dst_position);
@@ -439,13 +475,21 @@ void tile_grid::merge_tiles
         at(board_tiles_, merge.dst_tile_coordinate) = pdst_tile;
 
         //make destination tile appear with a fade in
-        anim1.add(animation::tracks::alpha_transition{pdst_tile, 1, 0.2});
+        animations[tree_height].add
+        (
+            animation::tracks::alpha_transition
+            {
+                .pobj = pdst_tile,
+                .finish_alpha = 1,
+                .duration_s = track_duration_s
+            }
+        );
     }
 
     animator_.push(animation::tracks::closure{[this]{next_input_.suspend();}});
     animator_.push(animation::tracks::closure{[this]{input_.suspend();}});
-    animator_.push(std::move(anim0));
-    animator_.push(std::move(anim1));
+    for(auto& [index, anim]: animations)
+        animator_.push(std::move(anim));
     animator_.push(animation::tracks::closure{[this]{input_.resume();}});
     animator_.push(animation::tracks::closure{[this]{next_input_.resume();}});
 }

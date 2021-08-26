@@ -22,6 +22,20 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libview::animation
 {
 
+const interpolator_t<float>& get_exponential_in_float_interpolator()
+{
+    static const auto interpolator = interpolator_t<float>
+    {
+        Magnum::Animation::ease
+        <
+            float,
+            Magnum::Math::lerp,
+            Magnum::Animation::Easing::exponentialIn
+        >()
+    };
+    return interpolator;
+}
+
 const interpolator_t<Magnum::Vector2>& get_cubic_out_position_interpolator()
 {
     static const auto interpolator = interpolator_t<Magnum::Vector2>

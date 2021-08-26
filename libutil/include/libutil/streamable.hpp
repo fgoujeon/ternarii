@@ -24,7 +24,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include "matrix.hpp"
 #include <variant>
 #include <vector>
-#include <forward_list>
+#include <list>
 #include <optional>
 #include <iostream>
 
@@ -113,7 +113,7 @@ std::ostream& operator<<(std::ostream& l, const streamable<std::chrono::system_c
 }
 
 template<class T>
-std::ostream& operator<<(std::ostream& l, const streamable<std::forward_list<T>>& r)
+std::ostream& operator<<(std::ostream& l, const streamable<std::list<T>>& r)
 {
     return streamable_detail::stream_sequence_container(l, r.value);
 }

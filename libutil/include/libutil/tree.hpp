@@ -20,7 +20,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #ifndef LIBUTIL_TREE_HPP
 #define LIBUTIL_TREE_HPP
 
-#include <forward_list>
+#include <list>
 
 namespace libutil
 {
@@ -60,23 +60,42 @@ class tree
             return pparent_;
         }
 
-        const auto& get_children() const
+        const std::list<tree>& get_children() const
         {
             return children_;
         }
 
         tree& add_child(const T& value)
         {
-            auto& child = children_.emplace_front(value);
+            auto& child = children_.emplace_back(value);
             child.pparent_ = this;
             return child;
+        }
+
+        void remove_child(const tree& child)
+        {
+            children_.remove_if
+            (
+                [&](const tree& t)
+                {
+                    return &t == &child;
+                }
+            );
         }
 
     private:
         T value_ = T{};
         tree* pparent_ = nullptr;
-        std::forward_list<tree> children_;
+        std::list<tree> children_;
 };
+
+template<class T, class F>
+void for_each_node(const tree<T>& t, F&& f)
+{
+    f(t);
+    for(const auto& child: t.get_children())
+        for_each_node(child, f);
+}
 
 template<class T>
 int get_height(const tree<T>& t)
@@ -88,17 +107,12 @@ int get_height(const tree<T>& t)
 }
 
 template<class T>
-bool contains(const tree<T>& t, const T& value)
+int get_depth(const tree<T>& t)
 {
-    for(const auto& child: t.get_children())
-    {
-        if(contains(child, value))
-        {
-            return true;
-        }
-    }
-
-    return false;
+    int depth = 0;
+    for(auto pnode = t.get_parent(); pnode != nullptr; pnode = pnode->get_parent())
+        ++depth;
+    return depth;
 }
 
 } //namespace

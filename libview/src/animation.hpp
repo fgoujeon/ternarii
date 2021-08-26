@@ -39,6 +39,8 @@ using player_supplier_t = libutil::unique_function<void(player_t&)>;
 template<class ValueType, class ResultType = Magnum::Animation::ResultOf<ValueType>>
 using interpolator_t = ResultType(*)(const ValueType&, const ValueType&, Magnum::Float);
 
+const interpolator_t<float>& get_exponential_in_float_interpolator();
+
 const interpolator_t<Magnum::Vector2>& get_cubic_out_position_interpolator();
 
 namespace tracks
