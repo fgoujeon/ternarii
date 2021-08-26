@@ -69,7 +69,7 @@ namespace
          / \
         A   B
     */
-    matrix_coordinate_tree make_merge_tree
+    std::unique_ptr<matrix_coordinate_tree> make_merge_tree
     (
         const libutil::matrix_coordinate_list& src_tile_coordinates,
         const libutil::matrix_coordinate& dst_tile_coordinate
@@ -81,7 +81,7 @@ namespace
             matrix_coordinate_tree* pparent_node = nullptr;
         };
 
-        auto tree = matrix_coordinate_tree{};
+        auto ptree = std::make_unique<matrix_coordinate_tree>();
 
         //Breadth-first traversal
         auto coordinate_queue = std::queue<coordinate_info>{};
@@ -99,8 +99,8 @@ namespace
             matrix_coordinate_tree* pcurrent_node;
             if(tile_coordinate_info.pparent_node == nullptr)
             {
-                tree.set_value(current_tile_coordinate);
-                pcurrent_node = &tree;
+                ptree->set_value(current_tile_coordinate);
+                pcurrent_node = ptree.get();
             }
             else
             {
@@ -151,7 +151,7 @@ namespace
             }
         }
 
-        return tree;
+        return ptree;
     }
 
     constexpr auto tile_scaling_factor = 0.46f;
@@ -398,22 +398,21 @@ void tile_grid::merge_tiles
 
     for(const auto& merge: merges)
     {
-        const auto merge_tree = make_merge_tree
+        const auto pmerge_tree = make_merge_tree
         (
             merge.src_tile_coordinates,
             merge.dst_tile_coordinate
         );
-        libutil::log::info(merge_tree);
 
         //translate all src tiles but the last one (the one at dst position)
-        const auto tree_height = get_height(merge_tree);
+        const auto tree_height = get_height(*pmerge_tree);
         for(auto i = tree_height; i > 0; --i)
         {
             const auto animation_index = tree_height - i;
 
             libutil::for_each_node
             (
-                merge_tree,
+                *pmerge_tree,
                 [&](const matrix_coordinate_tree& node)
                 {
                     if(get_depth(node) == i)

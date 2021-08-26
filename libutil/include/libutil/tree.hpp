@@ -36,9 +36,13 @@ class tree
         {
         }
 
-        tree(const tree&) = default;
+        tree(const tree&) = delete;
 
-        tree(tree&&) = default;
+        tree(tree&&) = delete;
+
+        tree& operator=(const tree&) = delete;
+
+        tree& operator=(tree&&) = delete;
 
         const T& get_value() const
         {
