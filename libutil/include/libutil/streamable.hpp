@@ -20,9 +20,11 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #ifndef LIBUTIL_STREAMABLE_HPP
 #define LIBUTIL_STREAMABLE_HPP
 
+#include "tree.hpp"
 #include "matrix.hpp"
 #include <variant>
 #include <vector>
+#include <list>
 #include <optional>
 #include <iostream>
 
@@ -111,6 +113,12 @@ std::ostream& operator<<(std::ostream& l, const streamable<std::chrono::system_c
 }
 
 template<class T>
+std::ostream& operator<<(std::ostream& l, const streamable<std::list<T>>& r)
+{
+    return streamable_detail::stream_sequence_container(l, r.value);
+}
+
+template<class T>
 std::ostream& operator<<(std::ostream& l, const streamable<std::optional<T>>& r)
 {
     if(r.value.has_value())
@@ -148,6 +156,12 @@ std::ostream& operator<<(std::ostream& l, const streamable<std::vector<T>>& r)
 /*
 libutil types
 */
+
+template<class T>
+std::ostream& operator<<(std::ostream& l, const streamable<libutil::tree<T>>& r)
+{
+    return l << "{" << streamable{r.value.get_value()} << ", " << streamable{r.value.get_children()} << "}";
+}
 
 template<class T, int Cols, int Rows>
 std::ostream& operator<<(std::ostream& l, const streamable<libutil::matrix<T, Cols, Rows>>& r)

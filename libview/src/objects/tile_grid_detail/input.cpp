@@ -311,7 +311,7 @@ void input::set_tiles(const input_tile_object_matrix& tiles)
                             ptile,
                             dst_position,
                             animation_duration_s,
-                            animation::get_cubic_out_position_interpolator()
+                            animation::get_cubic_out_vector2_interpolator()
                         }
                     );
                     anim.add
@@ -321,7 +321,7 @@ void input::set_tiles(const input_tile_object_matrix& tiles)
                             ptile,
                             {0.46f, 0.46f},
                             animation_duration_s,
-                            animation::get_cubic_out_position_interpolator()
+                            animation::get_cubic_out_vector2_interpolator()
                         }
                     );
                     anim.add

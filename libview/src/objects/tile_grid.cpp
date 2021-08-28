@@ -24,14 +24,20 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include "sdf_image.hpp"
 #include "../colors.hpp"
 #include <libres.hpp>
+#include <libutil/log.hpp>
 #include <libutil/matrix.hpp>
+#include <libutil/tree.hpp>
 #include <libutil/overload.hpp>
+#include <queue>
+#include <map>
 
 namespace libview::objects
 {
 
 namespace
 {
+    using matrix_coordinate_tree = libutil::tree<libutil::matrix_coordinate>;
+
     Magnum::Vector2 tile_coordinate_to_position(const libutil::matrix_coordinate& c)
     {
         return
@@ -40,6 +46,115 @@ namespace
             -5.0f + c.row
         };
     }
+
+    /*
+    Make a tree containing the coordinates of the merged tiles. Edges represent
+    the paths to the destination position.
+
+    For example, with the following board (where tile A to F are identical
+    number tiles)...:
+
+        | A    |
+        |BCD   |
+        |xxEF  |
+        --------
+
+    ... the corresponding coordinate tree is the following:
+
+            E
+           / \
+          D   F
+          |
+          C
+         / \
+        A   B
+    */
+    std::unique_ptr<matrix_coordinate_tree> make_merge_tree
+    (
+        const libutil::matrix_coordinate_list& src_tile_coordinates,
+        const libutil::matrix_coordinate& dst_tile_coordinate
+    )
+    {
+        struct coordinate_info
+        {
+            libutil::matrix_coordinate coordinate;
+            matrix_coordinate_tree* pparent_node = nullptr;
+        };
+
+        auto ptree = std::make_unique<matrix_coordinate_tree>();
+
+        //Breadth-first traversal
+        auto coordinate_queue = std::queue<coordinate_info>{};
+        auto explored_coordinates = std::vector<libutil::matrix_coordinate>{};
+        explored_coordinates.push_back(dst_tile_coordinate);
+        coordinate_queue.push(coordinate_info{dst_tile_coordinate, nullptr});
+        while(!coordinate_queue.empty())
+        {
+            const auto tile_coordinate_info = coordinate_queue.front();
+            const auto& current_tile_coordinate = tile_coordinate_info.coordinate;
+            const auto pparent_node = tile_coordinate_info.pparent_node;
+            coordinate_queue.pop();
+
+            //Add coordinate to merge tree
+            matrix_coordinate_tree* pcurrent_node;
+            if(tile_coordinate_info.pparent_node == nullptr)
+            {
+                ptree->set_value(current_tile_coordinate);
+                pcurrent_node = ptree.get();
+            }
+            else
+            {
+                pcurrent_node = &pparent_node->add_child(current_tile_coordinate);
+            }
+
+            const auto neighbor_tile_coordinates =
+                std::array
+                {
+                    libutil::matrix_coordinate{current_tile_coordinate.col,     current_tile_coordinate.row + 1}, //above
+                    libutil::matrix_coordinate{current_tile_coordinate.col + 1, current_tile_coordinate.row},     //right
+                    libutil::matrix_coordinate{current_tile_coordinate.col,     current_tile_coordinate.row - 1}, //below
+                    libutil::matrix_coordinate{current_tile_coordinate.col - 1, current_tile_coordinate.row}      //left
+                }
+            ;
+
+            //Explore neighbor coordinates
+            for(const auto& neighbor_tile_coordinate: neighbor_tile_coordinates)
+            {
+                const auto is_src_tile_coordinate = std::find
+                (
+                    src_tile_coordinates.begin(),
+                    src_tile_coordinates.end(),
+                    neighbor_tile_coordinate
+                ) != src_tile_coordinates.end();
+
+                if
+                (
+                    is_src_tile_coordinate &&
+                    std::find
+                    (
+                        explored_coordinates.begin(),
+                        explored_coordinates.end(),
+                        neighbor_tile_coordinate
+                    ) == explored_coordinates.end()
+                )
+                {
+                    explored_coordinates.push_back(neighbor_tile_coordinate);
+                    coordinate_queue.push
+                    (
+                        coordinate_info
+                        {
+                            neighbor_tile_coordinate,
+                            pcurrent_node
+                        }
+                    );
+                }
+            }
+        }
+
+        return ptree;
+    }
+
+    constexpr auto tile_scaling_factor = 0.46f;
 }
 
 tile_grid::tile_grid
@@ -186,7 +301,7 @@ void tile_grid::drop_board_tiles(const data_types::board_tile_drop_list& drops)
             {
                 ptile,
                 dst_position,
-                22
+                15
             }
         );
 
@@ -237,20 +352,21 @@ void tile_grid::merge_tiles
     const data_types::granite_erosion_list& granite_erosions
 )
 {
-    auto anim0 = animation::animation{};
-    auto anim1 = animation::animation{};
+    auto animations = std::map<int, animation::animation>{};
+
+    constexpr auto track_duration_s = 0.17f;
 
     for(const auto& granite_erosion: granite_erosions)
     {
         auto& ptile = at(board_tiles_, granite_erosion.coordinate);
 
-        anim0.add
+        animations[0].add
         (
             animation::tracks::alpha_transition
             {
                 .pobj = ptile,
                 .finish_alpha = 0,
-                .duration_s = 0.2
+                .duration_s = track_duration_s
             }
         );
 
@@ -268,13 +384,13 @@ void tile_grid::merge_tiles
             );
             ptile->set_alpha(0);
 
-            anim0.add
+            animations[0].add
             (
                 animation::tracks::alpha_transition
                 {
                     .pobj = ptile,
                     .finish_alpha = 1,
-                    .duration_s = 0.2
+                    .duration_s = track_duration_s
                 }
             );
         }
@@ -282,51 +398,113 @@ void tile_grid::merge_tiles
 
     for(const auto& merge: merges)
     {
-        const auto dst_position = tile_coordinate_to_position(merge.dst_tile_coordinate);
+        const auto pmerge_tree = make_merge_tree
+        (
+            merge.src_tile_coordinates,
+            merge.dst_tile_coordinate
+        );
 
-        for(const auto& src_tile_coordinate: merge.src_tile_coordinates) //for each source tile
+        //translate all src tiles but the last one (the one at dst position)
+        const auto tree_height = get_height(*pmerge_tree);
+        for(auto i = tree_height; i > 0; --i)
         {
-            auto& psrc_tile = at(board_tiles_, src_tile_coordinate);
+            const auto animation_index = tree_height - i;
 
-            //first, translate source tile toward position of destination tile
-            anim0.add
+            libutil::for_each_node
             (
-                animation::tracks::fixed_speed_translation
+                *pmerge_tree,
+                [&](const matrix_coordinate_tree& node)
                 {
-                    psrc_tile,
-                    dst_position,
-                    4.5,
-                    animation::get_cubic_out_position_interpolator()
+                    if(get_depth(node) == i)
+                    {
+                        const auto& src_coordinate = node.get_value();
+                        const auto& dst_coordinate = node.get_parent()->get_value();
+                        const auto dst_position = tile_coordinate_to_position(dst_coordinate);
+
+                        auto& ptile = at(board_tiles_, src_coordinate);
+
+                        //translate tile toward position of parent tile
+                        animations[animation_index].add
+                        (
+                            animation::tracks::fixed_duration_translation
+                            {
+                                .pobj = ptile,
+                                .finish_position = dst_position,
+                                .duration_s = track_duration_s
+                            }
+                        );
+
+                        //also, make it disappear with a fade out
+                        animations[animation_index].add
+                        (
+                            animation::tracks::alpha_transition
+                            {
+                                .pobj = ptile,
+                                .finish_alpha = 0,
+                                .duration_s = track_duration_s,
+                                .interpolator = animation::get_exponential_in_float_interpolator()
+                            }
+                        );
+
+                        //remove the tile object from the matrix so that it is
+                        //deleted once the animation ends
+                        ptile = nullptr;
+                    }
                 }
             );
+        }
 
-            //then, make it disappear with a fade out
-            anim1.add
+        //make last tile disappear with a fade out
+        {
+            auto& ptile = at(board_tiles_, merge.dst_tile_coordinate);
+            animations[tree_height].add
             (
                 animation::tracks::alpha_transition
                 {
-                    psrc_tile, 0, 0.2
+                    .pobj = ptile,
+                    .finish_alpha = 0,
+                    .duration_s = track_duration_s
                 }
             );
-
-            //remove the tile object from the matrix so that it is deleted once
-            //the animation ends
-            psrc_tile = nullptr;
         }
+
+        const auto dst_position = tile_coordinate_to_position(merge.dst_tile_coordinate);
 
         //create destination tile
         auto pdst_tile = make_tile(data_types::tiles::number{merge.dst_tile_value}, dst_position);
         pdst_tile->set_alpha(0);
+        pdst_tile->setScaling({tile_scaling_factor / 4, tile_scaling_factor / 4});
         at(board_tiles_, merge.dst_tile_coordinate) = pdst_tile;
 
-        //make destination tile appear with a fade in
-        anim1.add(animation::tracks::alpha_transition{pdst_tile, 1, 0.2});
+        //make destination tile appear with a fade in...
+        animations[tree_height].add
+        (
+            animation::tracks::alpha_transition
+            {
+                .pobj = pdst_tile,
+                .finish_alpha = 1,
+                .duration_s = track_duration_s,
+                .interpolator = animation::get_exponential_out_float_interpolator()
+            }
+        );
+
+        //... and a "pop"
+        animations[tree_height].add
+        (
+            animation::tracks::scaling_transition
+            {
+                .pobj = pdst_tile,
+                .finish_scaling = {tile_scaling_factor, tile_scaling_factor},
+                .duration_s = track_duration_s,
+                .interpolator = animation::get_back_out_vector2_interpolator()
+            }
+        );
     }
 
     animator_.push(animation::tracks::closure{[this]{next_input_.suspend();}});
     animator_.push(animation::tracks::closure{[this]{input_.suspend();}});
-    animator_.push(std::move(anim0));
-    animator_.push(std::move(anim1));
+    for(auto& [index, anim]: animations)
+        animator_.push(std::move(anim));
     animator_.push(animation::tracks::closure{[this]{input_.resume();}});
     animator_.push(animation::tracks::closure{[this]{next_input_.resume();}});
 }
@@ -399,7 +577,7 @@ std::shared_ptr<object2d> tile_grid::make_tile
 )
 {
     auto ptile = tile_grid_detail::make_tile_object(*this, drawables_, animables_, tile);
-    ptile->setScaling({0.46f, 0.46f});
+    ptile->setScaling({tile_scaling_factor, tile_scaling_factor});
     ptile->setTranslation(position);
     return ptile;
 }
