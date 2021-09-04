@@ -80,14 +80,16 @@ namespace
     Magnum::Color3 get_glow_color(const int value)
     {
         if(value == 10)
-        {
             return 0xeeeeee_rgbf;
-        }
+        if(value == 12)
+            return 0x660066_rgbf;
         return lighter(get_square_color(value));
     }
 
     Magnum::Color3 get_shine_color(const int value)
     {
+        if(value == 12)
+            return 0xee00ee_rgbf;
         return lighter(get_square_color(value));
     }
 
