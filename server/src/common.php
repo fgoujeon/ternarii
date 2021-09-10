@@ -24,12 +24,12 @@ function ternarii_verify_player_password($mysqli, $player_id, $player_password) 
     if ($row = $result->fetch_assoc()) {
         $player_password_hash = $row["password_hash"];
     } else {
-        exit("No player found");
+        throw new Exception("No player found");
     }
 
     #verify player password
     if (!password_verify($player_password, $player_password_hash)) {
-        exit("Incorrect password");
+        throw new Exception("Incorrect password");
     }
 }
 
