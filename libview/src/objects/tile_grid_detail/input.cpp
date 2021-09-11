@@ -250,7 +250,6 @@ input::input
     drop_request_callback_(drop_cb),
     layout_change_callback_(layout_cb)
 {
-    update_cog_target_position();
 }
 
 const data_types::input_layout& input::get_layout() const
