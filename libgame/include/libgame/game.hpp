@@ -23,6 +23,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include "events.hpp"
 #include "data_types.hpp"
 #include <memory>
+#include <cstdint>
 
 namespace libgame
 {
@@ -46,11 +47,17 @@ struct game
 
         bool is_over() const;
 
-        void start(event_list& events);
+        void start
+        (
+            uint64_t first_input_rand,
+            uint64_t first_next_input_rand,
+            event_list& events
+        );
 
         void drop_input_tiles
         (
             const data_types::input_layout& layout,
+            uint64_t next_input_rand,
             event_list& events
         );
 

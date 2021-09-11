@@ -23,6 +23,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include <libdb/database.hpp>
 #include <libview/view.hpp>
 #include <libutil/fsm.hpp>
+#include <libutil/rng.hpp>
 
 namespace events
 {
@@ -37,6 +38,7 @@ struct fsm_context
 {
     libdb::database& database;
     libview::view& view;
+    libutil::rng& rng;
 };
 
 //Finite state machine

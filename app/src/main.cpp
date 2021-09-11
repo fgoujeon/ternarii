@@ -167,7 +167,8 @@ class app: public Magnum::Platform::Sdl2Application
         configurator configurator_;
         libdb::database database_;
         libview::view view_;
-        fsm_context ctx_{database_, view_};
+        libutil::rng rng_;
+        fsm_context ctx_{database_, view_, rng_};
         fsm fsm_;
 
         std::chrono::steady_clock::time_point previous_frame_time_ = std::chrono::steady_clock::now();

@@ -41,7 +41,7 @@ struct game::impl
     {
     }
 
-    events::next_input_creation generate_next_input()
+    events::next_input_creation generate_next_input(const uint64_t random)
     {
         const auto board_highest_tile_value = data_types::get_highest_tile_value(state.board_tiles);
         const auto board_tile_count = data_types::get_tile_count(state.board_tiles);
@@ -50,7 +50,8 @@ struct game::impl
         state.next_input_tiles = input_gen.generate
         (
             board_highest_tile_value,
-            board_tile_count
+            board_tile_count,
+            random
         );
 
         return events::next_input_creation
@@ -95,7 +96,12 @@ bool game::is_over() const
     return data_types::is_overflowed(pimpl_->state.board_tiles);
 }
 
-void game::start(event_list& events)
+void game::start
+(
+    const uint64_t first_input_rand,
+    const uint64_t first_next_input_rand,
+    event_list& events
+)
 {
     //Clear data
     pimpl_->state.next_input_tiles = {};
@@ -108,18 +114,19 @@ void game::start(event_list& events)
     events.push_back(events::score_change{0});
     events.push_back(events::move_count_change{pimpl_->state.move_count});
 
-    events.push_back(pimpl_->generate_next_input());
+    events.push_back(pimpl_->generate_next_input(first_input_rand));
 
     //insert next input
     pimpl_->state.input_tiles = pimpl_->state.next_input_tiles;
     events.push_back(events::next_input_insertion{});
 
-    events.push_back(pimpl_->generate_next_input());
+    events.push_back(pimpl_->generate_next_input(first_next_input_rand));
 }
 
 void game::drop_input_tiles
 (
     const data_types::input_layout& layout,
+    const uint64_t next_input_rand,
     event_list& events
 )
 {
@@ -155,7 +162,7 @@ void game::drop_input_tiles
         events.push_back(events::next_input_insertion{});
 
         //create a new next input
-        events.push_back(pimpl_->generate_next_input());
+        events.push_back(pimpl_->generate_next_input(next_input_rand));
     }
 }
 

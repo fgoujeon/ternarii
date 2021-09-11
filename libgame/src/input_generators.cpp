@@ -18,14 +18,40 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 #include "input_generators.hpp"
-#include <libutil/rng.hpp>
 #include <memory>
+#include <random>
 
 namespace libgame
 {
 
 namespace
 {
+    /*
+    A number generator that "generates" the number given at construction.
+    Satisfies UniformRandomBitGenerator requirements.
+    */
+    struct uint16_generator
+    {
+        using result_type = uint16_t;
+
+        static constexpr result_type min()
+        {
+            return 0;
+        }
+
+        static constexpr result_type max()
+        {
+            return 0xffff;
+        }
+
+        result_type operator()() const
+        {
+            return n;
+        }
+
+        result_type n = 0;
+    };
+
     struct abstract_input_subgenerator
     {
         virtual ~abstract_input_subgenerator() = default;
@@ -33,66 +59,73 @@ namespace
         virtual data_types::input_tile_matrix generate
         (
             const int max,
-            const double standard_deviation
+            const double standard_deviation,
+            const uint64_t random
         ) = 0;
     };
 
-
-
-    class random_number_tile_generator
+    /*
+    Return a number tile whose random value goes from 0 to max, following a
+    normal distribution.
+    */
+    data_types::tiles::number generate_random_number_tile
+    (
+        const int max,
+        const double standard_deviation,
+        const uint16_t random
+    )
     {
-        private:
-            using distribution = std::normal_distribution<double>;
+        /*
+        Generate a random number with normal distribution.
 
-        public:
-            //return random value from 0 to max
-            data_types::tiles::number generate
-            (
-                const int max,
-                const double standard_deviation
-            )
-            {
-                //generate random number with normal distribution
-                const auto real_val = dis_
-                (
-                    rng_.engine,
-                    distribution::param_type{0, standard_deviation}
-                );
+        We can't use std::normal_distribution because it needs an undefined
+        amount of random numbers, and we only have one.
 
-                //remove negative values
-                const auto positive_real_val = std::abs(real_val);
+        Interval of x and y is [1/256, 1]. We don't want 0 to avoid
+        log(0) = inf. That's why we must add 1.
+        */
+        constexpr auto pi = 3.1415926535897932384626433;
+        const auto x = ((random & 0xff) + 1.0) / 256.0; //[1/256, 1]
+        const auto y = ((random >> 8) + 1.0) / 256.0; //[1/256, 1]
+        const auto real_val =
+            sqrt(-2 * log(x)) * cos(2 * pi * y) * standard_deviation
+        ;
 
-                //discretize
-                const auto natural_val = static_cast<int>(positive_real_val);
+        //remove negative values
+        const auto positive_real_val = std::abs(real_val);
 
-                //stay inside [0, max]
-                const auto final_val = natural_val % (max + 1);
+        //discretize
+        const auto natural_val = static_cast<int>(positive_real_val);
 
-                return data_types::tiles::number{final_val};
-            }
+        //stay inside [0, max]
+        const auto final_val = natural_val % (max + 1);
 
-        private:
-            libutil::rng rng_;
-            distribution dis_;
-    };
+        assert(final_val >= 0);
+
+        return data_types::tiles::number{final_val};
+    }
 
 
 
     class random_granite_tile_generator
     {
         public:
-            data_types::tiles::granite generate()
+            data_types::tiles::granite generate(const uint16_t random)
             {
-                return data_types::tiles::granite{dis_(rng_.engine) + 1};
+                auto engine = uint16_generator{random};
+                return data_types::tiles::granite
+                {
+                    dis_(engine) + 1
+                };
             }
 
         private:
-            libutil::rng rng_;
             std::discrete_distribution<int> dis_{13, 17, 10};
     };
 
 
 
+    //"Generates" the tiles given at construction
     class simple_input_generator: public abstract_input_subgenerator
     {
         public:
@@ -104,7 +137,8 @@ namespace
             data_types::input_tile_matrix generate
             (
                 const int /*max*/,
-                const double /*standard_deviation*/
+                const double /*standard_deviation*/,
+                const uint64_t /*random*/
             ) override
             {
                 return tiles_;
@@ -130,20 +164,21 @@ namespace
             data_types::input_tile_matrix generate
             (
                 const int max,
-                const double standard_deviation
+                const double standard_deviation,
+                const uint64_t random
             ) override
             {
+                const auto tile0_rand = random;
+                const auto tile1_rand = random >> 16;
+
                 return
                 {
-                    gen_.generate(max, standard_deviation),
+                    generate_random_number_tile(max, standard_deviation, tile0_rand),
                     std::nullopt,
-                    gen_.generate(max, standard_deviation),
+                    generate_random_number_tile(max, standard_deviation, tile1_rand),
                     std::nullopt
                 };
             }
-
-        private:
-            random_number_tile_generator gen_;
     };
 
     abstract_input_subgenerator& get_random_number_tile_pair_generator()
@@ -160,20 +195,22 @@ namespace
             data_types::input_tile_matrix generate
             (
                 const int max,
-                const double standard_deviation
+                const double standard_deviation,
+                const uint64_t random
             ) override
             {
+                const auto tile0_rand = random;
+                const auto tile1_rand = random >> 16;
+                const auto tile2_rand = random >> 32;
+
                 return
                 {
-                    gen_.generate(max, standard_deviation),
-                    gen_.generate(max, standard_deviation),
-                    gen_.generate(max, standard_deviation),
+                    generate_random_number_tile(max, standard_deviation, tile0_rand),
+                    generate_random_number_tile(max, standard_deviation, tile1_rand),
+                    generate_random_number_tile(max, standard_deviation, tile2_rand),
                     std::nullopt
                 };
             }
-
-        private:
-            random_number_tile_generator gen_;
     };
 
     abstract_input_subgenerator& get_random_number_tile_triple_generator()
@@ -190,20 +227,23 @@ namespace
             data_types::input_tile_matrix generate
             (
                 const int max,
-                const double standard_deviation
+                const double standard_deviation,
+                const uint64_t random
             ) override
             {
+                const auto number_tile_rand = random;
+                const auto granite_tile_rand = random >> 16;
+
                 return
                 {
-                    number_gen_.generate(max, standard_deviation),
+                    generate_random_number_tile(max, standard_deviation, number_tile_rand),
                     std::nullopt,
-                    granite_gen_.generate(),
+                    granite_gen_.generate(granite_tile_rand),
                     std::nullopt
                 };
             }
 
         private:
-            random_number_tile_generator number_gen_;
             random_granite_tile_generator granite_gen_;
     };
 
@@ -212,15 +252,14 @@ namespace
         static auto generator = random_number_and_granite_tile_generator{};
         return generator;
     }
+}
 
-
-
-    /*
-    random_input_generator
-
-    Higher-order random input generator.
-    */
-
+/*
+random_input_generator
+Higher-order random input generator.
+*/
+namespace
+{
     struct weighted_input_subgenerator_ref
     {
         abstract_input_subgenerator& generator;
@@ -252,7 +291,8 @@ namespace
             data_types::input_tile_matrix generate
             (
                 const int board_highest_tile_value,
-                const int board_tile_count
+                const int board_tile_count,
+                const uint64_t random
             ) override
             {
                 /*
@@ -302,27 +342,30 @@ namespace
                     return sd_min + sd_variable_part * (1.0 - fill_rate_pow);
                 }();
 
-                const auto r = dis_(rng_.engine);
+                //Use the first 16 bits for this level, the rest for the others
+                const auto random0 = static_cast<uint16_t>(random);
+                const auto random1 = random >> 16;
+
+                auto engine = uint16_generator{random0};
+                const auto r = dis_(engine);
                 return subgenerators_[r].generator.generate
                 (
                     max_value,
-                    standard_deviation
+                    standard_deviation,
+                    random1
                 );
             }
 
         private:
-            libutil::rng rng_;
             weighted_input_subgenerator_ref_list subgenerators_;
             std::vector<double> weights_;
             std::discrete_distribution<int> dis_;
     };
+}
 
-
-
-    /*
-    Top-level generators
-    */
-
+//Top-level generators
+namespace
+{
     abstract_input_generator& get_purity_chapel_input_generator()
     {
         static auto generator = random_input_generator

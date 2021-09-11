@@ -25,10 +25,17 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libutil
 {
 
-struct rng
+class rng
 {
-    std::random_device device;
-    std::mt19937 engine{device()};
+    public:
+        uint64_t operator()()
+        {
+            return static_cast<uint64_t>(engine_());
+        }
+
+    private:
+        std::random_device device_;
+        std::mt19937_64 engine_{device_()};
 };
 
 } //namespace

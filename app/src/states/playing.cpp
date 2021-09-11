@@ -62,12 +62,22 @@ playing::playing(fsm& f, const screen_transition trans, const libgame::data_type
                 .handle_clear_request = [this]
                 {
                     libutil::log::info("[fsm <- screen] Clear request");
-                    modify_game(&libgame::game::start);
+                    modify_game
+                    (
+                        &libgame::game::start,
+                        fsm_.get_context().rng(),
+                        fsm_.get_context().rng()
+                    );
                 },
                 .handle_drop_request = [this](const libview::data_types::input_layout input_layout)
                 {
                     libutil::log::info("[fsm <- screen] Drop request with layout: ", input_layout);
-                    modify_game(&libgame::game::drop_input_tiles, input_layout);
+                    modify_game
+                    (
+                        &libgame::game::drop_input_tiles,
+                        input_layout,
+                        fsm_.get_context().rng()
+                    );
                 },
                 .handle_exit_request = [this]
                 {
@@ -112,7 +122,12 @@ playing::playing(fsm& f, const screen_transition trans, const libgame::data_type
     else
     {
         pgame_ = std::make_unique<libgame::game>(stage);
-        modify_game(&libgame::game::start);
+        modify_game
+        (
+            &libgame::game::start,
+            fsm_.get_context().rng(),
+            fsm_.get_context().rng()
+        );
     }
 
     fsm_.get_context().view.show_screen(pscreen_, trans);

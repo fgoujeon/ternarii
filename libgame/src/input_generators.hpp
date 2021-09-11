@@ -21,6 +21,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #define LIBGAME_INPUT_GENERATORS_HPP
 
 #include <libgame/data_types.hpp>
+#include <cstdint>
 
 namespace libgame
 {
@@ -32,7 +33,8 @@ struct abstract_input_generator
     virtual data_types::input_tile_matrix generate
     (
         const int board_highest_tile_value,
-        const int board_tile_count
+        const int board_tile_count,
+        const uint64_t random
     ) = 0;
 };
 
