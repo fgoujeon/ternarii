@@ -46,7 +46,7 @@ try {
     }
 
     #insert new move
-    $next_input_random_number = rand();
+    $next_input_random_number = ternarii_random_int64();
     $query = sprintf(
         "INSERT INTO `unverified_game_move` (`game_id`, `idx`, `time`, `column_offset`, `rotation`, `next_input_random_number`) " .
         "VALUES ('%s', '%s', CURRENT_TIMESTAMP, b'%s', b'%s', '%s');",

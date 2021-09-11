@@ -29,8 +29,8 @@ try
 
     #create game if there's no unfinished game
     if(!$has_unfinished_game) {
-        $first_input_random_number = rand();
-        $first_next_input_random_number = rand();
+        $first_input_random_number = ternarii_random_int64();
+        $first_next_input_random_number = ternarii_random_int64();
         $query = sprintf(
             "INSERT INTO `unverified_game` (`id`, `player_id`, `stage_id`, `first_input_random_number`, `first_next_input_random_number`, `is_over`) " .
             "VALUES (NULL, '%s', '%s', '%s', '%s', '0');",

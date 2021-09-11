@@ -33,4 +33,13 @@ function ternarii_verify_player_password($mysqli, $player_id, $player_password) 
     }
 }
 
+function ternarii_random_int64() {
+    #We need cryptographically secure random, because we want the RNG to be
+    #unpredictable to the player.
+    return random_int(
+        -0x8000000000000000, #-2^63
+        0x7FFFFFFFFFFFFFFF #2^63 - 1
+    );
+}
+
 ?>
