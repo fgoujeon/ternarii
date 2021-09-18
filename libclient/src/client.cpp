@@ -125,4 +125,92 @@ void client::async_get_or_add_game
     );
 }
 
+void client::async_add_move
+(
+    const int player_id,
+    const std::string& player_password,
+    const int game_id,
+    const int move_index,
+    const int column_offset,
+    const int rotation,
+    const async_add_move_success_callback& success_callback,
+    const async_add_move_failure_callback& failure_callback
+)
+{
+    struct arg
+    {
+        async_add_move_success_callback success_callback;
+        async_add_move_failure_callback failure_callback;
+    };
+    auto parg = new arg{success_callback, failure_callback};
+
+    const auto query =
+        "https://ternarii.com/test/online/api/player/add_move?"
+        "player_id=" + std::to_string(player_id) + "&"
+        "player_password=" + player_password + "&"
+        "game_id=" + std::to_string(game_id) + "&"
+        "move_idx=" + std::to_string(move_index) + "&"
+        "column_offset=" + std::to_string(column_offset) + "&"
+        "rotation=" + std::to_string(rotation)
+    ;
+
+    emscripten_async_wget_data
+    (
+        query.c_str(),
+        parg,
+        [](void* vparg, void* vpdata, int data_size)
+        {
+            /*
+            Example of success message:
+                {
+                    "success":
+                    {
+                        "next_input_random_number":857073887
+                    }
+                }
+
+            Example of failure message:
+                {
+                    "failure":
+                    {
+                        "message":"No player found"
+                    }
+                }
+            */
+
+            auto parg = std::unique_ptr<arg>{reinterpret_cast<arg*>(vparg)};
+
+            try
+            {
+                const auto pdata = reinterpret_cast<const char*>(vpdata);
+                const auto json = nlohmann::json::parse
+                (
+                    pdata,
+                    pdata + data_size
+                );
+
+                if(json.contains("failure"))
+                {
+                    parg->failure_callback(json.at("failure").at("message").get<std::string>());
+                    return;
+                }
+
+                const auto next_input_random_number =
+                    json.at("success").at("next_input_random_number").get<unsigned long long>();
+
+                parg->success_callback(next_input_random_number);
+            }
+            catch(const std::exception& e)
+            {
+                parg->failure_callback(e.what());
+            }
+        },
+        [](void* vparg)
+        {
+            auto parg = std::unique_ptr<arg>{reinterpret_cast<arg*>(vparg)};
+            parg->failure_callback("Could not connect to the server.");
+        }
+    );
+}
+
 } //namespace

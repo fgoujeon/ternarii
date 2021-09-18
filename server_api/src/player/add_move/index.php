@@ -61,7 +61,7 @@ try {
     #check move ID
     if ($move_idx != $expected_move_idx)
     {
-        throw new Exception("Unexpected move index. Expected " . $expected_move_idx . ", got " . $move_idx);
+        throw new Exception("Unexpected move index. Expected " . $expected_move_idx . ", got " . $move_idx . ".");
     }
 
     #insert new move

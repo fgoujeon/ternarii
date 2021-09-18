@@ -37,6 +37,14 @@ class client
             libutil::void_function<const std::string&>
         ;
 
+        using async_add_move_success_callback =
+            libutil::void_function<int /*next_input_random_number*/>
+        ;
+
+        using async_add_move_failure_callback =
+            libutil::void_function<const std::string&>
+        ;
+
     public:
         void async_get_or_add_game
         (
@@ -45,6 +53,18 @@ class client
             int stage_id,
             const async_get_or_add_game_success_callback& success_callback,
             const async_get_or_add_game_failure_callback& failure_callback
+        );
+
+        void async_add_move
+        (
+            int player_id,
+            const std::string& player_password,
+            int game_id,
+            int move_index,
+            int column_offset,
+            int rotation,
+            const async_add_move_success_callback& success_callback,
+            const async_add_move_failure_callback& failure_callback
         );
 };
 
