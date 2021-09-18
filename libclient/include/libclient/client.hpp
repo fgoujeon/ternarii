@@ -34,7 +34,7 @@ class client
         ;
 
         using async_get_or_add_game_failure_callback =
-            libutil::void_function<const std::string&>
+            libutil::void_function<const std::string& /*error_message*/>
         ;
 
         using async_add_move_success_callback =
@@ -42,7 +42,15 @@ class client
         ;
 
         using async_add_move_failure_callback =
-            libutil::void_function<const std::string&>
+            libutil::void_function<const std::string& /*error_message*/>
+        ;
+
+        using async_finish_game_success_callback =
+            libutil::void_function<>
+        ;
+
+        using async_finish_game_failure_callback =
+            libutil::void_function<const std::string& /*error_message*/>
         ;
 
     public:
@@ -65,6 +73,15 @@ class client
             int rotation,
             const async_add_move_success_callback& success_callback,
             const async_add_move_failure_callback& failure_callback
+        );
+
+        void async_finish_game
+        (
+            int player_id,
+            const std::string& player_password,
+            int game_id,
+            const async_finish_game_success_callback& success_callback,
+            const async_finish_game_failure_callback& failure_callback
         );
 };
 

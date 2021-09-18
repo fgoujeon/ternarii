@@ -213,4 +213,82 @@ void client::async_add_move
     );
 }
 
+void client::async_finish_game
+(
+    const int player_id,
+    const std::string& player_password,
+    const int game_id,
+    const async_finish_game_success_callback& success_callback,
+    const async_finish_game_failure_callback& failure_callback
+)
+{
+    struct arg
+    {
+        async_finish_game_success_callback success_callback;
+        async_finish_game_failure_callback failure_callback;
+    };
+    auto parg = new arg{success_callback, failure_callback};
+
+    const auto query =
+        "https://ternarii.com/test/online/api/player/finish_game?"
+        "player_id=" + std::to_string(player_id) + "&"
+        "player_password=" + player_password + "&"
+        "game_id=" + std::to_string(game_id)
+    ;
+
+    emscripten_async_wget_data
+    (
+        query.c_str(),
+        parg,
+        [](void* vparg, void* vpdata, int data_size)
+        {
+            /*
+            Example of success message:
+                {
+                    "success": {}
+                }
+
+            Example of failure message:
+                {
+                    "failure":
+                    {
+                        "message":"No player found"
+                    }
+                }
+            */
+
+            auto parg = std::unique_ptr<arg>{reinterpret_cast<arg*>(vparg)};
+
+            try
+            {
+                const auto pdata = reinterpret_cast<const char*>(vpdata);
+                const auto json = nlohmann::json::parse
+                (
+                    pdata,
+                    pdata + data_size
+                );
+
+                if(json.contains("failure"))
+                {
+                    parg->failure_callback(json.at("failure").at("message").get<std::string>());
+                    return;
+                }
+
+                json.at("success");
+
+                parg->success_callback();
+            }
+            catch(const std::exception& e)
+            {
+                parg->failure_callback(e.what());
+            }
+        },
+        [](void* vparg)
+        {
+            auto parg = std::unique_ptr<arg>{reinterpret_cast<arg*>(vparg)};
+            parg->failure_callback("Could not connect to the server.");
+        }
+    );
+}
+
 } //namespace
