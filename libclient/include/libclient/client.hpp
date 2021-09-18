@@ -29,6 +29,14 @@ namespace libclient
 class client
 {
     public:
+        using async_get_player_id_success_callback =
+            libutil::void_function<int /*player_id*/>
+        ;
+
+        using async_get_player_id_failure_callback =
+            libutil::void_function<const std::string& /*error_message*/>
+        ;
+
         using async_get_or_add_game_success_callback =
             libutil::void_function<const data_types::game&>
         ;
@@ -54,6 +62,13 @@ class client
         ;
 
     public:
+        void async_get_player_id
+        (
+            const std::string& player_name,
+            const async_get_player_id_success_callback& success_callback,
+            const async_get_player_id_failure_callback& failure_callback
+        );
+
         void async_get_or_add_game
         (
             int player_id,
