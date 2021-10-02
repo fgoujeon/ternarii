@@ -1,0 +1,3 @@
+[submodule "fgfsm"]
+	path = fgfsm
+	url = git@github.com:fgoujeon/fgfsm.git
