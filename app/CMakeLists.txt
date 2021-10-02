@@ -40,6 +40,7 @@ target_link_options(
 target_link_libraries(
     app
     PRIVATE
+        fgfsm
         libdb
         libgame
         libview

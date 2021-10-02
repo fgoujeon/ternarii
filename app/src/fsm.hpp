@@ -20,26 +20,53 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #ifndef FSM_HPP
 #define FSM_HPP
 
-#include <libdb/database.hpp>
-#include <libview/view.hpp>
-#include <libutil/fsm.hpp>
+#include "events.hpp"
+#include "context.hpp"
+#include "states/playing.hpp"
+#include "states/showing_about_screen.hpp"
+#include "states/showing_stage_selection_screen.hpp"
+#include "states/showing_title_screen.hpp"
+#include <fgfsm.hpp>
 
-namespace events
+//Simple states
+namespace states
 {
-    struct iteration
-    {
-        std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
-        double elapsed_s = 0;
-    };
-};
+    struct idle { context& ctx; };
+    struct loading_database { context& ctx; };
+}
 
-struct fsm_context
-{
-    libdb::database& database;
-    libview::view& view;
-};
+using fsm_transition_table = fgfsm::transition_table
+<
+    //         start state,                            event,                                       target state
+    fgfsm::row<states::idle,                           events::start,                               states::loading_database>,
+    fgfsm::row<states::loading_database,               libdb::events::end_of_loading,               states::showing_title_screen>,
+    fgfsm::row<states::showing_title_screen,           events::stage_selection_screen_show_request, states::showing_stage_selection_screen>,
+    fgfsm::row<states::showing_title_screen,           events::about_screen_show_request,           states::showing_about_screen>,
+    fgfsm::row<states::showing_about_screen,           events::title_screen_show_request,           states::showing_title_screen>,
+    fgfsm::row<states::showing_stage_selection_screen, events::title_screen_show_request,           states::showing_title_screen>,
+    fgfsm::row<states::showing_stage_selection_screen, events::play_screen_show_request,            states::playing>,
+    fgfsm::row<states::playing,                        events::stage_selection_screen_show_request, states::showing_stage_selection_screen>
+>;
 
 //Finite state machine
-using fsm = libutil::fsm::fsm<fsm_context>;
+class fsm
+{
+    public:
+        fsm(context& ctx):
+            impl_(ctx)
+        {
+        }
+
+        void process_event(const fgfsm::event_ref& event)
+        {
+            impl_.process_event(event);
+        }
+
+    private:
+        using impl = fgfsm::fsm<fsm_transition_table>;
+        impl impl_;
+};
+
+void process_event(fsm& sm, const fgfsm::event_ref& event);
 
 #endif

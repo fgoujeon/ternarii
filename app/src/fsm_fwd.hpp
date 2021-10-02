@@ -17,26 +17,13 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#include "showing_about_screen.hpp"
-#include "showing_title_screen.hpp"
+#ifndef FSM_FWD_HPP
+#define FSM_FWD_HPP
 
-namespace states
-{
+#include <fgfsm.hpp>
 
-showing_about_screen::showing_about_screen(fsm& ctx, const screen_transition trans):
-    fsm_(ctx),
-    pscreen_
-    (
-        fsm_.get_context().view.make_screen<screen>
-        (
-            screen::callback_set
-            {
-                .back_request = [this]{fsm_.set_state<showing_title_screen>(screen_transition::left_to_right);}
-            }
-        )
-    )
-{
-    fsm_.get_context().view.show_screen(pscreen_, trans);
-}
+class fsm;
 
-} //namespace
+void process_event(fsm& sm, const fgfsm::event_ref& event);
+
+#endif

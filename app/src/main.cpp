@@ -17,8 +17,8 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#include "states/loading_database.hpp"
 #include "fsm.hpp"
+#include "context.hpp"
 #include <libdb/database.hpp>
 #include <libgame/game.hpp>
 #include <libview/view.hpp>
@@ -96,7 +96,7 @@ class app: public Magnum::Platform::Sdl2Application
             ),
             fsm_(ctx_)
         {
-            fsm_.set_state<states::loading_database>();
+            fsm_.process_event(events::start{});
         }
 
     //Sdl2Application virtual functions
@@ -108,7 +108,7 @@ class app: public Magnum::Platform::Sdl2Application
             previous_frame_time_ = now;
 
             //Advance
-            fsm_.handle_event(events::iteration{now, elapsed_s});
+            fsm_.process_event(events::iteration{now, elapsed_s});
             view_.advance(now, elapsed_s);
 
             //Draw
@@ -156,7 +156,7 @@ class app: public Magnum::Platform::Sdl2Application
             (
                 [this](const auto& event)
                 {
-                    fsm_.handle_event(event);
+                    fsm_.process_event(event);
                 },
                 event
             );
@@ -167,7 +167,7 @@ class app: public Magnum::Platform::Sdl2Application
         configurator configurator_;
         libdb::database database_;
         libview::view view_;
-        fsm_context ctx_{database_, view_};
+        context ctx_{fsm_, database_, view_};
         fsm fsm_;
 
         std::chrono::steady_clock::time_point previous_frame_time_ = std::chrono::steady_clock::now();
