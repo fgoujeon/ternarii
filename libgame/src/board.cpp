@@ -225,7 +225,9 @@ namespace
                                 },
                                 tiles
                             );
-                        }
+                        },
+
+                        [&](const data_types::tiles::adder&){}
                     },
                     tile
                 );

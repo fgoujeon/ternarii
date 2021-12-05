@@ -60,11 +60,19 @@ namespace tiles
         int thickness = 0;
     };
 
+    //Adds its value to all the number tiles that have the same value than the
+    //one
+    struct adder
+    {
+        int value = 0;
+    };
+
     std::ostream& operator<<(std::ostream& l, const number& r);
     std::ostream& operator<<(std::ostream& l, const column_nullifier& r);
     std::ostream& operator<<(std::ostream& l, const row_nullifier& r);
     std::ostream& operator<<(std::ostream& l, const number_nullifier& r);
     std::ostream& operator<<(std::ostream& l, const granite& r);
+    std::ostream& operator<<(std::ostream& l, const adder& r);
 }
 
 using tile = std::variant
@@ -73,7 +81,8 @@ using tile = std::variant
     tiles::column_nullifier,
     tiles::row_nullifier,
     tiles::number_nullifier,
-    tiles::granite
+    tiles::granite,
+    tiles::adder
 >;
 
 
@@ -252,7 +261,8 @@ enum class stage
     purity_chapel,
     nullifier_room,
     triplet_pines_mall,
-    granite_cave
+    granite_cave,
+    math_classroom
 };
 
 

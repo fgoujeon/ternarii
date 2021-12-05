@@ -122,6 +122,14 @@ namespace
         return generator;
     }
 
+    template<int value>
+    abstract_input_subgenerator& get_adder_generator()
+    {
+        const auto input = data_types::input_tile_matrix{data_types::tiles::adder{value}};
+        static auto generator = simple_input_generator{input};
+        return generator;
+    }
+
 
 
     class random_number_tile_pair_generator: public abstract_input_subgenerator
@@ -377,6 +385,21 @@ namespace
         );
         return generator;
     }
+
+    abstract_input_generator& get_math_classroom_input_generator()
+    {
+        static auto generator = random_input_generator
+        (
+            {
+                {get_random_number_tile_pair_generator(), 5000},
+                {get_adder_generator<-2>(),               1000},
+                {get_adder_generator<-1>(),               1000},
+                {get_adder_generator<1>(),                1000},
+                {get_adder_generator<2>(),                1000}
+            }
+        );
+        return generator;
+    }
 }
 
 abstract_input_generator& get_input_generator(data_types::stage stage)
@@ -392,6 +415,7 @@ abstract_input_generator& get_input_generator(data_types::stage stage)
         CASE(nullifier_room);
         CASE(triplet_pines_mall);
         CASE(granite_cave);
+        CASE(math_classroom);
     }
 
 #undef CASE

@@ -193,6 +193,15 @@ struct stage_selection::impl
             libres::images::number_nullifier
         ),
 
+        //Math classroom
+        math_classroom_button
+        (
+            self,
+            feature_groups,
+            data_types::stage::math_classroom,
+            callbacks
+        ),
+
         //Triplet pines mall
         triplet_pines_mall_button
         (
@@ -283,13 +292,13 @@ struct stage_selection::impl
         title_label.setTranslation({0.0f, 7.0f});
 
         {
-            purity_chapel_button.setTranslation({0.0f, 4.5f});
+            purity_chapel_button.setTranslation({0.0f, 5.0f});
 
             purity_chapel_description_label.setTranslation({0.75f, -0.4f});
         }
 
         {
-            nullifier_room_button.setTranslation({0.0f, 1.5f});
+            nullifier_room_button.setTranslation({0.0f, 2.5f});
 
             nullifier_room_special_tile_0.setScaling({0.4f, 0.4f});
             nullifier_room_special_tile_0.setTranslation({-0.25f, -0.4f});
@@ -302,7 +311,11 @@ struct stage_selection::impl
         }
 
         {
-            triplet_pines_mall_button.setTranslation({0.0f, -1.5f});
+            math_classroom_button.setTranslation({0.0f, 0.0f});
+        }
+
+        {
+            triplet_pines_mall_button.setTranslation({0.0f, -2.5f});
 
             triplet_pines_mall_tile_triplet.setScaling({0.4f, 0.4f});
             triplet_pines_mall_tile_triplet.setTranslation({-0.75f, -0.4f});
@@ -318,7 +331,7 @@ struct stage_selection::impl
         }
 
         {
-            granite_cave_button.setTranslation({0.0f, -4.5f});
+            granite_cave_button.setTranslation({0.0f, -5.0f});
 
             granite_cave_granite.setScaling({0.4f, 0.4f});
             granite_cave_granite.setTranslation({-0.75f, -0.4f});
@@ -348,6 +361,8 @@ struct stage_selection::impl
     objects::sdf_image_tile nullifier_room_special_tile_0;
     objects::sdf_image_tile nullifier_room_special_tile_1;
     objects::sdf_image_tile nullifier_room_special_tile_2;
+
+    selection_button math_classroom_button;
 
     selection_button triplet_pines_mall_button;
     objects::sdf_image triplet_pines_mall_tile_triplet;

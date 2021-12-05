@@ -57,6 +57,15 @@ namespace tiles
         l << "}";
         return l;
     }
+
+    std::ostream& operator<<(std::ostream& l, const adder& r)
+    {
+        l << "adder";
+        l << "{";
+        l << "value: " << r.value;
+        l << "}";
+        return l;
+    }
 }
 
 
