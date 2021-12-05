@@ -18,8 +18,6 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 #include <libview/screens/game.hpp>
-#include "game_detail/states/playing.hpp"
-#include "game_detail/states/showing_game_over_overlay.hpp"
 #include "game_detail/fsm.hpp"
 #include "../objects/shine.hpp"
 #include "../objects/game_over_overlay.hpp"
@@ -32,7 +30,6 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include "../data_types.hpp"
 #include "../common.hpp"
 #include <libres.hpp>
-#include <libutil/fsm.hpp>
 #include <chrono>
 #include <Magnum/Math/Color.h>
 #include <Magnum/Platform/Sdl2Application.h>

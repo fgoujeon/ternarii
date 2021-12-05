@@ -23,7 +23,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include "../context.hpp"
 #include "../../../objects/game_menu_overlay.hpp"
 #include <libview/data_types.hpp>
-#include <libutil/fsm.hpp>
+#include <fgfsm.hpp>
 
 namespace libview::screens::game_detail
 {
