@@ -20,16 +20,15 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #ifndef CONTEXT_HPP
 #define CONTEXT_HPP
 
-#include "fsm_fwd.hpp"
 #include <libdb/database.hpp>
 #include <libview/view.hpp>
+#include <fgfsm.hpp>
+
+class fsm;
 
 struct context
 {
-    void process_event(const fgfsm::event_ref& event)
-    {
-        ::process_event(sm, event);
-    }
+    void process_event(const fgfsm::event_ref& event);
 
     fsm& sm;
     libdb::database& database;

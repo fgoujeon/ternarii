@@ -67,6 +67,4 @@ class fsm
         impl impl_;
 };
 
-void process_event(fsm& sm, const fgfsm::event_ref& event);
-
 #endif

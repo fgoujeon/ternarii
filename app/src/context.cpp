@@ -17,13 +17,10 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef FSM_FWD_HPP
-#define FSM_FWD_HPP
+#include "context.hpp"
+#include "fsm.hpp"
 
-#include <fgfsm.hpp>
-
-class fsm;
-
-void process_event(fsm& sm, const fgfsm::event_ref& event);
-
-#endif
+void context::process_event(const fgfsm::event_ref& event)
+{
+    sm.process_event(event);
+}
