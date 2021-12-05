@@ -20,42 +20,48 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #ifndef LIBVIEW_SCREENS_GAME_DETAIL_STATES_SHOWING_GAME_OVER_OVERLAY_HPP
 #define LIBVIEW_SCREENS_GAME_DETAIL_STATES_SHOWING_GAME_OVER_OVERLAY_HPP
 
-#include "../fsm.hpp"
+#include "../context.hpp"
 #include "../../../objects/game_over_overlay.hpp"
 #include <libview/data_types.hpp>
 #include <libutil/fsm.hpp>
 
-namespace libview::screens::game_detail::states
+namespace libview::screens::game_detail
 {
 
-class showing_game_over_overlay: public libutil::fsm::state
+class showing_game_over_overlay
 {
     public:
-        showing_game_over_overlay(fsm& fsm):
-            fsm_(fsm),
-            pgame_over_overlay_
-            (
+        struct new_game_request{};
+
+        showing_game_over_overlay(context& ctx):
+            ctx_(ctx)
+        {
+        }
+
+        void on_entry()
+        {
+            pgame_over_overlay_ =
                 std::make_shared<objects::game_over_overlay>
                 (
-                    fsm_.get_context().screen,
-                    fsm_.get_context().feature_groups.drawables,
-                    fsm_.get_context().feature_groups.clickables,
-                    fsm_.get_context().move_count,
-                    fsm_.get_context().time_s,
+                    ctx_.screen,
+                    ctx_.feature_groups.drawables,
+                    ctx_.feature_groups.clickables,
+                    ctx_.move_count,
+                    ctx_.time_s,
                     objects::game_over_overlay::callback_set
                     {
                         .handle_exit_button_press = [this]
                         {
-                            fsm_.get_context().callbacks.handle_exit_request();
+                            ctx_.callbacks.handle_exit_request();
                         },
                         .handle_new_game_button_press = [this]
                         {
-                            fsm_.get_context().callbacks.handle_clear_request();
+                            ctx_.callbacks.handle_clear_request();
                         }
                     }
                 )
-            )
-        {
+            ;
+
             pgame_over_overlay_->translate({0.0f, 5.5f});
             pgame_over_overlay_->set_alpha(0);
 
@@ -79,10 +85,10 @@ class showing_game_over_overlay: public libutil::fsm::state
                     .duration_s = 0.5f
                 }
             );
-            fsm_.get_context().animator.push(std::move(anim));
+            ctx_.animator.push(std::move(anim));
         }
 
-        ~showing_game_over_overlay()
+        void on_exit()
         {
             auto anim = animation::animation{};
             anim.add
@@ -104,19 +110,26 @@ class showing_game_over_overlay: public libutil::fsm::state
                     .duration_s = 0.5f
                 }
             );
-            fsm_.get_context().animator.push(std::move(anim));
+            ctx_.animator.push(std::move(anim));
+
+            pgame_over_overlay_.reset();
         }
 
-        void handle_event(const std::any& event)
+        void handle_event(const fgfsm::event_ref& event)
         {
-            if(std::any_cast<events::new_game_request>(&event))
-            {
-                fsm_.set_state<playing>();
-            }
+            visit
+            (
+                event,
+
+                [this](const events::new_game_request&)
+                {
+                    ctx_.process_event(new_game_request{});
+                }
+            );
         }
 
     private:
-        fsm& fsm_;
+        context& ctx_;
         std::shared_ptr<objects::game_over_overlay> pgame_over_overlay_;
 };
 

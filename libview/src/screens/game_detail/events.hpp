@@ -17,34 +17,35 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef LIBVIEW_SCREENS_GAME_DETAIL_STATES_SHOWING_MENU_OVERLAY_HPP
-#define LIBVIEW_SCREENS_GAME_DETAIL_STATES_SHOWING_MENU_OVERLAY_HPP
+#ifndef LIBVIEW_SCREENS_GAME_DETAIL_EVENTS_HPP
+#define LIBVIEW_SCREENS_GAME_DETAIL_EVENTS_HPP
 
-#include "../context.hpp"
-#include "../../../objects/game_menu_overlay.hpp"
 #include <libview/data_types.hpp>
-#include <libutil/fsm.hpp>
 
 namespace libview::screens::game_detail
 {
 
-class showing_menu_overlay
+//Events sent to states
+namespace events
 {
-    public:
-        struct resume_request{};
+    struct button_press
+    {
+        data_types::move_button button;
+    };
 
-        showing_menu_overlay(context& ctx);
+    struct button_release
+    {
+        data_types::move_button button;
+    };
 
-        void on_entry();
+    struct game_over{};
 
-        void on_event(const fgfsm::event_ref& event);
+    struct new_game_request{};
 
-        void on_exit();
+    struct pause_request{};
 
-    private:
-        context& ctx_;
-        std::shared_ptr<objects::game_menu_overlay> pmenu_overlay_;
-};
+    struct iteration{};
+}
 
 } //namespace
 

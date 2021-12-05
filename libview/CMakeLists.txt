@@ -43,6 +43,7 @@ target_include_directories(libview PUBLIC include)
 target_link_libraries(
     libview
     PUBLIC
+        fgfsm
         libgame
         libres
         libutil

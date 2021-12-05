@@ -20,39 +20,41 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include "showing_menu_overlay.hpp"
 #include "playing.hpp"
 
-namespace libview::screens::game_detail::states
+namespace libview::screens::game_detail
 {
 
-showing_menu_overlay::showing_menu_overlay(fsm& fsm):
-    fsm_(fsm),
-    pmenu_overlay_
-    (
-        std::make_shared<objects::game_menu_overlay>
-        (
-            fsm_.get_context().screen,
-            fsm_.get_context().feature_groups.drawables,
-            fsm_.get_context().feature_groups.clickables,
-            objects::game_menu_overlay::callback_set
-            {
-                .handle_exit_request = [this]
-                {
-                    fsm_.get_context().callbacks.handle_exit_request();
-                },
-                .handle_resume_request = [this]
-                {
-                    handle_event(events::pause_request{});
-                }
-            }
-        )
-    )
+showing_menu_overlay::showing_menu_overlay(context& ctx):
+    ctx_(ctx)
 {
-    fsm_.get_context().animator.pause();
+}
+
+void showing_menu_overlay::on_entry()
+{
+    pmenu_overlay_ = std::make_shared<objects::game_menu_overlay>
+    (
+        ctx_.screen,
+        ctx_.feature_groups.drawables,
+        ctx_.feature_groups.clickables,
+        objects::game_menu_overlay::callback_set
+        {
+            .handle_exit_request = [this]
+            {
+                ctx_.callbacks.handle_exit_request();
+            },
+            .handle_resume_request = [this]
+            {
+                ctx_.process_event(events::pause_request{});
+            }
+        }
+    );
+
+    ctx_.animator.pause();
 
     pmenu_overlay_->setTranslation({0.0f, 3.5f});
     pmenu_overlay_->set_alpha(0);
-    pmenu_overlay_->set_time_s(fsm_.get_context().time_s);
-    pmenu_overlay_->set_move_count(fsm_.get_context().move_count);
-    pmenu_overlay_->set_hi_score(fsm_.get_context().hi_score);
+    pmenu_overlay_->set_time_s(ctx_.time_s);
+    pmenu_overlay_->set_move_count(ctx_.move_count);
+    pmenu_overlay_->set_hi_score(ctx_.hi_score);
 
     auto anim = animation::animation{};
     anim.add
@@ -74,10 +76,28 @@ showing_menu_overlay::showing_menu_overlay(fsm& fsm):
             .duration_s = 0.3f
         }
     );
-    fsm_.get_context().pause_animator.push(std::move(anim));
+    ctx_.pause_animator.push(std::move(anim));
 }
 
-showing_menu_overlay::~showing_menu_overlay()
+void showing_menu_overlay::on_event(const fgfsm::event_ref& event)
+{
+    visit
+    (
+        event,
+
+        [this](const events::pause_request&)
+        {
+            ctx_.process_event(resume_request{});
+        },
+
+        [this](const events::iteration&)
+        {
+            pmenu_overlay_->set_time_s(ctx_.time_s);
+        }
+    );
+}
+
+void showing_menu_overlay::on_exit()
 {
     auto anim = animation::animation{};
     anim.add
@@ -99,21 +119,11 @@ showing_menu_overlay::~showing_menu_overlay()
             .duration_s = 0.3f
         }
     );
-    fsm_.get_context().pause_animator.push(std::move(anim));
+    ctx_.pause_animator.push(std::move(anim));
 
-    fsm_.get_context().animator.resume();
-}
+    ctx_.animator.resume();
 
-void showing_menu_overlay::handle_event(const std::any& event)
-{
-    if(std::any_cast<events::pause_request>(&event))
-    {
-        fsm_.set_state<playing>();
-    }
-    else if(std::any_cast<events::iteration>(&event))
-    {
-        pmenu_overlay_->set_time_s(fsm_.get_context().time_s);
-    }
+    pmenu_overlay_.reset();
 }
 
 } //namespace

@@ -20,25 +20,48 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #ifndef LIBVIEW_SCREENS_GAME_DETAIL_STATES_PLAYING_HPP
 #define LIBVIEW_SCREENS_GAME_DETAIL_STATES_PLAYING_HPP
 
-#include "../fsm.hpp"
+#include "../events.hpp"
+#include "../context.hpp"
 #include <libview/data_types.hpp>
-#include <libutil/fsm.hpp>
+#include <fgfsm.hpp>
 
-namespace libview::screens::game_detail::states
+namespace libview::screens::game_detail
 {
 
-class playing: public libutil::fsm::state
+struct playing
 {
-    public:
-        playing(fsm& fsm):
-            fsm_(fsm)
-        {
-        }
+    struct game_over_overlay_show_request{};
+    struct menu_overlay_show_request{};
 
-        void handle_event(const std::any& event);
+    void on_event(const fgfsm::event_ref& event)
+    {
+        visit
+        (
+            event,
 
-    private:
-        fsm& fsm_;
+            [this](const events::button_press& event)
+            {
+                ctx.tile_grid.handle_button_press(event.button);
+            },
+
+            [this](const events::button_release& event)
+            {
+                ctx.tile_grid.handle_button_release(event.button);
+            },
+
+            [this](const events::game_over&)
+            {
+                ctx.process_event(game_over_overlay_show_request{});
+            },
+
+            [this](const events::pause_request&)
+            {
+                ctx.process_event(menu_overlay_show_request{});
+            }
+        );
+    }
+
+    context& ctx;
 };
 
 } //namespace

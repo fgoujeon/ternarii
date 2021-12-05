@@ -17,33 +17,34 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef LIBVIEW_SCREENS_GAME_DETAIL_STATES_SHOWING_MENU_OVERLAY_HPP
-#define LIBVIEW_SCREENS_GAME_DETAIL_STATES_SHOWING_MENU_OVERLAY_HPP
+#ifndef LIBVIEW_SCREENS_GAME_DETAIL_CONTEXT_HPP
+#define LIBVIEW_SCREENS_GAME_DETAIL_CONTEXT_HPP
 
-#include "../context.hpp"
-#include "../../../objects/game_menu_overlay.hpp"
-#include <libview/data_types.hpp>
-#include <libutil/fsm.hpp>
+#include "../../animation.hpp"
+#include "../../objects/tile_grid.hpp"
+#include <libview/screens/game.hpp>
+#include <fgfsm.hpp>
 
 namespace libview::screens::game_detail
 {
 
-class showing_menu_overlay
+class fsm;
+
+struct context
 {
-    public:
-        struct resume_request{};
+    void process_event(const fgfsm::event_ref& event);
 
-        showing_menu_overlay(context& ctx);
+    fsm& sm;
+    game& screen;
+    feature_group_set& feature_groups;
+    game::callback_set& callbacks;
+    animation::animator& animator;
+    animation::animator& pause_animator;
+    objects::tile_grid& tile_grid;
 
-        void on_entry();
-
-        void on_event(const fgfsm::event_ref& event);
-
-        void on_exit();
-
-    private:
-        context& ctx_;
-        std::shared_ptr<objects::game_menu_overlay> pmenu_overlay_;
+    int time_s = 0;
+    int move_count = 0;
+    int hi_score = 0;
 };
 
 } //namespace
