@@ -20,26 +20,56 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #ifndef STATES_SHOWING_STAGE_SELECTION_SCREEN_HPP
 #define STATES_SHOWING_STAGE_SELECTION_SCREEN_HPP
 
-#include "../fsm.hpp"
+#include "../context.hpp"
 #include <libview/screens/stage_selection.hpp>
 
 namespace states
 {
 
-class showing_stage_selection_screen final: public libutil::fsm::state
+struct showing_stage_selection_screen
 {
-    public:
-        using screen_transition = libview::view::screen_transition;
+    void on_entry(const fgfsm::event_ref& event)
+    {
+        visit
+        (
+            event,
 
-    private:
-        using screen = libview::screens::stage_selection;
+            [this](const events::stage_selection_screen_show_request& event)
+            {
+                using screen = libview::screens::stage_selection;
+                auto pscreen = ctx.view.make_screen<screen>
+                (
+                    screen::callback_set
+                    {
+                        .stage_selection_request = [this](const libview::data_types::stage stage)
+                        {
+                            ctx.process_event
+                            (
+                                events::play_screen_show_request
+                                {
+                                    screen_transition::zoom_in,
+                                    stage
+                                }
+                            );
+                        },
+                        .back_request = [this]
+                        {
+                            ctx.process_event
+                            (
+                                events::title_screen_show_request
+                                {
+                                    screen_transition::left_to_right
+                                }
+                            );
+                        }
+                    }
+                );
+                ctx.view.show_screen(pscreen, event.transition);
+            }
+        );
+    }
 
-    public:
-        showing_stage_selection_screen(fsm& ctx, screen_transition trans);
-
-    private:
-        fsm& fsm_;
-        std::shared_ptr<screen> pscreen_;
+    context& ctx;
 };
 
 } //namespace

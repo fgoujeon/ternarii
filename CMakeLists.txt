@@ -58,9 +58,10 @@ find_package(
     TgaImporter
     Trade
 )
-find_package(nlohmann_json 3.2.0 REQUIRED)
+find_package(nlohmann_json REQUIRED)
 
 add_subdirectory(app)
+add_subdirectory(fgfsm)
 add_subdirectory(libdb)
 add_subdirectory(libgame)
 add_subdirectory(libres)

@@ -20,34 +20,46 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #ifndef STATES_PLAYING_HPP
 #define STATES_PLAYING_HPP
 
-#include "../fsm.hpp"
+#include "../events.hpp"
+#include "../context.hpp"
 #include <libgame/game.hpp>
 #include <libutil/log.hpp>
+#include <optional>
 
 namespace states
 {
 
-class playing final: public libutil::fsm::state
+class playing_impl
 {
     public:
         using screen = libview::screens::game;
         using screen_transition = libview::view::screen_transition;
 
     public:
-        playing(fsm& f, screen_transition trans, libgame::data_types::stage stage);
+        playing_impl
+        (
+            context& ctx,
+            screen_transition trans,
+            libgame::data_types::stage stage
+        );
 
-        ~playing()
+        ~playing_impl()
         {
             save_game();
         }
 
-        void handle_event(const std::any& event) override
+        void on_event(const fgfsm::event_ref& event)
         {
-            if(const auto pevent = std::any_cast<events::iteration>(&event))
-            {
-                pgame_->advance(pevent->elapsed_s);
-                pscreen_->set_time_s(pgame_->get_state().time_s);
-            }
+            visit
+            (
+                event,
+
+                [this](const events::iteration& event)
+                {
+                    pgame_->advance(event.elapsed_s);
+                    pscreen_->set_time_s(pgame_->get_state().time_s);
+                }
+            );
         }
 
     //Game event handlers
@@ -157,11 +169,11 @@ class playing final: public libutil::fsm::state
 
         void save_game()
         {
-            fsm_.get_context().database.set_stage_state(stage_, pgame_->get_state());
+            ctx_.database.set_stage_state(stage_, pgame_->get_state());
         }
 
     private:
-        fsm& fsm_;
+        context& ctx_;
         const libgame::data_types::stage stage_;
         std::shared_ptr<libview::screens::game> pscreen_;
         std::unique_ptr<libgame::game> pgame_;
@@ -171,6 +183,42 @@ class playing final: public libutil::fsm::state
 
         //used by mark_tiles_for_nullification()
         libutil::matrix_coordinate_list targeted_tiles_;
+};
+
+class playing
+{
+    public:
+        playing(context& ctx):
+            ctx_(ctx)
+        {
+        }
+
+        void on_entry(const fgfsm::event_ref& event)
+        {
+            visit
+            (
+                event,
+
+                [this](const events::play_screen_show_request& event)
+                {
+                    pimpl_ = std::make_unique<playing_impl>(ctx_, event.transition, event.stage);
+                }
+            );
+        }
+
+        void on_event(const fgfsm::event_ref& event)
+        {
+            pimpl_->on_event(event);
+        }
+
+        void on_exit()
+        {
+            pimpl_ = nullptr;
+        }
+
+    private:
+        context& ctx_;
+        std::unique_ptr<playing_impl> pimpl_;
 };
 
 } //namespace

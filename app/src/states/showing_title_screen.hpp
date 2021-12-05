@@ -20,41 +20,70 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #ifndef STATES_SHOWING_TITLE_SCREEN_HPP
 #define STATES_SHOWING_TITLE_SCREEN_HPP
 
-#include "showing_stage_selection_screen.hpp"
-#include "showing_about_screen.hpp"
-#include "../fsm.hpp"
+#include "../context.hpp"
 #include <libview/screens/title.hpp>
 
 namespace states
 {
 
-class showing_title_screen final: public libutil::fsm::state
+struct showing_title_screen
 {
-    private:
-        using screen = libview::screens::title;
-        using screen_transition = libview::view::screen_transition;
+    void on_entry(const fgfsm::event_ref& event)
+    {
+        auto processed = false;
 
-    public:
-        showing_title_screen(fsm& ctx, const libview::view::screen_transition trans):
-            fsm_(ctx),
-            pscreen_
-            (
-                fsm_.get_context().view.make_screen<libview::screens::title>
+        visit
+        (
+            event,
+
+            [this, &processed](const events::title_screen_show_request& event)
+            {
+                using screen = libview::screens::title;
+                auto pscreen = ctx.view.make_screen<screen>
                 (
                     screen::callback_set
                     {
-                        .play_request  = [this]{fsm_.set_state<showing_stage_selection_screen>(screen_transition::right_to_left);},
-                        .about_request = [this]{fsm_.set_state<showing_about_screen>(screen_transition::right_to_left);}
+                        .play_request  = [this]
+                        {
+                            ctx.process_event
+                            (
+                                events::stage_selection_screen_show_request
+                                {
+                                    screen_transition::right_to_left
+                                }
+                            );
+                        },
+                        .about_request = [this]
+                        {
+                            ctx.process_event
+                            (
+                                events::about_screen_show_request
+                                {
+                                    screen_transition::right_to_left
+                                }
+                            );
+                        }
                     }
-                )
-            )
-        {
-            fsm_.get_context().view.show_screen(pscreen_, trans);
-        }
+                );
+                ctx.view.show_screen(pscreen, event.transition);
 
-    private:
-        fsm& fsm_;
-        std::shared_ptr<screen> pscreen_;
+                processed = true;
+            }
+        );
+
+        if(!processed)
+        {
+            on_entry
+            (
+                events::title_screen_show_request
+                {
+                    screen_transition::top_to_bottom
+                }
+            );
+        }
+    }
+
+    context& ctx;
 };
 
 } //namespace

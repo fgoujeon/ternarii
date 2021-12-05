@@ -18,7 +18,6 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 #include "playing.hpp"
-#include "showing_stage_selection_screen.hpp"
 #include <libres.hpp>
 
 namespace states
@@ -49,12 +48,17 @@ namespace
     }
 }
 
-playing::playing(fsm& f, const screen_transition trans, const libgame::data_types::stage stage):
-    fsm_(f),
+playing_impl::playing_impl
+(
+    context& ctx,
+    const screen_transition trans,
+    const libgame::data_types::stage stage
+):
+    ctx_(ctx),
     stage_(stage),
     pscreen_
     (
-        fsm_.get_context().view.make_screen<screen>
+        ctx.view.make_screen<screen>
         (
             stage,
             screen::callback_set
@@ -72,7 +76,13 @@ playing::playing(fsm& f, const screen_transition trans, const libgame::data_type
                 .handle_exit_request = [this]
                 {
                     libutil::log::info("[fsm <- screen] Exit request");
-                    fsm_.set_state<states::showing_stage_selection_screen>(screen_transition::zoom_out);
+                    ctx_.process_event
+                    (
+                        events::stage_selection_screen_show_request
+                        {
+                            screen_transition::zoom_out
+                        }
+                    );
                 },
                 .handle_input_layout_change = [this](const libview::data_types::input_layout input_layout)
                 {
@@ -84,7 +94,7 @@ playing::playing(fsm& f, const screen_transition trans, const libgame::data_type
     )
 {
     //Load game state from database
-    const auto& opt_game_state = fsm_.get_context().database.get_game_state();
+    const auto& opt_game_state = ctx_.database.get_game_state();
 
     //Find stage state
     const auto opt_stage_state = find_stage_state(opt_game_state, stage);
@@ -115,7 +125,7 @@ playing::playing(fsm& f, const screen_transition trans, const libgame::data_type
         modify_game(&libgame::game::start);
     }
 
-    fsm_.get_context().view.show_screen(pscreen_, trans);
+    ctx_.view.show_screen(pscreen_, trans);
 }
 
 } //namespace

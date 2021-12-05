@@ -18,8 +18,6 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 #include <libview/screens/game.hpp>
-#include "game_detail/states/playing.hpp"
-#include "game_detail/states/showing_game_over_overlay.hpp"
 #include "game_detail/fsm.hpp"
 #include "../objects/shine.hpp"
 #include "../objects/game_over_overlay.hpp"
@@ -32,7 +30,6 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include "../data_types.hpp"
 #include "../common.hpp"
 #include <libres.hpp>
-#include <libutil/fsm.hpp>
 #include <chrono>
 #include <Magnum/Math/Color.h>
 #include <Magnum/Platform/Sdl2Application.h>
@@ -84,11 +81,11 @@ namespace
         { \
             .handle_mouse_press = [this] \
             { \
-                fsm.handle_event(game_detail::events::button_press{data_types::move_button::MOVE}); \
+                fsm.process_event(game_detail::events::button_press{data_types::move_button::MOVE}); \
             }, \
             .handle_mouse_release = [this] \
             { \
-                fsm.handle_event(game_detail::events::button_release{data_types::move_button::MOVE}); \
+                fsm.process_event(game_detail::events::button_release{data_types::move_button::MOVE}); \
             } \
         } \
     )
@@ -137,7 +134,7 @@ struct game::impl
             {
                 .handle_mouse_release = [this]
                 {
-                    fsm.handle_event(game_detail::events::pause_request{});
+                    fsm.process_event(game_detail::events::pause_request{});
                 }
             }
         ),
@@ -213,8 +210,6 @@ struct game::impl
             clockwise_rotation_button.scale({move_button_scaling, move_button_scaling});
             clockwise_rotation_button.translate({3.25f, -5.85f});
         }
-
-        fsm.set_state<game_detail::states::playing>();
     }
 
     game& self;
@@ -238,8 +233,9 @@ struct game::impl
     objects::sdf_image_button drop_button;
     objects::sdf_image_button clockwise_rotation_button;
 
-    game_detail::fsm_context ctx
+    game_detail::context ctx
     {
+        fsm,
         self,
         feature_groups,
         callbacks,
@@ -277,7 +273,7 @@ game::~game() = default;
 
 void game::advance(const std::chrono::steady_clock::time_point& now, const float /*elapsed_s*/)
 {
-    pimpl_->fsm.handle_event(game_detail::events::iteration{});
+    pimpl_->fsm.process_event(game_detail::events::iteration{});
     pimpl_->animator.advance(now);
     pimpl_->pause_animator.advance(now);
 }
@@ -287,17 +283,17 @@ void game::handle_key_press(key_event& event)
     switch(event.key())
     {
         case key_event::Key::Left:
-            pimpl_->fsm.handle_event(game_detail::events::button_press{data_types::move_button::left_shift});
+            pimpl_->fsm.process_event(game_detail::events::button_press{data_types::move_button::left_shift});
             break;
         case key_event::Key::Right:
-            pimpl_->fsm.handle_event(game_detail::events::button_press{data_types::move_button::right_shift});
+            pimpl_->fsm.process_event(game_detail::events::button_press{data_types::move_button::right_shift});
             break;
         case key_event::Key::Up:
         case key_event::Key::Space:
-            pimpl_->fsm.handle_event(game_detail::events::button_press{data_types::move_button::clockwise_rotation});
+            pimpl_->fsm.process_event(game_detail::events::button_press{data_types::move_button::clockwise_rotation});
             break;
         case key_event::Key::Down:
-            pimpl_->fsm.handle_event(game_detail::events::button_press{data_types::move_button::drop});
+            pimpl_->fsm.process_event(game_detail::events::button_press{data_types::move_button::drop});
             break;
         default:
             break;
@@ -309,17 +305,17 @@ void game::handle_key_release(key_event& event)
     switch(event.key())
     {
         case key_event::Key::Left:
-            pimpl_->fsm.handle_event(game_detail::events::button_release{data_types::move_button::left_shift});
+            pimpl_->fsm.process_event(game_detail::events::button_release{data_types::move_button::left_shift});
             break;
         case key_event::Key::Right:
-            pimpl_->fsm.handle_event(game_detail::events::button_release{data_types::move_button::right_shift});
+            pimpl_->fsm.process_event(game_detail::events::button_release{data_types::move_button::right_shift});
             break;
         case key_event::Key::Up:
         case key_event::Key::Space:
-            pimpl_->fsm.handle_event(game_detail::events::button_release{data_types::move_button::clockwise_rotation});
+            pimpl_->fsm.process_event(game_detail::events::button_release{data_types::move_button::clockwise_rotation});
             break;
         case key_event::Key::Down:
-            pimpl_->fsm.handle_event(game_detail::events::button_release{data_types::move_button::drop});
+            pimpl_->fsm.process_event(game_detail::events::button_release{data_types::move_button::drop});
             break;
         default:
             break;
@@ -405,11 +401,11 @@ void game::set_game_over_overlay_visible(const bool visible)
 {
     if(visible)
     {
-        pimpl_->fsm.handle_event(game_detail::events::game_over{});
+        pimpl_->fsm.process_event(game_detail::events::game_over{});
     }
     else
     {
-        pimpl_->fsm.handle_event(game_detail::events::new_game_request{});
+        pimpl_->fsm.process_event(game_detail::events::new_game_request{});
     }
 }
 

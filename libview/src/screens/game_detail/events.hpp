@@ -17,37 +17,35 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef STATES_LOADING_DATABASE_HPP
-#define STATES_LOADING_DATABASE_HPP
+#ifndef LIBVIEW_SCREENS_GAME_DETAIL_EVENTS_HPP
+#define LIBVIEW_SCREENS_GAME_DETAIL_EVENTS_HPP
 
-#include "showing_title_screen.hpp"
-#include "../fsm.hpp"
+#include <libview/data_types.hpp>
 
-namespace states
+namespace libview::screens::game_detail
 {
 
-class loading_database final: public libutil::fsm::state
+//Events sent to states
+namespace events
 {
-    public:
-        loading_database(fsm& ctx):
-            fsm_(ctx)
-        {
-        }
+    struct button_press
+    {
+        data_types::move_button button;
+    };
 
-        void handle_event(const std::any& event) override
-        {
-            if(const auto pevent = std::any_cast<libdb::events::end_of_loading>(&event))
-            {
-                fsm_.set_state<showing_title_screen>
-                (
-                    libview::view::screen_transition::top_to_bottom
-                );
-            }
-        }
+    struct button_release
+    {
+        data_types::move_button button;
+    };
 
-    private:
-        fsm& fsm_;
-};
+    struct game_over{};
+
+    struct new_game_request{};
+
+    struct pause_request{};
+
+    struct iteration{};
+}
 
 } //namespace
 

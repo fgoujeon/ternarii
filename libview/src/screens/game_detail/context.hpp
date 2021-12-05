@@ -17,26 +17,36 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#include "showing_about_screen.hpp"
-#include "showing_title_screen.hpp"
+#ifndef LIBVIEW_SCREENS_GAME_DETAIL_CONTEXT_HPP
+#define LIBVIEW_SCREENS_GAME_DETAIL_CONTEXT_HPP
 
-namespace states
+#include "../../animation.hpp"
+#include "../../objects/tile_grid.hpp"
+#include <libview/screens/game.hpp>
+#include <fgfsm.hpp>
+
+namespace libview::screens::game_detail
 {
 
-showing_about_screen::showing_about_screen(fsm& ctx, const screen_transition trans):
-    fsm_(ctx),
-    pscreen_
-    (
-        fsm_.get_context().view.make_screen<screen>
-        (
-            screen::callback_set
-            {
-                .back_request = [this]{fsm_.set_state<showing_title_screen>(screen_transition::left_to_right);}
-            }
-        )
-    )
+class fsm;
+
+struct context
 {
-    fsm_.get_context().view.show_screen(pscreen_, trans);
-}
+    void process_event(const fgfsm::event_ref& event);
+
+    fsm& sm;
+    game& screen;
+    feature_group_set& feature_groups;
+    game::callback_set& callbacks;
+    animation::animator& animator;
+    animation::animator& pause_animator;
+    objects::tile_grid& tile_grid;
+
+    int time_s = 0;
+    int move_count = 0;
+    int hi_score = 0;
+};
 
 } //namespace
+
+#endif

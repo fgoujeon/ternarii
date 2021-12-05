@@ -20,53 +20,39 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #ifndef LIBVIEW_SCREENS_GAME_DETAIL_FSM_HPP
 #define LIBVIEW_SCREENS_GAME_DETAIL_FSM_HPP
 
-#include "../../animation.hpp"
-#include "../../objects/tile_grid.hpp"
-#include <libview/screens/game.hpp>
-#include <libview/data_types.hpp>
-#include <libutil/fsm.hpp>
-#include <chrono>
+#include "states/playing.hpp"
+#include "states/showing_game_over_overlay.hpp"
+#include "states/showing_menu_overlay.hpp"
+#include <fgfsm.hpp>
 
 namespace libview::screens::game_detail
 {
 
-//Events sent to states
-namespace events
+using fsm_transition_table = fgfsm::transition_table
+<
+    fgfsm::row<playing,                   playing::menu_overlay_show_request,          showing_menu_overlay>,
+    fgfsm::row<showing_menu_overlay,      showing_menu_overlay::resume_request,        playing>,
+    fgfsm::row<playing,                   playing::game_over_overlay_show_request,     showing_game_over_overlay>,
+    fgfsm::row<showing_game_over_overlay, showing_game_over_overlay::new_game_request, playing>
+>;
+
+class fsm
 {
-    struct button_press
-    {
-        data_types::move_button button;
-    };
+    public:
+        fsm(context& ctx):
+            impl_(ctx)
+        {
+        }
 
-    struct button_release
-    {
-        data_types::move_button button;
-    };
+        void process_event(const fgfsm::event_ref& event)
+        {
+            impl_.process_event(event);
+        }
 
-    struct game_over{};
-
-    struct new_game_request{};
-
-    struct pause_request{};
-
-    struct iteration{};
-}
-
-struct fsm_context
-{
-    game& screen;
-    feature_group_set& feature_groups;
-    game::callback_set& callbacks;
-    animation::animator& animator;
-    animation::animator& pause_animator;
-    objects::tile_grid& tile_grid;
-
-    int time_s = 0;
-    int move_count = 0;
-    int hi_score = 0;
+    private:
+        using impl = fgfsm::fsm<fsm_transition_table>;
+        impl impl_;
 };
-
-using fsm = libutil::fsm::fsm<fsm_context>;
 
 } //namespace
 

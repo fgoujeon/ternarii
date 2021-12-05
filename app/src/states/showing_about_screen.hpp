@@ -20,26 +20,46 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #ifndef STATES_SHOWING_ABOUT_SCREEN_HPP
 #define STATES_SHOWING_ABOUT_SCREEN_HPP
 
-#include "../fsm.hpp"
+#include "../events.hpp"
+#include "../context.hpp"
 #include <libview/screens/about.hpp>
 
 namespace states
 {
 
-class showing_about_screen final: public libutil::fsm::state
+struct showing_about_screen
 {
-    public:
-        using screen_transition = libview::view::screen_transition;
+    void on_entry(const fgfsm::event_ref& event)
+    {
+        visit
+        (
+            event,
 
-    private:
-        using screen = libview::screens::about;
+            [this](const events::about_screen_show_request& event)
+            {
+                using screen = libview::screens::about;
+                auto pscreen = ctx.view.make_screen<screen>
+                (
+                    screen::callback_set
+                    {
+                        .back_request = [this]
+                        {
+                            ctx.process_event
+                            (
+                                events::title_screen_show_request
+                                {
+                                    screen_transition::left_to_right
+                                }
+                            );
+                        }
+                    }
+                );
+                ctx.view.show_screen(pscreen, event.transition);
+            }
+        );
+    }
 
-    public:
-        showing_about_screen(fsm& ctx, screen_transition trans);
-
-    private:
-        fsm& fsm_;
-        std::shared_ptr<screen> pscreen_;
+    context& ctx;
 };
 
 } //namespace
