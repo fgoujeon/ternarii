@@ -120,6 +120,15 @@ class playing_impl
             );
         }
 
+        void handle_game_event(const libgame::events::tile_value_change& event)
+        {
+            pscreen_->change_tiles_value
+            (
+                event.nullified_tile_coordinate,
+                event.changes
+            );
+        }
+
         void handle_game_event(const libgame::events::end_of_game&)
         {
             pscreen_->set_game_over_overlay_visible(true);

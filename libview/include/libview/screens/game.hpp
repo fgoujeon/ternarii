@@ -93,6 +93,12 @@ class game: public object2d, public features::animable, public features::key_eve
             const data_types::granite_erosion_list& granite_erosions
         );
 
+        void change_tiles_value
+        (
+            const libutil::matrix_coordinate& nullified_tile_coordinate,
+            const data_types::tile_value_change_list& changes
+        );
+
         void mark_tiles_for_nullification(const libutil::matrix_coordinate_list& tile_coordinates);
 
         void set_board_tiles(const data_types::board_tile_matrix& tiles);

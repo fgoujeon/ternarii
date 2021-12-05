@@ -221,6 +221,18 @@ std::ostream& operator<<(std::ostream& l, const tile_merge& r)
 
 
 
+std::ostream& operator<<(std::ostream& l, const tile_value_change& r)
+{
+    l << "tile_value_change";
+    l << "{";
+    l << "coordinate: " << libutil::streamable{r.coordinate} << ", ";
+    l << "new_value: " << r.new_value;
+    l << "}";
+    return l;
+}
+
+
+
 std::ostream& operator<<(std::ostream& l, const granite_erosion& r)
 {
     l << "granite_erosion";

@@ -104,7 +104,7 @@ namespace
     data_types::board_tile_matrix apply_nullifiers
     (
         data_types::board_tile_matrix tiles,
-        libutil::matrix_coordinate_list& coords //output
+        libutil::matrix_coordinate_list& nullified_tiles_coords //output
     )
     {
         libutil::for_each_colrow
@@ -137,7 +137,7 @@ namespace
                                     continue;
                                 }
 
-                                coords.push_back({col, nullified_row});
+                                nullified_tiles_coords.push_back({col, nullified_row});
 
                                 opt_tile = std::nullopt;
                             }
@@ -155,7 +155,7 @@ namespace
                                     continue;
                                 }
 
-                                coords.push_back({nullified_col, row});
+                                nullified_tiles_coords.push_back({nullified_col, row});
 
                                 opt_tile = std::nullopt;
                             }
@@ -165,7 +165,7 @@ namespace
                         {
                             //Remove the nullifier tile itself
                             opt_tile = std::nullopt;
-                            coords.push_back({col, row});
+                            nullified_tiles_coords.push_back({col, row});
 
                             //Get the value of the number tile placed below the
                             //nullifier tile, if any
@@ -221,16 +221,116 @@ namespace
                                     }
 
                                     opt_tile = std::nullopt;
-                                    coords.push_back({col, row});
+                                    nullified_tiles_coords.push_back({col, row});
                                 },
                                 tiles
                             );
                         },
 
-                        [&](const data_types::tiles::adder&){}
+                        [&](const data_types::tiles::adder& tile){}
                     },
                     tile
                 );
+            },
+            tiles
+        );
+
+        return tiles;
+    }
+
+    data_types::board_tile_matrix apply_adders
+    (
+        data_types::board_tile_matrix tiles,
+        event_list& events
+    )
+    {
+        libutil::for_each_colrow
+        (
+            [&](auto& opt_tile, const int col, const int row)
+            {
+                if(!opt_tile)
+                    return;
+
+                const auto& tile = *opt_tile;
+
+                const auto padder_tile = std::get_if<data_types::tiles::adder>(&tile);
+
+                if(!padder_tile)
+                    return;
+
+                auto event = events::tile_value_change{};
+                event.nullified_tile_coordinate = {col, row};
+
+                const auto adder_tile = *padder_tile;
+                const auto adder_tile_value = adder_tile.value;
+
+                //Remove the adder tile itself
+                opt_tile = std::nullopt;
+
+                //Get the value of the number tile placed below the
+                //adder tile, if any
+                const auto opt_value = [&]() -> std::optional<int>
+                {
+                    if(row == 0)
+                    {
+                        return std::nullopt;
+                    }
+
+                    const auto& opt_below_tile = at(tiles, col, row - 1);
+
+                    if(!opt_below_tile)
+                    {
+                        return std::nullopt;
+                    }
+
+                    const auto pbelow_tile = std::get_if<data_types::tiles::number>(&*opt_below_tile);
+
+                    if(!pbelow_tile)
+                    {
+                        return std::nullopt;
+                    }
+
+                    return pbelow_tile->value;
+                }();
+
+                if(opt_value)
+                {
+                    //Alter value of all number tiles of that value
+                    libutil::for_each_colrow
+                    (
+                        [&](auto& opt_tile, const int col, const int row)
+                        {
+                            if(!opt_tile)
+                                return;
+
+                            const auto ptile = std::get_if<data_types::tiles::number>(&*opt_tile);
+
+                            if(!ptile)
+                                return;
+
+                            auto& tile = *ptile;
+
+                            if(tile.value != *opt_value)
+                                return;
+
+                            const auto unsafe_new_value = tile.value + adder_tile_value;
+                            const auto new_value = std::clamp(unsafe_new_value, 0, 9);
+
+                            if(tile.value == new_value)
+                                return;
+
+                            tile.value = new_value;
+
+                            auto change = data_types::tile_value_change{};
+                            change.coordinate = {col, row};
+                            change.new_value = new_value;
+                            event.changes.push_back(change);
+                        },
+                        tiles
+                    );
+                }
+
+                events.push_back(event);
             },
             tiles
         );
@@ -364,6 +464,9 @@ void board::drop_input_tiles
                 events.push_back(events::tile_nullification{std::move(nullified_tiles)});
             }
         }
+
+        //Apply adders
+        tiles_ = apply_adders(tiles_, events);
 
         //Merge number tiles
         const auto merges = merge_tiles();

@@ -98,6 +98,12 @@ namespace events
 
 
 
+    struct start{};
+
+    std::ostream& operator<<(std::ostream& l, const start&);
+
+
+
     struct tile_merge
     {
         data_types::tile_merge_list merges;
@@ -117,9 +123,13 @@ namespace events
 
 
 
-    struct start{};
+    struct tile_value_change
+    {
+        libutil::matrix_coordinate nullified_tile_coordinate;
+        data_types::tile_value_change_list changes;
+    };
 
-    std::ostream& operator<<(std::ostream& l, const start&);
+    std::ostream& operator<<(std::ostream& l, const tile_value_change& r);
 }
 
 using event = std::variant
@@ -134,7 +144,8 @@ using event = std::variant
     events::score_change,
     events::start,
     events::tile_merge,
-    events::tile_nullification
+    events::tile_nullification,
+    events::tile_value_change
 >;
 
 using event_list = std::vector<event>;

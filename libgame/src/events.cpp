@@ -78,6 +78,20 @@ std::ostream& operator<<(std::ostream& l, const next_input_insertion& r)
     return l << "next_input_insertion{}";
 }
 
+std::ostream& operator<<(std::ostream& l, const score_change& r)
+{
+    l << "score_change";
+    l << "{";
+    l << "score: " << r.score;
+    l << "}";
+    return l;
+}
+
+std::ostream& operator<<(std::ostream& l, const start&)
+{
+    return l << "start{}";
+}
+
 std::ostream& operator<<(std::ostream& l, const tile_merge& r)
 {
     l << "tile_merge";
@@ -97,18 +111,14 @@ std::ostream& operator<<(std::ostream& l, const tile_nullification& r)
     return l;
 }
 
-std::ostream& operator<<(std::ostream& l, const score_change& r)
+std::ostream& operator<<(std::ostream& l, const tile_value_change& r)
 {
-    l << "score_change";
+    l << "tile_value_change";
     l << "{";
-    l << "score: " << r.score;
+    l << "nullified_tile_coordinate: " << libutil::streamable{r.nullified_tile_coordinate} << ", ";
+    l << "changes: " << libutil::streamable{r.changes};
     l << "}";
     return l;
-}
-
-std::ostream& operator<<(std::ostream& l, const start&)
-{
-    return l << "start{}";
 }
 
 } //namespace

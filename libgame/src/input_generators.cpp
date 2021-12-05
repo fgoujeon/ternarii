@@ -392,10 +392,10 @@ namespace
         (
             {
                 {get_random_number_tile_pair_generator(), 5000},
-                {get_adder_generator<-2>(),               1000},
-                {get_adder_generator<-1>(),               1000},
-                {get_adder_generator<1>(),                1000},
-                {get_adder_generator<2>(),                1000}
+                {get_adder_generator<-2>(),               50},
+                {get_adder_generator<-1>(),               50},
+                {get_adder_generator<1>(),                50},
+                {get_adder_generator<2>(),                50}
             }
         );
         return generator;

@@ -244,6 +244,18 @@ std::ostream& operator<<(std::ostream& l, const tile_merge& r);
 
 
 
+struct tile_value_change
+{
+    libutil::matrix_coordinate coordinate;
+    int new_value = 0;
+};
+
+using tile_value_change_list = std::vector<tile_value_change>;
+
+std::ostream& operator<<(std::ostream& l, const tile_value_change& r);
+
+
+
 struct granite_erosion
 {
     libutil::matrix_coordinate coordinate;
