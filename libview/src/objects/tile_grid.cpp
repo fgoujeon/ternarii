@@ -571,8 +571,7 @@ void tile_grid::change_tiles_value
                 {
                     .pobj = pnew_tile,
                     .finish_alpha = 1,
-                    .duration_s = track_duration_s,
-                    .interpolator = animation::get_exponential_out_float_interpolator()
+                    .duration_s = track_duration_s
                 }
             );
         }
@@ -581,7 +580,6 @@ void tile_grid::change_tiles_value
     animator_.push(animation::tracks::closure{[this]{next_input_.suspend();}});
     animator_.push(animation::tracks::closure{[this]{input_.suspend();}});
     animator_.push(std::move(anim));
-    animator_.push(animation::tracks::pause{0.05});
     animator_.push(animation::tracks::closure{[this]{input_.resume();}});
     animator_.push(animation::tracks::closure{[this]{next_input_.resume();}});
 }
