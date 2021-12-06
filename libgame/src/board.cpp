@@ -295,6 +295,25 @@ namespace
 
                 if(opt_value)
                 {
+                    const auto current_value = *opt_value;
+
+                    const auto new_value = [&]
+                    {
+                        //For positive adders
+                        if(adder_tile_value > 0)
+                        {
+                            //Don't alter 9+ tiles
+                            if(current_value >= 9)
+                                return current_value;
+
+                            //Cap new value to 9
+                            return std::min(current_value + adder_tile_value, 9);
+                        }
+
+                        //Allow negative tiles
+                        return current_value + adder_tile_value;
+                    }();
+
                     //Alter value of all number tiles of that value
                     libutil::for_each_colrow
                     (
@@ -310,11 +329,8 @@ namespace
 
                             auto& tile = *ptile;
 
-                            if(tile.value != *opt_value)
+                            if(tile.value != current_value)
                                 return;
-
-                            const auto unsafe_new_value = tile.value + adder_tile_value;
-                            const auto new_value = std::clamp(unsafe_new_value, 0, 9);
 
                             if(tile.value == new_value)
                                 return;
