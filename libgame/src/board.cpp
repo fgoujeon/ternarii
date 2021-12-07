@@ -310,8 +310,8 @@ namespace
                             return std::min(current_value + adder_tile_value, 9);
                         }
 
-                        //Allow negative tiles
-                        return current_value + adder_tile_value;
+                        //Don't go below 0
+                        return std::max(current_value + adder_tile_value, 0);
                     }();
 
                     //Alter value of all number tiles of that value
