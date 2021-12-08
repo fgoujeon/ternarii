@@ -31,8 +31,6 @@ namespace libview::screens::game_detail
 class showing_game_over_overlay
 {
     public:
-        struct new_game_request{};
-
         showing_game_over_overlay(context& ctx):
             ctx_(ctx)
         {
@@ -113,19 +111,6 @@ class showing_game_over_overlay
             ctx_.animator.push(std::move(anim));
 
             pgame_over_overlay_.reset();
-        }
-
-        void handle_event(const fgfsm::event_ref& event)
-        {
-            visit
-            (
-                event,
-
-                [this](const events::new_game_request&)
-                {
-                    ctx_.process_event(new_game_request{});
-                }
-            );
         }
 
     private:

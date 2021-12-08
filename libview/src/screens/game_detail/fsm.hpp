@@ -30,10 +30,10 @@ namespace libview::screens::game_detail
 
 using fsm_transition_table = fgfsm::transition_table
 <
-    fgfsm::row<playing,                   playing::menu_overlay_show_request,          showing_menu_overlay>,
-    fgfsm::row<showing_menu_overlay,      showing_menu_overlay::resume_request,        playing>,
-    fgfsm::row<playing,                   playing::game_over_overlay_show_request,     showing_game_over_overlay>,
-    fgfsm::row<showing_game_over_overlay, showing_game_over_overlay::new_game_request, playing>
+    fgfsm::row<playing,                   playing::menu_overlay_show_request,      showing_menu_overlay>,
+    fgfsm::row<showing_menu_overlay,      showing_menu_overlay::resume_request,    playing>,
+    fgfsm::row<playing,                   playing::game_over_overlay_show_request, showing_game_over_overlay>,
+    fgfsm::row<showing_game_over_overlay, events::new_game_request,                playing>
 >;
 
 class fsm
