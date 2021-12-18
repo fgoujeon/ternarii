@@ -236,52 +236,6 @@ struct stage_selection::impl
             -2
         ),
 
-        //Triplet pines mall
-        triplet_pines_mall_button
-        (
-            self,
-            feature_groups,
-            data_types::stage::triplet_pines_mall,
-            callbacks
-        ),
-        triplet_pines_mall_tile_triplet
-        (
-            triplet_pines_mall_button,
-            feature_groups.drawables,
-            libres::images::tile_triplet,
-            objects::sdf_image::style
-            {
-                .color = colors::black
-            }
-        ),
-        triplet_pines_mall_special_tile_0
-        (
-            triplet_pines_mall_button,
-            feature_groups.drawables,
-            {
-                libres::images::special_tile_symbol_null,
-                libres::images::special_tile_modifier_row
-            }
-        ),
-        triplet_pines_mall_special_tile_1
-        (
-            triplet_pines_mall_button,
-            feature_groups.drawables,
-            {
-                libres::images::special_tile_symbol_null,
-                libres::images::special_tile_modifier_column
-            }
-        ),
-        triplet_pines_mall_special_tile_2
-        (
-            triplet_pines_mall_button,
-            feature_groups.drawables,
-            {
-                libres::images::special_tile_symbol_null,
-                libres::images::special_tile_modifier_star
-            }
-        ),
-
         //Granite cave
         granite_cave_button
         (
@@ -321,6 +275,52 @@ struct stage_selection::impl
         granite_cave_special_tile_2
         (
             granite_cave_button,
+            feature_groups.drawables,
+            {
+                libres::images::special_tile_symbol_null,
+                libres::images::special_tile_modifier_star
+            }
+        ),
+
+        //Triplet pines mall
+        triplet_pines_mall_button
+        (
+            self,
+            feature_groups,
+            data_types::stage::triplet_pines_mall,
+            callbacks
+        ),
+        triplet_pines_mall_tile_triplet
+        (
+            triplet_pines_mall_button,
+            feature_groups.drawables,
+            libres::images::tile_triplet,
+            objects::sdf_image::style
+            {
+                .color = colors::black
+            }
+        ),
+        triplet_pines_mall_special_tile_0
+        (
+            triplet_pines_mall_button,
+            feature_groups.drawables,
+            {
+                libres::images::special_tile_symbol_null,
+                libres::images::special_tile_modifier_row
+            }
+        ),
+        triplet_pines_mall_special_tile_1
+        (
+            triplet_pines_mall_button,
+            feature_groups.drawables,
+            {
+                libres::images::special_tile_symbol_null,
+                libres::images::special_tile_modifier_column
+            }
+        ),
+        triplet_pines_mall_special_tile_2
+        (
+            triplet_pines_mall_button,
             feature_groups.drawables,
             {
                 libres::images::special_tile_symbol_null,
@@ -379,23 +379,7 @@ struct stage_selection::impl
         }
 
         {
-            triplet_pines_mall_button.setTranslation({0.0f, -2.5f});
-
-            triplet_pines_mall_tile_triplet.setScaling({0.4f, 0.4f});
-            triplet_pines_mall_tile_triplet.setTranslation({-0.75f, -0.4f});
-
-            triplet_pines_mall_special_tile_0.setScaling({0.4f, 0.4f});
-            triplet_pines_mall_special_tile_0.setTranslation({0.25f, -0.4f});
-
-            triplet_pines_mall_special_tile_1.setScaling({0.4f, 0.4f});
-            triplet_pines_mall_special_tile_1.setTranslation({1.25f, -0.4f});
-
-            triplet_pines_mall_special_tile_2.setScaling({0.4f, 0.4f});
-            triplet_pines_mall_special_tile_2.setTranslation({2.25f, -0.4f});
-        }
-
-        {
-            granite_cave_button.setTranslation({0.0f, -5.0f});
+            granite_cave_button.setTranslation({0.0f, -2.5f});
 
             granite_cave_granite.setScaling({0.4f, 0.4f});
             granite_cave_granite.setTranslation({-0.75f, -0.4f});
@@ -408,6 +392,22 @@ struct stage_selection::impl
 
             granite_cave_special_tile_2.setScaling({0.4f, 0.4f});
             granite_cave_special_tile_2.setTranslation({2.25f, -0.4f});
+        }
+
+        {
+            triplet_pines_mall_button.setTranslation({0.0f, -5.0f});
+
+            triplet_pines_mall_tile_triplet.setScaling({0.4f, 0.4f});
+            triplet_pines_mall_tile_triplet.setTranslation({-0.75f, -0.4f});
+
+            triplet_pines_mall_special_tile_0.setScaling({0.4f, 0.4f});
+            triplet_pines_mall_special_tile_0.setTranslation({0.25f, -0.4f});
+
+            triplet_pines_mall_special_tile_1.setScaling({0.4f, 0.4f});
+            triplet_pines_mall_special_tile_1.setTranslation({1.25f, -0.4f});
+
+            triplet_pines_mall_special_tile_2.setScaling({0.4f, 0.4f});
+            triplet_pines_mall_special_tile_2.setTranslation({2.25f, -0.4f});
         }
 
         back_button.setScaling({2.0f, 2.0f});
@@ -432,17 +432,17 @@ struct stage_selection::impl
     objects::adder_tile math_classroom_special_tile_2;
     objects::adder_tile math_classroom_special_tile_3;
 
-    selection_button triplet_pines_mall_button;
-    objects::sdf_image triplet_pines_mall_tile_triplet;
-    objects::sdf_image_tile triplet_pines_mall_special_tile_0;
-    objects::sdf_image_tile triplet_pines_mall_special_tile_1;
-    objects::sdf_image_tile triplet_pines_mall_special_tile_2;
-
     selection_button granite_cave_button;
     objects::sdf_image granite_cave_granite;
     objects::sdf_image_tile granite_cave_special_tile_0;
     objects::sdf_image_tile granite_cave_special_tile_1;
     objects::sdf_image_tile granite_cave_special_tile_2;
+
+    selection_button triplet_pines_mall_button;
+    objects::sdf_image triplet_pines_mall_tile_triplet;
+    objects::sdf_image_tile triplet_pines_mall_special_tile_0;
+    objects::sdf_image_tile triplet_pines_mall_special_tile_1;
+    objects::sdf_image_tile triplet_pines_mall_special_tile_2;
 
     objects::label_button back_button;
 };

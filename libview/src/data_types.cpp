@@ -27,16 +27,11 @@ std::string_view get_pretty_name(const stage s)
 {
     switch(s)
     {
-        case stage::purity_chapel:
-            return "PURITY CHAPEL";
-        case stage::nullifier_room:
-            return "NULLIFIER ROOM";
-        case stage::triplet_pines_mall:
-            return "TRIPLET PINES MALL";
-        case stage::granite_cave:
-            return "GRANITE CAVE";
-        case stage::math_classroom:
-            return "MATH CLASSROOM";
+        case stage::granite_cave:       return "GRANITE CAVE";
+        case stage::math_classroom:     return "MATH CLASSROOM";
+        case stage::nullifier_room:     return "NULLIFIER ROOM";
+        case stage::purity_chapel:      return "PURITY CHAPEL";
+        case stage::triplet_pines_mall: return "TRIPLET PINES MALL";
     }
     return "";
 }
@@ -45,16 +40,17 @@ std::optional<std::filesystem::path> get_image(const stage s)
 {
     switch(s)
     {
-        case stage::purity_chapel:
-            return libres::images::background_purity_chapel;
-        case stage::nullifier_room:
-            return libres::images::background_nullifier_room;
-        case stage::triplet_pines_mall:
-            return libres::images::background_triplet_pines_mall;
-        case stage::granite_cave:
-            return libres::images::background_granite_cave;
-        case stage::math_classroom:
-            return libres::images::background_math_classroom;
+#define CASE(NAME) \
+    case stage::NAME: \
+        return libres::images::background_##NAME;
+
+        CASE(granite_cave)
+        CASE(math_classroom)
+        CASE(nullifier_room)
+        CASE(purity_chapel)
+        CASE(triplet_pines_mall)
+
+#undef CASE
     }
     return std::nullopt;
 }
