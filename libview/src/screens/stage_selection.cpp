@@ -18,6 +18,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 #include <libview/screens/stage_selection.hpp>
+#include "../objects/adder_tile.hpp"
 #include "../objects/blank_button.hpp"
 #include "../objects/label.hpp"
 #include "../objects/sdf_image_tile.hpp"
@@ -210,6 +211,30 @@ struct stage_selection::impl
             data_types::stage::math_classroom,
             callbacks
         ),
+        math_classroom_special_tile_0
+        (
+            math_classroom_button,
+            feature_groups.drawables,
+            2
+        ),
+        math_classroom_special_tile_1
+        (
+            math_classroom_button,
+            feature_groups.drawables,
+            1
+        ),
+        math_classroom_special_tile_2
+        (
+            math_classroom_button,
+            feature_groups.drawables,
+            -1
+        ),
+        math_classroom_special_tile_3
+        (
+            math_classroom_button,
+            feature_groups.drawables,
+            -2
+        ),
 
         //Triplet pines mall
         triplet_pines_mall_button
@@ -339,6 +364,18 @@ struct stage_selection::impl
 
         {
             math_classroom_button.setTranslation({0.0f, 0.0f});
+
+            math_classroom_special_tile_0.setScaling({0.4f, 0.4f});
+            math_classroom_special_tile_0.setTranslation({-0.75f, -0.4f});
+
+            math_classroom_special_tile_1.setScaling({0.4f, 0.4f});
+            math_classroom_special_tile_1.setTranslation({0.25f, -0.4f});
+
+            math_classroom_special_tile_2.setScaling({0.4f, 0.4f});
+            math_classroom_special_tile_2.setTranslation({1.25f, -0.4f});
+
+            math_classroom_special_tile_3.setScaling({0.4f, 0.4f});
+            math_classroom_special_tile_3.setTranslation({2.25f, -0.4f});
         }
 
         {
@@ -390,6 +427,10 @@ struct stage_selection::impl
     objects::sdf_image_tile nullifier_room_special_tile_2;
 
     selection_button math_classroom_button;
+    objects::adder_tile math_classroom_special_tile_0;
+    objects::adder_tile math_classroom_special_tile_1;
+    objects::adder_tile math_classroom_special_tile_2;
+    objects::adder_tile math_classroom_special_tile_3;
 
     selection_button triplet_pines_mall_button;
     objects::sdf_image triplet_pines_mall_tile_triplet;
