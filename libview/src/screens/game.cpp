@@ -387,6 +387,15 @@ void game::merge_tiles
     pimpl_->tile_grid.merge_tiles(merges, granite_erosions);
 }
 
+void game::change_tiles_value
+(
+    const libutil::matrix_coordinate& nullified_tile_coordinate,
+    const data_types::tile_value_change_list& changes
+)
+{
+    pimpl_->tile_grid.change_tiles_value(nullified_tile_coordinate, changes);
+}
+
 void game::mark_tiles_for_nullification(const libutil::matrix_coordinate_list& tile_coordinates)
 {
     pimpl_->tile_grid.mark_tiles_for_nullification(tile_coordinates);

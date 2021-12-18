@@ -509,6 +509,81 @@ void tile_grid::merge_tiles
     animator_.push(animation::tracks::closure{[this]{next_input_.resume();}});
 }
 
+void tile_grid::change_tiles_value
+(
+    const libutil::matrix_coordinate& nullified_tile_coordinate,
+    const data_types::tile_value_change_list& changes
+)
+{
+    constexpr auto track_duration_s = 0.4f;
+
+    auto anim = animation::animation{};
+
+    //Make nullified tile disappear
+    {
+        auto& ptile = at(board_tiles_, nullified_tile_coordinate);
+        if(ptile)
+        {
+            anim.add
+            (
+                animation::tracks::alpha_transition
+                {
+                    .pobj = ptile,
+                    .finish_alpha = 0,
+                    .duration_s = track_duration_s
+                }
+            );
+            ptile = nullptr;
+        }
+    }
+
+    //Make changed tiles disappear then reappear with new value
+    for(const auto& change: changes)
+    {
+        auto& ptile = at(board_tiles_, change.coordinate);
+
+        //Disappear
+        if(ptile)
+        {
+            anim.add
+            (
+                animation::tracks::alpha_transition
+                {
+                    .pobj = ptile,
+                    .finish_alpha = 0,
+                    .duration_s = track_duration_s
+                }
+            );
+            ptile = nullptr;
+        }
+
+        //Reappear
+        {
+            const auto dst_position = tile_coordinate_to_position(change.coordinate);
+            auto pnew_tile = make_tile(data_types::tiles::number{change.new_value}, dst_position);
+            pnew_tile->set_alpha(0);
+            pnew_tile->setScaling({tile_scaling_factor, tile_scaling_factor});
+            at(board_tiles_, change.coordinate) = pnew_tile;
+
+            anim.add
+            (
+                animation::tracks::alpha_transition
+                {
+                    .pobj = pnew_tile,
+                    .finish_alpha = 1,
+                    .duration_s = track_duration_s
+                }
+            );
+        }
+    }
+
+    animator_.push(animation::tracks::closure{[this]{next_input_.suspend();}});
+    animator_.push(animation::tracks::closure{[this]{input_.suspend();}});
+    animator_.push(std::move(anim));
+    animator_.push(animation::tracks::closure{[this]{input_.resume();}});
+    animator_.push(animation::tracks::closure{[this]{next_input_.resume();}});
+}
+
 void tile_grid::mark_tiles_for_nullification(const libutil::matrix_coordinate_list& tile_coordinates)
 {
     auto anim = animation::animation{};

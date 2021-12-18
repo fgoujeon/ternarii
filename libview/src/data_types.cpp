@@ -35,6 +35,8 @@ std::string_view get_pretty_name(const stage s)
             return "TRIPLET PINES MALL";
         case stage::granite_cave:
             return "GRANITE CAVE";
+        case stage::math_classroom:
+            return "MATH CLASSROOM";
     }
     return "";
 }
@@ -51,6 +53,8 @@ std::optional<std::filesystem::path> get_image(const stage s)
             return libres::images::background_triplet_pines_mall;
         case stage::granite_cave:
             return libres::images::background_granite_cave;
+        case stage::math_classroom:
+            return libres::images::background_math_classroom;
     }
     return std::nullopt;
 }

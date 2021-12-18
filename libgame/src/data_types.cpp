@@ -57,6 +57,15 @@ namespace tiles
         l << "}";
         return l;
     }
+
+    std::ostream& operator<<(std::ostream& l, const adder& r)
+    {
+        l << "adder";
+        l << "{";
+        l << "value: " << r.value;
+        l << "}";
+        return l;
+    }
 }
 
 
@@ -206,6 +215,18 @@ std::ostream& operator<<(std::ostream& l, const tile_merge& r)
     l << "src_tile_coordinates: " << libutil::streamable{r.src_tile_coordinates} << ", ";
     l << "dst_tile_coordinate: " << libutil::streamable{r.dst_tile_coordinate} << ", ";
     l << "dst_tile_value: " << r.dst_tile_value;
+    l << "}";
+    return l;
+}
+
+
+
+std::ostream& operator<<(std::ostream& l, const tile_value_change& r)
+{
+    l << "tile_value_change";
+    l << "{";
+    l << "coordinate: " << libutil::streamable{r.coordinate} << ", ";
+    l << "new_value: " << r.new_value;
     l << "}";
     return l;
 }

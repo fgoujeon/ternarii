@@ -18,6 +18,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 #include <libview/screens/stage_selection.hpp>
+#include "../objects/adder_tile.hpp"
 #include "../objects/blank_button.hpp"
 #include "../objects/label.hpp"
 #include "../objects/sdf_image_tile.hpp"
@@ -178,19 +179,61 @@ struct stage_selection::impl
         (
             nullifier_room_button,
             feature_groups.drawables,
-            libres::images::row_nullifier
+            {
+                libres::images::special_tile_symbol_null,
+                libres::images::special_tile_modifier_row
+            }
         ),
         nullifier_room_special_tile_1
         (
             nullifier_room_button,
             feature_groups.drawables,
-            libres::images::column_nullifier
+            {
+                libres::images::special_tile_symbol_null,
+                libres::images::special_tile_modifier_column
+            }
         ),
         nullifier_room_special_tile_2
         (
             nullifier_room_button,
             feature_groups.drawables,
-            libres::images::number_nullifier
+            {
+                libres::images::special_tile_symbol_null,
+                libres::images::special_tile_modifier_star
+            }
+        ),
+
+        //Math classroom
+        math_classroom_button
+        (
+            self,
+            feature_groups,
+            data_types::stage::math_classroom,
+            callbacks
+        ),
+        math_classroom_special_tile_0
+        (
+            math_classroom_button,
+            feature_groups.drawables,
+            2
+        ),
+        math_classroom_special_tile_1
+        (
+            math_classroom_button,
+            feature_groups.drawables,
+            1
+        ),
+        math_classroom_special_tile_2
+        (
+            math_classroom_button,
+            feature_groups.drawables,
+            -1
+        ),
+        math_classroom_special_tile_3
+        (
+            math_classroom_button,
+            feature_groups.drawables,
+            -2
         ),
 
         //Triplet pines mall
@@ -215,19 +258,28 @@ struct stage_selection::impl
         (
             triplet_pines_mall_button,
             feature_groups.drawables,
-            libres::images::row_nullifier
+            {
+                libres::images::special_tile_symbol_null,
+                libres::images::special_tile_modifier_row
+            }
         ),
         triplet_pines_mall_special_tile_1
         (
             triplet_pines_mall_button,
             feature_groups.drawables,
-            libres::images::column_nullifier
+            {
+                libres::images::special_tile_symbol_null,
+                libres::images::special_tile_modifier_column
+            }
         ),
         triplet_pines_mall_special_tile_2
         (
             triplet_pines_mall_button,
             feature_groups.drawables,
-            libres::images::number_nullifier
+            {
+                libres::images::special_tile_symbol_null,
+                libres::images::special_tile_modifier_star
+            }
         ),
 
         //Granite cave
@@ -252,19 +304,28 @@ struct stage_selection::impl
         (
             granite_cave_button,
             feature_groups.drawables,
-            libres::images::row_nullifier
+            {
+                libres::images::special_tile_symbol_null,
+                libres::images::special_tile_modifier_row
+            }
         ),
         granite_cave_special_tile_1
         (
             granite_cave_button,
             feature_groups.drawables,
-            libres::images::column_nullifier
+            {
+                libres::images::special_tile_symbol_null,
+                libres::images::special_tile_modifier_column
+            }
         ),
         granite_cave_special_tile_2
         (
             granite_cave_button,
             feature_groups.drawables,
-            libres::images::number_nullifier
+            {
+                libres::images::special_tile_symbol_null,
+                libres::images::special_tile_modifier_star
+            }
         ),
 
         back_button
@@ -283,13 +344,13 @@ struct stage_selection::impl
         title_label.setTranslation({0.0f, 7.0f});
 
         {
-            purity_chapel_button.setTranslation({0.0f, 4.5f});
+            purity_chapel_button.setTranslation({0.0f, 5.0f});
 
             purity_chapel_description_label.setTranslation({0.75f, -0.4f});
         }
 
         {
-            nullifier_room_button.setTranslation({0.0f, 1.5f});
+            nullifier_room_button.setTranslation({0.0f, 2.5f});
 
             nullifier_room_special_tile_0.setScaling({0.4f, 0.4f});
             nullifier_room_special_tile_0.setTranslation({-0.25f, -0.4f});
@@ -302,7 +363,23 @@ struct stage_selection::impl
         }
 
         {
-            triplet_pines_mall_button.setTranslation({0.0f, -1.5f});
+            math_classroom_button.setTranslation({0.0f, 0.0f});
+
+            math_classroom_special_tile_0.setScaling({0.4f, 0.4f});
+            math_classroom_special_tile_0.setTranslation({-0.75f, -0.4f});
+
+            math_classroom_special_tile_1.setScaling({0.4f, 0.4f});
+            math_classroom_special_tile_1.setTranslation({0.25f, -0.4f});
+
+            math_classroom_special_tile_2.setScaling({0.4f, 0.4f});
+            math_classroom_special_tile_2.setTranslation({1.25f, -0.4f});
+
+            math_classroom_special_tile_3.setScaling({0.4f, 0.4f});
+            math_classroom_special_tile_3.setTranslation({2.25f, -0.4f});
+        }
+
+        {
+            triplet_pines_mall_button.setTranslation({0.0f, -2.5f});
 
             triplet_pines_mall_tile_triplet.setScaling({0.4f, 0.4f});
             triplet_pines_mall_tile_triplet.setTranslation({-0.75f, -0.4f});
@@ -318,7 +395,7 @@ struct stage_selection::impl
         }
 
         {
-            granite_cave_button.setTranslation({0.0f, -4.5f});
+            granite_cave_button.setTranslation({0.0f, -5.0f});
 
             granite_cave_granite.setScaling({0.4f, 0.4f});
             granite_cave_granite.setTranslation({-0.75f, -0.4f});
@@ -348,6 +425,12 @@ struct stage_selection::impl
     objects::sdf_image_tile nullifier_room_special_tile_0;
     objects::sdf_image_tile nullifier_room_special_tile_1;
     objects::sdf_image_tile nullifier_room_special_tile_2;
+
+    selection_button math_classroom_button;
+    objects::adder_tile math_classroom_special_tile_0;
+    objects::adder_tile math_classroom_special_tile_1;
+    objects::adder_tile math_classroom_special_tile_2;
+    objects::adder_tile math_classroom_special_tile_3;
 
     selection_button triplet_pines_mall_button;
     objects::sdf_image triplet_pines_mall_tile_triplet;

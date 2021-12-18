@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#include "sdf_image_tile.hpp"
+#include "adder_tile.hpp"
 #include "../text.hpp"
 #include "../colors.hpp"
 #include <libres.hpp>
@@ -27,13 +27,26 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libview::objects
 {
 
-sdf_image_tile::sdf_image_tile
+namespace
+{
+    std::string get_label_text(const int value)
+    {
+        if(value >= 0)
+        {
+            return "+" + std::to_string(value);
+        }
+
+        return std::to_string(value);
+    }
+}
+
+adder_tile::adder_tile
 (
     object2d& parent,
     features::drawable_group& drawables,
-    const std::vector<std::filesystem::path>& image_paths
+    const int value
 ):
-    object2d{&parent},
+    object2d(&parent),
     square_
     (
         *this,
@@ -41,29 +54,36 @@ sdf_image_tile::sdf_image_tile
         rounded_rectangle::style
         {
             .color = colors::light_gray,
-            .dimension = {1.0f, 1.0f},
             .outline_color = colors::dark_gray,
             .outline_thickness = 0.04f,
-            .radius = 0.5f
+            .radius = 0.6f
         }
+    ),
+    star_
+    (
+        *this,
+        drawables,
+        libres::images::special_tile_modifier_star,
+        sdf_image::style
+        {
+            .color = colors::black,
+            .outline_color = colors::black,
+            .outline_range = {0.5f, 0.5f}
+        }
+    ),
+    label_
+    (
+        *this,
+        drawables,
+        label::style
+        {
+            .alignment = Magnum::Text::Alignment::MiddleCenter,
+            .color = colors::black,
+            .font_size = 1.0f
+        },
+        get_label_text(value).c_str()
     )
 {
-    for(const auto& image_path: image_paths)
-    {
-        auto pimage = std::make_unique<sdf_image>
-        (
-            *this,
-            drawables,
-            image_path,
-            sdf_image::style
-            {
-                .color = colors::black,
-                .outline_color = colors::black,
-                .outline_range = {0.5f, 0.5f}
-            }
-        );
-        images_.push_back(std::move(pimage));
-    }
 }
 
 } //namespace

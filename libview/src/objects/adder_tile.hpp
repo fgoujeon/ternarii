@@ -17,34 +17,33 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef LIBVIEW_OBJECTS_SDF_IMAGE_TILE_HPP
-#define LIBVIEW_OBJECTS_SDF_IMAGE_TILE_HPP
+#ifndef LIBVIEW_OBJECTS_ADDER_TILE_HPP
+#define LIBVIEW_OBJECTS_ADDER_TILE_HPP
 
-#include "sdf_image.hpp"
 #include "rounded_rectangle.hpp"
+#include "label.hpp"
+#include "sdf_image.hpp"
 #include "../common.hpp"
 #include <Magnum/Math/Color.h>
 #include <Magnum/Magnum.h>
-#include <filesystem>
-#include <vector>
-#include <memory>
 
 namespace libview::objects
 {
 
-class sdf_image_tile: public object2d
+class adder_tile: public object2d
 {
     public:
-        sdf_image_tile
+        adder_tile
         (
             object2d& parent,
             features::drawable_group& drawables,
-            const std::vector<std::filesystem::path>& image_paths
+            const int value
         );
 
     private:
         rounded_rectangle square_;
-        std::vector<std::unique_ptr<sdf_image>> images_;
+        sdf_image star_;
+        label label_;
 };
 
 } //namespace

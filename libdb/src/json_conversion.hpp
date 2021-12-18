@@ -176,6 +176,16 @@ namespace libgame::data_types
         {
             to = from.thickness;
         }
+
+        void from_json(const nlohmann::json& from, adder& to)
+        {
+            to.value = from.get<int>();
+        }
+
+        void to_json(nlohmann::json& to, const adder& from)
+        {
+            to = from.value;
+        }
     }
 
     void from_json(const nlohmann::json& from, stage& to)
