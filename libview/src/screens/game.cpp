@@ -64,6 +64,7 @@ namespace
         );
 
         pimage->setScaling({3.0f, 3.0f});
+        pimage->setTranslation({0.0f, -1.0f});
         pimage->set_alpha(0.1f);
 
         return pimage;
