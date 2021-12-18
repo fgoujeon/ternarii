@@ -27,7 +27,12 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libview::objects
 {
 
-sdf_image_tile::sdf_image_tile(object2d& parent, features::drawable_group& drawables, const std::filesystem::path& image_path):
+sdf_image_tile::sdf_image_tile
+(
+    object2d& parent,
+    features::drawable_group& drawables,
+    const std::vector<std::filesystem::path>& image_paths
+):
     object2d{&parent},
     square_
     (
@@ -41,20 +46,24 @@ sdf_image_tile::sdf_image_tile(object2d& parent, features::drawable_group& drawa
             .outline_thickness = 0.04f,
             .radius = 0.5f
         }
-    ),
-    image_
-    (
-        *this,
-        drawables,
-        image_path,
-        sdf_image::style
-        {
-            .color = colors::black,
-            .outline_color = colors::black,
-            .outline_range = {0.5f, 0.5f}
-        }
     )
 {
+    for(const auto& image_path: image_paths)
+    {
+        auto pimage = std::make_unique<sdf_image>
+        (
+            static_cast<object2d&>(*this),
+            drawables,
+            image_path,
+            sdf_image::style
+            {
+                .color = colors::black,
+                .outline_color = colors::black,
+                .outline_range = {0.5f, 0.5f}
+            }
+        );
+        images_.push_back(std::move(pimage));
+    }
 }
 
 } //namespace

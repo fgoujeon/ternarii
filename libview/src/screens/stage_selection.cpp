@@ -178,19 +178,19 @@ struct stage_selection::impl
         (
             nullifier_room_button,
             feature_groups.drawables,
-            libres::images::row_nullifier
+            {libres::images::row_nullifier}
         ),
         nullifier_room_special_tile_1
         (
             nullifier_room_button,
             feature_groups.drawables,
-            libres::images::column_nullifier
+            {libres::images::column_nullifier}
         ),
         nullifier_room_special_tile_2
         (
             nullifier_room_button,
             feature_groups.drawables,
-            libres::images::number_nullifier
+            {libres::images::number_nullifier}
         ),
 
         //Math classroom
@@ -224,19 +224,19 @@ struct stage_selection::impl
         (
             triplet_pines_mall_button,
             feature_groups.drawables,
-            libres::images::row_nullifier
+            {libres::images::row_nullifier}
         ),
         triplet_pines_mall_special_tile_1
         (
             triplet_pines_mall_button,
             feature_groups.drawables,
-            libres::images::column_nullifier
+            {libres::images::column_nullifier}
         ),
         triplet_pines_mall_special_tile_2
         (
             triplet_pines_mall_button,
             feature_groups.drawables,
-            libres::images::number_nullifier
+            {libres::images::number_nullifier}
         ),
 
         //Granite cave
@@ -261,19 +261,19 @@ struct stage_selection::impl
         (
             granite_cave_button,
             feature_groups.drawables,
-            libres::images::row_nullifier
+            {libres::images::row_nullifier}
         ),
         granite_cave_special_tile_1
         (
             granite_cave_button,
             feature_groups.drawables,
-            libres::images::column_nullifier
+            {libres::images::column_nullifier}
         ),
         granite_cave_special_tile_2
         (
             granite_cave_button,
             feature_groups.drawables,
-            libres::images::number_nullifier
+            {libres::images::number_nullifier}
         ),
 
         back_button

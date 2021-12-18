@@ -25,6 +25,9 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include "../common.hpp"
 #include <Magnum/Math/Color.h>
 #include <Magnum/Magnum.h>
+#include <filesystem>
+#include <vector>
+#include <memory>
 
 namespace libview::objects
 {
@@ -32,11 +35,16 @@ namespace libview::objects
 class sdf_image_tile: public object2d
 {
     public:
-        sdf_image_tile(object2d& parent, features::drawable_group& drawables, const std::filesystem::path& image_path);
+        sdf_image_tile
+        (
+            object2d& parent,
+            features::drawable_group& drawables,
+            const std::vector<std::filesystem::path>& image_paths
+        );
 
     private:
         rounded_rectangle square_;
-        sdf_image image_;
+        std::vector<std::unique_ptr<sdf_image>> images_;
 };
 
 } //namespace

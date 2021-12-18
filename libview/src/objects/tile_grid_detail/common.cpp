@@ -37,6 +37,7 @@ std::shared_ptr<object2d> make_tile_object
 )
 {
     using result_t = std::shared_ptr<object2d>;
+    using path_list = std::vector<std::filesystem::path>;
 
     return std::visit
     (
@@ -48,15 +49,15 @@ std::shared_ptr<object2d> make_tile_object
             },
             [&](const data_types::tiles::column_nullifier&) -> result_t
             {
-                return std::make_shared<sdf_image_tile>(parent, drawables, libres::images::column_nullifier);
+                return std::make_shared<sdf_image_tile>(parent, drawables, path_list{libres::images::column_nullifier});
             },
             [&](const data_types::tiles::row_nullifier&) -> result_t
             {
-                return std::make_shared<sdf_image_tile>(parent, drawables, libres::images::row_nullifier);
+                return std::make_shared<sdf_image_tile>(parent, drawables, path_list{libres::images::row_nullifier});
             },
             [&](const data_types::tiles::number_nullifier&) -> result_t
             {
-                return std::make_shared<sdf_image_tile>(parent, drawables, libres::images::number_nullifier);
+                return std::make_shared<sdf_image_tile>(parent, drawables, path_list{libres::images::number_nullifier});
             },
             [&](const data_types::tiles::granite& tile) -> result_t
             {
