@@ -52,7 +52,7 @@ sdf_image_tile::sdf_image_tile
     {
         auto pimage = std::make_unique<sdf_image>
         (
-            static_cast<object2d&>(*this),
+            *this,
             drawables,
             image_path,
             sdf_image::style

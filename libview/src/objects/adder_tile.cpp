@@ -54,7 +54,21 @@ adder_tile::adder_tile
         rounded_rectangle::style
         {
             .color = colors::light_gray,
+            .outline_color = colors::dark_gray,
+            .outline_thickness = 0.04f,
             .radius = 0.6f
+        }
+    ),
+    star_
+    (
+        *this,
+        drawables,
+        libres::images::special_tile_modifier_star,
+        sdf_image::style
+        {
+            .color = colors::black,
+            .outline_color = colors::black,
+            .outline_range = {0.5f, 0.5f}
         }
     ),
     label_
@@ -65,7 +79,7 @@ adder_tile::adder_tile
         {
             .alignment = Magnum::Text::Alignment::MiddleCenter,
             .color = colors::black,
-            .font_size = 1.15f
+            .font_size = 1.0f
         },
         get_label_text(value).c_str()
     )

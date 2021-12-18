@@ -22,6 +22,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "rounded_rectangle.hpp"
 #include "label.hpp"
+#include "sdf_image.hpp"
 #include "../common.hpp"
 #include <Magnum/Math/Color.h>
 #include <Magnum/Magnum.h>
@@ -41,6 +42,7 @@ class adder_tile: public object2d
 
     private:
         rounded_rectangle square_;
+        sdf_image star_;
         label label_;
 };
 
