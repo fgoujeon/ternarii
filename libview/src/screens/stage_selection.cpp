@@ -178,19 +178,28 @@ struct stage_selection::impl
         (
             nullifier_room_button,
             feature_groups.drawables,
-            {libres::images::row_nullifier}
+            {
+                libres::images::special_tile_symbol_null,
+                libres::images::special_tile_modifier_row
+            }
         ),
         nullifier_room_special_tile_1
         (
             nullifier_room_button,
             feature_groups.drawables,
-            {libres::images::column_nullifier}
+            {
+                libres::images::special_tile_symbol_null,
+                libres::images::special_tile_modifier_column
+            }
         ),
         nullifier_room_special_tile_2
         (
             nullifier_room_button,
             feature_groups.drawables,
-            {libres::images::number_nullifier}
+            {
+                libres::images::special_tile_symbol_null,
+                libres::images::special_tile_modifier_star
+            }
         ),
 
         //Math classroom
@@ -224,19 +233,28 @@ struct stage_selection::impl
         (
             triplet_pines_mall_button,
             feature_groups.drawables,
-            {libres::images::row_nullifier}
+            {
+                libres::images::special_tile_symbol_null,
+                libres::images::special_tile_modifier_row
+            }
         ),
         triplet_pines_mall_special_tile_1
         (
             triplet_pines_mall_button,
             feature_groups.drawables,
-            {libres::images::column_nullifier}
+            {
+                libres::images::special_tile_symbol_null,
+                libres::images::special_tile_modifier_column
+            }
         ),
         triplet_pines_mall_special_tile_2
         (
             triplet_pines_mall_button,
             feature_groups.drawables,
-            {libres::images::number_nullifier}
+            {
+                libres::images::special_tile_symbol_null,
+                libres::images::special_tile_modifier_star
+            }
         ),
 
         //Granite cave
@@ -261,19 +279,28 @@ struct stage_selection::impl
         (
             granite_cave_button,
             feature_groups.drawables,
-            {libres::images::row_nullifier}
+            {
+                libres::images::special_tile_symbol_null,
+                libres::images::special_tile_modifier_row
+            }
         ),
         granite_cave_special_tile_1
         (
             granite_cave_button,
             feature_groups.drawables,
-            {libres::images::column_nullifier}
+            {
+                libres::images::special_tile_symbol_null,
+                libres::images::special_tile_modifier_column
+            }
         ),
         granite_cave_special_tile_2
         (
             granite_cave_button,
             feature_groups.drawables,
-            {libres::images::number_nullifier}
+            {
+                libres::images::special_tile_symbol_null,
+                libres::images::special_tile_modifier_star
+            }
         ),
 
         back_button

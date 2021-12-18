@@ -45,27 +45,70 @@ std::shared_ptr<object2d> make_tile_object
         {
             [&](const data_types::tiles::number& tile) -> result_t
             {
-                return std::make_shared<number_tile>(parent, drawables, animables, tile.value);
+                return std::make_shared<number_tile>
+                (
+                    parent,
+                    drawables,
+                    animables,
+                    tile.value
+                );
             },
             [&](const data_types::tiles::column_nullifier&) -> result_t
             {
-                return std::make_shared<sdf_image_tile>(parent, drawables, path_list{libres::images::column_nullifier});
+                return std::make_shared<sdf_image_tile>
+                (
+                    parent,
+                    drawables,
+                    path_list
+                    {
+                        libres::images::special_tile_symbol_null,
+                        libres::images::special_tile_modifier_column
+                    }
+                );
             },
             [&](const data_types::tiles::row_nullifier&) -> result_t
             {
-                return std::make_shared<sdf_image_tile>(parent, drawables, path_list{libres::images::row_nullifier});
+                return std::make_shared<sdf_image_tile>
+                (
+                    parent,
+                    drawables,
+                    path_list
+                    {
+                        libres::images::special_tile_symbol_null,
+                        libres::images::special_tile_modifier_row
+                    }
+                );
             },
             [&](const data_types::tiles::number_nullifier&) -> result_t
             {
-                return std::make_shared<sdf_image_tile>(parent, drawables, path_list{libres::images::number_nullifier});
+                return std::make_shared<sdf_image_tile>
+                (
+                    parent,
+                    drawables,
+                    path_list
+                    {
+                        libres::images::special_tile_symbol_null,
+                        libres::images::special_tile_modifier_star
+                    }
+                );
             },
             [&](const data_types::tiles::granite& tile) -> result_t
             {
-                return std::make_shared<granite_tile>(parent, drawables, tile.thickness);
+                return std::make_shared<granite_tile>
+                (
+                    parent,
+                    drawables,
+                    tile.thickness
+                );
             },
             [&](const data_types::tiles::adder& tile) -> result_t
             {
-                return std::make_shared<adder_tile>(parent, drawables, tile.value);
+                return std::make_shared<adder_tile>
+                (
+                    parent,
+                    drawables,
+                    tile.value
+                );
             }
         },
         tile

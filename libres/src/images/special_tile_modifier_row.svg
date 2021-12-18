@@ -1,35 +1,35 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   sodipodi:docname="row_nullifier.svg"
-   inkscape:version="1.0 (4035a4fb49, 2020-05-01)"
+   sodipodi:docname="special_tile_modifier_row.svg"
+   inkscape:version="1.1.1 (3bf5ae0d25, 2021-09-20, custom)"
    id="svg8"
    version="1.1"
    viewBox="0 0 26.458333 26.458334"
    height="100"
-   width="100">
+   width="100"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
   <defs
      id="defs2" />
   <sodipodi:namedview
      inkscape:pagecheckerboard="false"
      units="px"
      inkscape:window-maximized="1"
-     inkscape:window-y="27"
-     inkscape:window-x="53"
-     inkscape:window-height="986"
-     inkscape:window-width="1627"
+     inkscape:window-y="32"
+     inkscape:window-x="60"
+     inkscape:window-height="981"
+     inkscape:window-width="1620"
      showgrid="false"
      inkscape:document-rotation="0"
      inkscape:current-layer="layer1"
      inkscape:document-units="mm"
-     inkscape:cy="65.252824"
-     inkscape:cx="20.18909"
+     inkscape:cy="65.281108"
+     inkscape:cx="20.203051"
      inkscape:zoom="3.959798"
      inkscape:pageshadow="2"
      inkscape:pageopacity="1"
@@ -45,7 +45,6 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -59,16 +58,6 @@
        d="m 4.7065991,10.131609 v 1.225653 l -1.669163,1.871904 1.669163,1.862929 v 1.234629 l -2.739385,-3.097558 z"
        sodipodi:nodetypes="ccccccc"
        inkscape:transform-center-x="1.0137025" />
-    <circle
-       style="fill:none;fill-rule:evenodd;stroke:#ffffff;stroke-width:1.05833;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="path867"
-       cx="13.229167"
-       cy="13.229167"
-       r="4.8951421" />
-    <path
-       style="fill:none;fill-rule:evenodd;stroke:#ffffff;stroke-width:0.59598;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       d="M 6.9824067,19.475926 19.475927,6.9824074"
-       id="path869" />
     <path
        inkscape:transform-center-x="-1.0137025"
        sodipodi:nodetypes="ccccccc"
