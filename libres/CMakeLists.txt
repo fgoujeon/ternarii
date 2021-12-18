@@ -95,6 +95,7 @@ endfunction()
 add_ttf_to_sdf_command(DejaVuSans)
 
 add_svg_to_sdf_command(background_granite_cave       64)
+add_svg_to_sdf_command(background_math_classroom     64)
 add_svg_to_sdf_command(background_nullifier_room     64)
 add_svg_to_sdf_command(background_purity_chapel      64)
 add_svg_to_sdf_command(background_triplet_pines_mall 128)
@@ -127,6 +128,7 @@ add_library(
     "${CMAKE_CURRENT_BINARY_DIR}/out/fonts/DejaVuSans.conf"
     "${CMAKE_CURRENT_BINARY_DIR}/out/fonts/DejaVuSans.tga"
     "${CMAKE_CURRENT_BINARY_DIR}/out/images/background_granite_cave.tga"
+    "${CMAKE_CURRENT_BINARY_DIR}/out/images/background_math_classroom.tga"
     "${CMAKE_CURRENT_BINARY_DIR}/out/images/background_nullifier_room.tga"
     "${CMAKE_CURRENT_BINARY_DIR}/out/images/background_purity_chapel.tga"
     "${CMAKE_CURRENT_BINARY_DIR}/out/images/background_triplet_pines_mall.tga"

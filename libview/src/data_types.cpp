@@ -54,7 +54,7 @@ std::optional<std::filesystem::path> get_image(const stage s)
         case stage::granite_cave:
             return libres::images::background_granite_cave;
         case stage::math_classroom:
-            return std::nullopt;
+            return libres::images::background_math_classroom;
     }
     return std::nullopt;
 }
