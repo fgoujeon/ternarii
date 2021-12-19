@@ -39,10 +39,9 @@ struct game
 
         const data_types::stage_state& get_state() const;
 
-        void get_targeted_tiles
+        libutil::matrix_coordinate_list get_targeted_tiles
         (
-            const data_types::input_layout& input_layout,
-            libutil::matrix_coordinate_list& coords
+            const data_types::input_layout& input_layout
         ) const;
 
         bool is_over() const;

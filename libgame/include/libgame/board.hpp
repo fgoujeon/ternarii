@@ -55,9 +55,7 @@ struct apply_gravity_on_input_result
 };
 
 /*
-Return:
-- board tile matrix after input tiles are dropped
-- list of tile drops
+Drop input tiles on board
 */
 apply_gravity_on_input_result apply_gravity_on_input
 (
@@ -74,20 +72,25 @@ struct apply_gravity_result
     data_types::board_tile_drop_list drops;
 };
 
+/*
+Apply gravity on board tiles
+*/
 apply_gravity_result apply_gravity(const board& brd);
 
 
 
+struct apply_nullifiers_result
+{
+    board brd;
+    libutil::matrix_coordinate_list nullified_tiles_coords;
+};
+
 /*
-Return:
-- board tile matrix after application of nullifiers
-- coordinates of nullified tiles
+Apply nullifier tiles on board tiles
 */
-board apply_nullifiers
-(
-    board brd,
-    libutil::matrix_coordinate_list& nullified_tiles_coords //output
-);
+apply_nullifiers_result apply_nullifiers(const board& brd);
+
+
 
 board apply_adders
 (

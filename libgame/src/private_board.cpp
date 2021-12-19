@@ -36,11 +36,10 @@ private_board::private_board(board& brd):
 {
 }
 
-void private_board::get_targeted_tiles
+libutil::matrix_coordinate_list private_board::get_targeted_tiles
 (
     const data_types::input_tile_matrix& input_tiles,
-    const data_types::input_layout& input_layout,
-    libutil::matrix_coordinate_list& coords
+    const data_types::input_layout& input_layout
 ) const
 {
     const auto result = apply_gravity_on_input
@@ -49,7 +48,8 @@ void private_board::get_targeted_tiles
         input_tiles,
         input_layout
     );
-    apply_nullifiers(result.brd, coords);
+    auto result2 = apply_nullifiers(result.brd);
+    return result2.nullified_tiles_coords;
 }
 
 void private_board::drop_input_tiles
@@ -78,12 +78,16 @@ void private_board::drop_input_tiles
 
         //Apply nullifier tiles
         {
-            auto nullified_tiles = libutil::matrix_coordinate_list{};
-            board_ = apply_nullifiers(board_, nullified_tiles);
-            if(!nullified_tiles.empty())
-            {
-                events.push_back(events::tile_nullification{std::move(nullified_tiles)});
-            }
+            auto result = apply_nullifiers(board_);
+            board_ = std::move(result.brd);
+            if(!result.nullified_tiles_coords.empty())
+                events.push_back
+                (
+                    events::tile_nullification
+                    {
+                        std::move(result.nullified_tiles_coords)
+                    }
+                );
         }
 
         //Apply adders

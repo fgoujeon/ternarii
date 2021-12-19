@@ -196,12 +196,11 @@ apply_gravity_result apply_gravity(const board& brd)
     return result;
 }
 
-board apply_nullifiers
-(
-    board brd,
-    libutil::matrix_coordinate_list& nullified_tiles_coords //output
-)
+apply_nullifiers_result apply_nullifiers(const board& brd)
 {
+    auto result = apply_nullifiers_result{};
+    result.brd = brd;
+
     libutil::for_each_colrow
     (
         [&](auto& opt_tile, const int col, const int row)
@@ -223,16 +222,16 @@ board apply_nullifiers
                     [&](const data_types::tiles::column_nullifier&)
                     {
                         //Remove all tiles from current column
-                        for(int nullified_row = 0; nullified_row < brd.tiles.rows; ++nullified_row)
+                        for(int nullified_row = 0; nullified_row < result.brd.tiles.rows; ++nullified_row)
                         {
-                            auto& opt_tile = at(brd.tiles, col, nullified_row);
+                            auto& opt_tile = at(result.brd.tiles, col, nullified_row);
 
                             if(!opt_tile)
                             {
                                 continue;
                             }
 
-                            nullified_tiles_coords.push_back({col, nullified_row});
+                            result.nullified_tiles_coords.push_back({col, nullified_row});
 
                             opt_tile = std::nullopt;
                         }
@@ -241,16 +240,16 @@ board apply_nullifiers
                     [&](const data_types::tiles::row_nullifier&)
                     {
                         //Remove all tiles from current row
-                        for(int nullified_col = 0; nullified_col < brd.tiles.cols; ++nullified_col)
+                        for(int nullified_col = 0; nullified_col < result.brd.tiles.cols; ++nullified_col)
                         {
-                            auto& opt_tile = at(brd.tiles, nullified_col, row);
+                            auto& opt_tile = at(result.brd.tiles, nullified_col, row);
 
                             if(!opt_tile)
                             {
                                 continue;
                             }
 
-                            nullified_tiles_coords.push_back({nullified_col, row});
+                            result.nullified_tiles_coords.push_back({nullified_col, row});
 
                             opt_tile = std::nullopt;
                         }
@@ -260,7 +259,7 @@ board apply_nullifiers
                     {
                         //Remove the nullifier tile itself
                         opt_tile = std::nullopt;
-                        nullified_tiles_coords.push_back({col, row});
+                        result.nullified_tiles_coords.push_back({col, row});
 
                         //Get the value of the number tile placed below the
                         //nullifier tile, if any
@@ -271,7 +270,7 @@ board apply_nullifiers
                                 return std::nullopt;
                             }
 
-                            const auto& opt_below_tile = at(brd.tiles, col, row - 1);
+                            const auto& opt_below_tile = at(result.brd.tiles, col, row - 1);
 
                             if(!opt_below_tile)
                             {
@@ -316,9 +315,9 @@ board apply_nullifiers
                                 }
 
                                 opt_tile = std::nullopt;
-                                nullified_tiles_coords.push_back({col, row});
+                                result.nullified_tiles_coords.push_back({col, row});
                             },
-                            brd.tiles
+                            result.brd.tiles
                         );
                     },
 
@@ -327,10 +326,10 @@ board apply_nullifiers
                 tile
             );
         },
-        brd.tiles
+        result.brd.tiles
     );
 
-    return brd;
+    return result;
 }
 
 board apply_adders

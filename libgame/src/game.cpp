@@ -81,13 +81,12 @@ const data_types::stage_state& game::get_state() const
     return pimpl_->state;
 }
 
-void game::get_targeted_tiles
+libutil::matrix_coordinate_list game::get_targeted_tiles
 (
-    const data_types::input_layout& input_layout,
-    libutil::matrix_coordinate_list& coords
+    const data_types::input_layout& input_layout
 ) const
 {
-    return pimpl_->board_.get_targeted_tiles(pimpl_->state.input_tiles, input_layout, coords);
+    return pimpl_->board_.get_targeted_tiles(pimpl_->state.input_tiles, input_layout);
 }
 
 bool game::is_over() const
