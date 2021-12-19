@@ -68,11 +68,15 @@ apply_gravity_on_input_result apply_gravity_on_input
 
 
 
-board apply_gravity
-(
-    board brd,
-    data_types::board_tile_drop_list& drops
-);
+struct apply_gravity_result
+{
+    board brd;
+    data_types::board_tile_drop_list drops;
+};
+
+apply_gravity_result apply_gravity(const board& brd);
+
+
 
 /*
 Return:

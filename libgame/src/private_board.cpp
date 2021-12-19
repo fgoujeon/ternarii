@@ -111,12 +111,10 @@ void private_board::drop_input_tiles
 
         //Apply gravity
         {
-            data_types::board_tile_drop_list drops;
-            board_ = apply_gravity(board_, drops);
-            if(!drops.empty())
-            {
-                events.push_back(events::board_tile_drop{drops});
-            }
+            auto result = apply_gravity(board_);
+            board_ = std::move(result.brd);
+            if(!result.drops.empty())
+                events.push_back(events::board_tile_drop{std::move(result.drops)});
         }
     } while(old_event_count != events.size());
 

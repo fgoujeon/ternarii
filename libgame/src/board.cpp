@@ -153,25 +153,24 @@ apply_gravity_on_input_result apply_gravity_on_input
     return result;
 }
 
-board apply_gravity
-(
-    board brd,
-    data_types::board_tile_drop_list& drops
-)
+apply_gravity_result apply_gravity(const board& brd)
 {
-    for(int col = 0; col < brd.tiles.cols; ++col)
+    auto result = apply_gravity_result{};
+    result.brd = brd;
+
+    for(int col = 0; col < result.brd.tiles.cols; ++col)
     {
         std::optional<int> opt_empty_cell_row;
-        for(int row = 0; row < brd.tiles.rows; ++row) //from bottom to top
+        for(int row = 0; row < result.brd.tiles.rows; ++row) //from bottom to top
         {
-            if(const auto& opt_tile = at(brd.tiles, col, row))
+            if(const auto& opt_tile = at(result.brd.tiles, col, row))
             {
                 if(opt_empty_cell_row) //if the tile is floating
                 {
-                    at(brd.tiles, col, *opt_empty_cell_row) = opt_tile;
-                    at(brd.tiles, col, row) = std::nullopt;
+                    at(result.brd.tiles, col, *opt_empty_cell_row) = opt_tile;
+                    at(result.brd.tiles, col, row) = std::nullopt;
 
-                    drops.push_back
+                    result.drops.push_back
                     (
                         data_types::board_tile_drop
                         {
@@ -194,7 +193,7 @@ board apply_gravity
         }
     }
 
-    return brd;
+    return result;
 }
 
 board apply_nullifiers
