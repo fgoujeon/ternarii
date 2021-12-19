@@ -17,8 +17,8 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef BOARD_HPP
-#define BOARD_HPP
+#ifndef PRIVATE_BOARD_HPP
+#define PRIVATE_BOARD_HPP
 
 #include <libgame/events.hpp>
 #include <libgame/data_types.hpp>
@@ -29,7 +29,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libgame
 {
 
-class board
+class private_board
 {
     public:
         static constexpr auto total_column_count      = constants::board_column_count;
@@ -39,7 +39,7 @@ class board
         static constexpr auto authorized_cell_count   = constants::board_authorized_cell_count;
 
     public:
-        board(data_types::board_tile_matrix& tiles);
+        private_board(data_types::board_tile_matrix& tiles);
 
         const data_types::board_tile_matrix& tile_array() const
         {

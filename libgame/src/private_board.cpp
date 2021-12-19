@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#include "board.hpp"
+#include "private_board.hpp"
 #include <libgame/data_types.hpp>
 #include <libutil/overload.hpp>
 #include <memory>
@@ -436,12 +436,12 @@ namespace
     }
 }
 
-board::board(data_types::board_tile_matrix& tiles):
+private_board::private_board(data_types::board_tile_matrix& tiles):
     tiles_(tiles)
 {
 }
 
-void board::get_targeted_tiles
+void private_board::get_targeted_tiles
 (
     const data_types::input_tile_matrix& input_tiles,
     const data_types::input_layout& input_layout,
@@ -452,7 +452,7 @@ void board::get_targeted_tiles
     apply_nullifiers(board_tiles, coords);
 }
 
-void board::drop_input_tiles
+void private_board::drop_input_tiles
 (
     const data_types::input_tile_matrix& input_tiles,
     const data_types::input_layout& input_layout,
@@ -515,7 +515,7 @@ void board::drop_input_tiles
     events.push_back(events::score_change{data_types::get_score(tiles_)});
 }
 
-data_types::board_tile_drop_list board::make_tiles_fall()
+data_types::board_tile_drop_list private_board::make_tiles_fall()
 {
     data_types::board_tile_drop_list drops;
 
@@ -557,7 +557,7 @@ data_types::board_tile_drop_list board::make_tiles_fall()
     return drops;
 }
 
-data_types::tile_merge_list board::merge_tiles()
+data_types::tile_merge_list private_board::merge_tiles()
 {
     data_types::tile_merge_list merges;
 
@@ -645,7 +645,7 @@ data_types::tile_merge_list board::merge_tiles()
     return merges;
 }
 
-void board::select_tiles
+void private_board::select_tiles
 (
     const int tile_value,
     const int col,

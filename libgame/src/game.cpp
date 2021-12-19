@@ -19,7 +19,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 
 #include <libgame/game.hpp>
 #include "input_generators.hpp"
-#include "board.hpp"
+#include "private_board.hpp"
 #include <algorithm>
 #include <random>
 #include <cmath>
@@ -61,7 +61,7 @@ struct game::impl
 
     abstract_input_generator& input_gen;
     data_types::stage_state state;
-    board board_{state.board_tiles};
+    private_board board_{state.board_tiles};
 };
 
 game::game(const data_types::stage stage):
