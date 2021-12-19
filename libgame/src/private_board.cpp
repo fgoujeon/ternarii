@@ -43,8 +43,13 @@ void private_board::get_targeted_tiles
     libutil::matrix_coordinate_list& coords
 ) const
 {
-    const auto board_tiles = apply_gravity(board_, input_tiles, input_layout, nullptr);
-    apply_nullifiers(board_tiles, coords);
+    const auto result = apply_gravity_on_input
+    (
+        board_,
+        input_tiles,
+        input_layout
+    );
+    apply_nullifiers(result.brd, coords);
 }
 
 void private_board::drop_input_tiles
@@ -56,9 +61,14 @@ void private_board::drop_input_tiles
 {
     //Apply gravity on input tiles
     {
-        auto drops = data_types::input_tile_drop_list{};
-        board_ = apply_gravity(board_, input_tiles, input_layout, &drops);
-        events.push_back(events::input_tile_drop{std::move(drops)});
+        auto result = apply_gravity_on_input
+        (
+            board_,
+            input_tiles,
+            input_layout
+        );
+        board_ = result.brd;
+        events.push_back(events::input_tile_drop{std::move(result.drops)});
     }
 
     auto old_event_count = 0;

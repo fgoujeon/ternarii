@@ -46,18 +46,27 @@ int get_highest_tile_value(const board& brd);
 
 int get_score(const board& brd);
 
+
+
+struct apply_gravity_on_input_result
+{
+    board brd;
+    data_types::input_tile_drop_list drops;
+};
+
 /*
 Return:
 - board tile matrix after input tiles are dropped
 - list of tile drops
 */
-board apply_gravity
+apply_gravity_on_input_result apply_gravity_on_input
 (
-    board brd,
+    const board& brd,
     const data_types::input_tile_matrix& input_tiles,
-    const data_types::input_layout& input_layout,
-    data_types::input_tile_drop_list* pdrops //output, optional
+    const data_types::input_layout& input_layout
 );
+
+
 
 board apply_gravity
 (

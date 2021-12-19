@@ -98,15 +98,15 @@ int get_score(const board& brd)
     return score;
 }
 
-board apply_gravity
+apply_gravity_on_input_result apply_gravity_on_input
 (
-    board brd,
+    const board& brd,
     const data_types::input_tile_matrix& input_tiles,
-    const data_types::input_layout& input_layout,
-    data_types::input_tile_drop_list* pdrops //output, optional
+    const data_types::input_layout& input_layout
 )
 {
-    auto drops = data_types::input_tile_drop_list{};
+    apply_gravity_on_input_result result;
+    result.brd = brd;
 
     //Make tiles fall from lowest to highest row of laid out input.
     for(auto input_row = 0; input_row < 2; ++input_row)
@@ -128,32 +128,29 @@ board apply_gravity
                     return;
                 }
 
-                const auto opt_dst_row = get_lowest_empty_cell(brd, coord.col);
+                const auto opt_dst_row = get_lowest_empty_cell(result.brd, coord.col);
 
                 if(!opt_dst_row)
                 {
                     return;
                 }
 
-                at(brd.tiles, coord.col, *opt_dst_row) = opt_tile;
+                at(result.brd.tiles, coord.col, *opt_dst_row) = opt_tile;
 
-                if(pdrops)
-                {
-                    pdrops->push_back
-                    (
-                        data_types::input_tile_drop
-                        {
-                            {col, row},
-                            {coord.col, *opt_dst_row}
-                        }
-                    );
-                }
+                result.drops.push_back
+                (
+                    data_types::input_tile_drop
+                    {
+                        {col, row},
+                        {coord.col, *opt_dst_row}
+                    }
+                );
             },
             input_tiles
         );
     }
 
-    return brd;
+    return result;
 }
 
 board apply_gravity
