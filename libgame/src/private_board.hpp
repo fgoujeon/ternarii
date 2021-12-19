@@ -62,8 +62,6 @@ class private_board
         );
 
     private:
-        data_types::board_tile_drop_list make_tiles_fall();
-
         data_types::tile_merge_list merge_tiles();
 
         enum class selection_state

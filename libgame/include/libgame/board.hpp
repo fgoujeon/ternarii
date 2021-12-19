@@ -59,6 +59,12 @@ board apply_gravity
     data_types::input_tile_drop_list* pdrops //output, optional
 );
 
+board apply_gravity
+(
+    board brd,
+    data_types::board_tile_drop_list& drops
+);
+
 /*
 Return:
 - board tile matrix after application of nullifiers

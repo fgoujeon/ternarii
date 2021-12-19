@@ -156,6 +156,50 @@ board apply_gravity
     return brd;
 }
 
+board apply_gravity
+(
+    board brd,
+    data_types::board_tile_drop_list& drops
+)
+{
+    for(int col = 0; col < brd.tiles.cols; ++col)
+    {
+        std::optional<int> opt_empty_cell_row;
+        for(int row = 0; row < brd.tiles.rows; ++row) //from bottom to top
+        {
+            if(const auto& opt_tile = at(brd.tiles, col, row))
+            {
+                if(opt_empty_cell_row) //if the tile is floating
+                {
+                    at(brd.tiles, col, *opt_empty_cell_row) = opt_tile;
+                    at(brd.tiles, col, row) = std::nullopt;
+
+                    drops.push_back
+                    (
+                        data_types::board_tile_drop
+                        {
+                            col,
+                            row,
+                            *opt_empty_cell_row
+                        }
+                    );
+
+                    ++*opt_empty_cell_row;
+                }
+            }
+            else
+            {
+                if(!opt_empty_cell_row)
+                {
+                    opt_empty_cell_row = row;
+                }
+            }
+        }
+    }
+
+    return brd;
+}
+
 board apply_nullifiers
 (
     board brd,

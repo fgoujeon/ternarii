@@ -100,56 +100,17 @@ void private_board::drop_input_tiles
         }
 
         //Apply gravity
-        const auto drops = make_tiles_fall();
-        if(!drops.empty())
         {
-            events.push_back(events::board_tile_drop{drops});
+            data_types::board_tile_drop_list drops;
+            board_ = apply_gravity(board_, drops);
+            if(!drops.empty())
+            {
+                events.push_back(events::board_tile_drop{drops});
+            }
         }
     } while(old_event_count != events.size());
 
     events.push_back(events::score_change{get_score(board_)});
-}
-
-data_types::board_tile_drop_list private_board::make_tiles_fall()
-{
-    data_types::board_tile_drop_list drops;
-
-    for(int col = 0; col < board_.tiles.cols; ++col)
-    {
-        std::optional<int> opt_empty_cell_row;
-        for(int row = 0; row < board_.tiles.rows; ++row) //from bottom to top
-        {
-            if(const auto& opt_tile = at(board_.tiles, col, row))
-            {
-                if(opt_empty_cell_row) //if the tile is floating
-                {
-                    at(board_.tiles, col, *opt_empty_cell_row) = opt_tile;
-                    at(board_.tiles, col, row) = std::nullopt;
-
-                    drops.push_back
-                    (
-                        data_types::board_tile_drop
-                        {
-                            col,
-                            row,
-                            *opt_empty_cell_row
-                        }
-                    );
-
-                    ++*opt_empty_cell_row;
-                }
-            }
-            else
-            {
-                if(!opt_empty_cell_row)
-                {
-                    opt_empty_cell_row = row;
-                }
-            }
-        }
-    }
-
-    return drops;
 }
 
 data_types::tile_merge_list private_board::merge_tiles()
