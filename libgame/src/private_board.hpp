@@ -20,6 +20,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #ifndef PRIVATE_BOARD_HPP
 #define PRIVATE_BOARD_HPP
 
+#include <libgame/board.hpp>
 #include <libgame/events.hpp>
 #include <libgame/data_types.hpp>
 #include <libgame/constants.hpp>
@@ -39,11 +40,11 @@ class private_board
         static constexpr auto authorized_cell_count   = constants::board_authorized_cell_count;
 
     public:
-        private_board(data_types::board_tile_matrix& tiles);
+        private_board(board& brd);
 
-        const data_types::board_tile_matrix& tile_array() const
+        const board& tile_array() const
         {
-            return tiles_;
+            return board_;
         }
 
         void get_targeted_tiles
@@ -84,7 +85,7 @@ class private_board
         );
 
     private:
-        data_types::board_tile_matrix& tiles_;
+        board& board_;
 };
 
 } //namespace

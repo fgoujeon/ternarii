@@ -43,8 +43,8 @@ struct game::impl
 
     events::next_input_creation generate_next_input()
     {
-        const auto board_highest_tile_value = data_types::get_highest_tile_value(state.board_tiles);
-        const auto board_tile_count = data_types::get_tile_count(state.board_tiles);
+        const auto board_highest_tile_value = get_highest_tile_value(state.brd);
+        const auto board_tile_count = get_tile_count(state.brd);
 
         //Generate a new input
         state.next_input_tiles = input_gen.generate
@@ -61,7 +61,7 @@ struct game::impl
 
     abstract_input_generator& input_gen;
     data_types::stage_state state;
-    private_board board_{state.board_tiles};
+    private_board board_{state.brd};
 };
 
 game::game(const data_types::stage stage):
@@ -92,7 +92,7 @@ void game::get_targeted_tiles
 
 bool game::is_over() const
 {
-    return data_types::is_overflowed(pimpl_->state.board_tiles);
+    return is_overflowed(pimpl_->state.brd);
 }
 
 void game::start(event_list& events)
@@ -100,7 +100,7 @@ void game::start(event_list& events)
     //Clear data
     pimpl_->state.next_input_tiles = {};
     pimpl_->state.input_tiles = {};
-    pimpl_->state.board_tiles = {};
+    pimpl_->state.brd = {};
     pimpl_->state.move_count = 0;
     pimpl_->state.time_s = 0;
 
@@ -140,7 +140,7 @@ void game::drop_input_tiles
         events.push_back(events::end_of_game{});
 
         //Save hi-score
-        const auto score = data_types::get_score(pimpl_->state.board_tiles);
+        const auto score = get_score(pimpl_->state.brd);
         auto& hi_score = pimpl_->state.hi_score;
         if(hi_score < score)
         {

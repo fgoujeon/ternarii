@@ -21,6 +21,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #define GAME_HPP
 
 #include "events.hpp"
+#include "board.hpp"
 #include "data_types.hpp"
 #include <memory>
 

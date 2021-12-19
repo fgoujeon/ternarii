@@ -20,6 +20,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #ifndef LIBDB_DATA_TYPES_HPP
 #define LIBDB_DATA_TYPES_HPP
 
+#include <libgame/board.hpp>
 #include <libgame/data_types.hpp>
 #include <map>
 

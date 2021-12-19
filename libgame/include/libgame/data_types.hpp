@@ -103,59 +103,8 @@ Convention of rows and columns:
 template<int Cols, int Rows>
 using basic_opt_tile_matrix = libutil::matrix<std::optional<tile>, Cols, Rows>;
 
-//Get the row index of the lowest empty cell on the given column.
-template<int Cols, int Rows>
-std::optional<int> get_lowest_empty_cell
-(
-    const basic_opt_tile_matrix<Cols, Rows>& mat,
-    const int col
-)
-{
-    for(auto row = 0; row < Rows; ++row)
-    {
-        if(!at(mat, col, row))
-        {
-            return row;
-        }
-    }
-
-    return std::nullopt;
-}
-
-template<int Cols, int Rows>
-int get_tile_count
-(
-    const basic_opt_tile_matrix<Cols, Rows>& mat
-)
-{
-    auto count = 0;
-    for(const auto& opt_tile: mat)
-    {
-        if(opt_tile)
-        {
-            ++count;
-        }
-    }
-    return count;
-}
-
-
-
 using input_tile_matrix = basic_opt_tile_matrix<constants::input_column_count, constants::input_row_count>;
-
-
-
-/*
-board_tile_matrix type and associated functions
-*/
-
 using board_tile_matrix = basic_opt_tile_matrix<constants::board_column_count, constants::board_row_count>;
-
-bool is_overflowed(const board_tile_matrix& tiles);
-
-int get_highest_tile_value(const board_tile_matrix& tiles);
-
-int get_score(const board_tile_matrix& tiles);
 
 
 
@@ -275,18 +224,6 @@ enum class stage
     triplet_pines_mall,
     granite_cave,
     math_classroom
-};
-
-
-
-struct stage_state
-{
-    double time_s = 0;
-    int hi_score = 0;
-    int move_count = 0;
-    input_tile_matrix next_input_tiles;
-    input_tile_matrix input_tiles;
-    board_tile_matrix board_tiles;
 };
 
 } //namespace
