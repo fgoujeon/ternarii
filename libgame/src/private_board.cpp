@@ -81,6 +81,7 @@ void private_board::drop_input_tiles
             auto result = apply_nullifiers(board_);
             board_ = std::move(result.brd);
             if(!result.nullified_tiles_coords.empty())
+            {
                 events.push_back
                 (
                     events::tile_nullification
@@ -88,10 +89,25 @@ void private_board::drop_input_tiles
                         std::move(result.nullified_tiles_coords)
                     }
                 );
+            }
         }
 
         //Apply adders
-        board_ = apply_adders(board_, events);
+        {
+            auto result = apply_adders(board_);
+            board_ = std::move(result.brd);
+            for(const auto& application: result.applications)
+            {
+                events.push_back
+                (
+                    events::tile_value_change
+                    {
+                        application.nullified_tile_coordinate,
+                        application.changes
+                    }
+                );
+            }
+        }
 
         //Merge number tiles
         const auto merges = merge_tiles();

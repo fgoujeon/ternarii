@@ -332,12 +332,11 @@ apply_nullifiers_result apply_nullifiers(const board& brd)
     return result;
 }
 
-board apply_adders
-(
-    board brd,
-    event_list& events
-)
+apply_adders_result apply_adders(const board& brd)
 {
+    auto result = apply_adders_result{};
+    result.brd = brd;
+
     libutil::for_each_colrow
     (
         [&](auto& opt_tile, const int col, const int row)
@@ -352,8 +351,8 @@ board apply_adders
             if(!padder_tile)
                 return;
 
-            auto event = events::tile_value_change{};
-            event.nullified_tile_coordinate = {col, row};
+            auto application = data_types::adder_tile_application{};
+            application.nullified_tile_coordinate = {col, row};
 
             const auto adder_tile = *padder_tile;
             const auto adder_tile_value = adder_tile.value;
@@ -370,7 +369,7 @@ board apply_adders
                     return std::nullopt;
                 }
 
-                const auto& opt_below_tile = at(brd.tiles, col, row - 1);
+                const auto& opt_below_tile = at(result.brd.tiles, col, row - 1);
 
                 if(!opt_below_tile)
                 {
@@ -434,18 +433,18 @@ board apply_adders
                         auto change = data_types::tile_value_change{};
                         change.coordinate = {col, row};
                         change.new_value = new_value;
-                        event.changes.push_back(change);
+                        application.changes.push_back(change);
                     },
-                    brd.tiles
+                    result.brd.tiles
                 );
             }
 
-            events.push_back(event);
+            result.applications.push_back(application);
         },
-        brd.tiles
+        result.brd.tiles
     );
 
-    return brd;
+    return result;
 }
 
 apply_merges_on_granites_result apply_merges_on_granites

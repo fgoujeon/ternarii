@@ -205,6 +205,18 @@ std::ostream& operator<<(std::ostream& l, const tile_value_change& r);
 
 
 
+struct adder_tile_application
+{
+    libutil::matrix_coordinate nullified_tile_coordinate;
+    tile_value_change_list changes;
+};
+
+using adder_tile_application_list = std::vector<adder_tile_application>;
+
+std::ostream& operator<<(std::ostream& l, const adder_tile_application& r);
+
+
+
 struct granite_erosion
 {
     libutil::matrix_coordinate coordinate;

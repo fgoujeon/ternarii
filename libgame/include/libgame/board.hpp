@@ -92,11 +92,15 @@ apply_nullifiers_result apply_nullifiers(const board& brd);
 
 
 
-board apply_adders
-(
-    board brd,
-    event_list& events
-);
+struct apply_adders_result
+{
+    board brd;
+    data_types::adder_tile_application_list applications;
+};
+
+apply_adders_result apply_adders(const board& brd);
+
+
 
 struct apply_merges_on_granites_result
 {
