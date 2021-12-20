@@ -18,6 +18,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 #include <libgame/board.hpp>
+#include <libgame/constants.hpp>
 #include <libutil/overload.hpp>
 
 namespace libgame
@@ -446,6 +447,203 @@ apply_adders_result apply_adders(const board& brd)
 
     return result;
 }
+
+
+
+namespace
+{
+    enum class selection_state
+    {
+        unselected,
+        visited,
+        selected
+    };
+
+    using selection_t = libutil::matrix
+    <
+        selection_state,
+        constants::board_column_count,
+        constants::board_row_count
+    >;
+
+    void select_tiles
+    (
+        const board& brd,
+        const int tile_value,
+        const int col,
+        const int row,
+        selection_t& selection,
+        int& selection_size
+    )
+    {
+        constexpr auto total_column_count = constants::board_column_count;
+        constexpr auto total_row_count = constants::board_row_count;
+
+        at(selection, col, row) = selection_state::visited;
+
+        const auto& opt_tile = at(brd.tiles, col, row);
+        if(!opt_tile)
+        {
+            return;
+        }
+
+        const auto pnum_tile = std::get_if<data_types::tiles::number>(&*opt_tile);
+        if(!pnum_tile)
+        {
+            return;
+        }
+
+        const auto& tile = *pnum_tile;
+
+        if(tile.value != tile_value)
+        {
+            return;
+        }
+
+        at(selection, col, row) = selection_state::selected;
+        ++selection_size;
+
+        //above tile
+        if
+        (
+            row + 1 < total_row_count &&
+            at(selection, col, row + 1) == selection_state::unselected
+        )
+        {
+            select_tiles(brd, tile_value, col, row + 1, selection, selection_size);
+        }
+
+        //beneath tile
+        if
+        (
+            row >= 1 &&
+            at(selection, col, row - 1) == selection_state::unselected
+        )
+        {
+            select_tiles(brd, tile_value, col, row - 1, selection, selection_size);
+        }
+
+        //right tile
+        if
+        (
+            col + 1 < total_column_count &&
+            at(selection, col + 1, row) == selection_state::unselected
+        )
+        {
+            select_tiles(brd, tile_value, col + 1, row, selection, selection_size);
+        }
+
+        //left tile
+        if
+        (
+            col >= 1 &&
+            at(selection, col - 1, row) == selection_state::unselected
+        )
+        {
+            select_tiles(brd, tile_value, col - 1, row, selection, selection_size);
+        }
+    }
+}
+
+apply_merges_result apply_merges(const board& brd)
+{
+    auto result = apply_merges_result{};
+    auto& merges = result.merges;
+
+    result.brd = brd;
+
+    auto tile_layer = data_types::board_tile_matrix{};
+
+    //Select the identical adjacent tiles.
+    //Scan row by row, from the bottom left corner to the top right corner.
+    for(int row = 0; row < result.brd.tiles.rows; ++row)
+    {
+        for(int col = 0; col < result.brd.tiles.cols; ++col)
+        {
+            const auto& opt_tile = at(result.brd.tiles, col, row);
+            if(!opt_tile)
+            {
+                continue;
+            }
+
+            const auto pnum_tile = std::get_if<data_types::tiles::number>(&*opt_tile);
+            if(!pnum_tile)
+            {
+                continue;
+            }
+
+            const auto& current_tile = *pnum_tile;
+
+            auto selection = selection_t{}; //fill with unselected
+            auto selection_size = 0;
+            select_tiles
+            (
+                result.brd,
+                current_tile.value,
+                col,
+                row,
+                selection,
+                selection_size
+            );
+
+            //if 3 or more tiles are selected
+            if(selection_size >= 3)
+            {
+                //remove the selected tiles from the board
+                libutil::matrix_coordinate_list removed_tile_coordinates;
+                libutil::for_each_colrow
+                (
+                    [&](auto& opt_tile2, const int col2, const int row2)
+                    {
+                        if(at(selection, col2, row2) == selection_state::selected)
+                        {
+                            assert(opt_tile2.has_value());
+                            removed_tile_coordinates.push_back({col2, row2});
+                            opt_tile2 = std::nullopt;
+                        }
+                    },
+                    result.brd.tiles
+                );
+
+                //put the new merged tile on the layer
+                auto merged_tile = data_types::tiles::number{current_tile.value + 1};
+                at(tile_layer, col, row) = merged_tile;
+
+                merges.push_back
+                (
+                    data_types::tile_merge
+                    {
+                        removed_tile_coordinates,
+                        libutil::matrix_coordinate{col, row},
+                        merged_tile.value
+                    }
+                );
+            }
+        }
+    }
+
+    if(!merges.empty())
+    {
+        //overlay the tile layer to the tile array of the board
+        libutil::for_each
+        (
+            [&](auto& opt_tile, const auto& opt_layer_tile)
+            {
+                if(opt_layer_tile)
+                {
+                    assert(!opt_tile);
+                    opt_tile = opt_layer_tile;
+                }
+            },
+            result.brd.tiles,
+            tile_layer
+        );
+    }
+
+    return result;
+}
+
+
 
 apply_merges_on_granites_result apply_merges_on_granites
 (

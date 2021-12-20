@@ -102,6 +102,16 @@ apply_adders_result apply_adders(const board& brd);
 
 
 
+struct apply_merges_result
+{
+    board brd;
+    data_types::tile_merge_list merges;
+};
+
+apply_merges_result apply_merges(const board& brd);
+
+
+
 struct apply_merges_on_granites_result
 {
     board brd;

@@ -61,27 +61,6 @@ class private_board
         );
 
     private:
-        data_types::tile_merge_list merge_tiles();
-
-        enum class selection_state
-        {
-            unselected,
-            visited,
-            selected
-        };
-
-        using selection_t = libutil::matrix<selection_state, total_column_count, total_row_count>;
-
-        void select_tiles
-        (
-            const int tile_value,
-            const int col,
-            const int row,
-            selection_t& selection,
-            int& selection_size
-        );
-
-    private:
         board& board_;
 };
 
