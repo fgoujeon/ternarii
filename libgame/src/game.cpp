@@ -19,7 +19,6 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 
 #include <libgame/game.hpp>
 #include "input_generators.hpp"
-#include "private_board.hpp"
 #include <algorithm>
 #include <random>
 #include <cmath>
@@ -61,7 +60,6 @@ struct game::impl
 
     abstract_input_generator& input_gen;
     data_types::stage_state state;
-    private_board board_{state.brd};
 };
 
 game::game(const data_types::stage stage):
@@ -86,7 +84,14 @@ libutil::matrix_coordinate_list game::get_targeted_tiles
     const data_types::input_layout& input_layout
 ) const
 {
-    return pimpl_->board_.get_targeted_tiles(pimpl_->state.input_tiles, input_layout);
+    const auto result = apply_gravity_on_input
+    (
+        pimpl_->state.brd,
+        pimpl_->state.input_tiles,
+        input_layout
+    );
+    auto result2 = apply_nullifiers(result.brd);
+    return result2.nullified_tiles_coords;
 }
 
 bool game::is_over() const
