@@ -716,4 +716,108 @@ apply_merges_on_granites_result apply_merges_on_granites
     return result;
 }
 
+
+
+drop_input_tiles_result drop_input_tiles
+(
+    const board& brd0,
+    const data_types::input_tile_matrix& input_tiles,
+    const data_types::input_layout& input_layout
+)
+{
+    auto final_result = drop_input_tiles_result{};
+    auto& brd = final_result.brd;
+    auto& events = final_result.events;
+
+    brd = brd0;
+
+    //Apply gravity on input tiles
+    {
+        auto result = apply_gravity_on_input
+        (
+            brd,
+            input_tiles,
+            input_layout
+        );
+        brd = result.brd;
+        events.push_back(events::input_tile_drop{std::move(result.drops)});
+    }
+
+    auto old_event_count = 0;
+    do
+    {
+        old_event_count = events.size();
+
+        //Apply nullifier tiles
+        {
+            auto result = apply_nullifiers(brd);
+            brd = std::move(result.brd);
+            if(!result.nullified_tiles_coords.empty())
+            {
+                events.push_back
+                (
+                    events::tile_nullification
+                    {
+                        std::move(result.nullified_tiles_coords)
+                    }
+                );
+            }
+        }
+
+        //Apply adders
+        {
+            auto result = apply_adders(brd);
+            brd = std::move(result.brd);
+            for(const auto& application: result.applications)
+            {
+                events.push_back
+                (
+                    events::tile_value_change
+                    {
+                        application.nullified_tile_coordinate,
+                        application.changes
+                    }
+                );
+            }
+        }
+
+        //Merge number tiles
+        const auto merges = [&]
+        {
+            auto result = apply_merges(brd);
+            brd = std::move(result.brd);
+            return result.merges;
+        }();
+
+        //Decrease thickness of granite tiles
+        if(!merges.empty())
+        {
+            const auto result = apply_merges_on_granites(brd, merges);
+
+            brd = result.brd;
+
+            events.push_back
+            (
+                events::tile_merge
+                {
+                    .merges = merges,
+                    .granite_erosions = result.granite_erosions
+                }
+            );
+        }
+
+        //Apply gravity
+        {
+            auto result = apply_gravity(brd);
+            brd = std::move(result.brd);
+            if(!result.drops.empty())
+                events.push_back(events::board_tile_drop{std::move(result.drops)});
+        }
+    } while(old_event_count != events.size());
+
+    events.push_back(events::score_change{get_score(brd)});
+
+    return final_result;
+}
+
 } //namespace

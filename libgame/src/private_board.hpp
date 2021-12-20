@@ -53,13 +53,6 @@ class private_board
             const data_types::input_layout& input_layout
         ) const;
 
-        void drop_input_tiles
-        (
-            const data_types::input_tile_matrix& input_tiles,
-            const data_types::input_layout& input_layout,
-            event_list& events
-        );
-
     private:
         board& board_;
 };

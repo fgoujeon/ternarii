@@ -130,6 +130,21 @@ apply_merges_on_granites_result apply_merges_on_granites
 
 
 
+struct drop_input_tiles_result
+{
+    board brd;
+    event_list events;
+};
+
+drop_input_tiles_result drop_input_tiles
+(
+    const board& brd,
+    const data_types::input_tile_matrix& input_tiles,
+    const data_types::input_layout& input_layout
+);
+
+
+
 namespace data_types
 {
     struct stage_state

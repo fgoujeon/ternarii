@@ -128,7 +128,19 @@ void game::drop_input_tiles
     }
 
     //drop the input
-    pimpl_->board_.drop_input_tiles(pimpl_->state.input_tiles, layout, events);
+    {
+        auto result = libgame::drop_input_tiles
+        (
+            pimpl_->state.brd,
+            pimpl_->state.input_tiles,
+            layout
+        );
+
+        pimpl_->state.brd = result.brd;
+
+        for(const auto& event: result.events)
+            events.push_back(event);
+    }
 
     auto& move_count = pimpl_->state.move_count;
     ++move_count;
