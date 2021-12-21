@@ -22,7 +22,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "../events.hpp"
 #include "../context.hpp"
-#include <libgame/game.hpp>
+#include <libgame.hpp>
 #include <libutil/log.hpp>
 #include <optional>
 

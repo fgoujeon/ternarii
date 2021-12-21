@@ -25,7 +25,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include "../../animation.hpp"
 #include "../../common.hpp"
 #include <libview/data_types.hpp>
-#include <libgame/constants.hpp>
+#include <libgame.hpp>
 #include <libutil/matrix.hpp>
 #include <libutil/void_function.hpp>
 #include <chrono>

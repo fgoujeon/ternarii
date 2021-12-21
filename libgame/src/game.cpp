@@ -134,7 +134,7 @@ void game::drop_input_tiles
 
     //drop the input
     {
-        auto result = libgame::drop_input_tiles
+        auto result = libgame::data_types::drop_input_tiles
         (
             pimpl_->state.brd,
             pimpl_->state.input_tiles,

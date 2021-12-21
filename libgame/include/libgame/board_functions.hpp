@@ -17,19 +17,14 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef BOARD_HPP
-#define BOARD_HPP
+#ifndef BOARD_FUNCTIONS_HPP
+#define BOARD_FUNCTIONS_HPP
 
 #include "data_types.hpp"
 #include "events.hpp"
 
-namespace libgame
+namespace libgame::data_types
 {
-
-struct board
-{
-    data_types::board_tile_matrix tiles;
-};
 
 int get_tile_count(const board& brd);
 
@@ -51,17 +46,17 @@ int get_score(const board& brd);
 struct apply_gravity_on_input_result
 {
     board brd;
-    data_types::input_tile_drop_list drops;
+    input_tile_drop_list drops;
 };
 
 /*
-Drop input tiles on board
+Apply gravity on input tiles
 */
 apply_gravity_on_input_result apply_gravity_on_input
 (
     const board& brd,
-    const data_types::input_tile_matrix& input_tiles,
-    const data_types::input_layout& input_layout
+    const input_tile_matrix& input_tiles,
+    const input_layout& input_layout
 );
 
 
@@ -69,7 +64,7 @@ apply_gravity_on_input_result apply_gravity_on_input
 struct apply_gravity_result
 {
     board brd;
-    data_types::board_tile_drop_list drops;
+    board_tile_drop_list drops;
 };
 
 /*
@@ -95,7 +90,7 @@ apply_nullifiers_result apply_nullifiers(const board& brd);
 struct apply_adders_result
 {
     board brd;
-    data_types::adder_tile_application_list applications;
+    adder_tile_application_list applications;
 };
 
 apply_adders_result apply_adders(const board& brd);
@@ -105,7 +100,7 @@ apply_adders_result apply_adders(const board& brd);
 struct apply_merges_result
 {
     board brd;
-    data_types::tile_merge_list merges;
+    tile_merge_list merges;
 };
 
 apply_merges_result apply_merges(const board& brd);
@@ -115,7 +110,7 @@ apply_merges_result apply_merges(const board& brd);
 struct apply_merges_on_granites_result
 {
     board brd;
-    data_types::granite_erosion_list granite_erosions;
+    granite_erosion_list granite_erosions;
 };
 
 /*
@@ -125,7 +120,7 @@ tile involved in a merge.
 apply_merges_on_granites_result apply_merges_on_granites
 (
     const board& brd,
-    const data_types::tile_merge_list& merges
+    const tile_merge_list& merges
 );
 
 
@@ -139,24 +134,9 @@ struct drop_input_tiles_result
 drop_input_tiles_result drop_input_tiles
 (
     const board& brd,
-    const data_types::input_tile_matrix& input_tiles,
-    const data_types::input_layout& input_layout
+    const input_tile_matrix& input_tiles,
+    const input_layout& input_layout
 );
-
-
-
-namespace data_types
-{
-    struct stage_state
-    {
-        double time_s = 0;
-        int hi_score = 0;
-        int move_count = 0;
-        input_tile_matrix next_input_tiles;
-        input_tile_matrix input_tiles;
-        board brd;
-    };
-}
 
 } //namespace
 

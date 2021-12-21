@@ -20,7 +20,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #ifndef LIBVIEW_DATA_TYPES_HPP
 #define LIBVIEW_DATA_TYPES_HPP
 
-#include <libgame/data_types.hpp>
+#include <libgame.hpp>
 #include <functional>
 #include <optional>
 #include <vector>

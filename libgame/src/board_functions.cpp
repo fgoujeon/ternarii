@@ -17,11 +17,11 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#include <libgame/board.hpp>
+#include <libgame/board_functions.hpp>
 #include <libgame/constants.hpp>
 #include <libutil/overload.hpp>
 
-namespace libgame
+namespace libgame::data_types
 {
 
 int get_tile_count(const board& brd)
@@ -74,7 +74,7 @@ int get_highest_tile_value(const board& brd)
     {
         if(opt_tile)
         {
-            if(const auto pnum_tile = std::get_if<data_types::tiles::number>(&*opt_tile))
+            if(const auto pnum_tile = std::get_if<tiles::number>(&*opt_tile))
             {
                 value = std::max(value, pnum_tile->value);
             }
@@ -90,7 +90,7 @@ int get_score(const board& brd)
     {
         if(opt_tile)
         {
-            if(const auto pnum_tile = std::get_if<data_types::tiles::number>(&*opt_tile))
+            if(const auto pnum_tile = std::get_if<tiles::number>(&*opt_tile))
             {
                 score += std::pow(3, pnum_tile->value);
             }
@@ -102,8 +102,8 @@ int get_score(const board& brd)
 apply_gravity_on_input_result apply_gravity_on_input
 (
     const board& brd,
-    const data_types::input_tile_matrix& input_tiles,
-    const data_types::input_layout& input_layout
+    const input_tile_matrix& input_tiles,
+    const input_layout& input_layout
 )
 {
     apply_gravity_on_input_result result;
@@ -140,7 +140,7 @@ apply_gravity_on_input_result apply_gravity_on_input
 
                 result.drops.push_back
                 (
-                    data_types::input_tile_drop
+                    input_tile_drop
                     {
                         {col, row},
                         {coord.col, *opt_dst_row}
@@ -173,7 +173,7 @@ apply_gravity_result apply_gravity(const board& brd)
 
                     result.drops.push_back
                     (
-                        data_types::board_tile_drop
+                        board_tile_drop
                         {
                             col,
                             row,
@@ -216,11 +216,11 @@ apply_nullifiers_result apply_nullifiers(const board& brd)
             (
                 libutil::overload
                 {
-                    [&](const data_types::tiles::number&){},
+                    [&](const tiles::number&){},
 
-                    [&](const data_types::tiles::granite&){},
+                    [&](const tiles::granite&){},
 
-                    [&](const data_types::tiles::column_nullifier&)
+                    [&](const tiles::column_nullifier&)
                     {
                         //Remove all tiles from current column
                         for(int nullified_row = 0; nullified_row < result.brd.tiles.rows; ++nullified_row)
@@ -238,7 +238,7 @@ apply_nullifiers_result apply_nullifiers(const board& brd)
                         }
                     },
 
-                    [&](const data_types::tiles::row_nullifier&)
+                    [&](const tiles::row_nullifier&)
                     {
                         //Remove all tiles from current row
                         for(int nullified_col = 0; nullified_col < result.brd.tiles.cols; ++nullified_col)
@@ -256,7 +256,7 @@ apply_nullifiers_result apply_nullifiers(const board& brd)
                         }
                     },
 
-                    [&](const data_types::tiles::number_nullifier&)
+                    [&](const tiles::number_nullifier&)
                     {
                         //Remove the nullifier tile itself
                         opt_tile = std::nullopt;
@@ -278,7 +278,7 @@ apply_nullifiers_result apply_nullifiers(const board& brd)
                                 return std::nullopt;
                             }
 
-                            const auto pbelow_tile = std::get_if<data_types::tiles::number>(&*opt_below_tile);
+                            const auto pbelow_tile = std::get_if<tiles::number>(&*opt_below_tile);
 
                             if(!pbelow_tile)
                             {
@@ -303,7 +303,7 @@ apply_nullifiers_result apply_nullifiers(const board& brd)
                                     return;
                                 }
 
-                                const auto ptile = std::get_if<data_types::tiles::number>(&*opt_tile);
+                                const auto ptile = std::get_if<tiles::number>(&*opt_tile);
 
                                 if(!ptile)
                                 {
@@ -322,7 +322,7 @@ apply_nullifiers_result apply_nullifiers(const board& brd)
                         );
                     },
 
-                    [&](const data_types::tiles::adder& tile){}
+                    [&](const tiles::adder& tile){}
                 },
                 tile
             );
@@ -347,12 +347,12 @@ apply_adders_result apply_adders(const board& brd)
 
             const auto& tile = *opt_tile;
 
-            const auto padder_tile = std::get_if<data_types::tiles::adder>(&tile);
+            const auto padder_tile = std::get_if<tiles::adder>(&tile);
 
             if(!padder_tile)
                 return;
 
-            auto application = data_types::adder_tile_application{};
+            auto application = adder_tile_application{};
             application.nullified_tile_coordinate = {col, row};
 
             const auto adder_tile = *padder_tile;
@@ -377,7 +377,7 @@ apply_adders_result apply_adders(const board& brd)
                     return std::nullopt;
                 }
 
-                const auto pbelow_tile = std::get_if<data_types::tiles::number>(&*opt_below_tile);
+                const auto pbelow_tile = std::get_if<tiles::number>(&*opt_below_tile);
 
                 if(!pbelow_tile)
                 {
@@ -416,7 +416,7 @@ apply_adders_result apply_adders(const board& brd)
                         if(!opt_tile)
                             return;
 
-                        const auto ptile = std::get_if<data_types::tiles::number>(&*opt_tile);
+                        const auto ptile = std::get_if<tiles::number>(&*opt_tile);
 
                         if(!ptile)
                             return;
@@ -431,7 +431,7 @@ apply_adders_result apply_adders(const board& brd)
 
                         tile.value = new_value;
 
-                        auto change = data_types::tile_value_change{};
+                        auto change = tile_value_change{};
                         change.coordinate = {col, row};
                         change.new_value = new_value;
                         application.changes.push_back(change);
@@ -487,7 +487,7 @@ namespace
             return;
         }
 
-        const auto pnum_tile = std::get_if<data_types::tiles::number>(&*opt_tile);
+        const auto pnum_tile = std::get_if<tiles::number>(&*opt_tile);
         if(!pnum_tile)
         {
             return;
@@ -552,7 +552,7 @@ apply_merges_result apply_merges(const board& brd)
 
     result.brd = brd;
 
-    auto tile_layer = data_types::board_tile_matrix{};
+    auto tile_layer = board_tile_matrix{};
 
     //Select the identical adjacent tiles.
     //Scan row by row, from the bottom left corner to the top right corner.
@@ -566,7 +566,7 @@ apply_merges_result apply_merges(const board& brd)
                 continue;
             }
 
-            const auto pnum_tile = std::get_if<data_types::tiles::number>(&*opt_tile);
+            const auto pnum_tile = std::get_if<tiles::number>(&*opt_tile);
             if(!pnum_tile)
             {
                 continue;
@@ -606,12 +606,12 @@ apply_merges_result apply_merges(const board& brd)
                 );
 
                 //put the new merged tile on the layer
-                auto merged_tile = data_types::tiles::number{current_tile.value + 1};
+                auto merged_tile = tiles::number{current_tile.value + 1};
                 at(tile_layer, col, row) = merged_tile;
 
                 merges.push_back
                 (
-                    data_types::tile_merge
+                    tile_merge
                     {
                         removed_tile_coordinates,
                         libutil::matrix_coordinate{col, row},
@@ -648,7 +648,7 @@ apply_merges_result apply_merges(const board& brd)
 apply_merges_on_granites_result apply_merges_on_granites
 (
     const board& brd,
-    const data_types::tile_merge_list& merges
+    const tile_merge_list& merges
 )
 {
     auto result = apply_merges_on_granites_result{};
@@ -664,7 +664,7 @@ apply_merges_on_granites_result apply_merges_on_granites
             }
             auto& tile = *opt_tile;
 
-            if(const auto pgranite = std::get_if<data_types::tiles::granite>(&tile))
+            if(const auto pgranite = std::get_if<tiles::granite>(&tile))
             {
                 auto& granite = *pgranite;
 
@@ -701,7 +701,7 @@ apply_merges_on_granites_result apply_merges_on_granites
 
                     result.granite_erosions.push_back
                     (
-                        data_types::granite_erosion
+                        granite_erosion
                         {
                             .coordinate = {col, row},
                             .new_thickness = granite.thickness
@@ -721,8 +721,8 @@ apply_merges_on_granites_result apply_merges_on_granites
 drop_input_tiles_result drop_input_tiles
 (
     const board& brd0,
-    const data_types::input_tile_matrix& input_tiles,
-    const data_types::input_layout& input_layout
+    const input_tile_matrix& input_tiles,
+    const input_layout& input_layout
 )
 {
     auto final_result = drop_input_tiles_result{};
