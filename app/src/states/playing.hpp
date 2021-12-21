@@ -22,7 +22,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 
 #include "../events.hpp"
 #include "../context.hpp"
-#include <libgame/game.hpp>
+#include <libgame.hpp>
 #include <libutil/log.hpp>
 #include <optional>
 
@@ -171,9 +171,8 @@ class playing_impl
 
         void mark_tiles_for_nullification()
         {
-            targeted_tiles_.clear();
-            pgame_->get_targeted_tiles(pscreen_->get_input_layout(), targeted_tiles_);
-            pscreen_->mark_tiles_for_nullification(targeted_tiles_);
+            auto targeted_tiles = pgame_->get_targeted_tiles(pscreen_->get_input_layout());
+            pscreen_->mark_tiles_for_nullification(std::move(targeted_tiles));
         }
 
         void save_game()
@@ -189,9 +188,6 @@ class playing_impl
 
         //used by modify_game()
         libgame::event_list game_events_;
-
-        //used by mark_tiles_for_nullification()
-        libutil::matrix_coordinate_list targeted_tiles_;
 };
 
 class playing

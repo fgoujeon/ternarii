@@ -20,7 +20,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include "fsm.hpp"
 #include "context.hpp"
 #include <libdb/database.hpp>
-#include <libgame/game.hpp>
+#include <libgame.hpp>
 #include <libview/view.hpp>
 #include <libutil/log.hpp>
 #include <Magnum/GL/DefaultFramebuffer.h>

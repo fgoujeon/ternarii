@@ -19,7 +19,6 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 
 #include <libgame/game.hpp>
 #include "input_generators.hpp"
-#include "board.hpp"
 #include <algorithm>
 #include <random>
 #include <cmath>
@@ -43,8 +42,8 @@ struct game::impl
 
     events::next_input_creation generate_next_input()
     {
-        const auto board_highest_tile_value = data_types::get_highest_tile_value(state.board_tiles);
-        const auto board_tile_count = data_types::get_tile_count(state.board_tiles);
+        const auto board_highest_tile_value = get_highest_tile_value(state.brd);
+        const auto board_tile_count = get_tile_count(state.brd);
 
         //Generate a new input
         state.next_input_tiles = input_gen.generate
@@ -61,7 +60,6 @@ struct game::impl
 
     abstract_input_generator& input_gen;
     data_types::stage_state state;
-    board board_{state.board_tiles};
 };
 
 game::game(const data_types::stage stage):
@@ -81,18 +79,24 @@ const data_types::stage_state& game::get_state() const
     return pimpl_->state;
 }
 
-void game::get_targeted_tiles
+libutil::matrix_coordinate_list game::get_targeted_tiles
 (
-    const data_types::input_layout& input_layout,
-    libutil::matrix_coordinate_list& coords
+    const data_types::input_layout& input_layout
 ) const
 {
-    return pimpl_->board_.get_targeted_tiles(pimpl_->state.input_tiles, input_layout, coords);
+    const auto result = apply_gravity_on_input
+    (
+        pimpl_->state.brd,
+        pimpl_->state.input_tiles,
+        input_layout
+    );
+    auto result2 = apply_nullifiers(result.brd);
+    return result2.nullified_tiles_coords;
 }
 
 bool game::is_over() const
 {
-    return data_types::is_overflowed(pimpl_->state.board_tiles);
+    return is_overflowed(pimpl_->state.brd);
 }
 
 void game::start(event_list& events)
@@ -100,7 +104,7 @@ void game::start(event_list& events)
     //Clear data
     pimpl_->state.next_input_tiles = {};
     pimpl_->state.input_tiles = {};
-    pimpl_->state.board_tiles = {};
+    pimpl_->state.brd = {};
     pimpl_->state.move_count = 0;
     pimpl_->state.time_s = 0;
 
@@ -129,7 +133,19 @@ void game::drop_input_tiles
     }
 
     //drop the input
-    pimpl_->board_.drop_input_tiles(pimpl_->state.input_tiles, layout, events);
+    {
+        auto result = libgame::data_types::drop_input_tiles
+        (
+            pimpl_->state.brd,
+            pimpl_->state.input_tiles,
+            layout
+        );
+
+        pimpl_->state.brd = result.brd;
+
+        for(const auto& event: result.events)
+            events.push_back(event);
+    }
 
     auto& move_count = pimpl_->state.move_count;
     ++move_count;
@@ -140,7 +156,7 @@ void game::drop_input_tiles
         events.push_back(events::end_of_game{});
 
         //Save hi-score
-        const auto score = data_types::get_score(pimpl_->state.board_tiles);
+        const auto score = get_score(pimpl_->state.brd);
         auto& hi_score = pimpl_->state.hi_score;
         if(hi_score < score)
         {

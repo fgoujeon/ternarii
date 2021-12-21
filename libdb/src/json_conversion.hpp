@@ -198,7 +198,7 @@ namespace libgame::data_types
         from.at("hiScore").        get_to(to.hi_score);
         from.at("nextInputTiles"). get_to(to.next_input_tiles.data);
         from.at("inputTiles").     get_to(to.input_tiles.data);
-        from.at("boardTiles").     get_to(to.board_tiles.data);
+        from.at("boardTiles").     get_to(to.brd.tiles.data);
 
         if(from.contains("moveCount"))
         {
@@ -221,7 +221,7 @@ namespace libgame::data_types
         to["moveCount"]      = from.move_count;
         to["nextInputTiles"] = from.next_input_tiles.data;
         to["inputTiles"]     = from.input_tiles.data;
-        to["boardTiles"]     = from.board_tiles.data;
+        to["boardTiles"]     = from.brd.tiles.data;
         to["time_s"]         = from.time_s;
     }
 }
@@ -275,7 +275,7 @@ namespace libdb
             from_tile_array1d(from.at("inputTiles"), state.input_tiles);
         }
 
-        //board_tiles
+        //brd
         {
             //Convention is arr[col][row]
             using tile_value_array = std::array<std::array<std::optional<int>, 10>, 6>;
@@ -292,7 +292,7 @@ namespace libdb
                         tile = libgame::data_types::tiles::number{tile_values[col][row].value()};
                     }
                 },
-                state.board_tiles
+                state.brd.tiles
             );
         }
     }
@@ -342,7 +342,7 @@ namespace libdb
         state.hi_score = from.at("hiScore").get<int>();
         fill_matrix(from.at("nextInputTiles"), state.next_input_tiles);
         fill_matrix(from.at("inputTiles"),     state.input_tiles);
-        fill_matrix(from.at("boardTiles"),     state.board_tiles);
+        fill_matrix(from.at("boardTiles"),     state.brd.tiles);
     }
 
     void from_json_v2(const nlohmann::json& from, data_types::game_state& to)

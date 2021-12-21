@@ -103,21 +103,21 @@ playing_impl::playing_impl
     if(opt_stage_state)
     {
         const auto& stage_state = *opt_stage_state;
-        const auto& board_tiles = stage_state.board_tiles;
+        const auto& board = stage_state.brd;
 
         pgame_ = std::make_unique<libgame::game>(stage, stage_state);
 
         //Initialize view
-        pscreen_->set_score(libgame::data_types::get_score(board_tiles));
+        pscreen_->set_score(get_score(board));
         pscreen_->set_time_s(stage_state.time_s);
         pscreen_->set_hi_score(stage_state.hi_score);
         pscreen_->set_move_count(stage_state.move_count);
         pscreen_->create_next_input(stage_state.input_tiles);
         pscreen_->insert_next_input();
         pscreen_->create_next_input(stage_state.next_input_tiles);
-        pscreen_->set_board_tiles(board_tiles);
+        pscreen_->set_board_tiles(board.tiles);
         mark_tiles_for_nullification();
-        pscreen_->set_game_over_overlay_visible(libgame::data_types::is_overflowed(board_tiles));
+        pscreen_->set_game_over_overlay_visible(is_overflowed(board));
     }
     else
     {

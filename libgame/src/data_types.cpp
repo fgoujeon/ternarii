@@ -71,57 +71,6 @@ namespace tiles
 
 
 /*
-board_tile_matrix associated functions
-*/
-
-bool is_overflowed(const board_tile_matrix& tiles)
-{
-    for(int col = 0; col < tiles.cols; ++col)
-    {
-        if(at(tiles, col, constants::board_authorized_row_count))
-        {
-            return true;
-        }
-    }
-
-    return false;
-}
-
-int get_highest_tile_value(const board_tile_matrix& tiles)
-{
-    auto value = 0;
-    for(const auto& opt_tile: tiles)
-    {
-        if(opt_tile)
-        {
-            if(const auto pnum_tile = std::get_if<data_types::tiles::number>(&*opt_tile))
-            {
-                value = std::max(value, pnum_tile->value);
-            }
-        }
-    }
-    return value;
-}
-
-int get_score(const board_tile_matrix& tiles)
-{
-    auto score = 0;
-    for(const auto& opt_tile: tiles)
-    {
-        if(opt_tile)
-        {
-            if(const auto pnum_tile = std::get_if<data_types::tiles::number>(&*opt_tile))
-            {
-                score += std::pow(3, pnum_tile->value);
-            }
-        }
-    }
-    return score;
-}
-
-
-
-/*
 input_layout associated functions
 */
 
@@ -227,6 +176,18 @@ std::ostream& operator<<(std::ostream& l, const tile_value_change& r)
     l << "{";
     l << "coordinate: " << libutil::streamable{r.coordinate} << ", ";
     l << "new_value: " << r.new_value;
+    l << "}";
+    return l;
+}
+
+
+
+std::ostream& operator<<(std::ostream& l, const adder_tile_application& r)
+{
+    l << "adder_tile_application";
+    l << "{";
+    l << "nullified_tile_coordinate: " << libutil::streamable{r.nullified_tile_coordinate} << ", ";
+    l << "changes: " << libutil::streamable{r.changes};
     l << "}";
     return l;
 }
