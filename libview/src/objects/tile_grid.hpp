@@ -120,6 +120,12 @@ class tile_grid: public object2d, public features::animable
             const Magnum::Vector2& position
         );
 
+        std::shared_ptr<object2d> make_preview_tile
+        (
+            const data_types::tile& tile,
+            const Magnum::Vector2& position
+        );
+
     private:
         features::drawable_group& drawables_;
         features::animable_group& animables_;

@@ -42,6 +42,14 @@ std::shared_ptr<object2d> make_tile_object
     const data_types::tile& tile
 );
 
+std::shared_ptr<object2d> make_preview_tile_object
+(
+    object2d& parent,
+    features::drawable_group& drawables,
+    features::animable_group& animables,
+    const data_types::tile& tile
+);
+
 } //namespace
 
 #endif
