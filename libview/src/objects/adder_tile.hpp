@@ -37,12 +37,13 @@ class adder_tile: public object2d
         (
             object2d& parent,
             features::drawable_group& drawables,
-            const int value
+            const int value,
+            const bool show_star = true
         );
 
     private:
         rounded_rectangle square_;
-        sdf_image star_;
+        std::unique_ptr<sdf_image> pstar_;
         label label_;
 };
 

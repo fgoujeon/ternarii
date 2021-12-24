@@ -101,6 +101,8 @@ class tile_grid: public object2d, public features::animable
 
         void mark_tiles_for_nullification(const libutil::matrix_coordinate_list& tile_coordinates);
 
+        void mark_tiles_for_addition(const data_types::tile_value_change_list& changes);
+
         void set_board_tiles(const data_types::board_tile_matrix& tiles);
 
         void advance(const std::chrono::steady_clock::time_point& now, float elapsed_s);
@@ -118,6 +120,12 @@ class tile_grid: public object2d, public features::animable
             const Magnum::Vector2& position
         );
 
+        std::shared_ptr<object2d> make_preview_tile
+        (
+            const data_types::tile& tile,
+            const Magnum::Vector2& position
+        );
+
     private:
         features::drawable_group& drawables_;
         features::animable_group& animables_;
@@ -127,6 +135,8 @@ class tile_grid: public object2d, public features::animable
         std::vector<std::unique_ptr<sdf_image>> board_corners_;
         data_types::input_layout input_layout_;
         board_tile_matrix board_tiles_ = {};
+
+        std::vector<std::shared_ptr<object2d>> addition_preview_tiles_;
 
         tile_grid_detail::next_input next_input_;
         tile_grid_detail::input input_;

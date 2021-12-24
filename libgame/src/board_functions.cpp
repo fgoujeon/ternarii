@@ -408,36 +408,39 @@ apply_adders_result apply_adders(const board& brd)
                     return std::max(current_value + adder_tile_value, 0);
                 }();
 
+                const auto value_diff = new_value - current_value;
+
                 //Alter value of all number tiles of that value
-                libutil::for_each_colrow
-                (
-                    [&](auto& opt_tile, const int col, const int row)
-                    {
-                        if(!opt_tile)
-                            return;
+                if(value_diff != 0)
+                {
+                    libutil::for_each_colrow
+                    (
+                        [&](auto& opt_tile, const int col, const int row)
+                        {
+                            if(!opt_tile)
+                                return;
 
-                        const auto ptile = std::get_if<tiles::number>(&*opt_tile);
+                            const auto ptile = std::get_if<tiles::number>(&*opt_tile);
 
-                        if(!ptile)
-                            return;
+                            if(!ptile)
+                                return;
 
-                        auto& tile = *ptile;
+                            auto& tile = *ptile;
 
-                        if(tile.value != current_value)
-                            return;
+                            if(tile.value != current_value)
+                                return;
 
-                        if(tile.value == new_value)
-                            return;
+                            tile.value = new_value;
 
-                        tile.value = new_value;
-
-                        auto change = tile_value_change{};
-                        change.coordinate = {col, row};
-                        change.new_value = new_value;
-                        application.changes.push_back(change);
-                    },
-                    result.brd.tiles
-                );
+                            auto change = tile_value_change{};
+                            change.coordinate = {col, row};
+                            change.new_value = new_value;
+                            change.value_diff = value_diff;
+                            application.changes.push_back(change);
+                        },
+                        result.brd.tiles
+                    );
+                }
             }
 
             result.applications.push_back(application);

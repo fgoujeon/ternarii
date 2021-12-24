@@ -44,7 +44,8 @@ adder_tile::adder_tile
 (
     object2d& parent,
     features::drawable_group& drawables,
-    const int value
+    const int value,
+    const bool show_star
 ):
     object2d(&parent),
     square_
@@ -57,18 +58,6 @@ adder_tile::adder_tile
             .outline_color = colors::dark_gray,
             .outline_thickness = 0.04f,
             .radius = 0.6f
-        }
-    ),
-    star_
-    (
-        *this,
-        drawables,
-        libres::images::special_tile_modifier_star,
-        sdf_image::style
-        {
-            .color = colors::black,
-            .outline_color = colors::black,
-            .outline_range = {0.5f, 0.5f}
         }
     ),
     label_
@@ -84,6 +73,21 @@ adder_tile::adder_tile
         get_label_text(value).c_str()
     )
 {
+    if(show_star)
+    {
+        pstar_ = std::make_unique<sdf_image>
+        (
+            *this,
+            drawables,
+            libres::images::special_tile_modifier_star,
+            sdf_image::style
+            {
+                .color = colors::black,
+                .outline_color = colors::black,
+                .outline_range = {0.5f, 0.5f}
+            }
+        );
+    }
 }
 
 } //namespace

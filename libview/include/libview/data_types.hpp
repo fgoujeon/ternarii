@@ -44,6 +44,7 @@ using stage                  = libgame::data_types::stage;
 using tile                   = libgame::data_types::tile;
 using tile_merge             = libgame::data_types::tile_merge;
 using tile_merge_list        = libgame::data_types::tile_merge_list;
+using tile_value_change      = libgame::data_types::tile_value_change;
 using tile_value_change_list = libgame::data_types::tile_value_change_list;
 
 enum class move_button

@@ -610,6 +610,34 @@ void tile_grid::mark_tiles_for_nullification(const libutil::matrix_coordinate_li
     animator_.push(std::move(anim));
 }
 
+void tile_grid::mark_tiles_for_addition(const data_types::tile_value_change_list& changes)
+{
+    auto anim = animation::animation{};
+
+    //Unmark all tiles
+    for(const auto& ptile: addition_preview_tiles_)
+    {
+        anim.add(animation::tracks::alpha_transition{ptile, 0, 0});
+    }
+    addition_preview_tiles_.clear();
+
+    //Mark given tiles
+    for(const auto& change: changes)
+    {
+        const auto position = tile_coordinate_to_position(change.coordinate);
+        auto ptile = make_preview_tile
+        (
+            data_types::tiles::adder{change.value_diff},
+            position
+        );
+        ptile->set_alpha(0.0f);
+        anim.add(animation::tracks::alpha_transition{ptile, 0.6, 0});
+        addition_preview_tiles_.push_back(ptile);
+    }
+
+    animator_.push(std::move(anim));
+}
+
 void tile_grid::set_board_tiles(const data_types::board_tile_matrix& tiles)
 {
     libutil::for_each_colrow
@@ -652,6 +680,18 @@ std::shared_ptr<object2d> tile_grid::make_tile
 )
 {
     auto ptile = tile_grid_detail::make_tile_object(*this, drawables_, animables_, tile);
+    ptile->setScaling({tile_scaling_factor, tile_scaling_factor});
+    ptile->setTranslation(position);
+    return ptile;
+}
+
+std::shared_ptr<object2d> tile_grid::make_preview_tile
+(
+    const data_types::tile& tile,
+    const Magnum::Vector2& position
+)
+{
+    auto ptile = tile_grid_detail::make_preview_tile_object(*this, drawables_, animables_, tile);
     ptile->setScaling({tile_scaling_factor, tile_scaling_factor});
     ptile->setTranslation(position);
     return ptile;

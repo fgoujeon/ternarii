@@ -402,6 +402,11 @@ void game::mark_tiles_for_nullification(const libutil::matrix_coordinate_list& t
     pimpl_->tile_grid.mark_tiles_for_nullification(tile_coordinates);
 }
 
+void game::mark_tiles_for_addition(const data_types::tile_value_change_list& changes)
+{
+    pimpl_->tile_grid.mark_tiles_for_addition(changes);
+}
+
 void game::set_board_tiles(const data_types::board_tile_matrix& tiles)
 {
     pimpl_->tile_grid.set_board_tiles(tiles);

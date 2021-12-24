@@ -92,12 +92,13 @@ class playing_impl
         void handle_game_event(const libgame::events::next_input_insertion&)
         {
             pscreen_->insert_next_input();
-            mark_tiles_for_nullification();
+            show_preview();
             save_game();
         }
 
         void handle_game_event(const libgame::events::input_tile_drop& event)
         {
+            pscreen_->mark_tiles_for_addition({});
             pscreen_->drop_input_tiles(event.drops);
         }
 
@@ -169,10 +170,37 @@ class playing_impl
             handle_game_events(game_events_);
         }
 
-        void mark_tiles_for_nullification()
+        void show_preview()
         {
-            auto targeted_tiles = pgame_->get_targeted_tiles(pscreen_->get_input_layout());
-            pscreen_->mark_tiles_for_nullification(std::move(targeted_tiles));
+            const auto gravity_result = apply_gravity_on_input
+            (
+                pgame_->get_state().brd,
+                pgame_->get_state().input_tiles,
+                pscreen_->get_input_layout()
+            );
+
+            //Show nullifier preview
+            {
+                const auto result = apply_nullifiers(gravity_result.brd);
+                auto targeted_tiles = result.nullified_tiles_coords;
+                pscreen_->mark_tiles_for_nullification(std::move(targeted_tiles));
+            }
+
+            //Show adder preview
+            {
+                const auto result = apply_adders(gravity_result.brd);
+
+                auto changes = libgame::data_types::tile_value_change_list{};
+                for(const auto& application: result.applications)
+                {
+                    for(const auto& change: application.changes)
+                    {
+                        changes.push_back(change);
+                    }
+                }
+
+                pscreen_->mark_tiles_for_addition(std::move(changes));
+            }
         }
 
         void save_game()

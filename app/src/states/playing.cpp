@@ -87,7 +87,7 @@ playing_impl::playing_impl
                 .handle_input_layout_change = [this](const libview::data_types::input_layout input_layout)
                 {
                     libutil::log::info("[fsm <- screen] Input layout change: ", input_layout);
-                    mark_tiles_for_nullification();
+                    show_preview();
                 }
             }
         )
@@ -116,7 +116,7 @@ playing_impl::playing_impl
         pscreen_->insert_next_input();
         pscreen_->create_next_input(stage_state.next_input_tiles);
         pscreen_->set_board_tiles(board.tiles);
-        mark_tiles_for_nullification();
+        show_preview();
         pscreen_->set_game_over_overlay_visible(is_overflowed(board));
     }
     else
