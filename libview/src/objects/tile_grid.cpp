@@ -610,6 +610,34 @@ void tile_grid::mark_tiles_for_nullification(const libutil::matrix_coordinate_li
     animator_.push(std::move(anim));
 }
 
+void tile_grid::mark_tiles_for_addition(const data_types::tile_value_change_list& changes)
+{
+    auto anim = animation::animation{};
+
+    //Unmark all tiles
+    for(const auto& ptile: addition_preview_tiles_)
+    {
+        anim.add(animation::tracks::alpha_transition{ptile, 0, 0});
+    }
+    addition_preview_tiles_.clear();
+
+    //Mark given tiles
+    for(const auto& change: changes)
+    {
+        const auto position = tile_coordinate_to_position(change.coordinate);
+        auto ptile = make_tile
+        (
+            data_types::tiles::adder{change.value_diff},
+            position
+        );
+        ptile->set_alpha(0.0f);
+        anim.add(animation::tracks::alpha_transition{ptile, 0.7, 0});
+        addition_preview_tiles_.push_back(ptile);
+    }
+
+    animator_.push(std::move(anim));
+}
+
 void tile_grid::set_board_tiles(const data_types::board_tile_matrix& tiles)
 {
     libutil::for_each_colrow

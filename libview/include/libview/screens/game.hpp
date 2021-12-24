@@ -101,6 +101,8 @@ class game: public object2d, public features::animable, public features::key_eve
 
         void mark_tiles_for_nullification(const libutil::matrix_coordinate_list& tile_coordinates);
 
+        void mark_tiles_for_addition(const data_types::tile_value_change_list& changes);
+
         void set_board_tiles(const data_types::board_tile_matrix& tiles);
 
         void set_game_over_overlay_visible(const bool visible);

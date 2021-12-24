@@ -79,21 +79,6 @@ const data_types::stage_state& game::get_state() const
     return pimpl_->state;
 }
 
-libutil::matrix_coordinate_list game::get_targeted_tiles
-(
-    const data_types::input_layout& input_layout
-) const
-{
-    const auto result = apply_gravity_on_input
-    (
-        pimpl_->state.brd,
-        pimpl_->state.input_tiles,
-        input_layout
-    );
-    auto result2 = apply_nullifiers(result.brd);
-    return result2.nullified_tiles_coords;
-}
-
 bool game::is_over() const
 {
     return is_overflowed(pimpl_->state.brd);

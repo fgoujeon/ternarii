@@ -215,6 +215,7 @@ struct tile_value_change
 {
     libutil::matrix_coordinate coordinate;
     int new_value = 0;
+    int value_diff = 0;
 };
 
 using tile_value_change_list = std::vector<tile_value_change>;

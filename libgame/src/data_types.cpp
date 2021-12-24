@@ -175,7 +175,8 @@ std::ostream& operator<<(std::ostream& l, const tile_value_change& r)
     l << "tile_value_change";
     l << "{";
     l << "coordinate: " << libutil::streamable{r.coordinate} << ", ";
-    l << "new_value: " << r.new_value;
+    l << "new_value: " << r.new_value << ", ";
+    l << "value_diff: " << r.value_diff;
     l << "}";
     return l;
 }
