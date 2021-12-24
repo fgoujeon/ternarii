@@ -98,6 +98,7 @@ class playing_impl
 
         void handle_game_event(const libgame::events::input_tile_drop& event)
         {
+            pscreen_->mark_tiles_for_addition({});
             pscreen_->drop_input_tiles(event.drops);
         }
 
