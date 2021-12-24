@@ -631,7 +631,7 @@ void tile_grid::mark_tiles_for_addition(const data_types::tile_value_change_list
             position
         );
         ptile->set_alpha(0.0f);
-        anim.add(animation::tracks::alpha_transition{ptile, 0.7, 0});
+        anim.add(animation::tracks::alpha_transition{ptile, 0.6, 0});
         addition_preview_tiles_.push_back(ptile);
     }
 
