@@ -155,7 +155,7 @@ std::ostream& operator<<(std::ostream& l, const input_layout& r);
 
 /*
 Get the coordinate of the given tile, with given layout applied, in a
-hypothetical 6*2 array.
+hypothetical 6*2 matrix.
 
 E.g. with col_offset = 3 and rotation = 1, input is laid out like so:
 [---][---][---][0,0][0,1][---][---]
@@ -169,6 +169,12 @@ libutil::matrix_coordinate get_tile_coordinate
 (
     const input_layout& layout,
     const libutil::matrix_coordinate& tile_coord //coordinate of tile in input
+);
+
+bool is_valid
+(
+    const input_layout& layout,
+    const input_tile_matrix& input_tiles
 );
 
 

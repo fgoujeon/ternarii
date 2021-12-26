@@ -172,6 +172,12 @@ class playing_impl
 
         void show_preview()
         {
+            const auto& input_tiles = pgame_->get_state().input_tiles;
+            const auto input_layout = pscreen_->get_input_layout();
+
+            if(!is_valid(input_layout, input_tiles))
+                return;
+
             const auto gravity_result = apply_gravity_on_input
             (
                 pgame_->get_state().brd,

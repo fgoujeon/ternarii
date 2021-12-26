@@ -106,7 +106,7 @@ apply_gravity_on_input_result apply_gravity_on_input
     const input_layout& input_layout
 )
 {
-    apply_gravity_on_input_result result;
+    auto result = apply_gravity_on_input_result{};
     result.brd = brd;
 
     //Make tiles fall from lowest to highest row of laid out input.

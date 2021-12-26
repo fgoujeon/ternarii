@@ -130,6 +130,35 @@ libutil::matrix_coordinate get_tile_coordinate
     return libutil::matrix_coordinate{0, 0};
 }
 
+bool is_valid
+(
+    const input_layout& layout,
+    const input_tile_matrix& input_tiles
+)
+{
+    auto valid = true;
+
+    libutil::for_each_colrow
+    (
+        [&](auto& opt_tile, const int col, const int row)
+        {
+            if(!valid)
+                return;
+
+            if(!opt_tile)
+                return;
+
+            const auto coord = get_tile_coordinate(layout, {col, row});
+
+            if(coord.col < 0 || 5 < coord.col)
+                valid = false;
+        },
+        input_tiles
+    );
+
+    return valid;
+}
+
 
 
 std::ostream& operator<<(std::ostream& l, const input_tile_drop& r)
