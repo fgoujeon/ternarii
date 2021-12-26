@@ -339,7 +339,8 @@ void view::show_screen
                 {
                     .pobj = pimpl_->pscreen,
                     .finish_alpha = 0.0f,
-                    .duration_s = duration_s
+                    .duration_s = duration_s,
+                    .interpolator = float_interpolator
                 }
             );
         }
@@ -363,7 +364,8 @@ void view::show_screen
                 {
                     .pobj = pscreen,
                     .finish_alpha = 1.0f,
-                    .duration_s = duration_s
+                    .duration_s = duration_s,
+                    .interpolator = float_interpolator
                 }
             );
         }
