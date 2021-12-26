@@ -49,7 +49,7 @@ struct showing_title_screen
                             (
                                 events::stage_selection_screen_show_request
                                 {
-                                    screen_transition::right_to_left
+                                    data_types::screen_transitions::right_to_left{}
                                 }
                             );
                         },
@@ -59,7 +59,7 @@ struct showing_title_screen
                             (
                                 events::about_screen_show_request
                                 {
-                                    screen_transition::right_to_left
+                                    data_types::screen_transitions::right_to_left{}
                                 }
                             );
                         }
@@ -77,7 +77,7 @@ struct showing_title_screen
             (
                 events::title_screen_show_request
                 {
-                    screen_transition::top_to_bottom
+                    data_types::screen_transitions::top_to_bottom{}
                 }
             );
         }

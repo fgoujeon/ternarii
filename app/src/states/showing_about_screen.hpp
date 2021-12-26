@@ -48,7 +48,7 @@ struct showing_about_screen
                             (
                                 events::title_screen_show_request
                                 {
-                                    screen_transition::left_to_right
+                                    data_types::screen_transitions::left_to_right{}
                                 }
                             );
                         }

@@ -23,6 +23,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include "screens/game.hpp"
 #include "data_types.hpp"
 #include <Magnum/Platform/Sdl2Application.h>
+#include <variant>
 #include <memory>
 
 namespace libview
@@ -37,14 +38,23 @@ class view
         using mouse_event      = application::MouseEvent;
         using mouse_move_event = application::MouseMoveEvent;
 
-        enum class screen_transition
+        struct screen_transitions
         {
-            top_to_bottom,
-            left_to_right,
-            right_to_left,
-            zoom_in,
-            zoom_out
+            struct top_to_bottom{};
+            struct left_to_right{};
+            struct right_to_left{};
+            struct zoom_in{};
+            struct zoom_out{};
         };
+
+        using screen_transition = std::variant
+        <
+            screen_transitions::top_to_bottom,
+            screen_transitions::left_to_right,
+            screen_transitions::right_to_left,
+            screen_transitions::zoom_in,
+            screen_transitions::zoom_out
+        >;
 
         struct configuration
         {
@@ -74,7 +84,7 @@ class view
         void show_screen
         (
             const std::shared_ptr<object2d>& pscreen,
-            screen_transition trans
+            const screen_transition& trans
         );
 
     //Magnum event handling

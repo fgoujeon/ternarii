@@ -47,7 +47,7 @@ struct showing_stage_selection_screen
                             (
                                 events::play_screen_show_request
                                 {
-                                    screen_transition::zoom_in,
+                                    data_types::screen_transitions::zoom_in{},
                                     stage
                                 }
                             );
@@ -58,7 +58,7 @@ struct showing_stage_selection_screen
                             (
                                 events::title_screen_show_request
                                 {
-                                    screen_transition::left_to_right
+                                    data_types::screen_transitions::left_to_right{}
                                 }
                             );
                         }

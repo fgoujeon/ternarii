@@ -80,7 +80,7 @@ playing_impl::playing_impl
                     (
                         events::stage_selection_screen_show_request
                         {
-                            screen_transition::zoom_out
+                            data_types::screen_transitions::zoom_out{}
                         }
                     );
                 },
