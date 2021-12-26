@@ -374,21 +374,52 @@ void view::show_screen
     const auto do_zoom_transition = [&]
     (
         const float duration_s,
-        const Magnum::Vector2& new_screen_start_scaling
+        const Magnum::Vector2& new_screen_start_position,
+        const float new_screen_start_scaling
     )
     {
+        const auto old_screen_finish_position = Magnum::Vector2
+        {
+            -new_screen_start_position.x() / new_screen_start_scaling,
+            -new_screen_start_position.y() / new_screen_start_scaling
+        };
+
         const auto old_screen_finish_scaling = Magnum::Vector2
         {
-            1.0f / new_screen_start_scaling.x(),
-            1.0f / new_screen_start_scaling.y()
+            1.0f / new_screen_start_scaling,
+            1.0f / new_screen_start_scaling
         };
+
+        pimpl_->screen_transition_animator.push
+        (
+            animation::tracks::fixed_duration_translation
+            {
+                .pobj = pscreen,
+                .finish_position = new_screen_start_position,
+                .duration_s = 0
+            }
+        );
 
         pimpl_->screen_transition_animator.push
         (
             animation::tracks::scaling_transition
             {
                 .pobj = pscreen,
-                .finish_scaling = new_screen_start_scaling,
+                .finish_scaling = Magnum::Vector2
+                {
+                    new_screen_start_scaling,
+                    new_screen_start_scaling
+                },
+                .duration_s = 0
+            }
+        );
+
+        pimpl_->screen_transition_animator.push
+        (
+            animation::tracks::alpha_transition
+            {
+                .pobj = pscreen,
+                .finish_alpha = 1.0f,
                 .duration_s = 0
             }
         );
@@ -398,6 +429,17 @@ void view::show_screen
         //Hide old screen, if any
         if(pimpl_->pscreen)
         {
+            anim.add
+            (
+                animation::tracks::fixed_duration_translation
+                {
+                    .pobj = pimpl_->pscreen,
+                    .finish_position = old_screen_finish_position,
+                    .duration_s = duration_s,
+                    .interpolator = vector_interpolator
+                }
+            );
+
             anim.add
             (
                 animation::tracks::scaling_transition
@@ -423,6 +465,17 @@ void view::show_screen
 
         //Show new screen
         {
+            anim.add
+            (
+                animation::tracks::fixed_duration_translation
+                {
+                    .pobj = pscreen,
+                    .finish_position = {0.0f, 0.0f},
+                    .duration_s = duration_s,
+                    .interpolator = vector_interpolator
+                }
+            );
+
             anim.add
             (
                 animation::tracks::scaling_transition
@@ -467,11 +520,21 @@ void view::show_screen
             },
             [&](const screen_transitions::zoom_in)
             {
-                do_zoom_transition(1.0f, Magnum::Vector2{0.2f, 0.2f});
+                do_zoom_transition
+                (
+                    1.0f,
+                    Magnum::Vector2{-2.25f, 0.25f},
+                    0.25f
+                );
             },
             [&](const screen_transitions::zoom_out)
             {
-                do_zoom_transition(0.7f, Magnum::Vector2{5.0f, 5.0f});
+                do_zoom_transition
+                (
+                    0.7f,
+                    Magnum::Vector2{9.0f, -1.0f},
+                    4.0f
+                );
             }
         },
         trans
