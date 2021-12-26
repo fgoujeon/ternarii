@@ -393,12 +393,23 @@ apply_adders_result apply_adders(const board& brd)
 
                 const auto new_value = [&]
                 {
-                    //Don't alter 9+ tiles
-                    if(current_value >= 9)
+                    //Don't alter tiles above 9
+                    if(current_value > 9)
                         return current_value;
 
-                    //Stay between 0 and 9
-                    return std::clamp(current_value + adder_tile_value, 0, 9);
+                    //For positive adders
+                    if(adder_tile_value > 0)
+                    {
+                        //Don't alter 9+ tiles
+                        if(current_value >= 9)
+                            return current_value;
+
+                        //Cap new value to 9
+                        return std::min(current_value + adder_tile_value, 9);
+                    }
+
+                    //Don't go below 0
+                    return std::max(current_value + adder_tile_value, 0);
                 }();
 
                 const auto value_diff = new_value - current_value;
