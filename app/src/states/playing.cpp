@@ -80,7 +80,12 @@ playing_impl::playing_impl
                     (
                         events::stage_selection_screen_show_request
                         {
-                            data_types::screen_transitions::zoom_out{}
+                            data_types::screen_transitions::zoom_out
+                            {
+                                .duration_s = 0.7f,
+                                .new_screen_start_position = Magnum::Vector2{9.0f, -1.0f},
+                                .new_screen_start_scaling = 4.0f
+                            }
                         }
                     );
                 },

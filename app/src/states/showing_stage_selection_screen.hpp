@@ -41,13 +41,26 @@ struct showing_stage_selection_screen
                 (
                     screen::callback_set
                     {
-                        .stage_selection_request = [this](const libview::data_types::stage stage)
+                        .stage_selection_request = [this]
+                        (
+                            const libview::data_types::stage stage,
+                            const Magnum::Vector2& stage_symbol_position
+                        )
                         {
                             ctx.process_event
                             (
                                 events::play_screen_show_request
                                 {
-                                    data_types::screen_transitions::zoom_in{},
+                                    data_types::screen_transitions::zoom_in
+                                    {
+                                        .duration_s = 1.0f,
+                                        .new_screen_start_position = Magnum::Vector2
+                                        {
+                                            stage_symbol_position.x(),
+                                            stage_symbol_position.y() + 0.25f
+                                        },
+                                        .new_screen_start_scaling = 0.25f
+                                    },
                                     stage
                                 }
                             );

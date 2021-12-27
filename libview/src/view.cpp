@@ -520,22 +520,22 @@ void view::show_screen
             {
                 do_translation_transition(0.5f, Magnum::Vector2{-12.0f, 0.0f});
             },
-            [&](const screen_transitions::zoom_in)
+            [&](const screen_transitions::zoom_in& trans)
             {
                 do_zoom_transition
                 (
-                    1.0f,
-                    Magnum::Vector2{-2.25f, 0.25f},
-                    0.25f
+                    trans.duration_s,
+                    trans.new_screen_start_position,
+                    trans.new_screen_start_scaling
                 );
             },
-            [&](const screen_transitions::zoom_out)
+            [&](const screen_transitions::zoom_out& trans)
             {
                 do_zoom_transition
                 (
-                    0.7f,
-                    Magnum::Vector2{9.0f, -1.0f},
-                    4.0f
+                    trans.duration_s,
+                    trans.new_screen_start_position,
+                    trans.new_screen_start_scaling
                 );
             }
         },

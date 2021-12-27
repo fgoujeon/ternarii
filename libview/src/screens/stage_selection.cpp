@@ -52,6 +52,8 @@ namespace
     class selection_button: public object2d
     {
         private:
+            static constexpr auto stage_image_x_position = -2.25f;
+
             static std::unique_ptr<objects::sdf_image> make_stage_image
             (
                 selection_button& parent,
@@ -77,7 +79,7 @@ namespace
                 );
 
                 pimage->setScaling({0.75f, 0.75f});
-                pimage->setTranslation({-2.25f, 0.0f});
+                pimage->setTranslation({stage_image_x_position, 0.0f});
 
                 return pimage;
             }
@@ -87,6 +89,7 @@ namespace
             (
                 object2d& parent,
                 feature_group_set& feature_groups,
+                const Magnum::Vector2& position,
                 const data_types::stage stage,
                 const stage_selection::callback_set& callbacks
             ):
@@ -105,9 +108,16 @@ namespace
                     },
                     objects::label_button::callback_set
                     {
-                        .mouse_click_callback = [callbacks, stage]
+                        .mouse_click_callback = [callbacks, position, stage]
                         {
-                            callbacks.stage_selection_request(stage);
+                            callbacks.stage_selection_request
+                            (
+                                stage,
+                                {
+                                    position.x() + -2.25f,
+                                    position.y()
+                                }
+                            );
                         }
                     }
                 ),
@@ -123,6 +133,7 @@ namespace
                     make_stage_image(*this, feature_groups, stage)
                 )
             {
+                setTranslation(position);
                 button_.setScaling({3.3f, 3.3f});
                 name_label_.setTranslation({0.75f, 0.5f});
             }
@@ -156,6 +167,7 @@ struct stage_selection::impl
         (
             self,
             feature_groups,
+            {0.0f, 5.0f},
             data_types::stage::purity_chapel,
             callbacks
         ),
@@ -172,6 +184,7 @@ struct stage_selection::impl
         (
             self,
             feature_groups,
+            {0.0f, 2.5f},
             data_types::stage::nullifier_room,
             callbacks
         ),
@@ -208,6 +221,7 @@ struct stage_selection::impl
         (
             self,
             feature_groups,
+            {0.0f, 0.0f},
             data_types::stage::math_classroom,
             callbacks
         ),
@@ -241,6 +255,7 @@ struct stage_selection::impl
         (
             self,
             feature_groups,
+            {0.0f, -2.5f},
             data_types::stage::granite_cave,
             callbacks
         ),
@@ -287,6 +302,7 @@ struct stage_selection::impl
         (
             self,
             feature_groups,
+            {0.0f, -5.0f},
             data_types::stage::triplet_pines_mall,
             callbacks
         ),
@@ -344,14 +360,10 @@ struct stage_selection::impl
         title_label.setTranslation({0.0f, 7.0f});
 
         {
-            purity_chapel_button.setTranslation({0.0f, 5.0f});
-
             purity_chapel_description_label.setTranslation({0.75f, -0.4f});
         }
 
         {
-            nullifier_room_button.setTranslation({0.0f, 2.5f});
-
             nullifier_room_special_tile_0.setScaling({0.4f, 0.4f});
             nullifier_room_special_tile_0.setTranslation({-0.25f, -0.4f});
 
@@ -363,8 +375,6 @@ struct stage_selection::impl
         }
 
         {
-            math_classroom_button.setTranslation({0.0f, 0.0f});
-
             math_classroom_special_tile_0.setScaling({0.4f, 0.4f});
             math_classroom_special_tile_0.setTranslation({-0.75f, -0.4f});
 
@@ -379,8 +389,6 @@ struct stage_selection::impl
         }
 
         {
-            granite_cave_button.setTranslation({0.0f, -2.5f});
-
             granite_cave_granite.setScaling({0.4f, 0.4f});
             granite_cave_granite.setTranslation({-0.75f, -0.4f});
 
@@ -395,8 +403,6 @@ struct stage_selection::impl
         }
 
         {
-            triplet_pines_mall_button.setTranslation({0.0f, -5.0f});
-
             triplet_pines_mall_tile_triplet.setScaling({0.4f, 0.4f});
             triplet_pines_mall_tile_triplet.setTranslation({-0.75f, -0.4f});
 

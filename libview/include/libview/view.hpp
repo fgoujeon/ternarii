@@ -43,8 +43,20 @@ class view
             struct top_to_bottom{};
             struct left_to_right{};
             struct right_to_left{};
-            struct zoom_in{};
-            struct zoom_out{};
+
+            struct zoom_in
+            {
+                float duration_s = 0;
+                Magnum::Vector2 new_screen_start_position;
+                float new_screen_start_scaling = 1.0f;
+            };
+
+            struct zoom_out
+            {
+                float duration_s = 0;
+                Magnum::Vector2 new_screen_start_position;
+                float new_screen_start_scaling = 1.0f;
+            };
         };
 
         using screen_transition = std::variant
