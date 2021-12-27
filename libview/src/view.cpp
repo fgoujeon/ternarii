@@ -416,16 +416,6 @@ void view::show_screen
             }
         );
 
-        pimpl_->screen_transition_animator.push
-        (
-            animation::tracks::alpha_transition
-            {
-                .pobj = pscreen,
-                .finish_alpha = 1.0f,
-                .duration_s = 0
-            }
-        );
-
         auto anim = animation::animation{};
 
         //Hide old screen, if any
