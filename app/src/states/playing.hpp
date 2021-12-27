@@ -33,13 +33,14 @@ class playing_impl
 {
     public:
         using screen = libview::screens::game;
+        using screen_transitions = libview::view::screen_transitions;
         using screen_transition = libview::view::screen_transition;
 
     public:
         playing_impl
         (
             context& ctx,
-            screen_transition trans,
+            const screen_transitions::zoom_in& trans,
             libgame::data_types::stage stage
         );
 

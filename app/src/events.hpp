@@ -44,7 +44,7 @@ namespace events
 
     struct play_screen_show_request
     {
-        data_types::screen_transition transition;
+        data_types::screen_transitions::zoom_in transition;
         libgame::data_types::stage stage;
     };
 
