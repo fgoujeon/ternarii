@@ -33,7 +33,12 @@ class stage_selection: public object2d
     public:
         struct callback_set
         {
-            libutil::void_function<data_types::stage> stage_selection_request;
+            libutil::void_function
+            <
+                data_types::stage,
+                const Magnum::Vector2& /*stage_symbol_position*/
+            > stage_selection_request;
+
             libutil::void_function<> back_request;
         };
 

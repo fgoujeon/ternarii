@@ -17,42 +17,15 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef EVENTS_HPP
-#define EVENTS_HPP
+#ifndef DATA_TYPES_HPP
+#define DATA_TYPES_HPP
 
-#include "data_types.hpp"
 #include <libview/view.hpp>
 
-namespace events
+namespace data_types
 {
-    struct start{};
-
-    struct title_screen_show_request
-    {
-        data_types::screen_transition transition;
-    };
-
-    struct stage_selection_screen_show_request
-    {
-        data_types::screen_transition transition;
-    };
-
-    struct about_screen_show_request
-    {
-        data_types::screen_transition transition;
-    };
-
-    struct play_screen_show_request
-    {
-        data_types::screen_transitions::zoom_in transition;
-        libgame::data_types::stage stage;
-    };
-
-    struct iteration
-    {
-        std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
-        double elapsed_s = 0;
-    };
+    using screen_transitions = libview::view::screen_transitions;
+    using screen_transition = libview::view::screen_transition;
 }
 
 #endif

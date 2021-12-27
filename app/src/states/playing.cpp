@@ -51,7 +51,7 @@ namespace
 playing_impl::playing_impl
 (
     context& ctx,
-    const screen_transition trans,
+    const screen_transitions::zoom_in& trans,
     const libgame::data_types::stage stage
 ):
     ctx_(ctx),
@@ -73,14 +73,23 @@ playing_impl::playing_impl
                     libutil::log::info("[fsm <- screen] Drop request with layout: ", input_layout);
                     modify_game(&libgame::game::drop_input_tiles, input_layout);
                 },
-                .handle_exit_request = [this]
+                .handle_exit_request = [this, trans]
                 {
                     libutil::log::info("[fsm <- screen] Exit request");
                     ctx_.process_event
                     (
                         events::stage_selection_screen_show_request
                         {
-                            screen_transition::zoom_out
+                            data_types::screen_transitions::zoom_out
+                            {
+                                .duration_s = 0.7f,
+                                .new_screen_start_position = Magnum::Vector2
+                                {
+                                    -trans.new_screen_start_position.x() / trans.new_screen_start_scaling,
+                                    -trans.new_screen_start_position.y() / trans.new_screen_start_scaling
+                                },
+                                .new_screen_start_scaling = 1.0f / trans.new_screen_start_scaling
+                            }
                         }
                     );
                 },
