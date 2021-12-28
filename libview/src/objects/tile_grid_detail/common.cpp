@@ -92,6 +92,19 @@ std::shared_ptr<object2d> make_tile_object
                     }
                 );
             },
+            [&](const data_types::tiles::outer_columns_nullifier&) -> result_t
+            {
+                return std::make_shared<sdf_image_tile>
+                (
+                    parent,
+                    drawables,
+                    path_list
+                    {
+                        libres::images::special_tile_symbol_null,
+                        libres::images::special_tile_modifier_outer_columns
+                    }
+                );
+            },
             [&](const data_types::tiles::granite& tile) -> result_t
             {
                 return std::make_shared<granite_tile>
@@ -159,6 +172,18 @@ std::shared_ptr<object2d> make_preview_tile_object
                 );
             },
             [&](const data_types::tiles::number_nullifier&) -> result_t
+            {
+                return std::make_shared<sdf_image_tile>
+                (
+                    parent,
+                    drawables,
+                    path_list
+                    {
+                        libres::images::special_tile_symbol_null
+                    }
+                );
+            },
+            [&](const data_types::tiles::outer_columns_nullifier&) -> result_t
             {
                 return std::make_shared<sdf_image_tile>
                 (

@@ -108,7 +108,7 @@ add_svg_to_sdf_command(menu                                  64)
 add_svg_to_sdf_command(move_button                           64)
 add_svg_to_sdf_command(rotate_button                         64)
 add_svg_to_sdf_command(special_tile_modifier_column          64)
-add_svg_to_sdf_command(special_tile_modifier_outside_columns 64)
+add_svg_to_sdf_command(special_tile_modifier_outer_columns 64)
 add_svg_to_sdf_command(special_tile_modifier_row             64)
 add_svg_to_sdf_command(special_tile_modifier_star            64)
 add_svg_to_sdf_command(special_tile_symbol_null              64)
@@ -143,7 +143,7 @@ add_library(
     "${CMAKE_CURRENT_BINARY_DIR}/out/images/move_button.tga"
     "${CMAKE_CURRENT_BINARY_DIR}/out/images/rotate_button.tga"
     "${CMAKE_CURRENT_BINARY_DIR}/out/images/special_tile_modifier_column.tga"
-    "${CMAKE_CURRENT_BINARY_DIR}/out/images/special_tile_modifier_outside_columns.tga"
+    "${CMAKE_CURRENT_BINARY_DIR}/out/images/special_tile_modifier_outer_columns.tga"
     "${CMAKE_CURRENT_BINARY_DIR}/out/images/special_tile_modifier_row.tga"
     "${CMAKE_CURRENT_BINARY_DIR}/out/images/special_tile_modifier_star.tga"
     "${CMAKE_CURRENT_BINARY_DIR}/out/images/special_tile_symbol_null.tga"

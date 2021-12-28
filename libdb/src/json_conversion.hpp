@@ -167,6 +167,14 @@ namespace libgame::data_types
         {
         }
 
+        void from_json(const nlohmann::json&, outer_columns_nullifier&)
+        {
+        }
+
+        void to_json(nlohmann::json&, const outer_columns_nullifier&)
+        {
+        }
+
         void from_json(const nlohmann::json& from, granite& to)
         {
             to.thickness = from.get<int>();

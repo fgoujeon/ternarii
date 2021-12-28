@@ -265,7 +265,7 @@ struct stage_selection::impl
             feature_groups.drawables,
             {
                 libres::images::special_tile_symbol_null,
-                libres::images::special_tile_modifier_outside_columns
+                libres::images::special_tile_modifier_outer_columns
             }
         ),
         waterfalls_special_tile_1
