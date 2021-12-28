@@ -32,6 +32,7 @@ std::string_view get_pretty_name(const stage s)
         case stage::nullifier_room:     return "NULLIFIER ROOM";
         case stage::purity_chapel:      return "PURITY CHAPEL";
         case stage::triplet_pines_mall: return "TRIPLET PINES MALL";
+        case stage::waterfalls:         return "WATERFALLS";
     }
     return "";
 }
@@ -49,6 +50,7 @@ std::optional<std::filesystem::path> get_image(const stage s)
         CASE(nullifier_room)
         CASE(purity_chapel)
         CASE(triplet_pines_mall)
+        CASE(waterfalls)
 
 #undef CASE
     }

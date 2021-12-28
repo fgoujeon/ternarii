@@ -102,7 +102,7 @@ namespace
                     objects::blank_button::style
                     {
                         .color = colors::light_gray,
-                        .dimension = {1.0f, 0.33f},
+                        .dimension = {1.0f, 0.30f},
                         .highlight_color = colors::white,
                         .radius = 0.16f
                     },
@@ -134,7 +134,7 @@ namespace
                 )
             {
                 setTranslation(position);
-                button_.setScaling({3.3f, 3.3f});
+                button_.setScaling({3.2f, 3.2f});
                 name_label_.setTranslation({0.75f, 0.5f});
             }
 
@@ -167,7 +167,7 @@ struct stage_selection::impl
         (
             self,
             feature_groups,
-            {0.0f, 5.0f},
+            {0.0f, 5.375f},
             data_types::stage::purity_chapel,
             callbacks
         ),
@@ -184,7 +184,7 @@ struct stage_selection::impl
         (
             self,
             feature_groups,
-            {0.0f, 2.5f},
+            {0.0f, 3.225f},
             data_types::stage::nullifier_room,
             callbacks
         ),
@@ -221,7 +221,7 @@ struct stage_selection::impl
         (
             self,
             feature_groups,
-            {0.0f, 0.0f},
+            {0.0f, 1.075f},
             data_types::stage::math_classroom,
             callbacks
         ),
@@ -250,12 +250,58 @@ struct stage_selection::impl
             -2
         ),
 
+        //Waterfalls
+        waterfalls_button
+        (
+            self,
+            feature_groups,
+            {0.0f, -1.075f},
+            data_types::stage::waterfalls,
+            callbacks
+        ),
+        waterfalls_special_tile_0
+        (
+            waterfalls_button,
+            feature_groups.drawables,
+            {
+                libres::images::special_tile_symbol_null,
+                libres::images::special_tile_modifier_outer_columns
+            }
+        ),
+        waterfalls_special_tile_1
+        (
+            waterfalls_button,
+            feature_groups.drawables,
+            {
+                libres::images::special_tile_symbol_null,
+                libres::images::special_tile_modifier_row
+            }
+        ),
+        waterfalls_special_tile_2
+        (
+            waterfalls_button,
+            feature_groups.drawables,
+            {
+                libres::images::special_tile_symbol_null,
+                libres::images::special_tile_modifier_column
+            }
+        ),
+        waterfalls_special_tile_3
+        (
+            waterfalls_button,
+            feature_groups.drawables,
+            {
+                libres::images::special_tile_symbol_null,
+                libres::images::special_tile_modifier_star
+            }
+        ),
+
         //Granite cave
         granite_cave_button
         (
             self,
             feature_groups,
-            {0.0f, -2.5f},
+            {0.0f, -3.225f},
             data_types::stage::granite_cave,
             callbacks
         ),
@@ -302,7 +348,7 @@ struct stage_selection::impl
         (
             self,
             feature_groups,
-            {0.0f, -5.0f},
+            {0.0f, -5.375f},
             data_types::stage::triplet_pines_mall,
             callbacks
         ),
@@ -389,6 +435,20 @@ struct stage_selection::impl
         }
 
         {
+            waterfalls_special_tile_0.setScaling({0.4f, 0.4f});
+            waterfalls_special_tile_0.setTranslation({-0.75f, -0.4f});
+
+            waterfalls_special_tile_1.setScaling({0.4f, 0.4f});
+            waterfalls_special_tile_1.setTranslation({0.25f, -0.4f});
+
+            waterfalls_special_tile_2.setScaling({0.4f, 0.4f});
+            waterfalls_special_tile_2.setTranslation({1.25f, -0.4f});
+
+            waterfalls_special_tile_3.setScaling({0.4f, 0.4f});
+            waterfalls_special_tile_3.setTranslation({2.25f, -0.4f});
+        }
+
+        {
             granite_cave_granite.setScaling({0.4f, 0.4f});
             granite_cave_granite.setTranslation({-0.75f, -0.4f});
 
@@ -437,6 +497,12 @@ struct stage_selection::impl
     objects::adder_tile math_classroom_special_tile_1;
     objects::adder_tile math_classroom_special_tile_2;
     objects::adder_tile math_classroom_special_tile_3;
+
+    selection_button waterfalls_button;
+    objects::sdf_image_tile waterfalls_special_tile_0;
+    objects::sdf_image_tile waterfalls_special_tile_1;
+    objects::sdf_image_tile waterfalls_special_tile_2;
+    objects::sdf_image_tile waterfalls_special_tile_3;
 
     selection_button granite_cave_button;
     objects::sdf_image granite_cave_granite;

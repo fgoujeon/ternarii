@@ -238,6 +238,32 @@ apply_nullifiers_result apply_nullifiers(const board& brd)
                         }
                     },
 
+                    [&](const tiles::outer_columns_nullifier&)
+                    {
+                        //Remove the nullifier tile itself
+                        opt_tile = std::nullopt;
+                        result.nullified_tiles_coords.push_back({col, row});
+
+                        //Remove all tiles from first and last columns
+                        static const auto columns = std::vector<int>({0, 5});
+                        for(const auto column: columns)
+                        {
+                            for(int nullified_row = 0; nullified_row < result.brd.tiles.rows; ++nullified_row)
+                            {
+                                auto& opt_tile = at(result.brd.tiles, column, nullified_row);
+
+                                if(!opt_tile)
+                                {
+                                    continue;
+                                }
+
+                                result.nullified_tiles_coords.push_back({column, nullified_row});
+
+                                opt_tile = std::nullopt;
+                            }
+                        }
+                    },
+
                     [&](const tiles::row_nullifier&)
                     {
                         //Remove all tiles from current row

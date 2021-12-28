@@ -49,6 +49,11 @@ namespace tiles
         return l << "number_nullifier{}";
     }
 
+    std::ostream& operator<<(std::ostream& l, const outer_columns_nullifier&)
+    {
+        return l << "outer_columns_nullifier{}";
+    }
+
     std::ostream& operator<<(std::ostream& l, const granite& r)
     {
         l << "granite";

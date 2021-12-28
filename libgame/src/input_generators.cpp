@@ -400,6 +400,21 @@ namespace
         );
         return generator;
     }
+
+    abstract_input_generator& get_waterfalls_input_generator()
+    {
+        static auto generator = random_input_generator
+        (
+            {
+                {get_random_number_tile_pair_generator(), 5000},
+                {get_simple_input_generator<data_types::tiles::column_nullifier>(), 15},
+                {get_simple_input_generator<data_types::tiles::row_nullifier>(), 30},
+                {get_simple_input_generator<data_types::tiles::number_nullifier>(), 10},
+                {get_simple_input_generator<data_types::tiles::outer_columns_nullifier>(), 45}
+            }
+        );
+        return generator;
+    }
 }
 
 abstract_input_generator& get_input_generator(data_types::stage stage)
@@ -416,6 +431,7 @@ abstract_input_generator& get_input_generator(data_types::stage stage)
         CASE(triplet_pines_mall);
         CASE(granite_cave);
         CASE(math_classroom);
+        CASE(waterfalls);
     }
 
 #undef CASE

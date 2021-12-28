@@ -55,6 +55,9 @@ namespace tiles
     //placed below
     struct number_nullifier{};
 
+    //Nullifies all the tiles of the outer columns
+    struct outer_columns_nullifier{};
+
     struct granite
     {
         int thickness = 0;
@@ -71,10 +74,12 @@ namespace tiles
     std::ostream& operator<<(std::ostream& l, const column_nullifier& r);
     std::ostream& operator<<(std::ostream& l, const row_nullifier& r);
     std::ostream& operator<<(std::ostream& l, const number_nullifier& r);
+    std::ostream& operator<<(std::ostream& l, const outer_columns_nullifier& r);
     std::ostream& operator<<(std::ostream& l, const granite& r);
     std::ostream& operator<<(std::ostream& l, const adder& r);
 }
 
+//Never reorder
 using tile = std::variant
 <
     tiles::number,
@@ -82,7 +87,8 @@ using tile = std::variant
     tiles::row_nullifier,
     tiles::number_nullifier,
     tiles::granite,
-    tiles::adder
+    tiles::adder,
+    tiles::outer_columns_nullifier
 >;
 
 
@@ -254,13 +260,15 @@ std::ostream& operator<<(std::ostream& l, const granite_erosion& r);
 
 
 
+//Never reorder
 enum class stage
 {
     purity_chapel,
     nullifier_room,
     triplet_pines_mall,
     granite_cave,
-    math_classroom
+    math_classroom,
+    waterfalls
 };
 
 
