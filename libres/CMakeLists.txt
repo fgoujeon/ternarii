@@ -94,23 +94,25 @@ endfunction()
 
 add_ttf_to_sdf_command(DejaVuSans)
 
-add_svg_to_sdf_command(background_granite_cave       64)
-add_svg_to_sdf_command(background_math_classroom     64)
-add_svg_to_sdf_command(background_nullifier_room     64)
-add_svg_to_sdf_command(background_purity_chapel      64)
-add_svg_to_sdf_command(background_triplet_pines_mall 128)
-add_svg_to_sdf_command(board_corner                  64)
-add_svg_to_sdf_command(granite                       64)
-add_svg_to_sdf_command(logo                          64)
-add_svg_to_sdf_command(logo_text                     256)
-add_svg_to_sdf_command(menu                          64)
-add_svg_to_sdf_command(move_button                   64)
-add_svg_to_sdf_command(rotate_button                 64)
-add_svg_to_sdf_command(special_tile_modifier_column  64)
-add_svg_to_sdf_command(special_tile_modifier_row     64)
-add_svg_to_sdf_command(special_tile_modifier_star    64)
-add_svg_to_sdf_command(special_tile_symbol_null      64)
-add_svg_to_sdf_command(tile_triplet                  64)
+add_svg_to_sdf_command(background_granite_cave               64)
+add_svg_to_sdf_command(background_math_classroom             64)
+add_svg_to_sdf_command(background_nullifier_room             64)
+add_svg_to_sdf_command(background_purity_chapel              64)
+add_svg_to_sdf_command(background_triplet_pines_mall         128)
+add_svg_to_sdf_command(background_waterfalls                 128)
+add_svg_to_sdf_command(board_corner                          64)
+add_svg_to_sdf_command(granite                               64)
+add_svg_to_sdf_command(logo                                  64)
+add_svg_to_sdf_command(logo_text                             256)
+add_svg_to_sdf_command(menu                                  64)
+add_svg_to_sdf_command(move_button                           64)
+add_svg_to_sdf_command(rotate_button                         64)
+add_svg_to_sdf_command(special_tile_modifier_column          64)
+add_svg_to_sdf_command(special_tile_modifier_outside_columns 64)
+add_svg_to_sdf_command(special_tile_modifier_row             64)
+add_svg_to_sdf_command(special_tile_modifier_star            64)
+add_svg_to_sdf_command(special_tile_symbol_null              64)
+add_svg_to_sdf_command(tile_triplet                          64)
 
 #Generate libres.hpp
 file(GLOB SRC_SVG_FILES src/images/*.svg)
@@ -132,6 +134,7 @@ add_library(
     "${CMAKE_CURRENT_BINARY_DIR}/out/images/background_nullifier_room.tga"
     "${CMAKE_CURRENT_BINARY_DIR}/out/images/background_purity_chapel.tga"
     "${CMAKE_CURRENT_BINARY_DIR}/out/images/background_triplet_pines_mall.tga"
+    "${CMAKE_CURRENT_BINARY_DIR}/out/images/background_waterfalls.tga"
     "${CMAKE_CURRENT_BINARY_DIR}/out/images/board_corner.tga"
     "${CMAKE_CURRENT_BINARY_DIR}/out/images/granite.tga"
     "${CMAKE_CURRENT_BINARY_DIR}/out/images/logo.tga"
@@ -140,6 +143,7 @@ add_library(
     "${CMAKE_CURRENT_BINARY_DIR}/out/images/move_button.tga"
     "${CMAKE_CURRENT_BINARY_DIR}/out/images/rotate_button.tga"
     "${CMAKE_CURRENT_BINARY_DIR}/out/images/special_tile_modifier_column.tga"
+    "${CMAKE_CURRENT_BINARY_DIR}/out/images/special_tile_modifier_outside_columns.tga"
     "${CMAKE_CURRENT_BINARY_DIR}/out/images/special_tile_modifier_row.tga"
     "${CMAKE_CURRENT_BINARY_DIR}/out/images/special_tile_modifier_star.tga"
     "${CMAKE_CURRENT_BINARY_DIR}/out/images/special_tile_symbol_null.tga"

@@ -254,13 +254,15 @@ std::ostream& operator<<(std::ostream& l, const granite_erosion& r);
 
 
 
+//Never reorder
 enum class stage
 {
     purity_chapel,
     nullifier_room,
     triplet_pines_mall,
     granite_cave,
-    math_classroom
+    math_classroom,
+    waterfalls
 };
 
 

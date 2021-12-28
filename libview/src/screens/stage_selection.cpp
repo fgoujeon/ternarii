@@ -256,32 +256,44 @@ struct stage_selection::impl
             self,
             feature_groups,
             {0.0f, -1.075f},
-            data_types::stage::math_classroom,
+            data_types::stage::waterfalls,
             callbacks
         ),
         waterfalls_special_tile_0
         (
             waterfalls_button,
             feature_groups.drawables,
-            2
+            {
+                libres::images::special_tile_symbol_null,
+                libres::images::special_tile_modifier_outside_columns
+            }
         ),
         waterfalls_special_tile_1
         (
             waterfalls_button,
             feature_groups.drawables,
-            1
+            {
+                libres::images::special_tile_symbol_null,
+                libres::images::special_tile_modifier_row
+            }
         ),
         waterfalls_special_tile_2
         (
             waterfalls_button,
             feature_groups.drawables,
-            -1
+            {
+                libres::images::special_tile_symbol_null,
+                libres::images::special_tile_modifier_column
+            }
         ),
         waterfalls_special_tile_3
         (
             waterfalls_button,
             feature_groups.drawables,
-            -2
+            {
+                libres::images::special_tile_symbol_null,
+                libres::images::special_tile_modifier_star
+            }
         ),
 
         //Granite cave
@@ -487,10 +499,10 @@ struct stage_selection::impl
     objects::adder_tile math_classroom_special_tile_3;
 
     selection_button waterfalls_button;
-    objects::adder_tile waterfalls_special_tile_0;
-    objects::adder_tile waterfalls_special_tile_1;
-    objects::adder_tile waterfalls_special_tile_2;
-    objects::adder_tile waterfalls_special_tile_3;
+    objects::sdf_image_tile waterfalls_special_tile_0;
+    objects::sdf_image_tile waterfalls_special_tile_1;
+    objects::sdf_image_tile waterfalls_special_tile_2;
+    objects::sdf_image_tile waterfalls_special_tile_3;
 
     selection_button granite_cave_button;
     objects::sdf_image granite_cave_granite;
