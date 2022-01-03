@@ -103,6 +103,18 @@ struct game::impl
         self(self),
         feature_groups(feature_groups),
         callbacks(callbacks),
+        logo_text
+        (
+            self,
+            feature_groups.drawables,
+            libres::images::logo_text,
+            objects::sdf_image::style
+            {
+                .color = colors::light_gray,
+                .outline_color = colors::dark_gray,
+                .outline_range = {0.5f, 0.4f}
+            }
+        ),
         pbackground_image
         (
             make_background_image
@@ -189,6 +201,10 @@ struct game::impl
         score_display.setScaling({0.75f, 0.75f});
         score_display.setTranslation({3.4f, 7.2f});
 
+        logo_text.set_alpha(0.1f);
+        logo_text.scale({4.25f, 4.25f});
+        logo_text.translate({0.0f, 4.25f});
+
         tile_grid.translate({0.0f, 1.0f});
 
         stage_name_label.translate({0.0f, -4.68f});
@@ -222,6 +238,7 @@ struct game::impl
     animation::animator animator;
     animation::animator pause_animator;
 
+    objects::sdf_image logo_text;
     std::unique_ptr<objects::sdf_image> pbackground_image;
     objects::label menu_label;
     objects::sdf_image_button menu_button;
