@@ -19,10 +19,12 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 
 #include <libview/screens/hi_scores.hpp>
 #include "../data_types.hpp"
+#include "../objects/sdf_image.hpp"
 #include "../objects/label_button.hpp"
 #include "../styles.hpp"
 #include "../colors.hpp"
 #include "../common.hpp"
+#include <libres.hpp>
 #include <libutil/to_string.hpp>
 #include <Magnum/Math/Color.h>
 #include <Magnum/Platform/Sdl2Application.h>
@@ -49,6 +51,18 @@ struct hi_scores::impl
             styles::title_label,
             "HI-SCORES"
         ),
+        logo
+        (
+            self,
+            feature_groups.drawables,
+            libres::images::logo,
+            objects::sdf_image::style
+            {
+                .color = colors::light_gray,
+                .outline_color = colors::dark_gray,
+                .outline_range = {0.5f, 0.4f}
+            }
+        ),
         back_button
         (
             self,
@@ -64,15 +78,18 @@ struct hi_scores::impl
     {
         title_label.translate({0.0f, 7.0f});
 
+        logo.scale({3.0f, 3.0f});
+        logo.set_alpha(0.1f);
+
         back_button.scale({2.0f, 2.0f});
         back_button.translate({0.0f, -7.0f});
 
-        add_score(data_types::stage::purity_chapel, 1234, 4.0f);
-        add_score(data_types::stage::nullifier_room, 1234, 3.0f);
-        add_score(data_types::stage::math_classroom, 1234567, 2.0f);
-        add_score(data_types::stage::waterfalls, 1234567, 1.0f);
-        add_score(data_types::stage::granite_cave, 1234567, 0.0f);
-        add_score(data_types::stage::triplet_pines_mall, 1234567, -1.0f);
+        add_score(data_types::stage::purity_chapel, 1234, 3.5f);
+        add_score(data_types::stage::nullifier_room, 1234, 2.5f);
+        add_score(data_types::stage::math_classroom, 1234567, 1.5f);
+        add_score(data_types::stage::waterfalls, 1234567, 0.5f);
+        add_score(data_types::stage::granite_cave, 1234567, -0.5f);
+        add_score(data_types::stage::triplet_pines_mall, 1234567, -1.5f);
 
         //total score
         {
@@ -88,7 +105,7 @@ struct hi_scores::impl
                 },
                 "TOTAL"
             );
-            pname_label->translate({-3.5f, -2.5f});
+            pname_label->translate({-3.5f, -3.0f});
             objects.push_back(pname_label);
 
             auto pscore_label = std::make_shared<objects::label>
@@ -103,7 +120,7 @@ struct hi_scores::impl
                 },
                 libutil::to_string(3349986)
             );
-            pscore_label->translate({3.5f, -2.5f});
+            pscore_label->translate({3.5f, -3.0f});
             objects.push_back(pscore_label);
         }
     }
@@ -152,6 +169,7 @@ struct hi_scores::impl
     callback_set callbacks;
 
     objects::label title_label;
+    objects::sdf_image logo;
     std::vector<std::shared_ptr<object2d>> objects;
     objects::label_button back_button;
 };
