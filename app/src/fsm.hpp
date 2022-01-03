@@ -24,6 +24,7 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #include "context.hpp"
 #include "states/playing.hpp"
 #include "states/showing_about_screen.hpp"
+#include "states/showing_hi_score_screen.hpp"
 #include "states/showing_stage_selection_screen.hpp"
 #include "states/showing_title_screen.hpp"
 #include <fgfsm.hpp>
@@ -41,7 +42,9 @@ using fsm_transition_table = fgfsm::transition_table
     fgfsm::row<states::idle,                           events::start,                               states::loading_database>,
     fgfsm::row<states::loading_database,               libdb::events::end_of_loading,               states::showing_title_screen>,
     fgfsm::row<states::showing_title_screen,           events::stage_selection_screen_show_request, states::showing_stage_selection_screen>,
+    fgfsm::row<states::showing_title_screen,           events::hi_score_screen_show_request,        states::showing_hi_score_screen>,
     fgfsm::row<states::showing_title_screen,           events::about_screen_show_request,           states::showing_about_screen>,
+    fgfsm::row<states::showing_hi_score_screen,        events::title_screen_show_request,           states::showing_title_screen>,
     fgfsm::row<states::showing_about_screen,           events::title_screen_show_request,           states::showing_title_screen>,
     fgfsm::row<states::showing_stage_selection_screen, events::title_screen_show_request,           states::showing_title_screen>,
     fgfsm::row<states::showing_stage_selection_screen, events::play_screen_show_request,            states::playing>,

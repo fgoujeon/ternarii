@@ -53,6 +53,16 @@ struct showing_title_screen
                                 }
                             );
                         },
+                        .hi_scores_request = [this]
+                        {
+                            ctx.process_event
+                            (
+                                events::hi_score_screen_show_request
+                                {
+                                    data_types::screen_transitions::right_to_left{}
+                                }
+                            );
+                        },
                         .about_request = [this]
                         {
                             ctx.process_event

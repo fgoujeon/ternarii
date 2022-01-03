@@ -17,38 +17,35 @@ You should have received a copy of the GNU General Public License
 along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef LIBVIEW_SCREENS_TITLE_HPP
-#define LIBVIEW_SCREENS_TITLE_HPP
+#ifndef LIBVIEW_SCREENS_HI_SCORES_HPP
+#define LIBVIEW_SCREENS_HI_SCORES_HPP
 
 #include "../common.hpp"
-#include <libview/data_types.hpp>
 #include <chrono>
-#include <libutil/void_function.hpp>
 #include <Magnum/Math/Color.h>
 #include <Magnum/Platform/Sdl2Application.h>
+#include <libutil/void_function.hpp>
 
 namespace libview::screens
 {
 
-class title: public object2d
+class hi_scores: public object2d
 {
     public:
         struct callback_set
         {
-            libutil::void_function<> play_request;
-            libutil::void_function<> hi_scores_request;
-            libutil::void_function<> about_request;
+            libutil::void_function<> back_request;
         };
 
     public:
-        title
+        hi_scores
         (
             object2d& parent,
             feature_group_set& feature_groups,
             const callback_set& callbacks
         );
 
-        ~title();
+        ~hi_scores();
 
     private:
         struct impl;
