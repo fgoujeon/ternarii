@@ -38,8 +38,22 @@ struct showing_hi_score_screen
             [this](const events::hi_score_screen_show_request& event)
             {
                 using screen = libview::screens::hi_scores;
+
+                //get hi-scores
+                auto scores = screen::score_map{};
+                if(const auto& opt_game_state = ctx.database.get_game_state())
+                {
+                    const auto& game_state = opt_game_state.value();
+                    const auto& stage_states = game_state.stage_states;
+                    for(const auto& [stage, stage_state]: stage_states)
+                    {
+                        scores.insert({stage, stage_state.hi_score});
+                    }
+                }
+
                 auto pscreen = ctx.view.make_screen<screen>
                 (
+                    scores,
                     screen::callback_set
                     {
                         .back_request = [this]

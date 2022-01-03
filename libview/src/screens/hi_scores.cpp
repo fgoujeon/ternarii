@@ -33,16 +33,41 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 namespace libview::screens
 {
 
+namespace
+{
+    int get_score
+    (
+        const hi_scores::score_map& scores,
+        const data_types::stage stage
+    )
+    {
+        const auto it = scores.find(stage);
+        if(it != scores.end())
+            return it->second;
+        return 0;
+    }
+
+    int get_total_score(const hi_scores::score_map& scores)
+    {
+        int total = 0;
+        for(const auto [stage, score]: scores)
+            total += score;
+        return total;
+    }
+}
+
 struct hi_scores::impl
 {
     impl
     (
         hi_scores& self,
         feature_group_set& feature_groups,
+        const score_map& scores,
         const callback_set& callbacks
     ):
         self(self),
         feature_groups(feature_groups),
+        scores(scores),
         callbacks(callbacks),
         title_label
         (
@@ -84,12 +109,12 @@ struct hi_scores::impl
         back_button.scale({2.0f, 2.0f});
         back_button.translate({0.0f, -7.0f});
 
-        add_score(data_types::stage::purity_chapel, 1234, 3.5f);
-        add_score(data_types::stage::nullifier_room, 1234, 2.5f);
-        add_score(data_types::stage::math_classroom, 1234567, 1.5f);
-        add_score(data_types::stage::waterfalls, 1234567, 0.5f);
-        add_score(data_types::stage::granite_cave, 1234567, -0.5f);
-        add_score(data_types::stage::triplet_pines_mall, 1234567, -1.5f);
+        add_score(data_types::stage::purity_chapel, 3.25f);
+        add_score(data_types::stage::nullifier_room, 2.25f);
+        add_score(data_types::stage::math_classroom, 1.25f);
+        add_score(data_types::stage::waterfalls, 0.25f);
+        add_score(data_types::stage::granite_cave, -0.75f);
+        add_score(data_types::stage::triplet_pines_mall, -1.75f);
 
         //total score
         {
@@ -105,7 +130,7 @@ struct hi_scores::impl
                 },
                 "TOTAL"
             );
-            pname_label->translate({-3.5f, -3.0f});
+            pname_label->translate({-3.5f, -3.25f});
             objects.push_back(pname_label);
 
             auto pscore_label = std::make_shared<objects::label>
@@ -118,9 +143,9 @@ struct hi_scores::impl
                     .color = colors::light_gray,
                     .font_size = 0.6f
                 },
-                libutil::to_string(3349986)
+                libutil::to_string(get_total_score(scores))
             );
-            pscore_label->translate({3.5f, -3.0f});
+            pscore_label->translate({3.5f, -3.25f});
             objects.push_back(pscore_label);
         }
     }
@@ -128,7 +153,6 @@ struct hi_scores::impl
     void add_score
     (
         const data_types::stage stage,
-        const int score,
         const float y_position
     )
     {
@@ -157,7 +181,7 @@ struct hi_scores::impl
                 .color = colors::light_gray,
                 .font_size = 0.4f
             },
-            libutil::to_string(score)
+            libutil::to_string(get_score(scores, stage))
         );
         pscore_label->translate({3.5f, y_position});
         objects.push_back(pscore_label);
@@ -165,6 +189,7 @@ struct hi_scores::impl
 
     object2d& self;
     feature_group_set& feature_groups;
+    score_map scores;
 
     callback_set callbacks;
 
@@ -178,10 +203,11 @@ hi_scores::hi_scores
 (
     object2d& parent,
     feature_group_set& feature_groups,
+    const score_map& scores,
     const callback_set& callbacks
 ):
     object2d{&parent},
-    pimpl_(std::make_unique<impl>(*this, feature_groups, callbacks))
+    pimpl_(std::make_unique<impl>(*this, feature_groups, scores, callbacks))
 {
 }
 

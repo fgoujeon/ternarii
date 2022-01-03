@@ -20,11 +20,13 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 #ifndef LIBVIEW_SCREENS_HI_SCORES_HPP
 #define LIBVIEW_SCREENS_HI_SCORES_HPP
 
+#include "../data_types.hpp"
 #include "../common.hpp"
 #include <chrono>
 #include <Magnum/Math/Color.h>
 #include <Magnum/Platform/Sdl2Application.h>
 #include <libutil/void_function.hpp>
+#include <map>
 
 namespace libview::screens
 {
@@ -37,11 +39,17 @@ class hi_scores: public object2d
             libutil::void_function<> back_request;
         };
 
-    public:
+        using score_map = std::map
+        <
+            data_types::stage,
+            int /*score*/
+        >;
+
         hi_scores
         (
             object2d& parent,
             feature_group_set& feature_groups,
+            const score_map& scores,
             const callback_set& callbacks
         );
 
