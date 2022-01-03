@@ -37,6 +37,11 @@ namespace events
         data_types::screen_transition transition;
     };
 
+    struct hi_score_screen_show_request
+    {
+        data_types::screen_transition transition;
+    };
+
     struct about_screen_show_request
     {
         data_types::screen_transition transition;

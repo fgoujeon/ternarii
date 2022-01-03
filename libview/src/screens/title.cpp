@@ -76,6 +76,18 @@ struct title::impl
                 .mouse_click_callback = [this]{this->callbacks.play_request();}
             }
         ),
+        hi_scores_button
+        (
+            self,
+            feature_groups.drawables,
+            feature_groups.clickables,
+            styles::white_label_button,
+            "HI-SCORES",
+            objects::label_button::callback_set
+            {
+                .mouse_click_callback = [this]{this->callbacks.hi_scores_request();}
+            }
+        ),
         about_button
         (
             self,
@@ -102,8 +114,11 @@ struct title::impl
         play_button.scale({2.8f, 2.8f});
         play_button.translate({0.0f, -1.0f});
 
+        hi_scores_button.scale({2.8f, 2.8f});
+        hi_scores_button.translate({0.0f, -2.5f});
+
         about_button.scale({2.8f, 2.8f});
-        about_button.translate({0.0f, -2.5f});
+        about_button.translate({0.0f, -4.0f});
     }
 
     callback_set callbacks;
@@ -111,6 +126,7 @@ struct title::impl
     objects::sdf_image logo;
     objects::sdf_image logo_text;
     objects::label_button play_button;
+    objects::label_button hi_scores_button;
     objects::label_button about_button;
 };
 
