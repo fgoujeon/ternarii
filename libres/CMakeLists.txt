@@ -1,4 +1,4 @@
-#Copyright 2018 - 2021 Florian Goujeon
+#Copyright 2018 - 2022 Florian Goujeon
 #
 #This file is part of Ternarii.
 #
