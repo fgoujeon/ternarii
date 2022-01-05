@@ -59,7 +59,7 @@ You should have received a copy of the GNU General
 Public License along with Ternarii.
 If not, see https://www.gnu.org/licenses/.
 
-Official website: http://ternarii.com
+Official website: https://ternarii.com
 Source code: https://github.com/fgoujeon/ternarii
 
 Copyright 2018 - 2022 Florian Goujeon)^";
