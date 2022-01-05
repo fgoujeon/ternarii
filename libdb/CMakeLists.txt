@@ -36,12 +36,6 @@ target_include_directories(
     PUBLIC include
 )
 
-target_link_options(
-    libdb
-    INTERFACE
-        -lidbfs.js
-)
-
 target_link_libraries(
     libdb
     PUBLIC libgame

@@ -18,7 +18,6 @@ along with Ternarii.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 #include "json_conversion.hpp"
-#include "filesystem.hpp"
 #include "indexed_db.hpp"
 #include <libdb/database.hpp>
 #include <nlohmann/json.hpp>
@@ -33,25 +32,6 @@ namespace libdb
 namespace
 {
     constexpr int current_version = 2;
-
-    //Deprecated files
-    std::filesystem::path get_config_dir()
-    {
-        static const auto dir = std::filesystem::path{std::getenv("HOME")} / ".config" / "ternarii";
-        return dir;
-    }
-
-    //Deprecated files
-    std::filesystem::path get_database_path(const int version = current_version)
-    {
-        switch(version)
-        {
-            case 0: return get_config_dir() / "database.json";
-            case 1: return get_config_dir() / "database_v1.json";
-            case 2: return get_config_dir() / "database_v2.json";
-            default: throw std::runtime_error{"Unsupported database version."};
-        }
-    }
 }
 
 struct database::impl
@@ -64,7 +44,7 @@ struct database::impl
             (
                 "database",
                 "game_state",
-                2,
+                current_version,
                 [this](void* data, int size)
                 {
                     if(data)
@@ -75,12 +55,11 @@ struct database::impl
                             static_cast<std::string_view::size_type>(size)
                         };
                         libutil::log::info("Loaded data from IndexedDB.", json_str);
-                        load_from_idb(json_str, 2);
+                        load_from_idb(json_str, current_version);
                     }
                     else
                     {
-                        libutil::log::info("No IndexedDB data found. Trying with IDBFS...");
-                        filesystem::async_load([this]{load_from_idbfs();});
+                        event_handler_(events::end_of_loading{});
                     }
                 },
                 [](const char* error)
@@ -98,9 +77,7 @@ struct database::impl
         void set_stage_state(const data_types::stage stage, const data_types::stage_state& state)
         {
             if(!opt_game_state_)
-            {
                 opt_game_state_ = data_types::game_state{};
-            }
 
             opt_game_state_->stage_states[stage] = state;
 
@@ -108,54 +85,6 @@ struct database::impl
         }
 
     private:
-        //Deprecated format
-        bool try_load_from_idbfs(const int version)
-        {
-            const auto path = get_database_path(version);
-            if(!exists(path))
-            {
-                return false;
-            }
-
-            //read json from file
-            auto ifs = std::ifstream{path};
-            auto json = nlohmann::json{};
-            ifs >> json;
-
-            libutil::log::info("Loaded JSON:");
-            libutil::log::info(json);
-
-            //convert json to state
-            auto game_state = data_types::game_state{};
-            from_json(json, game_state, version);
-            opt_game_state_ = game_state;
-
-            return true;
-        }
-
-        //Deprecated format
-        void load_from_idbfs()
-        {
-            try
-            {
-                auto loaded = false;
-                for(auto i = current_version; i >= 0 && !loaded; --i)
-                {
-                    loaded = try_load_from_idbfs(i);
-                }
-            }
-            catch(const std::exception& e)
-            {
-                std::cerr << e.what() << '\n';
-            }
-            catch(...)
-            {
-                std::cerr << "Unknown error\n";
-            }
-
-            event_handler_(events::end_of_loading{});
-        }
-
         void load_from_idb(const std::string_view& json_str, const int json_version)
         {
             //Parse JSON string
@@ -186,7 +115,7 @@ struct database::impl
                 (
                     "database",
                     "game_state",
-                    2,
+                    current_version,
                     pstr->c_str(),
                     pstr->size(),
                     [pstr]
