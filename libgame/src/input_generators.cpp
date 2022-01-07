@@ -43,6 +43,7 @@ namespace
     {
         private:
             using distribution = std::normal_distribution<double>;
+            using low_tile_distribution = std::uniform_int_distribution<>;
 
         public:
             //return random value from 0 to max
@@ -53,7 +54,7 @@ namespace
             )
             {
                 //generate random number with normal distribution
-                const auto real_val = dis_
+                const auto real_val = real_val_dis_
                 (
                     rng_.engine,
                     distribution::param_type{0, standard_deviation}
@@ -66,14 +67,34 @@ namespace
                 const auto natural_val = static_cast<int>(positive_real_val);
 
                 //stay inside [0, max]
-                const auto final_val = natural_val % (max + 1);
+                const auto bounded_val = natural_val % (max + 1);
+
+                const auto final_val = [&]
+                {
+                    //we want all low-value tiles to have the same probability
+                    const auto highest_low_tile_value = std::min(3, max);
+                    if(bounded_val <= highest_low_tile_value)
+                    {
+                        return low_tile_dis_
+                        (
+                            rng_.engine,
+                            low_tile_distribution::param_type
+                            {
+                                0,
+                                highest_low_tile_value
+                            }
+                        );
+                    }
+                    return bounded_val;
+                }();
 
                 return data_types::tiles::number{final_val};
             }
 
         private:
             libutil::rng rng_;
-            distribution dis_;
+            distribution real_val_dis_;
+            low_tile_distribution low_tile_dis_;
     };
 
 
