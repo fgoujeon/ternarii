@@ -55,7 +55,7 @@ auto white_label_button = objects::label_button::style
         .highlight_color = colors::white,
         .outline_color = colors::dark_gray,
         .outline_thickness = 0.01f,
-        .radius = 0.16f
+        .radius = 0.2f
     }
 };
 
