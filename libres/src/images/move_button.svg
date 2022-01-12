@@ -2,23 +2,23 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="100"
    height="100"
    viewBox="0 0 26.458333 26.458334"
    version="1.1"
    id="svg8"
-   inkscape:version="0.92.4 5da689c313, 2019-01-14"
+   inkscape:version="1.1.1 (3bf5ae0d25, 2021-09-20, custom)"
    sodipodi:docname="move_button.svg"
    inkscape:export-filename="/home/florian/Development/ternarii/art/move_button.png"
    inkscape:export-xdpi="960"
-   inkscape:export-ydpi="960">
+   inkscape:export-ydpi="960"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
   <defs
      id="defs2" />
   <sodipodi:namedview
@@ -28,18 +28,19 @@
      borderopacity="1.0"
      inkscape:pageopacity="1"
      inkscape:pageshadow="2"
-     inkscape:zoom="5.6"
-     inkscape:cx="27.767857"
-     inkscape:cy="47.355604"
+     inkscape:zoom="2.8"
+     inkscape:cx="43.214286"
+     inkscape:cy="60.535714"
      inkscape:document-units="px"
      inkscape:current-layer="layer2"
      showgrid="false"
      units="px"
-     inkscape:window-width="1630"
-     inkscape:window-height="986"
-     inkscape:window-x="50"
-     inkscape:window-y="27"
-     inkscape:window-maximized="1" />
+     inkscape:window-width="1620"
+     inkscape:window-height="981"
+     inkscape:window-x="60"
+     inkscape:window-y="32"
+     inkscape:window-maximized="1"
+     inkscape:pagecheckerboard="0" />
   <metadata
      id="metadata5">
     <rdf:RDF>
@@ -48,7 +49,6 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -84,5 +84,22 @@
        inkscape:randomized="0"
        d="M 18.275165,20.714341 C 17.62693,21.088599 5.3104629,13.977683 5.310463,13.229166 c 0,-0.748518 12.316468,-7.8594331 12.964703,-7.4851743 0.648235,0.3742588 0.648234,14.5960903 -10e-7,14.9703493 z"
        inkscape:transform-center-x="2.1607838" />
+    <path
+       sodipodi:type="star"
+       style="opacity:1;fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1.94146;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:normal"
+       id="path827-4"
+       sodipodi:sides="3"
+       sodipodi:cx="13.953598"
+       sodipodi:cy="13.229166"
+       sodipodi:r1="8.6431351"
+       sodipodi:r2="4.3215675"
+       sodipodi:arg1="1.0471976"
+       sodipodi:arg2="2.0943951"
+       inkscape:flatsided="true"
+       inkscape:rounded="0.05"
+       inkscape:randomized="0"
+       inkscape:transform-center-x="1.4802729"
+       d="M 18.275165,20.714341 C 17.62693,21.088599 5.3104629,13.977683 5.310463,13.229166 c 0,-0.748518 12.316468,-7.8594331 12.964703,-7.4851743 0.648235,0.3742588 0.648234,14.5960903 -10e-7,14.9703493 z"
+       transform="matrix(0.68506294,0,0,0.68506294,6.540089,4.1664386)" />
   </g>
 </svg>
