@@ -40,6 +40,7 @@ a fantastic, soon-to-be discontinued game by Motion Twin.
 
 Ternarii is powered by:
 - Magnum/Corrade, by Vladimír Vondruš and contributors;
+- FGFSM, by Florian Goujeon;
 - JSON for Modern C++, by Niels Lohmann;
 - Emscripten, by Emscripten contributors.
 
