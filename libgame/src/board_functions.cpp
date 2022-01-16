@@ -779,6 +779,9 @@ drop_input_tiles_result drop_input_tiles
     auto old_event_count = 0;
     do
     {
+        //Update score
+        events.push_back(events::score_change{get_score(brd)});
+
         old_event_count = events.size();
 
         //Apply nullifier tiles
@@ -847,8 +850,6 @@ drop_input_tiles_result drop_input_tiles
                 events.push_back(events::board_tile_drop{std::move(result.drops)});
         }
     } while(old_event_count != events.size());
-
-    events.push_back(events::score_change{get_score(brd)});
 
     return final_result;
 }

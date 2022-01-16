@@ -353,7 +353,16 @@ void game::clear()
 
 void game::set_score(const int value)
 {
-    pimpl_->score_display.set_score(value);
+    pimpl_->animator.push
+    (
+        animation::tracks::closure
+        {
+            [this, value]
+            {
+                pimpl_->score_display.set_score(value);
+            }
+        }
+    );
 }
 
 void game::set_hi_score(const int value)
