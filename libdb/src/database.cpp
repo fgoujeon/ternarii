@@ -37,7 +37,12 @@ namespace
 struct database::impl
 {
     public:
-        impl(const event_handler& evt_handler):
+        impl
+        (
+            const bool fail_on_access_error,
+            const event_handler& evt_handler
+        ):
+            fail_on_access_error_(fail_on_access_error),
             event_handler_(evt_handler)
         {
             indexed_db::async_read
@@ -62,9 +67,11 @@ struct database::impl
                         event_handler_(events::end_of_loading{});
                     }
                 },
-                [](const char* error)
+                [fail_on_access_error](const char* error)
                 {
                     libutil::log::error("IndexedDB read error: ", error);
+                    if(fail_on_access_error)
+                        throw std::runtime_error{std::string{"IndexedDB read error: "} + error};
                 }
             );
         }
@@ -122,29 +129,40 @@ struct database::impl
                     {
                         libutil::log::info("Write success.");
                     },
-                    [](const char* error)
+                    [this](const char* error)
                     {
                         libutil::log::error("Write error: ", error);
+                        if(fail_on_access_error_)
+                            throw std::runtime_error{std::string{"Write: "} + error};
                     }
                 );
             }
             catch(const std::exception& e)
             {
                 std::cerr << e.what() << '\n';
+                if(fail_on_access_error_)
+                    throw;
             }
             catch(...)
             {
                 std::cerr << "Unknown error\n";
+                if(fail_on_access_error_)
+                    throw;
             }
         }
 
     private:
+        const bool fail_on_access_error_;
         event_handler event_handler_;
         std::optional<data_types::game_state> opt_game_state_;
 };
 
-database::database(const event_handler& evt_handler):
-    pimpl_(std::make_unique<impl>(evt_handler))
+database::database
+(
+    const bool fail_on_access_error,
+    const event_handler& evt_handler
+):
+    pimpl_(std::make_unique<impl>(fail_on_access_error, evt_handler))
 {
 }
 

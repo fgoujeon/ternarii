@@ -38,6 +38,7 @@ namespace
         bool show_debug_grid = false;
         bool enable_log = false;
         bool show_fps_counter = false;
+        bool fail_on_db_error = false;
     };
 
     configuration parse_command_line(const int argc, char** const argv)
@@ -45,7 +46,8 @@ namespace
         Corrade::Utility::Arguments args;
         args.addBooleanOption("debug-grid").setHelp("debug-grid", "show debug grid");
         args.addBooleanOption("log").setHelp("log", "enable log");
-        args.addBooleanOption("fps").setHelp("log", "show FPS counter");
+        args.addBooleanOption("fps").setHelp("fps", "show FPS counter");
+        args.addBooleanOption("fail-on-db-error").setHelp("fail-on-db-error", "fail on database access error");
 
         if(args.tryParse(argc, argv))
         {
@@ -53,7 +55,8 @@ namespace
             {
                 .show_debug_grid = args.isSet("debug-grid"),
                 .enable_log = args.isSet("log"),
-                .show_fps_counter = args.isSet("fps")
+                .show_fps_counter = args.isSet("fps"),
+                .fail_on_db_error = args.isSet("fail-on-db-error")
             };
         }
         else
@@ -85,7 +88,14 @@ class app: public Magnum::Platform::Sdl2Application
             },
             conf_(parse_command_line(args.argc, args.argv)),
             configurator_(conf_),
-            database_([this](const libdb::event& event){handle_database_event(event);}),
+            database_
+            (
+                conf_.fail_on_db_error,
+                [this](const libdb::event& event)
+                {
+                    handle_database_event(event);
+                }
+            ),
             view_
             (
                 libview::view::configuration

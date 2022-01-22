@@ -30,7 +30,7 @@ namespace libdb
 class database
 {
     public:
-        database(const event_handler& evt_handler);
+        database(bool fail_on_access_error, const event_handler& evt_handler);
 
         ~database();
 
