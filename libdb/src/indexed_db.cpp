@@ -205,30 +205,64 @@ void async_read
     );
 }
 
-void async_write
+void async_read_v2
 (
     const char* database_name,
     const char* store_name,
-    int key,
-    const void* data,
-    const int size,
+    const read_success_callback_t& success_callback,
+    const failure_callback_2_t& failure_callback
+)
+{
+    struct context
+    {
+        read_success_callback_t success_callback;
+        failure_callback_2_t failure_callback;
+    };
+
+    auto pctx = new context{success_callback, failure_callback};
+
+    emscripten_idb_async_load
+    (
+        database_name,
+        store_name,
+        pctx,
+        [](void* vpctx, void* data, int size)
+        {
+            auto pctx = reinterpret_cast<context*>(vpctx);
+            pctx->success_callback(data, size);
+            delete pctx;
+        },
+        [](void* vpctx)
+        {
+            auto pctx = reinterpret_cast<context*>(vpctx);
+            pctx->failure_callback();
+            delete pctx;
+        }
+    );
+}
+
+void async_write_v2
+(
+    const char* database_name,
+    const char* store_name,
+    void* data,
+    int size,
     const write_success_callback_t& success_callback,
-    const failure_callback_t& failure_callback
+    const failure_callback_2_t& failure_callback
 )
 {
     struct context
     {
         write_success_callback_t success_callback;
-        failure_callback_t failure_callback;
+        failure_callback_2_t failure_callback;
     };
 
     auto pctx = new context{success_callback, failure_callback};
 
-    raw_async_write
+    emscripten_idb_async_store
     (
         database_name,
         store_name,
-        key,
         data,
         size,
         pctx,
@@ -238,10 +272,10 @@ void async_write
             pctx->success_callback();
             delete pctx;
         },
-        [](void* vpctx, const char* error)
+        [](void* vpctx)
         {
             auto pctx = reinterpret_cast<context*>(vpctx);
-            pctx->failure_callback(error);
+            pctx->failure_callback();
             delete pctx;
         }
     );

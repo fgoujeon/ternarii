@@ -45,35 +45,33 @@ struct database::impl
             fail_on_access_error_(fail_on_access_error),
             event_handler_(evt_handler)
         {
-            indexed_db::async_read
+            indexed_db::async_read_v2
             (
-                "database",
+                "ternarii",
                 "game_state",
-                current_version,
                 [this](void* data, int size)
                 {
-                    if(data)
+                    if(data && size != 0)
                     {
                         auto json_str = std::string_view
                         {
                             reinterpret_cast<char*>(data),
                             static_cast<std::string_view::size_type>(size)
                         };
-                        libutil::log::info("Loaded data from IndexedDB.", json_str);
+                        libutil::log::info("Loaded data from \"ternarii\" IndexedDB database: ", json_str);
                         load_from_idb(json_str, current_version);
                     }
                     else
                     {
-                        event_handler_(events::end_of_loading{});
+                        async_read_database_v1();
                     }
                 },
-                [fail_on_access_error](const char* error)
+                [this]()
                 {
-                    libutil::log::error("IndexedDB read error: ", error);
-                    if(fail_on_access_error)
-                        throw std::runtime_error{std::string{"IndexedDB read error: "} + error};
+                    async_read_database_v1();
                 }
             );
+
         }
 
         const std::optional<data_types::game_state>& get_game_state() const
@@ -92,7 +90,40 @@ struct database::impl
         }
 
     private:
-        void load_from_idb(const std::string_view& json_str, const int json_version)
+        void async_read_database_v1()
+        {
+            indexed_db::async_read
+            (
+                "database",
+                "game_state",
+                current_version,
+                [this](void* data, int size)
+                {
+                    if(data)
+                    {
+                        auto json_str = std::string_view
+                        {
+                            reinterpret_cast<char*>(data),
+                            static_cast<std::string_view::size_type>(size)
+                        };
+                        libutil::log::info("Loaded data from \"database\" IndexedDB database: ", json_str);
+                        load_from_idb(json_str, current_version);
+                    }
+                    else
+                    {
+                        event_handler_(events::end_of_loading{});
+                    }
+                },
+                [this](const char* error)
+                {
+                    libutil::log::error("IndexedDB read error: ", error);
+                    if(fail_on_access_error_)
+                        throw std::runtime_error{std::string{"IndexedDB read error: "} + error};
+                }
+            );
+        }
+
+        void load_from_idb(const std::string_view json_str, const int json_version)
         {
             //Parse JSON string
             const auto json = nlohmann::json::parse(json_str);
@@ -118,22 +149,21 @@ struct database::impl
 
                 auto pstr = std::make_shared<std::string>(oss.str());
 
-                indexed_db::async_write
+                indexed_db::async_write_v2
                 (
-                    "database",
+                    "ternarii",
                     "game_state",
-                    current_version,
-                    pstr->c_str(),
+                    pstr->data(),
                     pstr->size(),
                     [pstr]
                     {
                         libutil::log::info("Write success.");
                     },
-                    [this](const char* error)
+                    [this]()
                     {
-                        libutil::log::error("Write error: ", error);
+                        libutil::log::error("Write error");
                         if(fail_on_access_error_)
-                            throw std::runtime_error{std::string{"Write: "} + error};
+                            throw std::runtime_error{"Write error"};
                     }
                 );
             }

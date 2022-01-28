@@ -27,6 +27,7 @@ namespace libdb::indexed_db
 
 using read_success_callback_t  = std::function<void(void* data, int size)>;
 using write_success_callback_t = std::function<void()>;
+using failure_callback_2_t     = std::function<void()>;
 using failure_callback_t       = std::function<void(const char* error)>;
 
 /*
@@ -43,17 +44,28 @@ void async_read
 );
 
 /*
-Writes to given database entry.
+Reads given database entry.
+Note: If given entry doesn't exist, calls success_callback(arg, nullptr, 0).
 */
-void async_write
+void async_read_v2
 (
     const char* database_name,
     const char* store_name,
-    int key,
-    const void* data,
+    const read_success_callback_t& success_callback,
+    const failure_callback_2_t& failure_callback
+);
+
+/*
+Writes to given database entry.
+*/
+void async_write_v2
+(
+    const char* database_name,
+    const char* store_name,
+    void* data,
     int size,
     const write_success_callback_t& success_callback,
-    const failure_callback_t& failure_callback
+    const failure_callback_2_t& failure_callback
 );
 
 } //namespace
